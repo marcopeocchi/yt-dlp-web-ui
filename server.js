@@ -5,7 +5,7 @@ const path = require('path');
 const { createServer } = require('http');
 const cors = require('@koa/cors');
 const logger = require('./lib/logger');
-const { download, abortDownload } = require('./downloader');
+const { download, abortDownload } = require('./lib/downloader');
 
 const app = new Koa()
 const server = createServer(app.callback())
