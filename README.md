@@ -8,7 +8,7 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 ## Docker install
 ```
-// download the yt-dl build and put it in the lib folder
+// download the yt-dl build and put it in the lib folder and make it executable
 
 mkdir downloads
 
@@ -18,7 +18,7 @@ docker run -d -p 3022:3022 yt-dlp-webui
 
 ## Manual install
 ```
-// download the yt-dl build and put it in the lib folder
+// download the yt-dl build and put it in the lib folder and make it executable
 
 npm i
 npm run build
