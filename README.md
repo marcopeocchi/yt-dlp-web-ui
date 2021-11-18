@@ -1,11 +1,12 @@
-## yt-dlp Web UI
+# yt-dlp Web UI
 
 A terrible web ui for yt-dlp.  
-Created for the only purpose of *cough cough* k-pop videos from my server/nas.
+Created for the only purpose of *cough cough* k-pop videos from my server/nas.  
+I will eventually make this better as soon as I can. Not in the immediate.  
 
 <img src="https://i.ibb.co/s9pcXP8/yt.png" alt="yt">
 
-### Docker install
+## Docker install
 ```
 // download the yt-dl build and put it in the lib folder
 
@@ -15,7 +16,7 @@ docker build -t yt-dlp-webui .
 docker run -d -p 3022:3022 yt-dlp-webui
 ```
 
-### Manual install
+## Manual install
 ```
 // download the yt-dl build and put it in the lib folder
 
@@ -30,6 +31,6 @@ mkdir downloads
 node server.js
 ```
 
-### Todo list
+## Todo list
 - retrieve background task
 - better ui/ux
