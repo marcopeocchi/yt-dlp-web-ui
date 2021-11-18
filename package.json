@@ -1,0 +1,26 @@
+{
+  "name": "youtube-dlp-web",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node --harmony app.js",
+    "dev": "nodemon app.js",
+    "build": "parcel build ./frontend/index.html",
+    "fe": "parcel ./frontend/index.html --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "koa-static": "^5.0.0",
+    "koa-views": "^7.0.2",
+    "parcel": "^2.0.1",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.0.2",
+    "react-dom": "^17.0.2",
+    "socket.io": "^4.3.2",
+    "socket.io-client": "^4.3.2"
+  }
+}
