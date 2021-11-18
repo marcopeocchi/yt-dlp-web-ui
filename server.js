@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const serve = require('koa-static');
-const { Server } = require('socket.io');
 const path = require('path');
+const { Server } = require('socket.io');
 const { createServer } = require('http');
 const cors = require('@koa/cors');
 const logger = require('./lib/logger');
@@ -37,6 +37,6 @@ app
     .use(cors())
     .use(serve(path.join(__dirname, 'dist')))
 
-console.log('[koa] Server started port', 3000)
+console.log('[koa] Server started port', process.env.PORT || 3022)
 
-server.listen(3000)
+server.listen(process.env.PORT || 3022)
