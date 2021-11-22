@@ -10,7 +10,8 @@ import {
     Button,
     Toast
 } from "react-bootstrap";
-import './App.css'
+import { validateDomain, validateIP } from "./utils";
+import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
@@ -21,6 +22,7 @@ export function App() {
     const [halt, setHalt] = useState(false)
     const [url, setUrl] = useState('')
     const [showToast, setShowToast] = useState(false)
+    const [invalidIP, setInvalidIP] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
 
     useEffect(() => {
@@ -58,7 +60,16 @@ export function App() {
     }
 
     const handleAddrChange = (e) => {
-        localStorage.setItem('server-addr', e.target.value)
+        const input = e.target.value;
+        if (validateIP(input)) {
+            setInvalidIP(false)
+            localStorage.setItem('server-addr', input)
+        } else if (validateDomain(input)) {
+            setInvalidIP(false)
+            localStorage.setItem('server-addr', input)
+        } else {
+            setInvalidIP(true)
+        }
     }
 
     const abort = () => {
@@ -86,22 +97,24 @@ export function App() {
                         <pre id='status'>{message}</pre>
                     </div>
 
-                    {progress ? <ProgressBar className="container-padding" now={progress} variant="success" /> : null}
+                    {progress ? <ProgressBar className="container-padding" now={progress} variant="danger" /> : null}
 
-                    <Button className="my-5" variant="success" onClick={() => sendUrl()} disabled={halt}>Go!</Button>{' '}
-                    <Button variant="danger" onClick={() => abort()}>Abort</Button>{' '}
+                    <Button className="my-5" variant="danger" onClick={() => sendUrl()} disabled={halt}>Go!</Button>{' '}
+                    <Button variant="danger" active onClick={() => abort()}>Abort</Button>{' '}
                     <Button variant="secondary" onClick={() => setShowSettings(!showSettings)}>Settings</Button>
 
                     {showSettings ?
                         <>
                             <h6>Server address</h6>
-                            <InputGroup className="mb-3 url-input">
+                            <InputGroup className="mb-3 url-input" hasValidation>
                                 <InputGroup.Text>ws://</InputGroup.Text>
                                 <FormControl
                                     defaultValue={localStorage.getItem('server-addr')}
                                     placeholder="Server address"
                                     aria-label="Server address"
                                     onChange={handleAddrChange}
+                                    isInvalid={invalidIP}
+                                    isValid={!invalidIP}
                                 />
                                 <InputGroup.Text>:3022</InputGroup.Text>
                             </InputGroup>
@@ -120,7 +133,7 @@ export function App() {
                         show={showToast}
                         onClose={() => setShowToast(false)}
                         bg={'success'}
-                        delay={1000}
+                        delay={1500}
                         autohide
                         className="mt-5"
                     >
