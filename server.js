@@ -27,11 +27,11 @@ io.on('connection', socket => {
     socket.on('abort', () => {
         abortDownload(socket)
     })
-});
+})
 
 io.on('disconnect', () => {
     logger('ws', 'disconnesso')
-});
+})
 
 app
     .use(cors())

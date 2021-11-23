@@ -8,12 +8,13 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 ## Docker install
 ```
-// download the yt-dl build and put it in the lib folder and make it executable
-
-mkdir downloads
-
+docker pull marcobaobao/yt-dlp-webui:latest
+docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads marcobaobao/yt-dlp-webui
+```
+or  
+```
 docker build -t yt-dlp-webui .
-docker run -d -p 3022:3022 yt-dlp-webui
+docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-webui
 ```
 
 ## Manual install
@@ -22,6 +23,7 @@ docker run -d -p 3022:3022 yt-dlp-webui
 
 npm i
 npm run build
+npm run fetch
 
 // edit the settings.json specifying the download path or 
 // it will use the following folder

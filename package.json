@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node --harmony app.js",
+    "start": "node --harmony server.js",
     "dev": "nodemon app.js",
     "build": "parcel build ./frontend/index.html",
-    "fe": "parcel ./frontend/index.html --open"
+    "fe": "parcel ./frontend/index.html --open",
+    "fetch":"./lib/fetch-yt-dlp.sh && mv yt-dlp ./lib"
   },
   "author": "",
   "license": "ISC",
