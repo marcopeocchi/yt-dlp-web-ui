@@ -1,5 +1,8 @@
-body{
+body {
+    font-family: 'Shippori Antique', sans-serif;
     height: 80vh;
-    background-color: #202124;
-    color: #f1f1f1;
+    /* background-color: #222848; */
+    background-color: #f8f9ff;
+    /* color: #f1f1f1; */
+    color: #3b3e66;
 }

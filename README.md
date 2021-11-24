@@ -4,7 +4,7 @@ A terrible web ui for yt-dlp.
 Created for the only purpose of *cough cough* k-pop videos from my server/nas.  
 I will eventually make this better as soon as I can. Not in the immediate.  
 
-<img src="https://i.ibb.co/s9pcXP8/yt.png" alt="yt">
+<img src="https://i.ibb.co/drt0LWc/Screenshot-2021-11-24-at-13-11-09-yt-dlp-Web-UI.png" alt="ytdlpwebui">
 
 ## Docker install
 ```

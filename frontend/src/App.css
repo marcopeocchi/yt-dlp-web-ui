@@ -1,5 +1,16 @@
-.status-box{
-    background-color: #2b2c31;
+.status-box {
+    background-color: #f8f9ffa1;
     padding: 8px;
     border-radius: 5px;
+    overflow-x: hidden;
+}
+
+.stack-box {
+    background-color: #ffffff;
+    border-radius: 1pc;
+}
+
+.settings {
+    text-decoration: underline;
+    cursor: pointer;
 }

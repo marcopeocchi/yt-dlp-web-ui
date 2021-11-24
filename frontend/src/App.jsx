@@ -8,7 +8,8 @@ import {
     InputGroup,
     FormControl,
     Button,
-    Toast
+    ButtonGroup,
+    Toast,
 } from "react-bootstrap";
 import { validateDomain, validateIP } from "./utils";
 import './App.css';
@@ -44,14 +45,13 @@ export function App() {
                     setProgress(_progress)
                 }
             } catch (error) {
-                console.log('finished or empty url or aborted')
+                console.warn('finished or empty url or aborted')
             }
         })
     }, [])
 
     const sendUrl = () => {
         setHalt(true)
-        console.log(url)
         socket.emit('send-url', url)
     }
 
@@ -82,34 +82,42 @@ export function App() {
             <Row>
                 <Col lg={7} xs={12}>
                     <div className="mt-5" />
-                    <h1>yt-dlp Web UI 🤠</h1>
+                    <h1 className="fw-bold">yt-dlp WebUI</h1>
+                    <div className="mt-5" />
 
-                    <InputGroup className="mt-5">
-                        <FormControl
-                            className="url-input"
-                            placeholder="YouTube or other supported service video url"
-                            onChange={handleUrlChange}
-                        />
-                    </InputGroup>
+                    <div className="p-3 stack-box shadow">
+                        <InputGroup>
+                            <FormControl
+                                className="url-input"
+                                placeholder="YouTube or other supported service video url"
+                                onChange={handleUrlChange}
+                            />
+                        </InputGroup>
 
-                    <div className="mt-2 status-box">
-                        <h6>Status</h6>
-                        <pre id='status'>{message}</pre>
+                        <div className="mt-2 status-box">
+                            <h6>Status</h6>
+                            {!message ? <pre>Ready</pre> : null}
+                            <pre id='status'>{message}</pre>
+                        </div>
+                        <ButtonGroup>
+                            <Button className="mt-2" variant="primary" onClick={() => sendUrl()} disabled={halt}>Start</Button>{' '}
+                            <Button className="mt-2" variant="primary" active onClick={() => abort()}>Abort</Button>{' '}
+                        </ButtonGroup>
                     </div>
 
-                    {progress ? <ProgressBar className="container-padding" now={progress} variant="danger" /> : null}
+                    {progress ? <ProgressBar className="container-padding" now={progress} variant="primary" /> : null}
 
-                    <Button className="my-5" variant="danger" onClick={() => sendUrl()} disabled={halt}>Go!</Button>{' '}
-                    <Button variant="danger" active onClick={() => abort()}>Abort</Button>{' '}
-                    <Button variant="secondary" onClick={() => setShowSettings(!showSettings)}>Settings</Button>
+                    <div className="my-4">
+                        <span className="settings" onClick={() => setShowSettings(!showSettings)}>Settings</span>
+                    </div>
 
                     {showSettings ?
-                        <>
+                        <div className="p-3 stack-box shadow">
                             <h6>Server address</h6>
                             <InputGroup className="mb-3 url-input" hasValidation>
                                 <InputGroup.Text>ws://</InputGroup.Text>
                                 <FormControl
-                                    defaultValue={localStorage.getItem('server-addr')}
+                                    defaultValue={localStorage.getItem('server-addr') || 'localhost'}
                                     placeholder="Server address"
                                     aria-label="Server address"
                                     onChange={handleAddrChange}
@@ -118,7 +126,7 @@ export function App() {
                                 />
                                 <InputGroup.Text>:3022</InputGroup.Text>
                             </InputGroup>
-                        </> :
+                        </div> :
                         null
                     }
 
@@ -132,16 +140,14 @@ export function App() {
                     <Toast
                         show={showToast}
                         onClose={() => setShowToast(false)}
-                        bg={'success'}
+                        bg={'primary'}
                         delay={1500}
                         autohide
                         className="mt-5"
                     >
-                        <Toast.Header>
-                            <strong className="me-auto">Server</strong>
-                            <small>Now</small>
-                        </Toast.Header>
-                        <Toast.Body>{`Connected to ${localStorage.getItem('server-addr')}`}</Toast.Body>
+                        <Toast.Body className="text-light">
+                            {`Connected to ${localStorage.getItem('server-addr') || 'localhost'}`}
+                        </Toast.Body>
                     </Toast>
                 </Col>
             </Row>
