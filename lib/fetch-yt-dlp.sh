@@ -1,5 +1,6 @@
 #!/bin/bash
-echo "Downloading latest yt-dlp..."
+
+echo "Downloading latest yt-dlp build..."
 
 rm -f yt-dlp
 

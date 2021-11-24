@@ -1,26 +1,27 @@
 {
   "name": "youtube-dlp-web",
   "version": "1.0.0",
-  "description": "",
+  "description": "A terrible webUI for yt-dlp, all-in-one solution.",
   "scripts": {
     "start": "node --harmony server.js",
     "dev": "nodemon app.js",
     "build": "parcel build ./frontend/index.html",
     "fe": "parcel ./frontend/index.html --open",
-    "fetch":"./lib/fetch-yt-dlp.sh && mv yt-dlp ./lib"
+    "fetch": "./lib/fetch-yt-dlp.sh && mv yt-dlp ./lib"
   },
-  "author": "",
+  "author": "marcobaobao",
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.1.0",
-    "dotenv": "^10.0.0",
     "koa": "^2.13.4",
     "koa-static": "^5.0.0",
-    "parcel": "^2.0.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.2",
     "react-dom": "^17.0.2",
     "socket.io": "^4.3.2",
     "socket.io-client": "^4.3.2"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.1"
   }
 }

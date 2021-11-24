@@ -10,5 +10,6 @@ COPY . .
 RUN npm run build
 RUN chmod +x ./lib/fetch-yt-dlp.sh
 RUN ./lib/fetch-yt-dlp.sh && mv yt-dlp ./lib
+RUN rm -rf .parcel-cache
 EXPOSE 3022
 CMD [ "node" , "./server.js" ]
