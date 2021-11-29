@@ -12,8 +12,8 @@ import {
     Toast,
 } from "react-bootstrap";
 import { validateDomain, validateIP } from "./utils";
-import './App.css';
 import { IMessage } from "./interfaces";
+import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
@@ -27,6 +27,7 @@ export function App() {
     const [invalidIP, setInvalidIP] = useState(false)
     const [updatedBin, setUpdatedBin] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
+    const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark')
 
     useEffect(() => {
         socket.on('connect', () => {
@@ -35,8 +36,14 @@ export function App() {
     }, [])
 
     useEffect(() => {
+        darkMode ?
+            document.body.classList.add('dark') :
+            document.body.classList.remove('dark')
+    }, [darkMode])
+
+    useEffect(() => {
         socket.on('progress', (data: IMessage) => {
-            setMessage(`${data.status || 'starting'} | progress: ${data.progress || '?'} | size: ${data.size || '?'} | speed: ${data.dlSpeed || '?'}`)
+            setMessage(`${data.status || '...'} | progress: ${data.progress || '?'} | size: ${data.size || '?'} | speed: ${data.dlSpeed || '?'}`)
             if (data.status === 'Done!') {
                 setHalt(false)
                 setMessage('Done!')
@@ -86,6 +93,16 @@ export function App() {
     const updateBinary = () => {
         setHalt(true)
         socket.emit('update-bin')
+    }
+
+    const toggleTheme = () => {
+        if (darkMode) {
+            localStorage.setItem('theme', 'light')
+            setDarkMode(false)
+        } else {
+            localStorage.setItem('theme', 'dark')
+            setDarkMode(true)
+        }
     }
 
     return (
@@ -140,6 +157,11 @@ export function App() {
                             </InputGroup>
                             <Button onClick={() => updateBinary()} disabled={halt}>
                                 Update yt-dlp binary
+                            </Button>{' '}
+                            <Button
+                                variant={darkMode ? 'light' : 'dark'}
+                                onClick={() => toggleTheme()}>
+                                {darkMode ? 'Dark theme' : 'Light theme'}
                             </Button>
                         </div> :
                         null
