@@ -27,7 +27,6 @@ io.on('connection', socket => {
     socket.on('abort', () => {
         abortDownload(socket)
     })
-
     socket.on('update-bin', () => {
         ytdlpUpdater(socket)
     })

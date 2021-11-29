@@ -13,6 +13,7 @@ import {
 } from "react-bootstrap";
 import { validateDomain, validateIP } from "./utils";
 import './App.css';
+import { IMessage } from "./interfaces";
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
@@ -34,20 +35,17 @@ export function App() {
     }, [])
 
     useEffect(() => {
-        socket.on('progress', data => {
-            setMessage(data.trim())
-            if (data.trim() === 'Done!') {
+        socket.on('progress', (data: IMessage) => {
+            setMessage(`${data.status || 'starting'} | progress: ${data.progress || '?'} | size: ${data.size || '?'} | speed: ${data.dlSpeed || '?'}`)
+            if (data.status === 'Done!') {
                 setHalt(false)
+                setMessage('Done!')
                 setProgress(0)
+                return
             }
-            try {
-                const _progress = Math.ceil(data.split(" ")[2].replace('%', ''))
-                if (!isNaN(_progress)) {
-                    setProgress(_progress)
-                }
-            } catch (error) {
-                console.warn('finished or empty url or aborted')
-            }
+            setProgress(
+                Math.ceil(Number(data.progress.replace('%', '')))
+            )
         })
     }, [])
 
@@ -63,11 +61,11 @@ export function App() {
         socket.emit('send-url', url)
     }
 
-    const handleUrlChange = (e) => {
+    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUrl(e.target.value)
     }
 
-    const handleAddrChange = (e) => {
+    const handleAddrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
         if (validateIP(input)) {
             setInvalidIP(false)
