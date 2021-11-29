@@ -24,6 +24,7 @@ export function App() {
     const [url, setUrl] = useState('')
     const [showToast, setShowToast] = useState(false)
     const [invalidIP, setInvalidIP] = useState(false)
+    const [updatedBin, setUpdatedBin] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
 
     useEffect(() => {
@@ -47,6 +48,13 @@ export function App() {
             } catch (error) {
                 console.warn('finished or empty url or aborted')
             }
+        })
+    }, [])
+
+    useEffect(() => {
+        socket.on('updated', () => {
+            setUpdatedBin(true)
+            setHalt(false)
         })
     }, [])
 
@@ -77,6 +85,11 @@ export function App() {
         setHalt(false)
     }
 
+    const updateBinary = () => {
+        setHalt(true)
+        socket.emit('update-bin')
+    }
+
     return (
         <Container>
             <Row>
@@ -100,12 +113,13 @@ export function App() {
                             <pre id='status'>{message}</pre>
                         </div>
                         <ButtonGroup>
-                            <Button className="mt-2" variant="primary" onClick={() => sendUrl()} disabled={halt}>Start</Button>{' '}
-                            <Button className="mt-2" variant="primary" active onClick={() => abort()}>Abort</Button>{' '}
+                            <Button className="mt-2" onClick={() => sendUrl()} disabled={halt}>Start</Button>{' '}
+                            <Button className="mt-2" active onClick={() => abort()}>Abort</Button>{' '}
                         </ButtonGroup>
+
+                        {progress ? <ProgressBar className="container-padding mt-2" now={progress} variant="primary" /> : null}
                     </div>
 
-                    {progress ? <ProgressBar className="container-padding" now={progress} variant="primary" /> : null}
 
                     <div className="my-4">
                         <span className="settings" onClick={() => setShowSettings(!showSettings)}>Settings</span>
@@ -126,6 +140,9 @@ export function App() {
                                 />
                                 <InputGroup.Text>:3022</InputGroup.Text>
                             </InputGroup>
+                            <Button onClick={() => updateBinary()} disabled={halt}>
+                                Update yt-dlp binary
+                            </Button>
                         </div> :
                         null
                     }
@@ -147,6 +164,18 @@ export function App() {
                     >
                         <Toast.Body className="text-light">
                             {`Connected to ${localStorage.getItem('server-addr') || 'localhost'}`}
+                        </Toast.Body>
+                    </Toast>
+                    <Toast
+                        show={updatedBin}
+                        onClose={() => setUpdatedBin(false)}
+                        bg={'primary'}
+                        delay={1500}
+                        autohide
+                        className="mt-5"
+                    >
+                        <Toast.Body className="text-light">
+                            Updated yt-dlp binary!
                         </Toast.Body>
                     </Toast>
                 </Col>

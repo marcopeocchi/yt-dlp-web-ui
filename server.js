@@ -6,6 +6,7 @@ const { createServer } = require('http');
 const cors = require('@koa/cors');
 const logger = require('./lib/logger');
 const { download, abortDownload } = require('./lib/downloader');
+const { ytdlpUpdater } = require('./lib/updater');
 
 const app = new Koa()
 const server = createServer(app.callback())
@@ -23,9 +24,12 @@ io.on('connection', socket => {
         logger('ws', args)
         download(socket, args)
     })
-
     socket.on('abort', () => {
         abortDownload(socket)
+    })
+
+    socket.on('update-bin', () => {
+        ytdlpUpdater(socket)
     })
 })
 

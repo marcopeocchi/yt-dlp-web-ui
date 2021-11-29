@@ -1,5 +1,5 @@
 FROM node:16-bullseye
-RUN mkdir -p /usr/src/yt-dlp-webui/downloadsd
+RUN mkdir -p /usr/src/yt-dlp-webui/download
 VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
 COPY package*.json ./
