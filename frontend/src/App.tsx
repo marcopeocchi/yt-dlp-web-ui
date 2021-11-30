@@ -12,7 +12,7 @@ import {
     Toast,
 } from "react-bootstrap";
 import { validateDomain, validateIP } from "./utils";
-import { IMessage } from "./interfaces";
+import { IDLInfo, IMessage } from "./interfaces";
 import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
@@ -28,11 +28,15 @@ export function App() {
     const [updatedBin, setUpdatedBin] = useState(false)
     const [showSettings, setShowSettings] = useState(false)
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark')
+    const [downloadInfo, setDownloadInfo] = useState<IDLInfo>()
 
     useEffect(() => {
         socket.on('connect', () => {
             setShowToast(true)
         })
+        return () => {
+            socket.disconnect()
+        }
     }, [])
 
     useEffect(() => {
@@ -42,8 +46,14 @@ export function App() {
     }, [darkMode])
 
     useEffect(() => {
+        socket.on('info', (data: IDLInfo) => {
+            setDownloadInfo(data)
+        })
+    }, [])
+
+    useEffect(() => {
         socket.on('progress', (data: IMessage) => {
-            setMessage(`${data.status || '...'} | progress: ${data.progress || '?'} | size: ${data.size || '?'} | speed: ${data.dlSpeed || '?'}`)
+            setMessage(`operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`)
             if (data.status === 'Done!') {
                 setHalt(false)
                 setMessage('Done!')
@@ -86,6 +96,10 @@ export function App() {
     }
 
     const abort = () => {
+        setDownloadInfo({
+            title: '',
+            thumbnail: ''
+        })
         socket.emit('abort')
         setHalt(false)
     }
@@ -123,13 +137,23 @@ export function App() {
                         </InputGroup>
 
                         <div className="mt-2 status-box">
-                            <h6>Status</h6>
-                            {!message ? <pre>Ready</pre> : null}
-                            <pre id='status'>{message}</pre>
+                            <Row>
+                                {downloadInfo ? <p>{downloadInfo.title}</p> : null}
+                                <Col sm={9}>
+                                    <h6>Status</h6>
+                                    {!message ? <pre>Ready</pre> : null}
+                                    <pre id='status'>{message}</pre>
+                                </Col>
+                                <Col sm={3}>
+                                    <br />
+                                    <img className="img-fluid rounded" src={downloadInfo?.thumbnail} />
+                                </Col>
+                            </Row>
                         </div>
-                        <ButtonGroup>
-                            <Button className="mt-2" onClick={() => sendUrl()} disabled={halt}>Start</Button>{' '}
-                            <Button className="mt-2" active onClick={() => abort()}>Abort</Button>{' '}
+
+                        <ButtonGroup className="mt-2">
+                            <Button onClick={() => sendUrl()} disabled={halt}>Start</Button>
+                            <Button active onClick={() => abort()}>Abort</Button>
                         </ButtonGroup>
 
                         {progress ? <ProgressBar className="container-padding mt-2" now={progress} variant="primary" /> : null}
@@ -161,14 +185,14 @@ export function App() {
                             <Button
                                 variant={darkMode ? 'light' : 'dark'}
                                 onClick={() => toggleTheme()}>
-                                {darkMode ? 'Dark theme' : 'Light theme'}
+                                {darkMode ? 'Light theme' : 'Dark theme'}
                             </Button>
                         </div> :
                         null
                     }
 
                     <div className="mt-5" />
-                    <div>Once you close the page the download will continue in the background.</div>
+                    <div>Once you close this page the download will continue in the background.</div>
                     <div>It won't be possible retriving the progress though.</div>
                     <div className="mt-5" />
                     <small>Made with ❤️ by Marcobaobao</small>

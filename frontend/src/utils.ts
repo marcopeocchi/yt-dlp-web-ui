@@ -7,3 +7,10 @@ export function validateDomain(domainName: string): boolean {
     let domainRegex = /[^@ \t\r\n]+.[^@ \t\r\n]+\.[^@ \t\r\n]+/
     return domainRegex.test(domainName) || domainName === 'localhost'
 }
+
+export function ellipsis(str: string, lim: number): string {
+    if (str) {
+        return str.length > lim ? `${str.substr(0, lim)}...` : str
+    }
+    return ''
+}

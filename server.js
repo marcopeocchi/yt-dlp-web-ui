@@ -18,8 +18,8 @@ const io = new Server(server, {
 })
 
 io.on('connection', socket => {
-    logger('ws', 'connesso')
-
+    logger('ws', `${socket.handshake.address} connected!`)
+    // message listeners
     socket.on('send-url', args => {
         logger('ws', args)
         download(socket, args)
@@ -32,14 +32,14 @@ io.on('connection', socket => {
     })
 })
 
-io.on('disconnect', () => {
-    logger('ws', 'disconnesso')
+io.on('disconnect', (socket) => {
+    logger('ws', `${socket.handshake.address} disconnected`)
 })
 
 app
     .use(cors())
     .use(serve(path.join(__dirname, 'dist')))
 
-console.log('[koa] Server started port', process.env.PORT || 3022)
+logger('koa', `Server started on port ${process.env.PORT || 3022}`)
 
 server.listen(process.env.PORT || 3022)
