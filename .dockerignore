@@ -8,3 +8,4 @@ lib/yt-dlp
 .env
 *.mp4
 *.ytdl
+*.db

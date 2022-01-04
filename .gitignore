@@ -8,3 +8,4 @@ lib/yt-dlp
 *.mp4
 *.ytdl
 *.part
+*.db
