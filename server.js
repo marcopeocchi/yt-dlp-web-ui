@@ -22,7 +22,7 @@ io.on('connection', socket => {
     logger('ws', `${socket.handshake.address} connected!`)
     // message listeners
     socket.on('send-url', args => {
-        logger('ws', args)
+        logger('ws', args?.url)
         download(socket, args)
     })
     socket.on('abort', () => {
@@ -32,7 +32,7 @@ io.on('connection', socket => {
         ytdlpUpdater(socket)
     })
     socket.on('fetch-jobs', async () => {
-        socket.emit('pending-jobs', await db.pruneDownloads())
+        socket.emit('pending-jobs', await db.retrieveAll())
     })
     socket.on('retrieve-jobs', async () => {
         retriveDownload(socket)
