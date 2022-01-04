@@ -6,3 +6,5 @@ lib/*.exe
 lib/yt-dlp
 .env
 *.mp4
+*.ytdl
+*.part

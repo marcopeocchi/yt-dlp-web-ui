@@ -5,6 +5,7 @@ WORKDIR /usr/src/yt-dlp-webui
 COPY package*.json ./
 RUN apt-get update
 RUN apt-get install curl ffmpeg -y
+RUN apt-get install psmisc
 RUN npm install
 COPY . .
 RUN npm run build

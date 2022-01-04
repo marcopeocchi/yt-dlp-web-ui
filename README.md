@@ -1,9 +1,12 @@
 # yt-dlp Web UI
 
-A terrible web ui for yt-dlp.  
+A not so terrible web ui for yt-dlp.  
 Created for the only purpose of *consume* videos from my server/nas.  
 I will eventually make this better as soon as I can. Not in the immediate.  
 
+**Background jobs now are retrieved. It's still rudimentary but it leverages**
+**on yt-dlp resume feature**  
+  
 <img src="https://i.ibb.co/7VBK1PY/1.png">
 
 ## Now with dark mode
@@ -15,9 +18,11 @@ I will eventually make this better as soon as I can. Not in the immediate.
 The avaible settings are currently only:
 -   Server address
 -   Switch theme
+-   Retrieve background jobs
 
 Future releases will have:
--   Exctract audio
+-   Multi download
+-   ~~Exctract audio~~
 -   Format selection
 
 ## Docker installation
@@ -46,5 +51,5 @@ node server.js
 ```
 
 ## Todo list
-- retrieve background tasks
+- ~~retrieve background tasks~~
 - better ui/ux

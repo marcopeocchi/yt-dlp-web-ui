@@ -1,12 +1,13 @@
-const Koa = require('koa');
-const serve = require('koa-static');
-const path = require('path');
-const { Server } = require('socket.io');
-const { createServer } = require('http');
-const cors = require('@koa/cors');
-const logger = require('./lib/logger');
-const { download, abortDownload } = require('./lib/downloader');
-const { ytdlpUpdater } = require('./lib/updater');
+const Koa = require('koa'),
+    serve = require('koa-static'),
+    cors = require('@koa/cors'),
+    { logger, splash } = require('./lib/logger'),
+    { join } = require('path'),
+    { Server } = require('socket.io'),
+    { createServer } = require('http'),
+    { download, abortDownload, retriveDownload } = require('./lib/downloader'),
+    { ytdlpUpdater } = require('./lib/updater'),
+    db = require('./lib/db');
 
 const app = new Koa()
 const server = createServer(app.callback())
@@ -30,6 +31,12 @@ io.on('connection', socket => {
     socket.on('update-bin', () => {
         ytdlpUpdater(socket)
     })
+    socket.on('fetch-jobs', async () => {
+        socket.emit('pending-jobs', await db.pruneDownloads())
+    })
+    socket.on('retrieve-jobs', async () => {
+        retriveDownload(socket)
+    })
 })
 
 io.on('disconnect', (socket) => {
@@ -38,8 +45,10 @@ io.on('disconnect', (socket) => {
 
 app
     .use(cors())
-    .use(serve(path.join(__dirname, 'dist')))
+    .use(serve(join(__dirname, 'dist')))
 
+splash()
 logger('koa', `Server started on port ${process.env.PORT || 3022}`)
 
-server.listen(process.env.PORT || 3022)
+db.init()
+    .then(() => server.listen(process.env.PORT || 3022))

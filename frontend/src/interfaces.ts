@@ -2,7 +2,7 @@ export interface IMessage {
     status: string,
     progress?: string,
     size?: string,
-    dlSpeed?: string | IDLSpeed
+    dlSpeed?: string
 }
 
 export interface IDLInfo {

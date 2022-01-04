@@ -14,3 +14,16 @@ export function ellipsis(str: string, lim: number): string {
     }
     return ''
 }
+
+export function detectSpeed(str: string): number {
+    let effective = str.match(/[\d,]+(\.\d+)?/)[0]
+    const unit = str.replace(effective, '')
+    switch (unit) {
+        case 'MiB/s':
+            return Number(effective) * 1000
+        case 'KiB/s':
+            return Number(effective)
+        default:
+            return 0
+    }
+}
