@@ -23,4 +23,4 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
     - name: Publish the Docker image
-      run: docker push ${{secrets.DOCKER_HUB_USERNAME}}/yt-dlp-webui
+      run: docker push ${{secrets.DOCKER_HUB_USERNAME}}/yt-dlp-webui:latest
