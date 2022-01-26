@@ -5,8 +5,13 @@ const Koa = require('koa'),
     { join } = require('path'),
     { Server } = require('socket.io'),
     { createServer } = require('http'),
-    { download, abortDownload, retriveDownload } = require('./lib/downloader'),
     { ytdlpUpdater } = require('./lib/updater'),
+    {
+        download,
+        abortDownload,
+        retriveDownload,
+        abortAllDownloads
+    } = require('./lib/downloader'),
     db = require('./lib/db');
 
 const app = new Koa()
@@ -25,8 +30,11 @@ io.on('connection', socket => {
         logger('ws', args?.url)
         download(socket, args)
     })
-    socket.on('abort', () => {
-        abortDownload(socket)
+    socket.on('abort', (args) => {
+        abortDownload(socket, args)
+    })
+    socket.on('abort-all', () => {
+        abortAllDownloads(socket)
     })
     socket.on('update-bin', () => {
         ytdlpUpdater(socket)

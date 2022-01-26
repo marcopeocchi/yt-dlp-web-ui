@@ -43,9 +43,9 @@ export function App() {
 
     useEffect(() => {
         socket.on('pending-jobs', (jobs: Array<any>) => {
-            if (jobs.length > 0) {
-                socket.emit('retrieve-jobs')
-            }
+            //if (jobs.length > 0) {
+            socket.emit('retrieve-jobs')
+            //}
         })
     }, [])
 
