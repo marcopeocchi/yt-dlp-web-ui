@@ -10,7 +10,7 @@ export function validateDomain(domainName: string): boolean {
 
 export function ellipsis(str: string, lim: number): string {
     if (str) {
-        return str.length > lim ? `${str.substr(0, lim)}...` : str
+        return str.length > lim ? `${str.substring(0, lim)}...` : str
     }
     return ''
 }

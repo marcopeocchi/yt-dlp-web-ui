@@ -229,7 +229,7 @@ export function App() {
                                             <ProgressBar className="container-padding mt-2" now={progressMap.get(message[0])} variant="primary" /> :
                                             null
                                         }
-                                        {message[1] && message[1] !== 'Done!' ?
+                                        {message[0] && message[1] && message[1] !== 'Done!' ?
                                             <Row>
                                                 <Col>
                                                     <Button variant={darkMode ? 'dark' : 'light'} className="float-end" active size="sm" onClick={() => abort(message[0])}>
