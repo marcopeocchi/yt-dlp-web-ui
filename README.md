@@ -6,6 +6,8 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 Changelog:
 ```
+27/01/22: Multidownload implemented!
+
 26/01/22: Multiple downloads are being implemented. Maybe by next release they will be there.
 Refactoring and JSDoc.
 
@@ -26,7 +28,7 @@ The avaible settings are currently only:
 -   Extract audio
 
 Future releases will have:
--   Multi download *on its way*
+-   ~~Multi download~~ *experimental*
 -   ~~Exctract audio~~ *done*
 -   Format selection
 
@@ -55,10 +57,6 @@ mkdir downloads
 node server.js
 ```
 
-
-## Regarding multiple downloads
-There's a way to circumvent the single download restriction **BUT IT LEADS TO UNDEFINED BEHAVIOUR**.  
-Fire up multiple tabs and make a download for each tab. I know that's horrible but it's gonna be fixed by next release.
 
 ## Todo list
 - ~~retrieve background tasks~~

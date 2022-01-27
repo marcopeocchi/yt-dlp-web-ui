@@ -3,13 +3,20 @@ export interface IMessage {
     progress?: string,
     size?: string,
     dlSpeed?: string
+    pid: number
 }
 
-export interface IDLInfo {
+export interface IDLInfoBase {
     title: string,
     thumbnail: string,
     upload_date?: string | Date,
     duration?: number
+    resolution?: string
+}
+
+export interface IDLInfo {
+    pid: number,
+    info: IDLInfoBase
 }
 
 export interface IDLSpeed {

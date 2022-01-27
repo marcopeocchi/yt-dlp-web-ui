@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {
     Container,
     Row,
@@ -9,27 +9,37 @@ import {
     FormControl,
     Button,
     ButtonGroup,
-    Toast,
 } from "react-bootstrap";
 import { validateDomain, validateIP } from "./utils";
-import { IDLInfo, IMessage } from "./interfaces";
+import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
+import { MessageToast } from "./components/MessageToast";
 import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
 export function App() {
 
-    const [progress, setProgress] = useState(0)
-    const [message, setMessage] = useState('')
-    const [halt, setHalt] = useState(false)
-    const [url, setUrl] = useState('')
-    const [showToast, setShowToast] = useState(false)
-    const [invalidIP, setInvalidIP] = useState(false)
-    const [updatedBin, setUpdatedBin] = useState(false)
-    const [showSettings, setShowSettings] = useState(false)
-    const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark')
-    const [extractAudio, setExtractAudio] = useState(localStorage.getItem('-x') === 'true')
-    const [downloadInfo, setDownloadInfo] = useState<IDLInfo>()
+    const [progressMap, setProgressMap] = useState(new Map<number, number>());
+    const [messageMap, setMessageMap] = useState(new Map<number, string>());
+    const [downloadInfoMap, setDownloadInfoMap] = useState(new Map<number, IDLInfoBase>());
+
+    const [halt, setHalt] = useState(false);
+    const [url, setUrl] = useState('');
+    const [showToast, setShowToast] = useState(false);
+    const [invalidIP, setInvalidIP] = useState(false);
+    const [updatedBin, setUpdatedBin] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
+    const [extractAudio, setExtractAudio] = useState(localStorage.getItem('-x') === 'true');
+
+    const updateInStateMap = (k: number, v: any, target: Map<number, any>, callback: Function, remove: boolean = false) => {
+        if (remove) {
+            target.delete(k)
+            callback(new Map(target))
+            return;
+        }
+        callback(new Map(target.set(k, v)));
+    }
 
     useEffect(() => {
         socket.on('connect', () => {
@@ -42,10 +52,8 @@ export function App() {
     }, [])
 
     useEffect(() => {
-        socket.on('pending-jobs', (jobs: Array<any>) => {
-            //if (jobs.length > 0) {
+        socket.on('pending-jobs', () => {
             socket.emit('retrieve-jobs')
-            //}
         })
     }, [])
 
@@ -57,21 +65,32 @@ export function App() {
 
     useEffect(() => {
         socket.on('info', (data: IDLInfo) => {
-            setDownloadInfo(data)
+            updateInStateMap(data.pid, data.info, downloadInfoMap, setDownloadInfoMap)
         })
     }, [])
 
+
     useEffect(() => {
         socket.on('progress', (data: IMessage) => {
-            setMessage(`operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`)
             if (data.status === 'Done!' || data.status === 'Aborted') {
                 setHalt(false)
-                setMessage('Done!')
-                setProgress(0)
+                updateInStateMap(
+                    data.pid,
+                    'Done!',
+                    messageMap,
+                    setMessageMap
+                )
+                updateInStateMap(data.pid, 0, progressMap, setProgressMap)
                 return
             }
+            updateInStateMap(
+                data.pid,
+                `operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`,
+                messageMap,
+                setMessageMap
+            )
             if (data.progress) {
-                setProgress(Math.ceil(Number(data.progress.replace('%', ''))))
+                updateInStateMap(data.pid, Math.ceil(Number(data.progress.replace('%', ''))), progressMap, setProgressMap)
             }
             // if (data.dlSpeed) {
             //     const event = new CustomEvent<number>("dlSpeed", { "detail": detectSpeed(data.dlSpeed) });
@@ -95,6 +114,9 @@ export function App() {
                 xa: extractAudio
             },
         })
+        setUrl('')
+        const input: HTMLInputElement = document.getElementById('urlInput') as HTMLInputElement;
+        input.value = '';
     }
 
     const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,12 +136,13 @@ export function App() {
         }
     }
 
-    const abort = () => {
-        setDownloadInfo({
-            title: '',
-            thumbnail: ''
-        })
-        socket.emit('abort')
+    const abort = (id?: number) => {
+        if (id) {
+            updateInStateMap(id, null, downloadInfoMap, setDownloadInfoMap, true)
+            socket.emit('abort', { pid: id })
+            return
+        }
+        socket.emit('abort-all')
         setHalt(false)
     }
 
@@ -149,7 +172,7 @@ export function App() {
     }
 
     return (
-        <React.Fragment>
+        <main>
             <Container className="pb-5">
                 <Row>
                     <Col lg={7} xs={12}>
@@ -160,38 +183,84 @@ export function App() {
                         <div className="p-3 stack-box shadow">
                             <InputGroup>
                                 <FormControl
+                                    id="urlInput"
                                     className="url-input"
                                     placeholder="YouTube or other supported service video url"
                                     onChange={handleUrlChange}
                                 />
                             </InputGroup>
-
-                            <div className="mt-2 status-box">
-                                <Row>
-                                    {downloadInfo ? <p>{downloadInfo.title}</p> : null}
-                                    <Col sm={9}>
-                                        <h6>Status</h6>
-                                        {!message ? <pre>Ready</pre> : null}
-                                        <pre id='status'>{message}</pre>
-                                    </Col>
-                                    <Col sm={3}>
-                                        <br />
-                                        <img className="img-fluid rounded" src={downloadInfo?.thumbnail} />
-                                    </Col>
-                                </Row>
-                                {/* <Col>
-                                <Statistics></Statistics>
-                            </Col> */}
-                            </div>
+                            {
+                                Array.from(messageMap).length === 0 ?
+                                    <div className="mt-2 status-box">
+                                        <Row>
+                                            <Col sm={9}>
+                                                <h6>Status</h6>
+                                                <pre>Ready</pre>
+                                            </Col>
+                                        </Row>
+                                    </div> : null
+                            }
+                            { /*Super big brain flatMap moment*/
+                                Array.from(messageMap).flatMap(message => (
+                                    <Fragment key={message[0]}>
+                                        {
+                                            /*
+                                                Message[0] => key, the pid which is shared with the progress Map
+                                                Message[1] => value, the actual formatted message sent from server
+                                             */
+                                        }
+                                        {message[1] && message[1] !== 'Done!' ?
+                                            <div className="mt-2 status-box">
+                                                <Row>
+                                                    {
+                                                        downloadInfoMap.get(message[0]) ?
+                                                            <p>{downloadInfoMap.get(message[0]).title}</p> :
+                                                            null
+                                                    }
+                                                    <Col sm={9}>
+                                                        <h6>Status</h6>
+                                                        {!message[1] ? <pre>Ready</pre> : null}
+                                                        <pre id='status'>{message[1]}</pre>
+                                                    </Col>
+                                                    <Col sm={3}>
+                                                        <br />
+                                                        <img className="img-fluid rounded" src={
+                                                            downloadInfoMap.get(message[0]) ?
+                                                                downloadInfoMap.get(message[0]).thumbnail :
+                                                                ''
+                                                        } />
+                                                    </Col>
+                                                </Row>
+                                            </div> : null
+                                        }
+                                        {
+                                            /*
+                                                Gets the progress by indexing the map with the pid
+                                             */
+                                        }
+                                        {progressMap.get(message[0]) ?
+                                            <ProgressBar className="container-padding mt-2" now={progressMap.get(message[0])} variant="primary" /> :
+                                            null
+                                        }
+                                        {message[1] && message[1] !== 'Done!' ?
+                                            <Row>
+                                                <Col>
+                                                    <div className="px-2">
+                                                        <Button variant="" className="float-end" active size="sm" onClick={() => abort(message[0])}>x</Button>
+                                                    </div>
+                                                </Col>
+                                            </Row> : null
+                                        }
+                                    </Fragment>
+                                ))
+                            }
 
                             <ButtonGroup className="mt-2">
-                                <Button onClick={() => sendUrl()} disabled={halt}>Start</Button>
-                                <Button active onClick={() => abort()}>Abort</Button>
+                                <Button onClick={() => sendUrl()} disabled={false}>Start</Button>
+                                <Button active onClick={() => abort()}>Abort all</Button>
                             </ButtonGroup>
 
-                            {progress ? <ProgressBar className="container-padding mt-2" now={progress} variant="primary" /> : null}
                         </div>
-
 
                         <div className="my-4">
                             <span className="settings" onClick={() => setShowSettings(!showSettings)}>Settings</span>
@@ -237,36 +306,18 @@ export function App() {
                         </div>
                     </Col>
                     <Col>
-                        <Toast
-                            show={showToast}
-                            onClose={() => setShowToast(false)}
-                            bg={'primary'}
-                            delay={1500}
-                            autohide
-                            className="mt-5"
-                        >
-                            <Toast.Body className="text-light">
-                                {`Connected to ${localStorage.getItem('server-addr') || 'localhost'}`}
-                            </Toast.Body>
-                        </Toast>
-                        <Toast
-                            show={updatedBin}
-                            onClose={() => setUpdatedBin(false)}
-                            bg={'primary'}
-                            delay={1500}
-                            autohide
-                            className="mt-5"
-                        >
-                            <Toast.Body className="text-light">
-                                Updated yt-dlp binary!
-                            </Toast.Body>
-                        </Toast>
+                        <MessageToast flag={showToast} callback={setShowToast}>
+                            {`Connected to ${localStorage.getItem('server-addr') || 'localhost'}`}
+                        </MessageToast>
+                        <MessageToast flag={updatedBin} callback={setUpdatedBin}>
+                            Updated yt-dlp binary!
+                        </MessageToast>
                     </Col>
                 </Row>
             </Container>
             <div className="container pb-5">
                 <small>Made with ❤️ by Marcobaobao</small>
             </div>
-        </React.Fragment>
+        </main>
     )
 }

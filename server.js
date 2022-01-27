@@ -10,7 +10,7 @@ const Koa = require('koa'),
         download,
         abortDownload,
         retriveDownload,
-        abortAllDownloads
+        abortAllDownloads,
     } = require('./lib/downloader'),
     db = require('./lib/db');
 
@@ -23,10 +23,13 @@ const io = new Server(server, {
     }
 })
 
+/*
+    WebSocket listeners
+*/
 io.on('connection', socket => {
     logger('ws', `${socket.handshake.address} connected!`)
-    // message listeners
-    socket.on('send-url', args => {
+
+    socket.on('send-url', (args) => {
         logger('ws', args?.url)
         download(socket, args)
     })
@@ -39,10 +42,10 @@ io.on('connection', socket => {
     socket.on('update-bin', () => {
         ytdlpUpdater(socket)
     })
-    socket.on('fetch-jobs', async () => {
-        socket.emit('pending-jobs', await db.retrieveAll())
+    socket.on('fetch-jobs', () => {
+        socket.emit('pending-jobs', db.retrieveAll())
     })
-    socket.on('retrieve-jobs', async () => {
+    socket.on('retrieve-jobs', () => {
         retriveDownload(socket)
     })
 })
