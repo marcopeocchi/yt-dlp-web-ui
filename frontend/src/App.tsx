@@ -10,7 +10,8 @@ import {
     Button,
     ButtonGroup,
 } from "react-bootstrap";
-import { validateDomain, validateIP } from "./utils";
+import { X } from "react-bootstrap-icons";
+import { updateInStateMap, validateDomain, validateIP } from "./utils";
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
 import './App.css';
@@ -31,15 +32,6 @@ export function App() {
     const [showSettings, setShowSettings] = useState(false);
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
     const [extractAudio, setExtractAudio] = useState(localStorage.getItem('-x') === 'true');
-
-    const updateInStateMap = (k: number, v: any, target: Map<number, any>, callback: Function, remove: boolean = false) => {
-        if (remove) {
-            target.delete(k)
-            callback(new Map(target))
-            return;
-        }
-        callback(new Map(target.set(k, v)));
-    }
 
     useEffect(() => {
         socket.on('connect', () => {
@@ -69,7 +61,6 @@ export function App() {
         })
     }, [])
 
-
     useEffect(() => {
         socket.on('progress', (data: IMessage) => {
             if (data.status === 'Done!' || data.status === 'Aborted') {
@@ -92,10 +83,6 @@ export function App() {
             if (data.progress) {
                 updateInStateMap(data.pid, Math.ceil(Number(data.progress.replace('%', ''))), progressMap, setProgressMap)
             }
-            // if (data.dlSpeed) {
-            //     const event = new CustomEvent<number>("dlSpeed", { "detail": detectSpeed(data.dlSpeed) });
-            //     document.dispatchEvent(event);
-            // }
         })
     }, [])
 
@@ -115,7 +102,7 @@ export function App() {
             },
         })
         setUrl('')
-        const input: HTMLInputElement = document.getElementById('urlInput') as HTMLInputElement;
+        const input = document.getElementById('urlInput') as HTMLInputElement;
         input.value = '';
     }
 
@@ -190,7 +177,7 @@ export function App() {
                                 />
                             </InputGroup>
                             {
-                                Array.from(messageMap).length === 0 ?
+                                !Array.from(messageMap).length ?
                                     <div className="mt-2 status-box">
                                         <Row>
                                             <Col sm={9}>
@@ -209,7 +196,7 @@ export function App() {
                                                 Message[1] => value, the actual formatted message sent from server
                                              */
                                         }
-                                        {message[1] && message[1] !== 'Done!' ?
+                                        {message[0] && message[1] && message[1] !== 'Done!' ?
                                             <div className="mt-2 status-box">
                                                 <Row>
                                                     {
@@ -245,9 +232,9 @@ export function App() {
                                         {message[1] && message[1] !== 'Done!' ?
                                             <Row>
                                                 <Col>
-                                                    <div className="px-2">
-                                                        <Button variant="" className="float-end" active size="sm" onClick={() => abort(message[0])}>x</Button>
-                                                    </div>
+                                                    <Button variant={darkMode ? 'dark' : 'light'} className="float-end" active size="sm" onClick={() => abort(message[0])}>
+                                                        <X></X>
+                                                    </Button>
                                                 </Col>
                                             </Row> : null
                                         }
@@ -284,10 +271,7 @@ export function App() {
                                 <Button onClick={() => updateBinary()} disabled={halt}>
                                     Update yt-dlp binary
                                 </Button>{' '}
-                                <Button
-                                    variant={darkMode ? 'light' : 'dark'}
-                                    onClick={() => toggleTheme()}
-                                >
+                                <Button variant={darkMode ? 'light' : 'dark'} onClick={() => toggleTheme()}>
                                     {darkMode ? 'Light theme' : 'Dark theme'}
                                 </Button>
                                 <div className="pt-2">
