@@ -11,9 +11,10 @@ import {
     ButtonGroup,
 } from "react-bootstrap";
 import { X } from "react-bootstrap-icons";
-import { updateInStateMap, validateDomain, validateIP } from "./utils";
+import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./utils";
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
+import { StackableResult } from "./components/StackableResult";
 import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
@@ -33,6 +34,9 @@ export function App() {
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
     const [extractAudio, setExtractAudio] = useState(localStorage.getItem('-x') === 'true');
 
+    /* -------------------- Effects -------------------- */
+
+    /* WebSocket connect event handler*/
     useEffect(() => {
         socket.on('connect', () => {
             setShowToast(true)
@@ -43,49 +47,37 @@ export function App() {
         }
     }, [])
 
+    /* Ask server for pending jobs / background jobs */
     useEffect(() => {
         socket.on('pending-jobs', () => {
             socket.emit('retrieve-jobs')
         })
     }, [])
 
-    useEffect(() => {
-        darkMode ?
-            document.body.classList.add('dark') :
-            document.body.classList.remove('dark')
-    }, [darkMode])
-
+    /* Handle download information sent by server */
     useEffect(() => {
         socket.on('info', (data: IDLInfo) => {
-            updateInStateMap(data.pid, data.info, downloadInfoMap, setDownloadInfoMap)
+            updateInStateMap(data.pid, data.info, downloadInfoMap, setDownloadInfoMap);
         })
     }, [])
 
+    /* Handle per-download progress */
     useEffect(() => {
         socket.on('progress', (data: IMessage) => {
             if (data.status === 'Done!' || data.status === 'Aborted') {
-                setHalt(false)
-                updateInStateMap(
-                    data.pid,
-                    'Done!',
-                    messageMap,
-                    setMessageMap
-                )
-                updateInStateMap(data.pid, 0, progressMap, setProgressMap)
-                return
+                setHalt(false);
+                updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
+                updateInStateMap(data.pid, 0, progressMap, setProgressMap);
+                return;
             }
-            updateInStateMap(
-                data.pid,
-                `operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`,
-                messageMap,
-                setMessageMap
-            )
+            updateInStateMap(data.pid, buildMessage(data), messageMap, setMessageMap);
             if (data.progress) {
                 updateInStateMap(data.pid, Math.ceil(Number(data.progress.replace('%', ''))), progressMap, setProgressMap)
             }
         })
     }, [])
 
+    /* Handle yt-dlp update success */
     useEffect(() => {
         socket.on('updated', () => {
             setUpdatedBin(true)
@@ -93,6 +85,18 @@ export function App() {
         })
     }, [])
 
+    /* Theme changer */
+    useEffect(() => {
+        darkMode ?
+            document.body.classList.add('dark') :
+            document.body.classList.remove('dark');
+    }, [darkMode])
+
+    /* -------------------- component functions -------------------- */
+
+    /**
+     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
+     */
     const sendUrl = () => {
         setHalt(true)
         socket.emit('send-url', {
@@ -106,10 +110,19 @@ export function App() {
         input.value = '';
     }
 
+    /**
+     * Update the url state whenever the input value changes
+     * @param {React.ChangeEvent<HTMLInputElement>} e Input change event
+     */
     const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUrl(e.target.value)
     }
 
+    /**
+     * Update the server ip address state and localstorage whenever the input value changes.  
+     * Validate the ip-addr then set.
+     * @param {React.ChangeEvent<HTMLInputElement>} e Input change event
+     */
     const handleAddrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
         if (validateIP(input)) {
@@ -123,6 +136,11 @@ export function App() {
         }
     }
 
+    /**
+     * Abort a specific download if id's provided, other wise abort all running ones.
+     * @param {number} id The download id / pid
+     * @returns void
+     */
     const abort = (id?: number) => {
         if (id) {
             updateInStateMap(id, null, downloadInfoMap, setDownloadInfoMap, true)
@@ -133,11 +151,17 @@ export function App() {
         setHalt(false)
     }
 
+    /**
+     * Send via WebSocket a message in order to update the yt-dlp binary from server
+     */
     const updateBinary = () => {
         setHalt(true)
         socket.emit('update-bin')
     }
 
+    /**
+     * Theme toggler handler
+     */
     const toggleTheme = () => {
         if (darkMode) {
             localStorage.setItem('theme', 'light')
@@ -148,6 +172,9 @@ export function App() {
         }
     }
 
+    /**
+     * Handle extract audio checkbox
+     */
     const toggleExtractAudio = () => {
         if (extractAudio) {
             localStorage.setItem('-x', 'false')
@@ -192,51 +219,25 @@ export function App() {
                                     <Fragment key={message[0]}>
                                         {
                                             /*
-                                                Message[0] => key, the pid which is shared with the progress Map
+                                                Message[0] => key, the pid which is shared with the progress and download Maps
                                                 Message[1] => value, the actual formatted message sent from server
                                              */
                                         }
                                         {message[0] && message[1] && message[1] !== 'Done!' ?
-                                            <div className="mt-2 status-box">
+                                            <Fragment>
+                                                <StackableResult
+                                                    formattedLog={message[1]}
+                                                    title={downloadInfoMap.get(message[0])?.title}
+                                                    thumbnail={downloadInfoMap.get(message[0])?.thumbnail}
+                                                    progress={progressMap.get(message[0])} />
                                                 <Row>
-                                                    {
-                                                        downloadInfoMap.get(message[0]) ?
-                                                            <p>{downloadInfoMap.get(message[0]).title}</p> :
-                                                            null
-                                                    }
-                                                    <Col sm={9}>
-                                                        <h6>Status</h6>
-                                                        {!message[1] ? <pre>Ready</pre> : null}
-                                                        <pre id='status'>{message[1]}</pre>
-                                                    </Col>
-                                                    <Col sm={3}>
-                                                        <br />
-                                                        <img className="img-fluid rounded" src={
-                                                            downloadInfoMap.get(message[0]) ?
-                                                                downloadInfoMap.get(message[0]).thumbnail :
-                                                                ''
-                                                        } />
+                                                    <Col>
+                                                        <Button variant={darkMode ? 'dark' : 'light'} className="float-end" active size="sm" onClick={() => abort(message[0])}>
+                                                            <X></X>
+                                                        </Button>
                                                     </Col>
                                                 </Row>
-                                            </div> : null
-                                        }
-                                        {
-                                            /*
-                                                Gets the progress by indexing the map with the pid
-                                             */
-                                        }
-                                        {progressMap.get(message[0]) ?
-                                            <ProgressBar className="container-padding mt-2" now={progressMap.get(message[0])} variant="primary" /> :
-                                            null
-                                        }
-                                        {message[0] && message[1] && message[1] !== 'Done!' ?
-                                            <Row>
-                                                <Col>
-                                                    <Button variant={darkMode ? 'dark' : 'light'} className="float-end" active size="sm" onClick={() => abort(message[0])}>
-                                                        <X></X>
-                                                    </Button>
-                                                </Col>
-                                            </Row> : null
+                                            </Fragment> : null
                                         }
                                     </Fragment>
                                 ))
