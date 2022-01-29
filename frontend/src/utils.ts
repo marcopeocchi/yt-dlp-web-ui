@@ -51,11 +51,11 @@ export function detectSpeed(str: string): number {
 
 /**
  * Update a map stored in React State, in this specific impl. all maps have integer keys
- * @param {num} k Map key
- * @param {*} v Map value
- * @param {Map<number, any>} target The target map saved in-state
- * @param {Function} callback calls React's StateAction function with the newly created Map
- * @param {boolean} remove -optional- is it an update or a deletion operation?
+ * @param k Map key
+ * @param v Map value
+ * @param target The target map saved in-state
+ * @param callback calls React's StateAction function with the newly created Map
+ * @param remove -optional- is it an update or a deletion operation?
  */
 export const updateInStateMap = (k: number, v: any, target: Map<number, any>, callback: Function, remove: boolean = false) => {
     if (remove) {
@@ -69,7 +69,7 @@ export const updateInStateMap = (k: number, v: any, target: Map<number, any>, ca
 /**
  * Pre like function
  * @param data 
- * @returns 
+ * @returns formatted server message
  */
 export function buildMessage(data: IMessage) {
     return `operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`;

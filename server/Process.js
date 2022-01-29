@@ -6,7 +6,7 @@ const { logger } = require('./logger');
  * Represents a download process that spawns yt-dlp.
  * @constructor
  * @param {string} url - The downlaod url.
- * @param {string} params - The cli arguments passed by the frontend.
+ * @param {Array<String>} params - The cli arguments passed by the frontend.
  * @param {*} settings - The download settings passed by the frontend.
  */
 
@@ -28,12 +28,10 @@ class Process {
     async start(callback) {
         await this.#__internalGetInfo();
 
-        const ytldp = spawn('./lib/yt-dlp',
-            [
-                '-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`,
-                this.params,
-                this.url
-            ]
+        const ytldp = spawn('./server/yt-dlp',
+            ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
+                .concat(this.params)
+                .concat([this.url])
         );
 
         this.pid = ytldp.pid;
@@ -54,7 +52,7 @@ class Process {
     async #__internalGetInfo() {
         let lock = true;
         let stdoutChunks = [];
-        const ytdlpInfo = spawn('./lib/yt-dlp', ['-s', '-j', this.url]);
+        const ytdlpInfo = spawn('./server/yt-dlp', ['-s', '-j', this.url]);
 
         ytdlpInfo.stdout.on('data', (data) => {
             stdoutChunks.push(data);

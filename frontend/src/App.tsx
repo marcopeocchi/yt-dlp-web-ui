@@ -1,10 +1,9 @@
 import { io } from "socket.io-client";
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import {
     Container,
     Row,
     Col,
-    ProgressBar,
     InputGroup,
     FormControl,
     Button,
@@ -15,6 +14,7 @@ import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./ut
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
 import { StackableResult } from "./components/StackableResult";
+import { CliArguments } from "./classes";
 import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
@@ -32,7 +32,19 @@ export function App() {
     const [updatedBin, setUpdatedBin] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
-    const [extractAudio, setExtractAudio] = useState(localStorage.getItem('-x') === 'true');
+
+    const xaInput = useRef(null);
+    const mtInput = useRef(null);
+
+    /* -------------------- Init ----------------------- */
+
+    const cliArgs = new CliArguments();
+
+    if (!localStorage.getItem('cliArgs')) {
+        localStorage.setItem('cliArgs', '')
+    }
+
+    cliArgs.fromString(localStorage.getItem('cliArgs'))
 
     /* -------------------- Effects -------------------- */
 
@@ -101,9 +113,7 @@ export function App() {
         setHalt(true)
         socket.emit('send-url', {
             url: url,
-            params: {
-                xa: extractAudio
-            },
+            params: cliArgs.toString(),
         })
         setUrl('')
         const input = document.getElementById('urlInput') as HTMLInputElement;
@@ -112,7 +122,7 @@ export function App() {
 
     /**
      * Update the url state whenever the input value changes
-     * @param {React.ChangeEvent<HTMLInputElement>} e Input change event
+     * @param e Input change event
      */
     const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUrl(e.target.value)
@@ -121,7 +131,7 @@ export function App() {
     /**
      * Update the server ip address state and localstorage whenever the input value changes.  
      * Validate the ip-addr then set.
-     * @param {React.ChangeEvent<HTMLInputElement>} e Input change event
+     * @param e Input change event
      */
     const handleAddrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
@@ -138,7 +148,7 @@ export function App() {
 
     /**
      * Abort a specific download if id's provided, other wise abort all running ones.
-     * @param {number} id The download id / pid
+     * @param id The download id / pid
      * @returns void
      */
     const abort = (id?: number) => {
@@ -175,13 +185,38 @@ export function App() {
     /**
      * Handle extract audio checkbox
      */
-    const toggleExtractAudio = () => {
-        if (extractAudio) {
-            localStorage.setItem('-x', 'false')
-            setExtractAudio(false)
+    const setExtractAudio = () => {
+        if (cliArgs.extractAudio) {
+            xaInput.current.checked = false;
+            cliArgs.extractAudio = false;
+
+            const lStorageItem = localStorage.getItem('cliArgs');
+            localStorage.setItem('cliArgs', lStorageItem.replace('-x ', ''));
         } else {
-            localStorage.setItem('-x', 'true')
-            setExtractAudio(true)
+            xaInput.current.checked = true;
+            cliArgs.extractAudio = true;
+
+            const lStorageItem = localStorage.getItem('cliArgs');
+            localStorage.setItem('cliArgs', lStorageItem.concat('-x ', ''));
+        }
+    }
+
+    /**
+     * Handle no modified time header checkbox
+     */
+    const setNoMTime = () => {
+        if (cliArgs.noMTime) {
+            mtInput.current.checked = false;
+            cliArgs.noMTime = false;
+
+            const lStorageItem = localStorage.getItem('cliArgs');
+            localStorage.setItem('cliArgs', lStorageItem.replace('--no-mtime ', ''));
+        } else {
+            mtInput.current.checked = true;
+            cliArgs.noMTime = true;
+
+            const lStorageItem = localStorage.getItem('cliArgs');
+            localStorage.setItem('cliArgs', lStorageItem.concat('--no-mtime ', ''));
         }
     }
 
@@ -276,9 +311,13 @@ export function App() {
                                     {darkMode ? 'Light theme' : 'Dark theme'}
                                 </Button>
                                 <div className="pt-2">
-                                    <input type="checkbox" name="-x" id="-x"
-                                        onClick={() => toggleExtractAudio()} checked={extractAudio} />
+                                    <input type="checkbox" name="-x" defaultChecked={cliArgs.extractAudio} ref={xaInput}
+                                        onClick={setExtractAudio} />
                                     <label htmlFor="-x">&nbsp;Extract audio</label>
+                                    &nbsp;&nbsp;
+                                    <input type="checkbox" name="-nomtime" defaultChecked={cliArgs.noMTime} ref={mtInput}
+                                        onClick={setNoMTime} />
+                                    <label htmlFor="-x">&nbsp;Don't set file modification time</label>
                                 </div>
                             </div> :
                             null

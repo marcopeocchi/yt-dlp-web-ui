@@ -34,8 +34,10 @@ async function download(socket, payload) {
         return;
     }
 
-    const url = payload.url
-    const params = payload.params?.xa ? '-x' : '';
+    const url = payload.url;
+    const params = payload.params.split(' ');
+
+    console.log(params)
 
     const p = new Process(url, params, settings);
 

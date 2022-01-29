@@ -7,7 +7,7 @@
     "dev": "nodemon app.js",
     "build": "parcel build ./frontend/index.html",
     "fe": "parcel ./frontend/index.html --open",
-    "fetch": "./lib/fetch-yt-dlp.sh && mv yt-dlp ./lib"
+    "fetch": "./server/fetch-yt-dlp.sh && mv yt-dlp ./server"
   },
   "author": "marcobaobao",
   "license": "ISC",

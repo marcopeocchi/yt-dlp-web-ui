@@ -3,8 +3,8 @@ dist
 package-lock.json
 .parcel-cache
 .git
-lib/*.exe
-lib/yt-dlp
+server/*.exe
+server/yt-dlp
 .env
 *.mp4
 *.ytdl

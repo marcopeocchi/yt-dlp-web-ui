@@ -1,18 +1,18 @@
 const Koa = require('koa'),
     serve = require('koa-static'),
     cors = require('@koa/cors'),
-    { logger, splash } = require('./lib/logger'),
+    { logger, splash } = require('./server/logger'),
     { join } = require('path'),
     { Server } = require('socket.io'),
     { createServer } = require('http'),
-    { ytdlpUpdater } = require('./lib/updater'),
+    { ytdlpUpdater } = require('./server/updater'),
     {
         download,
         abortDownload,
         retriveDownload,
         abortAllDownloads,
-    } = require('./lib/downloader'),
-    db = require('./lib/db');
+    } = require('./server/downloader'),
+    db = require('./server/db');
 
 const app = new Koa()
 const server = createServer(app.callback())

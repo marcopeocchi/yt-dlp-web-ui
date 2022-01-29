@@ -2,8 +2,8 @@
 dist
 package-lock.json
 node_modules
-lib/*.exe
-lib/yt-dlp
+server/*.exe
+server/yt-dlp
 .env
 *.mp4
 *.ytdl
