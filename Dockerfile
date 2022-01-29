@@ -8,9 +8,8 @@ RUN apt-get install curl ffmpeg -y
 RUN apt-get install psmisc
 RUN npm install
 COPY . .
-RUN npm run build
-RUN chmod +x ./server/fetch-yt-dlp.sh
-RUN ./server/fetch-yt-dlp.sh && mv yt-dlp ./server
+RUN chmod +x ./fetch-yt-dlp.sh
+RUN npm run build-all
 RUN rm -rf .parcel-cache
 EXPOSE 3022
-CMD [ "node" , "./server.js" ]
+CMD [ "node" , "./dist/main.js" ]

@@ -1,6 +1,10 @@
-const { spawn } = require('child_process');
-const { deleteDownloadByPID, insertDownload } = require('./db');
-const { logger } = require('./logger');
+import { spawn } from 'child_process';
+import { join } from 'path';
+import { Readable } from 'stream';
+import { deleteDownloadByPID, insertDownload } from '../db/db';
+import Logger from '../utils/BetterLogger';
+
+const log = new Logger();
 
 /**
  * Represents a download process that spawns yt-dlp.
@@ -11,9 +15,18 @@ const { logger } = require('./logger');
  */
 
 class Process {
-    constructor(url, params, settings) {
+    private url: string;
+    private params: Array<string>;
+    private settings: any;
+    private stdout: Readable;
+    private pid: number;
+    private info: any;
+    private lock: boolean;
+    private exePath = join(__dirname, 'yt-dlp');
+
+    constructor(url: string, params: Array<string>, settings: any) {
         this.url = url;
-        this.params = params || ' ';
+        this.params = params || [];
         this.settings = settings
         this.stdout = undefined;
         this.pid = undefined;
@@ -25,10 +38,10 @@ class Process {
      * @param {Function} callback not yet implemented
      * @returns {Promise<this>} the process instance
      */
-    async start(callback) {
+    async start(callback?: Function): Promise<this> {
         await this.#__internalGetInfo();
 
-        const ytldp = spawn('./server/yt-dlp',
+        const ytldp = spawn(this.exePath,
             ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
                 .concat(this.params)
                 .concat([this.url])
@@ -37,9 +50,9 @@ class Process {
         this.pid = ytldp.pid;
         this.stdout = ytldp.stdout;
 
-        logger('proc', `Spawned a new process, pid: ${this.pid}`)
+        log.info('proc', `Spawned a new process, pid: ${this.pid}`)
 
-        await insertDownload(this.url, null, null, null, this.pid);
+        await insertDownload(this.url, this.info?.title, this.info?.thumbnail, null, this.pid);
 
         return this;
     }
@@ -52,7 +65,7 @@ class Process {
     async #__internalGetInfo() {
         let lock = true;
         let stdoutChunks = [];
-        const ytdlpInfo = spawn('./server/yt-dlp', ['-s', '-j', this.url]);
+        const ytdlpInfo = spawn(this.exePath, ['-s', '-j', this.url]);
 
         ytdlpInfo.stdout.on('data', (data) => {
             stdoutChunks.push(data);
@@ -82,9 +95,9 @@ class Process {
      * function that kills the current process
      */
     async kill() {
-        spawn('kill', [this.pid]).on('exit', () => {
+        spawn('kill', [String(this.pid)]).on('exit', () => {
             deleteDownloadByPID(this.pid).then(() => {
-                logger('db', `Deleted ${this.pid} because SIGKILL`)
+                log.info('db', `Deleted ${this.pid} because SIGKILL`)
             })
         });
     }
@@ -93,7 +106,7 @@ class Process {
      * pid getter function
      * @returns {number} pid
      */
-    getPid() {
+    getPid(): number {
         if (!this.pid) {
             throw "Process isn't started"
         }
@@ -102,9 +115,9 @@ class Process {
 
     /**
      * stdout getter function
-     * @returns {ReadableStream} stdout as stream
+     * @returns {Readable} stdout as stream
      */
-    getStdout() {
+    getStdout(): Readable {
         return this.stdout
     }
 
@@ -112,9 +125,9 @@ class Process {
      * download info getter function
      * @returns {object}
      */
-    getInfo() {
+    getInfo(): object {
         return this.info
     }
 }
 
-module.exports = Process;
+export default Process;

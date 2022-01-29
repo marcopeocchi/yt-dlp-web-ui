@@ -37,7 +37,7 @@ function buildDonwloadOptions(release) {
 async function update() {
     // ensure that the binary has been removed
     try {
-        fs.rmSync(path.join(__dirname, 'yt-dlp'))
+        fs.rmSync(path.join(__dirname, '..', 'core', 'yt-dlp'))
     }
     catch (e) {
         console.log('file not found!')
@@ -70,11 +70,11 @@ function downloadBinary(url) {
         if (res.statusCode === 301 || res.statusCode === 302) {
             return downloadBinary(res.headers.location)
         }
-        let bin = fs.createWriteStream(path.join(__dirname, 'yt-dlp'))
+        let bin = fs.createWriteStream(path.join(__dirname, '..', 'core', 'yt-dlp'))
         res.pipe(bin)
         // once the connection has ended make the file executable
         res.on('end', () => {
-            fs.chmod(path.join(__dirname, 'yt-dlp'), 0o775, err => {
+            fs.chmod(path.join(__dirname, '..', 'core', 'yt-dlp'), 0o775, err => {
                 err ? console.error('failed updating!') : console.log('done!')
             })
         })

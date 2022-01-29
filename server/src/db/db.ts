@@ -1,13 +1,14 @@
-const uuid = require('uuid')
-const { logger } = require('./logger')
-const { existsInProc } = require('./procUtils')
+import { v1 } from 'uuid';
+import { existsInProc } from '../utils/procUtils';
+import Logger from '../utils/BetterLogger';
+const db = require('better-sqlite3')('downloads.db');
 
-const db = require('better-sqlite3')('downloads.db')
+const log = new Logger();
 
 /**
  * Inits the repository, the tables.
  */
-async function init() {
+export async function init() {
     try {
         db.exec(`CREATE TABLE downloads (
             uid varchar(36) NOT NULL,
@@ -20,7 +21,7 @@ async function init() {
             PRIMARY KEY (uid)
         )`)
     } catch (e) {
-        logger('db', 'Table already created, ignoring')
+        log.warn('db', 'Table already created, ignoring')
     }
 }
 
@@ -28,7 +29,7 @@ async function init() {
  * Get an instance of the db.
  * @returns {BetterSqlite3.Database} Current database instance
  */
-async function get_db() {
+export async function get_db(): Promise<any> {
     return db
 }
 
@@ -41,8 +42,8 @@ async function get_db() {
  * @param {number} PID the pid of the downloader
  * @returns {Promise<string>} the download UUID
  */
-async function insertDownload(url, title, thumbnail, size, PID) {
-    const uid = uuid.v1()
+export async function insertDownload(url: string, title: string, thumbnail: string, size: string, PID: number): Promise<string> {
+    const uid = v1()
     try {
         db
             .prepare(`
@@ -52,7 +53,7 @@ async function insertDownload(url, title, thumbnail, size, PID) {
             )
             .run(uid, url, title, thumbnail, size, PID)
     } catch (error) {
-        logger('db', 'some error occourred')
+        log.err('db', 'some error occourred')
     }
 
     return uid
@@ -62,7 +63,7 @@ async function insertDownload(url, title, thumbnail, size, PID) {
  * Retrieve all downloads from the database
  * @returns {ArrayLike} a collection of results
  */
-async function retrieveAll() {
+export async function retrieveAll(): Promise<any> {
     return db
         .prepare('SELECT * FROM downloads')
         .all()
@@ -72,7 +73,7 @@ async function retrieveAll() {
  * Delete a download by its uuid
  * @param {string} uid the to-be-deleted download uuid
  */
-async function deleteDownloadById(uid) {
+export async function deleteDownloadById(uid: string) {
     db.prepare(`DELETE FROM downloads WHERE uid=${uid}`).run()
 }
 
@@ -80,7 +81,7 @@ async function deleteDownloadById(uid) {
  * Delete a download by its pid
  * @param {string} pid the to-be-deleted download pid
  */
-async function deleteDownloadByPID(PID) {
+export async function deleteDownloadByPID(PID) {
     db.prepare(`DELETE FROM downloads WHERE process_pid=${PID}`).run()
 }
 
@@ -88,7 +89,7 @@ async function deleteDownloadByPID(PID) {
  * Deletes the downloads that aren't active anymore
  * @returns {Promise<ArrayLike>}
  */
-async function pruneDownloads() {
+export async function pruneDownloads(): Promise<any> {
     const all = await retrieveAll()
     return all.map(job => {
         if (existsInProc(job.process_pid)) {
@@ -96,14 +97,4 @@ async function pruneDownloads() {
         }
         deleteDownloadByPID(job.process_pid)
     })
-}
-
-module.exports = {
-    init: init,
-    getDB: get_db,
-    insertDownload: insertDownload,
-    retrieveAll: retrieveAll,
-    deleteDownloadById: deleteDownloadById,
-    deleteDownloadByPID: deleteDownloadByPID,
-    pruneDownloads: pruneDownloads,
 }

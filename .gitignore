@@ -1,9 +1,10 @@
 .parcel-cache
 dist
 package-lock.json
+pnpm-lock.yaml
 node_modules
-server/*.exe
-server/yt-dlp
+src/server/core/*.exe
+src/server/core/yt-dlp
 .env
 *.mp4
 *.ytdl

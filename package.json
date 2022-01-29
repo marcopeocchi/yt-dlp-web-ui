@@ -1,18 +1,29 @@
 {
-  "name": "youtube-dlp-web",
-  "version": "1.0.0",
+  "name": "yt-dlp-webui",
+  "version": "1.1.0",
   "description": "A terrible webUI for yt-dlp, all-in-one solution.",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon app.js",
-    "build": "parcel build ./frontend/index.html",
+    "build": "parcel build ./frontend/index.html --dist-dir ./dist/frontend",
+    "build-server": "tsc --build",
+    "build-all": "tsc --build && npm run build && npm run fetch",
+    "clean": "tsc --build --clean",
+    "clean-all": "rm -r dist",
     "fe": "parcel ./frontend/index.html --open",
-    "fetch": "./server/fetch-yt-dlp.sh && mv yt-dlp ./server"
+    "fetch-dev": "./fetch-yt-dlp.sh && mv yt-dlp ./server/core",
+    "fetch": "./fetch-yt-dlp.sh && mv yt-dlp ./dist/core"
   },
   "author": "marcobaobao",
   "license": "ISC",
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "@types/better-sqlite3": "^7.4.2",
+    "@types/koa": "^2.13.4",
+    "@types/koa-static": "^4.0.2",
+    "@types/koa__cors": "^3.1.1",
+    "@types/node": "^17.0.13",
+    "@types/uuid": "^8.3.4",
     "better-sqlite3": "^7.4.5",
     "chart.js": "^3.6.0",
     "koa": "^2.13.4",

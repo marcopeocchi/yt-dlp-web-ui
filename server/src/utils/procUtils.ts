@@ -1,14 +1,14 @@
-const { spawn } = require('child_process');
-const fs = require('fs');
-const net = require('net');
-const { logger } = require('./logger');
+import { spawn } from 'child_process';
+import fs = require('fs');
+import net = require('net');
+import { logger } from './logger';
 
 /**
  * Browse /proc in order to find the specific pid
  * @param {number} pid 
  * @returns {*} process stats if any
  */
-function existsInProc(pid) {
+export function existsInProc(pid: number): any {
     try {
         return fs.statSync(`/proc/${pid}`)
     } catch (e) {
@@ -33,15 +33,9 @@ function retriveStdoutFromProcFd(pid) {
  * Kills a process with a sys-call
  * @param {number} pid the killed process pid
  */
-async function killProcess(pid) {
-    const res = spawn('kill', [pid])
+export async function killProcess(pid: number) {
+    const res = spawn('kill', [String(pid)])
     res.on('exit', () => {
         logger('proc', `Successfully killed yt-dlp process, pid: ${pid}`)
     })
-}
-
-module.exports = {
-    existsInProc: existsInProc,
-    //retriveStdoutFromProcFd: retriveStdoutFromProcFd,
-    killProcess: killProcess,
 }

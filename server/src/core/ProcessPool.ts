@@ -3,7 +3,12 @@
  * Represents a download process that spawns yt-dlp.
  */
 
+import Process from "./Process";
+
 class ProcessPool {
+    private _pool: Map<number, Process>;
+    private _size: number;
+
     constructor() {
         this._pool = new Map();
         this._size = 0;
@@ -13,7 +18,7 @@ class ProcessPool {
      * Pool size getter
      * @returns {number} pool's size
      */
-    size() {
+    size(): number {
         return this._size;
     }
 
@@ -21,7 +26,7 @@ class ProcessPool {
      * Add a process to the pool
      * @param {Process} process 
      */
-    add(process) {
+    add(process: Process) {
         this._pool.set(process.getPid(), process)
     }
 
@@ -29,7 +34,7 @@ class ProcessPool {
      * Delete a process from the pool
      * @param {Process} process 
      */
-    remove(process) {
+    remove(process: Process) {
         this._pool.delete(process.getPid())
     }
 
@@ -37,7 +42,7 @@ class ProcessPool {
      * Delete a process from the pool by its pid
      * @param {number} pid 
      */
-    removeByPid(pid) {
+    removeByPid(pid: number) {
         this._pool.delete(pid)
     }
 
@@ -45,7 +50,7 @@ class ProcessPool {
      * get an iterator for the pool
      * @returns {IterableIterator} iterator 
      */
-    iterator() {
+    iterator(): IterableIterator<[number, Process]> {
         return this._pool.entries()
     }
 
@@ -54,9 +59,9 @@ class ProcessPool {
      * @param {number} pid 
      * @returns {Process}
      */
-    getByPid(pid) {
+    getByPid(pid: number): Process {
         return this._pool.get(pid)
     }
 }
 
-module.exports = ProcessPool;
+export default ProcessPool;

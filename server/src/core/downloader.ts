@@ -1,16 +1,18 @@
-const { spawn } = require('child_process');
-const { from, interval } = require('rxjs');
-const { throttle } = require('rxjs/operators');
-const { Socket } = require('socket.io');
-const { pruneDownloads } = require('./db');
-const { logger } = require('./logger');
-const Process = require('./Process');
-const ProcessPool = require('./ProcessPool');
-const { killProcess } = require('./procUtils');
+import { spawn } from 'child_process';
+import { from, interval } from 'rxjs';
+import { throttle } from 'rxjs/operators';
+import { pruneDownloads } from '../db/db';
+import { killProcess } from '../utils/procUtils';
+import Logger from '../utils/BetterLogger';
+import Process from './Process';
+import ProcessPool from './ProcessPool';
+import { Socket } from 'socket.io';
+import { IPayload } from '../interfaces/IPayload';
 
 // settings read from settings.json
 let settings;
 let coldRestart = true;
+const log = new Logger();
 
 const pool = new ProcessPool();
 
@@ -28,7 +30,7 @@ catch (e) {
  * @param {object} payload frontend download payload
  * @returns 
  */
-async function download(socket, payload) {
+export async function download(socket: Socket, payload: IPayload) {
     if (!payload || payload.url === '' || payload.url === null) {
         socket.emit('progress', { status: 'Done!' });
         return;
@@ -87,14 +89,14 @@ async function download(socket, payload) {
  * @param {Socket} socket current connection socket
  * @returns 
  */
-async function retriveDownload(socket) {
+export async function retriveDownload(socket: Socket) {
     // it's a cold restart: the server has just been started with pending
     // downloads, so fetch them from the database and resume.
     if (coldRestart) {
         coldRestart = false;
         let downloads = await pruneDownloads();
         downloads = [... new Set(downloads)];
-        logger('dl', `Cold restart, retrieving ${downloads.length} jobs`)
+        log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
         for (const entry of downloads) {
             if (entry) {
                 await download(socket, entry);
@@ -105,10 +107,10 @@ async function retriveDownload(socket) {
 
     // it's an hot-reload the server it's running and the frontend ask for
     // the pending job: retrieve them from the "in-memory database" (ProcessPool)
-    logger('dl', `Retrieving jobs ${pool.size()} from pool`)
+    log.info('dl', `Retrieving ${pool.size()} jobs from pool`)
 
     const it = pool.iterator();
-    tempWorkQueue = new Array();
+    const tempWorkQueue = new Array();
 
     // sanitize
     for (const entry of it) {
@@ -135,7 +137,7 @@ async function retriveDownload(socket) {
  * @param {*} args args sent by the frontend. MUST contain the PID.
  * @returns 
  */
-function abortDownload(socket, args) {
+export function abortDownload(socket: Socket, args: any) {
     if (!args) {
         abortAllDownloads(socket);
         return;
@@ -148,7 +150,7 @@ function abortDownload(socket, args) {
                 status: 'Aborted',
                 process: pid,
             });
-            logger('dl', `Aborting download ${pid}`);
+            log.warn('dl', `Aborting download ${pid}`);
         });
 }
 
@@ -156,11 +158,11 @@ function abortDownload(socket, args) {
  * Unconditionally kills all yt-dlp process.
  * @param {Socket} socket currenct connection socket
  */
-function abortAllDownloads(socket) {
+export function abortAllDownloads(socket: Socket) {
     spawn('killall', ['yt-dlp'])
         .on('exit', () => {
             socket.emit('progress', { status: 'Aborted' });
-            logger('dl', 'Aborting downloads');
+            log.info('dl', 'Aborting downloads');
         });
 }
 
@@ -170,7 +172,7 @@ function abortAllDownloads(socket) {
  * @param {number} pid current process id relative to stdout
  * @returns 
  */
-const formatter = (stdout, pid) => {
+const formatter = (stdout: string, pid: number) => {
     const cleanStdout = stdout
         .replace(/\s\s+/g, ' ')
         .split(' ');
@@ -192,11 +194,4 @@ const formatter = (stdout, pid) => {
         default:
             return { progress: '0' }
     }
-}
-
-module.exports = {
-    download: download,
-    abortDownload: abortDownload,
-    abortAllDownloads: abortAllDownloads,
-    retriveDownload: retriveDownload,
 }
