@@ -37,8 +37,6 @@ async function download(socket, payload) {
     const url = payload.url;
     const params = payload.params.split(' ');
 
-    console.log(params)
-
     const p = new Process(url, params, settings);
 
     p.start().then(downloader => {
