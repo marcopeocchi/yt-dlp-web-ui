@@ -35,7 +35,9 @@ async function download(socket, payload) {
     }
 
     const url = payload.url;
-    const params = payload.params.split(' ');
+    const params = typeof payload.params !== 'object' ?
+        payload.params.split(' ') :
+        payload.params;
 
     const p = new Process(url, params, settings);
 
@@ -103,7 +105,7 @@ async function retriveDownload(socket) {
 
     // it's an hot-reload the server it's running and the frontend ask for
     // the pending job: retrieve them from the "in-memory database" (ProcessPool)
-    logger('dl', `Retrieving jobs from pool`)
+    logger('dl', `Retrieving jobs ${pool.size()} from pool`)
 
     const it = pool.iterator();
     tempWorkQueue = new Array();
