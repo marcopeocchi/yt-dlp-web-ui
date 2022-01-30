@@ -1,6 +1,6 @@
-import { spawn } from 'child_process';
+import { exec, spawn } from 'child_process';
 import fs = require('fs');
-import net = require('net');
+// import net = require('net');
 import { logger } from './logger';
 
 /**
@@ -37,5 +37,13 @@ export async function killProcess(pid: number) {
     const res = spawn('kill', [String(pid)])
     res.on('exit', () => {
         logger('proc', `Successfully killed yt-dlp process, pid: ${pid}`)
+    })
+}
+
+export function getFreeDiskSpace(socket: any) {
+    let buffer: string = '';
+    let message: string = 'free-space';
+    exec("df -h / | tail -1 | awk '{print $4}'", (_, stdout) => {
+        socket.emit(message, stdout)
     })
 }

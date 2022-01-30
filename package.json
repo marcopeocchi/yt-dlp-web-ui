@@ -3,8 +3,8 @@
   "version": "1.1.0",
   "description": "A terrible webUI for yt-dlp, all-in-one solution.",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon app.js",
+    "start": "node dist/main.js",
+    "dev": "tsc --build -w",
     "build": "parcel build ./frontend/index.html --dist-dir ./dist/frontend",
     "build-server": "tsc --build",
     "build-all": "tsc --build && npm run build && npm run fetch",

@@ -12,9 +12,9 @@ class Logger {
      * @param {string} proto the context/protocol/section outputting the message
      * @param {string} args the acutal message
      */
-    info(proto: string, args: string) {
+    public info(proto: string, args: string) {
         process.stdout.write(
-            this.#__formatter(proto, args)
+            this.formatter(proto, args)
         )
     }
     /**
@@ -22,9 +22,9 @@ class Logger {
      * @param {string} proto the context/protocol/section outputting the message
      * @param {string} args the acutal message
      */
-    warn(proto: string, args: string) {
+    public warn(proto: string, args: string) {
         process.stdout.write(
-            `${ansi.yellow}${this.#__formatter(proto, args)}${ansi.reset}`
+            `${ansi.yellow}${this.formatter(proto, args)}${ansi.reset}`
         )
     }
     /**
@@ -32,13 +32,13 @@ class Logger {
      * @param {string} proto the context/protocol/section outputting the message
      * @param {string} args the acutal message
      */
-    err(proto: string, args: string) {
+    public err(proto: string, args: string) {
         process.stdout.write(
-            `${ansi.red}${this.#__formatter(proto, args)}${ansi.reset}`
+            `${ansi.red}${this.formatter(proto, args)}${ansi.reset}`
         )
     }
 
-    #__formatter(proto: any, args: any) {
+    private formatter(proto: any, args: any) {
         return `[${proto}]\t${args}\n`
     }
 }

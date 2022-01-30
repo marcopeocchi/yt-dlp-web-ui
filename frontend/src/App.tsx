@@ -9,7 +9,7 @@ import {
     Button,
     ButtonGroup,
 } from "react-bootstrap";
-import { X } from "react-bootstrap-icons";
+import { X, HddFill } from "react-bootstrap-icons";
 import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./utils";
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
@@ -31,6 +31,7 @@ export function App() {
     const [invalidIP, setInvalidIP] = useState(false);
     const [updatedBin, setUpdatedBin] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [freeDiskSpace, setFreeDiskSpace] = useState('');
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
 
     const xaInput = useRef(null);
@@ -53,6 +54,7 @@ export function App() {
         socket.on('connect', () => {
             setShowToast(true)
             socket.emit('fetch-jobs')
+            socket.emit('disk-space')
         })
         return () => {
             socket.disconnect()
@@ -80,6 +82,7 @@ export function App() {
                 setHalt(false);
                 updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
                 updateInStateMap(data.pid, 0, progressMap, setProgressMap);
+                socket.emit('disk-space')
                 return;
             }
             updateInStateMap(data.pid, buildMessage(data), messageMap, setMessageMap);
@@ -103,6 +106,13 @@ export function App() {
             document.body.classList.add('dark') :
             document.body.classList.remove('dark');
     }, [darkMode])
+
+    /* Get disk free space */
+    useEffect(() => {
+        socket.on('free-space', (res: string) => {
+            setFreeDiskSpace(res)
+        })
+    }, [])
 
     /* -------------------- component functions -------------------- */
 
@@ -282,6 +292,10 @@ export function App() {
                                 <Button onClick={() => sendUrl()} disabled={false}>Start</Button>
                                 <Button active onClick={() => abort()}>Abort all</Button>
                             </ButtonGroup>
+                            <span className="text-muted float-end pt-3">
+                                <HddFill></HddFill> {' '}
+                                <small>{freeDiskSpace ? freeDiskSpace : '-'}</small>
+                            </span>
 
                         </div>
 
@@ -304,21 +318,22 @@ export function App() {
                                     />
                                     <InputGroup.Text>:3022</InputGroup.Text>
                                 </InputGroup>
-                                <Button onClick={() => updateBinary()} disabled={halt}>
-                                    Update yt-dlp binary
-                                </Button>{' '}
-                                <Button variant={darkMode ? 'light' : 'dark'} onClick={() => toggleTheme()}>
-                                    {darkMode ? 'Light theme' : 'Dark theme'}
-                                </Button>
                                 <div className="pt-2">
                                     <input type="checkbox" name="-x" defaultChecked={cliArgs.extractAudio} ref={xaInput}
                                         onClick={setExtractAudio} />
                                     <label htmlFor="-x">&nbsp;Extract audio</label>
-                                    &nbsp;&nbsp;
+                                    <div></div>
                                     <input type="checkbox" name="-nomtime" defaultChecked={cliArgs.noMTime} ref={mtInput}
                                         onClick={setNoMTime} />
                                     <label htmlFor="-x">&nbsp;Don't set file modification time</label>
                                 </div>
+                                <br />
+                                <Button size="sm" onClick={() => updateBinary()} disabled={halt}>
+                                    Update yt-dlp binary
+                                </Button>{' '}
+                                <Button size="sm" variant={darkMode ? 'light' : 'dark'} onClick={() => toggleTheme()}>
+                                    {darkMode ? 'Light theme' : 'Dark theme'}
+                                </Button>
                             </div> :
                             null
                         }

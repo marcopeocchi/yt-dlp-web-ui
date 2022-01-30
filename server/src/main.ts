@@ -9,6 +9,7 @@ import { ytdlpUpdater } from './utils/updater';
 import { download, abortDownload, retriveDownload, abortAllDownloads } from './core/downloader';
 import Logger from './utils/BetterLogger';
 import { retrieveAll, init } from './db/db';
+import { getFreeDiskSpace } from './utils/procUtils';
 
 const app = new Koa()
 const log = new Logger()
@@ -44,6 +45,9 @@ io.on('connection', socket => {
     })
     socket.on('retrieve-jobs', () => {
         retriveDownload(socket)
+    })
+    socket.on('disk-space', () => {
+        getFreeDiskSpace(socket)
     })
 })
 

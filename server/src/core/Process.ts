@@ -52,7 +52,14 @@ class Process {
 
         log.info('proc', `Spawned a new process, pid: ${this.pid}`)
 
-        await insertDownload(this.url, this.info?.title, this.info?.thumbnail, null, this.pid);
+        await insertDownload(
+            this.url,
+            this.info?.title,
+            this.info?.thumbnail,
+            null,
+            this.params.reduce((prev, next) => `${prev} ${next}`),
+            this.pid
+        );
 
         return this;
     }

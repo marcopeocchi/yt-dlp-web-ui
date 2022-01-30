@@ -95,7 +95,9 @@ export async function retriveDownload(socket: Socket) {
     if (coldRestart) {
         coldRestart = false;
         let downloads = await pruneDownloads();
-        downloads = [... new Set(downloads)];
+        console.log(downloads)
+        // sanitize
+        downloads = [... new Set(downloads.filter(el => el !== undefined))];
         log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
         for (const entry of downloads) {
             if (entry) {
@@ -180,7 +182,7 @@ const formatter = (stdout: string, pid: number) => {
     switch (status) {
         case 'download':
             return {
-                status: cleanStdout[0].replace(/\[|\]|\r/g, ''),
+                status: 'download',
                 progress: cleanStdout[1],
                 size: cleanStdout[3],
                 dlSpeed: cleanStdout[5],
