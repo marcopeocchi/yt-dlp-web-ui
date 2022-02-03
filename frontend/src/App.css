@@ -13,8 +13,10 @@
 }
 
 .settings {
-    text-decoration: underline;
     cursor: pointer;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
 }
 
 .form-control{

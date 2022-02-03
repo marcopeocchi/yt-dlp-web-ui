@@ -9,12 +9,13 @@ import {
     Button,
     ButtonGroup,
 } from "react-bootstrap";
-import { X, HddFill } from "react-bootstrap-icons";
+import { X, HddFill, GearFill, Translate } from "react-bootstrap-icons";
 import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./utils";
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
 import { StackableResult } from "./components/StackableResult";
 import { CliArguments } from "./classes";
+import { I18nBuilder } from "./i18n";
 import './App.css';
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
@@ -31,8 +32,11 @@ export function App() {
     const [invalidIP, setInvalidIP] = useState(false);
     const [updatedBin, setUpdatedBin] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [showLanguages, setShowLanguages] = useState(false);
     const [freeDiskSpace, setFreeDiskSpace] = useState('');
+
     const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
+    const [language, setLanguage] = useState(localStorage.getItem('language') || 'english');
 
     const xaInput = useRef(null);
     const mtInput = useRef(null);
@@ -46,6 +50,8 @@ export function App() {
     }
 
     cliArgs.fromString(localStorage.getItem('cliArgs'))
+
+    const i18n = new I18nBuilder(language);
 
     /* -------------------- Effects -------------------- */
 
@@ -113,6 +119,11 @@ export function App() {
             setFreeDiskSpace(res)
         })
     }, [])
+
+    /* Change language */
+    useEffect(() => {
+        i18n.setLanguage(language)
+    }, [language])
 
     /* -------------------- component functions -------------------- */
 
@@ -230,6 +241,15 @@ export function App() {
         }
     }
 
+    /**
+     * Language toggler handler 
+     */
+    const handleLanguageChage = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setLanguage(event.target.value);
+        setShowLanguages(false);
+        localStorage.setItem('language', event.target.value);
+    }
+
     return (
         <main>
             <Container className="pb-5">
@@ -244,7 +264,7 @@ export function App() {
                                 <FormControl
                                     id="urlInput"
                                     className="url-input"
-                                    placeholder="YouTube or other supported service video url"
+                                    placeholder={i18n.t('urlInput')}
                                     onChange={handleUrlChange}
                                 />
                             </InputGroup>
@@ -253,8 +273,8 @@ export function App() {
                                     <div className="mt-2 status-box">
                                         <Row>
                                             <Col sm={9}>
-                                                <h6>Status</h6>
-                                                <pre>Ready</pre>
+                                                <h6>{i18n.t('statusTitle')}</h6>
+                                                <pre>{i18n.t('statusReady')}</pre>
                                             </Col>
                                         </Row>
                                     </div> : null
@@ -289,8 +309,8 @@ export function App() {
                             }
 
                             <ButtonGroup className="mt-2">
-                                <Button onClick={() => sendUrl()} disabled={false}>Start</Button>
-                                <Button active onClick={() => abort()}>Abort all</Button>
+                                <Button onClick={() => sendUrl()} disabled={false}>{i18n.t('startButton')}</Button>
+                                <Button active onClick={() => abort()}>{i18n.t('abortAllButton')}</Button>
                             </ButtonGroup>
                             <span className="text-muted float-end pt-3">
                                 <HddFill></HddFill> {' '}
@@ -300,18 +320,37 @@ export function App() {
                         </div>
 
                         <div className="my-4">
-                            <span className="settings" onClick={() => setShowSettings(!showSettings)}>Settings</span>
+                            <span className="settings" onClick={() => setShowSettings(!showSettings)}>
+                                {i18n.t('settingsAnchor')}
+                                {' '}
+                                <GearFill></GearFill>
+                            </span>
+                            {' '}
+                            <span className="settings" onClick={() => setShowLanguages(!showLanguages)}>
+                                <Translate></Translate>
+                            </span>
+                            {showLanguages ?
+                                <select className="form-select mt-2" onChange={handleLanguageChage} defaultValue={language}>
+                                    <option value="english">English</option>
+                                    <option value="italian">Italian</option>
+                                    <option value="chinese">Chinese</option>
+                                    <option value="spanish">Spanish</option>
+                                    <option value="russian">Russian</option>
+                                </select>
+                                : null
+                            }
                         </div>
+
 
                         {showSettings ?
                             <div className="p-3 stack-box shadow">
-                                <h6>Server address</h6>
+                                <h6>{i18n.t('serverAddressTitle')}</h6>
                                 <InputGroup className="mb-3 url-input" hasValidation>
                                     <InputGroup.Text>ws://</InputGroup.Text>
                                     <FormControl
                                         defaultValue={localStorage.getItem('server-addr') || 'localhost'}
-                                        placeholder="Server address"
-                                        aria-label="Server address"
+                                        placeholder={i18n.t('serverAddressTitle')}
+                                        aria-label={i18n.t('serverAddressTitle') || ''}
                                         onChange={handleAddrChange}
                                         isInvalid={invalidIP}
                                         isValid={!invalidIP}
@@ -321,35 +360,42 @@ export function App() {
                                 <div className="pt-2">
                                     <input type="checkbox" name="-x" defaultChecked={cliArgs.extractAudio} ref={xaInput}
                                         onClick={setExtractAudio} />
-                                    <label htmlFor="-x">&nbsp;Extract audio</label>
+                                    <label htmlFor="-x">&nbsp;
+                                        {i18n.t('extractAudioCheckbox')}
+                                    </label>
                                     <div></div>
                                     <input type="checkbox" name="-nomtime" defaultChecked={cliArgs.noMTime} ref={mtInput}
                                         onClick={setNoMTime} />
-                                    <label htmlFor="-x">&nbsp;Don't set file modification time</label>
+                                    <label htmlFor="-x">&nbsp;
+                                        {i18n.t('noMTimeCheckbox')}
+                                    </label>
                                 </div>
                                 <br />
                                 <Button size="sm" onClick={() => updateBinary()} disabled={halt}>
-                                    Update yt-dlp binary
+                                    {i18n.t('updateBinButton')}
                                 </Button>{' '}
                                 <Button size="sm" variant={darkMode ? 'light' : 'dark'} onClick={() => toggleTheme()}>
-                                    {darkMode ? 'Light theme' : 'Dark theme'}
+                                    {darkMode ? i18n.t('lightThemeButton') : i18n.t('darkThemeButton')}
                                 </Button>
                             </div> :
                             null
                         }
+
                         <div className="mt-5" />
                         <div>
                             <small>
-                                Once you close this page the download will continue in the background.
+                                {i18n.t('bgReminder')}
                             </small>
                         </div>
                     </Col>
                     <Col>
                         <MessageToast flag={showToast} callback={setShowToast}>
-                            {`Connected to ${localStorage.getItem('server-addr') || 'localhost'}`}
+                            <>
+                                {i18n.t('toastConnected')}{localStorage.getItem('server-addr') || 'localhost'}
+                            </>
                         </MessageToast>
                         <MessageToast flag={updatedBin} callback={setUpdatedBin}>
-                            Updated yt-dlp binary!
+                            {i18n.t('toastUpdated')}
                         </MessageToast>
                     </Col>
                 </Row>

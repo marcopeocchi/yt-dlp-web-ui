@@ -1,11 +1,13 @@
 # yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp.  
-Created for the only purpose of *consume* videos from my server/nas.  
+Created for the only purpose of *consuming* videos from my server/nas.  
 I will eventually make this better as soon as I can. Not in the immediate.  
 
 Changelog:
 ```
+03/02/22: i18n enabled! I need help with the traductions :/
+
 27/01/22: Multidownload implemented!
 
 26/01/22: Multiple downloads are being implemented. Maybe by next release they will be there.

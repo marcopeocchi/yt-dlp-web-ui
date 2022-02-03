@@ -2,6 +2,7 @@
 dist
 package-lock.json
 pnpm-lock.yaml
+.pnpm-debug.log
 node_modules
 src/server/core/*.exe
 src/server/core/yt-dlp
