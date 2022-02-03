@@ -6,7 +6,7 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 Changelog:
 ```
-03/02/22: i18n enabled! I need help with the traductions :/
+03/02/22: i18n enabled! I need help with the translations :/
 
 27/01/22: Multidownload implemented!
 
