@@ -294,6 +294,7 @@ export function App() {
                                                     formattedLog={message[1]}
                                                     title={downloadInfoMap.get(message[0])?.title}
                                                     thumbnail={downloadInfoMap.get(message[0])?.thumbnail}
+                                                    resolution={downloadInfoMap.get(message[0])?.resolution}
                                                     progress={progressMap.get(message[0])} />
                                                 <Row>
                                                     <Col>
@@ -321,8 +322,6 @@ export function App() {
 
                         <div className="my-4">
                             <span className="settings" onClick={() => setShowSettings(!showSettings)}>
-                                {i18n.t('settingsAnchor')}
-                                {' '}
                                 <GearFill></GearFill>
                             </span>
                             {' '}

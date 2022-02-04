@@ -16,11 +16,11 @@ Refactoring and JSDoc.
 04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature
 
 ```
-<img src="https://i.ibb.co/7VBK1PY/1.png">
+<img src="https://i.ibb.co/tcq3mtq/Screenshot-20220204-122644.png">
 
 ## Now with dark mode
 
-<img src="https://i.ibb.co/h8S5vKg/2.png">
+<img src="https://i.ibb.co/1qd2RMs/Screenshot-20220204-122713.png">
 
 ## Settings
 
@@ -48,15 +48,14 @@ docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-
 ## Manual installation
 ```
 npm i
-npm run build
-npm run fetch
+npm run build-all
 
 // edit the settings.json specifying the download path or 
 // it will default to the following created folder
 
 mkdir downloads
 
-node server.js
+node dist/main.js
 ```
 
 
