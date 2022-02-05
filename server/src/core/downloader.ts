@@ -3,14 +3,15 @@ import { from, interval } from 'rxjs';
 import { throttle } from 'rxjs/operators';
 import { pruneDownloads } from '../db/db';
 import { killProcess } from '../utils/procUtils';
+import { Socket } from 'socket.io';
+import { IPayload } from '../interfaces/IPayload';
+import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
 import Process from './Process';
 import ProcessPool from './ProcessPool';
-import { Socket } from 'socket.io';
-import { IPayload } from '../interfaces/IPayload';
 
 // settings read from settings.json
-let settings;
+let settings: ISettings;
 let coldRestart = true;
 const log = new Logger();
 
@@ -20,7 +21,7 @@ try {
     settings = require('../settings.json');
 }
 catch (e) {
-    console.warn("settings.json not found");
+    log.warn('dl', 'settings.json not found');
 }
 
 /**
@@ -95,7 +96,6 @@ export async function retriveDownload(socket: Socket) {
     if (coldRestart) {
         coldRestart = false;
         let downloads = await pruneDownloads();
-        console.log(downloads)
         // sanitize
         downloads = [... new Set(downloads.filter(el => el !== undefined))];
         log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)

@@ -2,6 +2,7 @@ import { spawn } from 'child_process';
 import { join } from 'path';
 import { Readable } from 'stream';
 import { deleteDownloadByPID, insertDownload } from '../db/db';
+import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
 
 const log = new Logger();
@@ -9,15 +10,15 @@ const log = new Logger();
 /**
  * Represents a download process that spawns yt-dlp.
  * @constructor
- * @param {string} url - The downlaod url.
- * @param {Array<String>} params - The cli arguments passed by the frontend.
- * @param {*} settings - The download settings passed by the frontend.
+ * @param url - The downlaod url.
+ * @param params - The cli arguments passed by the frontend.
+ * @param settings - The download settings passed by the frontend.
  */
 
 class Process {
     private url: string;
     private params: Array<string>;
-    private settings: any;
+    private settings: ISettings;
     private stdout: Readable;
     private pid: number;
     private info: any;
@@ -35,11 +36,11 @@ class Process {
 
     /**
      * function that launch the download process, sets the stdout property and the pid
-     * @param {Function} callback not yet implemented
-     * @returns {Promise<this>} the process instance
+     * @param callback not yet implemented
+     * @returns the process instance
      */
     async start(callback?: Function): Promise<this> {
-        await this.#__internalGetInfo();
+        await this.internalGetInfo();
 
         const ytldp = spawn(this.exePath,
             ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
@@ -69,8 +70,8 @@ class Process {
      * function used internally by the download process to fetch information, usually thumbnail and title
      * @returns Promise to the lock
      */
-    async #__internalGetInfo() {
-        let lock = true;
+    private async internalGetInfo() {
+        this.lock = true;
         let stdoutChunks = [];
         const ytdlpInfo = spawn(this.exePath, ['-s', '-j', this.url]);
 
@@ -93,7 +94,7 @@ class Process {
             }
         });
 
-        if (!lock) {
+        if (!this.lock) {
             return true;
         }
     }
