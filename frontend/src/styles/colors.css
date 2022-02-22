@@ -5,3 +5,11 @@
     --border:#ced4da;
     --stack: #ffffff;
 }
+
+.dark {
+    --body: #1c1c1c;
+    --text: #ffffff;
+    --status:#292929;
+    --stack: #212121;
+    --border: #3a3a3a;
+}

@@ -9,7 +9,7 @@
 
 .stack-box {
     background-color: var(--stack);
-    border-radius: 1pc;
+    border-radius: 0.5pc;
 }
 
 .settings {
@@ -19,14 +19,21 @@
     border-radius: 5px;
 }
 
-.form-control{
+.form-control {
     background-color: var(--status);
     border-color: var(--border);
     color: var(--text);
 }
 
-.input-group-text{
+.input-group-text {
     color: var(--text);
     background-color: var(--status);
     border-color: var(--border);
+}
+
+.buttonAbort {
+    background-color: var(--border);
+    color: var(--text);
+    border: 0px;
+    margin-top: 2px;
 }

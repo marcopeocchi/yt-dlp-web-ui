@@ -3,8 +3,9 @@
   "version": "1.1.0",
   "description": "A terrible webUI for yt-dlp, all-in-one solution.",
   "scripts": {
+    "dev": "nodemon dist/main.js",
     "start": "node dist/main.js",
-    "dev": "tsc --build -w",
+    "watch": "tsc --build -w",
     "build": "parcel build ./frontend/index.html --dist-dir ./dist/frontend",
     "build-server": "tsc --build",
     "build-all": "tsc --build && npm run build && npm run fetch",
@@ -21,12 +22,10 @@
     "react": "^17.0.2",
     "react-bootstrap": "2.0.2",
     "react-bootstrap-icons": "^1.7.2",
-    "react-chartjs-2": "^4.0.0",
     "react-dom": "^17.0.2",
     "rxjs": "^7.4.0",
     "socket.io": "^4.3.2",
     "socket.io-client": "^4.3.2",
-    "sqlite": "^4.0.23",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

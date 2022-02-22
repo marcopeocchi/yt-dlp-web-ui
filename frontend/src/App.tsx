@@ -9,7 +9,7 @@ import {
     Button,
     ButtonGroup,
 } from "react-bootstrap";
-import { X, HddFill, GearFill, Translate } from "react-bootstrap-icons";
+import { StopFill, GearFill, Translate } from "react-bootstrap-icons";
 import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./utils";
 import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
 import { MessageToast } from "./components/MessageToast";
@@ -17,6 +17,7 @@ import { StackableResult } from "./components/StackableResult";
 import { CliArguments } from "./classes";
 import { I18nBuilder } from "./i18n";
 import './App.css';
+import { Footer } from "./components/Footer";
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
@@ -30,6 +31,7 @@ export function App() {
     const [url, setUrl] = useState('');
     const [showToast, setShowToast] = useState(false);
     const [invalidIP, setInvalidIP] = useState(false);
+    const [connected, setConnected] = useState(false);
     const [updatedBin, setUpdatedBin] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [showLanguages, setShowLanguages] = useState(false);
@@ -58,6 +60,7 @@ export function App() {
     /* WebSocket connect event handler*/
     useEffect(() => {
         socket.on('connect', () => {
+            setConnected(true)
             setShowToast(true)
             socket.emit('fetch-jobs')
             socket.emit('disk-space')
@@ -298,8 +301,8 @@ export function App() {
                                                     progress={progressMap.get(message[0])} />
                                                 <Row>
                                                     <Col>
-                                                        <Button variant={darkMode ? 'dark' : 'light'} className="float-end" active size="sm" onClick={() => abort(message[0])}>
-                                                            <X></X>
+                                                        <Button className="float-end buttonAbort" size="sm" onClick={() => abort(message[0])}>
+                                                            <StopFill></StopFill>
                                                         </Button>
                                                     </Col>
                                                 </Row>
@@ -308,16 +311,10 @@ export function App() {
                                     </Fragment>
                                 ))
                             }
-
                             <ButtonGroup className="mt-2">
                                 <Button onClick={() => sendUrl()} disabled={false}>{i18n.t('startButton')}</Button>
                                 <Button active onClick={() => abort()}>{i18n.t('abortAllButton')}</Button>
                             </ButtonGroup>
-                            <span className="text-muted float-end pt-3">
-                                <HddFill></HddFill> {' '}
-                                <small>{freeDiskSpace ? freeDiskSpace : '-'}</small>
-                            </span>
-
                         </div>
 
                         <div className="my-4">
@@ -399,9 +396,11 @@ export function App() {
                     </Col>
                 </Row>
             </Container>
-            <div className="container pb-5">
-                <small>Made with ❤️ by Marcobaobao</small>
-            </div>
+            <Footer
+                freeSpace={freeDiskSpace}
+                serverAddr={localStorage.getItem('server-addr')}
+                connected={connected}
+            />
         </main>
     )
 }
