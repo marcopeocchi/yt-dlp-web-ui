@@ -8,6 +8,8 @@ type Props = {
     connected: boolean,
 }
 
+const isDesktop = window.innerWidth > 510;
+
 export const Footer = ({ freeSpace, statistics, serverAddr, connected }: Props) => {
     return (
         <footer className="footer">
@@ -19,10 +21,13 @@ export const Footer = ({ freeSpace, statistics, serverAddr, connected }: Props) 
                     <HddStackFill></HddStackFill> {' '}
                     <small>{freeSpace ? `${freeSpace.trim()}iB` : '-'}</small>
                 </span>
-                <span className="px-3 separator">
-                    <Ethernet></Ethernet> {' '}
-                    <small>{serverAddr ? `${serverAddr}:3022` : 'not defined'}</small>
-                </span>
+                {isDesktop ?
+                    <span className="px-3 separator">
+                        <Ethernet></Ethernet> {' '}
+                        <small>{serverAddr ? `${serverAddr}:3022` : 'not defined'}</small>
+                    </span> :
+                    null
+                }
                 <span className="px-3 separator">
                     <small title={connected ? 'Successfully connected!' : 'Can\'t connect to server'}>
                         {connected ?
