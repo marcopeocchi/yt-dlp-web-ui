@@ -1,12 +1,11 @@
 @import url('./src/styles/colors.css');
 
-html {
-    min-height: 100%;
+.main {
+    min-height: calc(100vh - 41px);
 }
 
 body {
     font-family: 'Shippori Antique', sans-serif;
-    height: 80vh;
     background-color: var(--body);
     color: var(--text);
 }

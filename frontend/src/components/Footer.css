@@ -1,11 +1,9 @@
 @import url('../../src/styles/colors.css');
 
 .footer {
-    position: absolute;
-    bottom: 0;
     width: 100%;
     height: 40px;
-    line-height: 39px;
+    line-height: 38px;
     background-color: var(--stack);
 }
 

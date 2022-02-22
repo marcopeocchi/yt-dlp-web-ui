@@ -255,7 +255,7 @@ export function App() {
 
     return (
         <main>
-            <Container className="pb-5">
+            <Container className="pb-5 main">
                 <Row>
                     <Col lg={7} xs={12}>
                         <div className="mt-5" />
