@@ -33,21 +33,21 @@ languages:
     toastConnected: 'Connesso a '
     toastUpdated: yt-dlp aggiornato con successo!
   chinese:
-    urlInput: 输入网址
-    statusTitle: 运行状态
+    urlInput: YouTube 或其他受支持服务的视频网址
+    statusTitle: 状态
     startButton: 开始
-    statusReady: Ready
-    abortAllButton: 退出
-    updateBinButton: yt-dlp 现代化
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
-    toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
+    statusReady: 就绪
+    abortAllButton: 全部中止
+    updateBinButton: 更新 yt-dlp 可执行文件
+    darkThemeButton: 黑暗主题
+    lightThemeButton: 明亮主题
+    settingsAnchor: 设置
+    serverAddressTitle: 服务器地址
+    extractAudioCheckbox: 提取音频
+    noMTimeCheckbox: 不设置文件修改时间
+    bgReminder: 关闭页面后，下载会继续在后台运行。
+    toastConnected: '已连接到 '
+    toastUpdated: 已更新 yt-dlp 可执行文件！
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
