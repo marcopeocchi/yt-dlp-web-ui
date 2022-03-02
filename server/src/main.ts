@@ -58,3 +58,21 @@ log.info('http', `Server started on port ${process.env.PORT || 3022}`)
 init()
     .then(() => server.listen(process.env.PORT || 3022))
     .catch(err => log.err('db', err))
+
+
+/**
+ * Cleanup handler
+ */
+const gracefullyStop = () => {
+    log.warn('proc', 'Shutting down...')
+    io.disconnectSockets(true)
+    server.close()
+    log.info('proc', 'Done!')
+    process.exit(0)
+}
+
+/* Intercepts singnals and perform cleanups before shutting down. */
+process
+    .on('SIGTERM', () => gracefullyStop())
+    .on('SIGUSR1', () => gracefullyStop())
+    .on('SIGUSR2', () => gracefullyStop())
