@@ -4,9 +4,11 @@ VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
 COPY package*.json ./
 RUN apt-get update
-RUN apt-get install curl ffmpeg -y
-RUN apt-get install psmisc
+RUN apt-get install curl psmisc wget -y
 RUN npm install
+RUN wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+RUN tar -xf ffmpeg-release-amd64-static.tar.xz
+RUN mv ./ffmpeg-5.0-amd64-static/ff* /usr/bin
 COPY . .
 RUN chmod +x ./fetch-yt-dlp.sh
 RUN npm run build-all

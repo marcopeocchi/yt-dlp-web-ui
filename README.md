@@ -6,6 +6,10 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 Changelog:
 ```
+02/03/22: cut-down docker container size by using ffmpeg static builds
+
+01/03/22: Chinese translation by deluxghost
+
 03/02/22: i18n enabled! I need help with the translations :/
 
 27/01/22: Multidownload implemented!
@@ -14,7 +18,6 @@ Changelog:
 Refactoring and JSDoc.
 
 04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature
-
 ```
 <img src="https://i.ibb.co/tcq3mtq/Screenshot-20220204-122644.png">
 
@@ -28,11 +31,12 @@ The avaible settings are currently only:
 -   Server address
 -   Switch theme
 -   Extract audio
+-   Switch language
 
 Future releases will have:
--   ~~Multi download~~ *experimental*
+-   ~~Multi download~~ *done*
 -   ~~Exctract audio~~ *done*
--   Format selection
+-   Format selection *in-progess*
 
 ## Docker installation
 ```
@@ -61,4 +65,8 @@ node dist/main.js
 
 ## Todo list
 - ~~retrieve background tasks~~
+- format selection
 - better ui/ux
+
+
+_static ffmpeg builds by johnvansickle https://johnvansickle.com/ffmpeg/_ 
