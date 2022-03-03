@@ -6,7 +6,7 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 Changelog:
 ```
-02/03/22: cut-down docker container size by using ffmpeg static builds
+03/03/22: cut-down image size by switching to Alpine linux based container
 
 01/03/22: Chinese translation by deluxghost
 
@@ -67,6 +67,3 @@ node dist/main.js
 - ~~retrieve background tasks~~
 - format selection
 - better ui/ux
-
-
-_static ffmpeg builds by johnvansickle https://johnvansickle.com/ffmpeg/_ 
