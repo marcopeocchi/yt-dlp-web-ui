@@ -21,7 +21,8 @@ try {
     settings = require('../settings.json');
 }
 catch (e) {
-    log.warn('dl', 'settings.json not found');
+    new Promise(resolve => setTimeout(resolve, 500))
+        .then(() => log.warn('dl', 'settings.json not found, ignore if using Docker'));
 }
 
 /**

@@ -6,6 +6,8 @@ I will eventually make this better as soon as I can. Not in the immediate.
 
 Changelog:
 ```
+05/03/22: Korean translation by kimpig
+
 03/03/22: cut-down image size by switching to Alpine linux based container
 
 01/03/22: Chinese translation by deluxghost
@@ -38,6 +40,14 @@ Future releases will have:
 -   ~~Exctract audio~~ *done*
 -   Format selection *in-progess*
 
+## Troubleshooting
+-   It says that it isn't connected/ip in the footer is not defined.  
+    - You must set the server ip address in the settings section (gear icon).
+-   The download  doens't start.  
+    - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
+-   Background jobs are not retrieved.
+    -   As before forking yt-dlp isn't fast so resuming _n_ background jobs takes _n_*_time to exec yt-dlp_ Just have patience.
+
 ## Docker installation
 ```
 docker pull marcobaobao/yt-dlp-webui:latest
@@ -51,17 +61,28 @@ docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-
 
 ## Manual installation
 ```
+# the dependencies are: python3, ffmpeg, nodejs, psmisc.
+
 npm i
 npm run build-all
 
-// edit the settings.json specifying the download path or 
-// it will default to the following created folder
+# edit the settings.json specifying the download path or 
+# it will default to the following created folder
 
 mkdir downloads
 
 node dist/main.js
 ```
 
+## FAQ
+-   Will it availabe for Raspberry Pi/ generic ARM devices?
+    - Yes, absolutely a multi-arch docker image is planned to be released.  
+      Alternatively use the **non-docker / Manual** installation method.  
+      If you plan to use it on a Raspberry Pi ensure to have fast and durable storage.
+-   Why the docker image is so heavy?
+    - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
+-   Am I forced to run it on port 3022?
+    -   Well, yes (until now).
 
 ## Todo list
 - ~~retrieve background tasks~~
