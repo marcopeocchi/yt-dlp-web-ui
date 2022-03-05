@@ -302,7 +302,7 @@ export function App() {
                                                 <Row>
                                                     <Col>
                                                         <Button className="float-end buttonAbort" size="sm" onClick={() => abort(message[0])}>
-                                                            <StopFill></StopFill>
+                                                            <StopFill className="mb-1"></StopFill>
                                                         </Button>
                                                     </Col>
                                                 </Row>
@@ -319,18 +319,19 @@ export function App() {
 
                         <div className="my-4">
                             <span className="settings" onClick={() => setShowSettings(!showSettings)}>
-                                <GearFill></GearFill>
+                                <GearFill className="mb-1"></GearFill>
                             </span>
                             {' '}
                             <span className="settings" onClick={() => setShowLanguages(!showLanguages)}>
-                                <Translate></Translate>
+                                <Translate className="mb-1"></Translate>
                             </span>
                             {showLanguages ?
                                 <select className="form-select mt-2" onChange={handleLanguageChage} defaultValue={language}>
                                     <option value="english">English</option>
                                     <option value="italian">Italian</option>
-                                    <option value="chinese">Chinese</option>
                                     <option value="spanish">Spanish</option>
+                                    <option value="chinese">Chinese</option>
+                                    <option value="korean">Korean</option>
                                     <option value="russian">Russian</option>
                                 </select>
                                 : null
