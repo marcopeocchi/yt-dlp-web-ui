@@ -80,3 +80,19 @@ languages:
     bgReminder: Once you close this page the download will continue in the background.
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
+  korean:
+    urlInput: YouTube나 다른 지원되는 사이트의 URL
+    statusTitle: 상태
+    startButton: 시작
+    statusReady: 준비됨
+    abortAllButton: 모두 중단
+    updateBinButton: yt-dlp 바이너리 업데이트
+    darkThemeButton: 다크 모드
+    lightThemeButton: 라이트 모드
+    settingsAnchor: 설정
+    serverAddressTitle: 서버 주소
+    extractAudioCheckbox: 오디오 추출
+    noMTimeCheckbox: 파일 수정 시간을 설정하지 않음
+    bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다
+    toastConnected: '다음으로 연결됨 '
+    toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
