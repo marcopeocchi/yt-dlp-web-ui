@@ -12,7 +12,7 @@ RUN chmod +x ./fetch-yt-dlp.sh
 RUN npm install
 RUN npm run build-all
 # cleanup
-RUN npm remove parcel react react-dom react-bootstrap react-bootstrap-icons
+RUN npm remove parcel
 RUN rm -rf .parcel-cache
 # expose and run
 EXPOSE 3022

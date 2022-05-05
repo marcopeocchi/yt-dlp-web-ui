@@ -20,12 +20,12 @@ Changelog:
 Refactoring and JSDoc.
 
 04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature
+
+05/05/22: Material UI update
 ```
-<img src="https://i.ibb.co/tcq3mtq/Screenshot-20220204-122644.png">
 
-## Now with dark mode
 
-<img src="https://i.ibb.co/1qd2RMs/Screenshot-20220204-122713.png">
+<img src="https://i.ibb.co/YyCwS0F/Unsaved-Image-1.png">
 
 ## Settings
 
@@ -34,6 +34,9 @@ The avaible settings are currently only:
 -   Switch theme
 -   Extract audio
 -   Switch language
+
+<img src="https://i.ibb.co/VMBhhFX/Unsaved-Image-2.png">
+<img src="https://i.ibb.co/cXJwDp4/Unsaved-Image-3.png">
 
 Future releases will have:
 -   ~~Multi download~~ *done*
@@ -83,6 +86,8 @@ node dist/main.js
     - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
 -   **Am I forced to run it on port 3022?**
     -   Well, yes (until now).
+-   **Why is it so slow to start a download**
+    - I genuinely don't know. I know that yt-dlp is slow starting up even on my M1 Mac, so....
 
 ## Todo list
 - ~~retrieve background tasks~~

@@ -1,407 +1,195 @@
-import { io } from "socket.io-client";
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, { useEffect } from "react"
+import { ThemeProvider } from "@emotion/react";
+import { Badge, Box, Container, createTheme, CssBaseline, Divider, IconButton, List, ListItemIcon, ListItemText, Snackbar, styled, Toolbar, Typography } from "@mui/material"
+import MuiDrawer from '@mui/material/Drawer';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import { ChevronLeft, Dashboard, Menu, Settings as SettingsIcon } from "@mui/icons-material";
+import ListItemButton from '@mui/material/ListItemButton';
 import {
-    Container,
-    Row,
-    Col,
-    InputGroup,
-    FormControl,
-    Button,
-    ButtonGroup,
-} from "react-bootstrap";
-import { StopFill, GearFill, Translate } from "react-bootstrap-icons";
-import { buildMessage, updateInStateMap, validateDomain, validateIP } from "./utils";
-import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
-import { MessageToast } from "./components/MessageToast";
-import { StackableResult } from "./components/StackableResult";
-import { CliArguments } from "./classes";
-import { I18nBuilder } from "./i18n";
-import './App.css';
-import { Footer } from "./components/Footer";
+    BrowserRouter as Router,
+    Route,
+    Routes,
+    Link,
+} from 'react-router-dom';
+import Home from "./Home";
+import Settings from "./Settings";
+import { io } from "socket.io-client";
+import { RootState, store } from './stores/store';
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { connected } from "./features/status/statusSlice";
+
+const theme = createTheme();
+
+const drawerWidth: number = 240;
 
 const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
-export function App() {
+interface AppBarProps extends MuiAppBarProps {
+    open?: boolean;
+}
 
-    const [progressMap, setProgressMap] = useState(new Map<number, number>());
-    const [messageMap, setMessageMap] = useState(new Map<number, string>());
-    const [downloadInfoMap, setDownloadInfoMap] = useState(new Map<number, IDLInfoBase>());
+const AppBar = styled(MuiAppBar, {
+    shouldForwardProp: (prop) => prop !== 'open',
+})<AppBarProps>(({ theme, open }) => ({
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+    }),
+    ...(open && {
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth}px)`,
+        transition: theme.transitions.create(['width', 'margin'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+        }),
+    }),
+}));
 
-    const [halt, setHalt] = useState(false);
-    const [url, setUrl] = useState('');
-    const [showToast, setShowToast] = useState(false);
-    const [invalidIP, setInvalidIP] = useState(false);
-    const [connected, setConnected] = useState(false);
-    const [updatedBin, setUpdatedBin] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [showLanguages, setShowLanguages] = useState(false);
-    const [freeDiskSpace, setFreeDiskSpace] = useState('');
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+    ({ theme, open }) => ({
+        '& .MuiDrawer-paper': {
+            position: 'relative',
+            whiteSpace: 'nowrap',
+            width: drawerWidth,
+            transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+            }),
+            boxSizing: 'border-box',
+            ...(!open && {
+                overflowX: 'hidden',
+                transition: theme.transitions.create('width', {
+                    easing: theme.transitions.easing.sharp,
+                    duration: theme.transitions.duration.leavingScreen,
+                }),
+                width: theme.spacing(7),
+                [theme.breakpoints.up('sm')]: {
+                    width: theme.spacing(9),
+                },
+            }),
+        },
+    }),
+);
 
-    const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
-    const [language, setLanguage] = useState(localStorage.getItem('language') || 'english');
+function AppContent() {
+    const [open, setOpen] = React.useState(false);
+    const toggleDrawer = () => {
+        setOpen(!open);
+    };
 
-    const xaInput = useRef(null);
-    const mtInput = useRef(null);
-
-    /* -------------------- Init ----------------------- */
-
-    const cliArgs = new CliArguments();
-
-    if (!localStorage.getItem('cliArgs')) {
-        localStorage.setItem('cliArgs', '')
-    }
-
-    cliArgs.fromString(localStorage.getItem('cliArgs'))
-
-    const i18n = new I18nBuilder(language);
-
-    /* -------------------- Effects -------------------- */
-
-    /* WebSocket connect event handler*/
-    useEffect(() => {
-        socket.on('connect', () => {
-            setConnected(true)
-            setShowToast(true)
-            socket.emit('fetch-jobs')
-            socket.emit('disk-space')
-        })
-        return () => {
-            socket.disconnect()
-        }
-    }, [])
-
-    /* Ask server for pending jobs / background jobs */
-    useEffect(() => {
-        socket.on('pending-jobs', () => {
-            socket.emit('retrieve-jobs')
-        })
-    }, [])
-
-    /* Handle download information sent by server */
-    useEffect(() => {
-        socket.on('info', (data: IDLInfo) => {
-            updateInStateMap(data.pid, data.info, downloadInfoMap, setDownloadInfoMap);
-        })
-    }, [])
-
-    /* Handle per-download progress */
-    useEffect(() => {
-        socket.on('progress', (data: IMessage) => {
-            if (data.status === 'Done!' || data.status === 'Aborted') {
-                setHalt(false);
-                updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
-                updateInStateMap(data.pid, 0, progressMap, setProgressMap);
-                socket.emit('disk-space')
-                return;
-            }
-            updateInStateMap(data.pid, buildMessage(data), messageMap, setMessageMap);
-            if (data.progress) {
-                updateInStateMap(data.pid, Math.ceil(Number(data.progress.replace('%', ''))), progressMap, setProgressMap)
-            }
-        })
-    }, [])
-
-    /* Handle yt-dlp update success */
-    useEffect(() => {
-        socket.on('updated', () => {
-            setUpdatedBin(true)
-            setHalt(false)
-        })
-    }, [])
-
-    /* Theme changer */
-    useEffect(() => {
-        darkMode ?
-            document.body.classList.add('dark') :
-            document.body.classList.remove('dark');
-    }, [darkMode])
-
-    /* Get disk free space */
-    useEffect(() => {
-        socket.on('free-space', (res: string) => {
-            setFreeDiskSpace(res)
-        })
-    }, [])
-
-    /* Change language */
-    useEffect(() => {
-        i18n.setLanguage(language)
-    }, [language])
-
-    /* -------------------- component functions -------------------- */
-
-    /**
-     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
-     */
-    const sendUrl = () => {
-        setHalt(true)
-        socket.emit('send-url', {
-            url: url,
-            params: cliArgs.toString(),
-        })
-        setUrl('')
-        const input = document.getElementById('urlInput') as HTMLInputElement;
-        input.value = '';
-    }
-
-    /**
-     * Update the url state whenever the input value changes
-     * @param e Input change event
-     */
-    const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUrl(e.target.value)
-    }
-
-    /**
-     * Update the server ip address state and localstorage whenever the input value changes.  
-     * Validate the ip-addr then set.
-     * @param e Input change event
-     */
-    const handleAddrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const input = e.target.value;
-        if (validateIP(input)) {
-            setInvalidIP(false)
-            localStorage.setItem('server-addr', input)
-        } else if (validateDomain(input)) {
-            setInvalidIP(false)
-            localStorage.setItem('server-addr', input)
-        } else {
-            setInvalidIP(true)
-        }
-    }
-
-    /**
-     * Abort a specific download if id's provided, other wise abort all running ones.
-     * @param id The download id / pid
-     * @returns void
-     */
-    const abort = (id?: number) => {
-        if (id) {
-            updateInStateMap(id, null, downloadInfoMap, setDownloadInfoMap, true)
-            socket.emit('abort', { pid: id })
-            return
-        }
-        socket.emit('abort-all')
-        setHalt(false)
-    }
-
-    /**
-     * Send via WebSocket a message in order to update the yt-dlp binary from server
-     */
-    const updateBinary = () => {
-        setHalt(true)
-        socket.emit('update-bin')
-    }
-
-    /**
-     * Theme toggler handler
-     */
-    const toggleTheme = () => {
-        if (darkMode) {
-            localStorage.setItem('theme', 'light')
-            setDarkMode(false)
-        } else {
-            localStorage.setItem('theme', 'dark')
-            setDarkMode(true)
-        }
-    }
-
-    /**
-     * Handle extract audio checkbox
-     */
-    const setExtractAudio = () => {
-        if (cliArgs.extractAudio) {
-            xaInput.current.checked = false;
-            cliArgs.extractAudio = false;
-
-            const lStorageItem = localStorage.getItem('cliArgs');
-            localStorage.setItem('cliArgs', lStorageItem.replace('-x ', ''));
-        } else {
-            xaInput.current.checked = true;
-            cliArgs.extractAudio = true;
-
-            const lStorageItem = localStorage.getItem('cliArgs');
-            localStorage.setItem('cliArgs', lStorageItem.concat('-x ', ''));
-        }
-    }
-
-    /**
-     * Handle no modified time header checkbox
-     */
-    const setNoMTime = () => {
-        if (cliArgs.noMTime) {
-            mtInput.current.checked = false;
-            cliArgs.noMTime = false;
-
-            const lStorageItem = localStorage.getItem('cliArgs');
-            localStorage.setItem('cliArgs', lStorageItem.replace('--no-mtime ', ''));
-        } else {
-            mtInput.current.checked = true;
-            cliArgs.noMTime = true;
-
-            const lStorageItem = localStorage.getItem('cliArgs');
-            localStorage.setItem('cliArgs', lStorageItem.concat('--no-mtime ', ''));
-        }
-    }
-
-    /**
-     * Language toggler handler 
-     */
-    const handleLanguageChage = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setLanguage(event.target.value);
-        setShowLanguages(false);
-        localStorage.setItem('language', event.target.value);
-    }
+    const status = useSelector((state: RootState) => state.status)
+    const dispatch = useDispatch()
 
     return (
-        <main>
-            <Container className="pb-5 main">
-                <Row>
-                    <Col lg={7} xs={12}>
-                        <div className="mt-5" />
-                        <h1 className="fw-bold">yt-dlp WebUI</h1>
-                        <div className="mt-5" />
+        <ThemeProvider theme={theme}>
+            <Router>
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
+                    <AppBar position="absolute" open={open}>
+                        <Toolbar
+                            sx={{
+                                pr: '24px', // keep right padding when drawer closed
+                            }}
+                        >
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={toggleDrawer}
+                                sx={{
+                                    marginRight: '36px',
+                                    ...(open && { display: 'none' }),
+                                }}
+                            >
+                                <Menu />
+                            </IconButton>
+                            <Typography
+                                component="h1"
+                                variant="h6"
+                                color="inherit"
+                                noWrap
+                                sx={{ flexGrow: 1 }}
+                            >
+                                yt-dlp WebUI
+                            </Typography>
+                            <IconButton color="inherit">
+                                <Badge badgeContent={0} color="secondary">
+                                </Badge>
+                            </IconButton>
+                        </Toolbar>
+                    </AppBar>
+                    <Drawer variant="permanent" open={open}>
+                        <Toolbar
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'flex-end',
+                                px: [1],
+                            }}
+                        >
+                            <IconButton onClick={toggleDrawer}>
+                                <ChevronLeft />
+                            </IconButton>
+                        </Toolbar>
+                        <Divider />
+                        <List component="nav">
+                            <Link to={'/'} style={
+                                {
+                                    textDecoration: 'none',
+                                    color: '#222222'
+                                }
+                            }>
+                                <ListItemButton disabled={status.downloading}>
+                                    <ListItemIcon>
+                                        <Dashboard />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Home" />
+                                </ListItemButton>
+                            </Link>
+                            <Link to={'/settings'} style={
+                                {
+                                    textDecoration: 'none',
+                                    color: '#222222'
+                                }
+                            }>
+                                <ListItemButton disabled={status.downloading}>
+                                    <ListItemIcon>
+                                        <SettingsIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Settings" />
+                                </ListItemButton>
+                            </Link>
+                        </List>
+                    </Drawer>
+                    <Box
+                        component="main"
+                        sx={{
+                            backgroundColor: (theme) =>
+                                theme.palette.mode === 'light'
+                                    ? theme.palette.grey[100]
+                                    : theme.palette.grey[900],
+                            flexGrow: 1,
+                            height: '100vh',
+                            overflow: 'auto',
+                        }}
+                    >
+                        <Toolbar />
+                        <Routes>
+                            <Route path="/" element={<Home socket={socket}></Home>}></Route>
+                            <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
+                        </Routes>
+                    </Box>
+                </Box>
+            </Router>
+        </ThemeProvider>
+    );
+}
 
-                        <div className="p-3 stack-box shadow">
-                            <InputGroup>
-                                <FormControl
-                                    id="urlInput"
-                                    className="url-input"
-                                    placeholder={i18n.t('urlInput')}
-                                    onChange={handleUrlChange}
-                                />
-                            </InputGroup>
-                            {
-                                !Array.from(messageMap).length ?
-                                    <div className="mt-2 status-box">
-                                        <Row>
-                                            <Col sm={9}>
-                                                <h6>{i18n.t('statusTitle')}</h6>
-                                                <pre>{i18n.t('statusReady')}</pre>
-                                            </Col>
-                                        </Row>
-                                    </div> : null
-                            }
-                            { /*Super big brain flatMap moment*/
-                                Array.from(messageMap).flatMap(message => (
-                                    <Fragment key={message[0]}>
-                                        {
-                                            /*
-                                                Message[0] => key, the pid which is shared with the progress and download Maps
-                                                Message[1] => value, the actual formatted message sent from server
-                                             */
-                                        }
-                                        {message[0] && message[1] && message[1] !== 'Done!' ?
-                                            <Fragment>
-                                                <StackableResult
-                                                    formattedLog={message[1]}
-                                                    title={downloadInfoMap.get(message[0])?.title}
-                                                    thumbnail={downloadInfoMap.get(message[0])?.thumbnail}
-                                                    resolution={downloadInfoMap.get(message[0])?.resolution}
-                                                    progress={progressMap.get(message[0])} />
-                                                <Row>
-                                                    <Col>
-                                                        <Button className="float-end buttonAbort" size="sm" onClick={() => abort(message[0])}>
-                                                            <StopFill className="mb-1"></StopFill>
-                                                        </Button>
-                                                    </Col>
-                                                </Row>
-                                            </Fragment> : null
-                                        }
-                                    </Fragment>
-                                ))
-                            }
-                            <ButtonGroup className="mt-2">
-                                <Button onClick={() => sendUrl()} disabled={false}>{i18n.t('startButton')}</Button>
-                                <Button active onClick={() => abort()}>{i18n.t('abortAllButton')}</Button>
-                            </ButtonGroup>
-                        </div>
-
-                        <div className="my-4">
-                            <span className="settings" onClick={() => setShowSettings(!showSettings)}>
-                                <GearFill className="mb-1"></GearFill>
-                            </span>
-                            {' '}
-                            <span className="settings" onClick={() => setShowLanguages(!showLanguages)}>
-                                <Translate className="mb-1"></Translate>
-                            </span>
-                            {showLanguages ?
-                                <select className="form-select mt-2" onChange={handleLanguageChage} defaultValue={language}>
-                                    <option value="english">English</option>
-                                    <option value="italian">Italian</option>
-                                    <option value="spanish">Spanish</option>
-                                    <option value="chinese">Chinese</option>
-                                    <option value="korean">Korean</option>
-                                    <option value="russian">Russian</option>
-                                </select>
-                                : null
-                            }
-                        </div>
-
-
-                        {showSettings ?
-                            <div className="p-3 stack-box shadow">
-                                <h6>{i18n.t('serverAddressTitle')}</h6>
-                                <InputGroup className="mb-3 url-input" hasValidation>
-                                    <InputGroup.Text>ws://</InputGroup.Text>
-                                    <FormControl
-                                        defaultValue={localStorage.getItem('server-addr') || 'localhost'}
-                                        placeholder={i18n.t('serverAddressTitle')}
-                                        aria-label={i18n.t('serverAddressTitle') || ''}
-                                        onChange={handleAddrChange}
-                                        isInvalid={invalidIP}
-                                        isValid={!invalidIP}
-                                    />
-                                    <InputGroup.Text>:3022</InputGroup.Text>
-                                </InputGroup>
-                                <div className="pt-2">
-                                    <input type="checkbox" name="-x" defaultChecked={cliArgs.extractAudio} ref={xaInput}
-                                        onClick={setExtractAudio} />
-                                    <label htmlFor="-x">&nbsp;
-                                        {i18n.t('extractAudioCheckbox')}
-                                    </label>
-                                    <div></div>
-                                    <input type="checkbox" name="-nomtime" defaultChecked={cliArgs.noMTime} ref={mtInput}
-                                        onClick={setNoMTime} />
-                                    <label htmlFor="-x">&nbsp;
-                                        {i18n.t('noMTimeCheckbox')}
-                                    </label>
-                                </div>
-                                <br />
-                                <Button size="sm" onClick={() => updateBinary()} disabled={halt}>
-                                    {i18n.t('updateBinButton')}
-                                </Button>{' '}
-                                <Button size="sm" variant={darkMode ? 'light' : 'dark'} onClick={() => toggleTheme()}>
-                                    {darkMode ? i18n.t('lightThemeButton') : i18n.t('darkThemeButton')}
-                                </Button>
-                            </div> :
-                            null
-                        }
-
-                        <div className="mt-5" />
-                        <div>
-                            <small>
-                                {i18n.t('bgReminder')}
-                            </small>
-                        </div>
-                    </Col>
-                    <Col>
-                        <MessageToast flag={showToast} callback={setShowToast}>
-                            <>
-                                {i18n.t('toastConnected')}{localStorage.getItem('server-addr') || 'localhost'}
-                            </>
-                        </MessageToast>
-                        <MessageToast flag={updatedBin} callback={setUpdatedBin}>
-                            {i18n.t('toastUpdated')}
-                        </MessageToast>
-                    </Col>
-                </Row>
-            </Container>
-            <Footer
-                freeSpace={freeDiskSpace}
-                serverAddr={localStorage.getItem('server-addr')}
-                connected={connected}
-            />
-        </main>
-    )
+export function App() {
+    return (
+        <Provider store={store}>
+            <AppContent></AppContent>
+        </Provider>
+    );
 }

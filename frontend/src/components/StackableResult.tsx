@@ -1,53 +1,62 @@
 import { Fragment } from "react";
-import {
-    Row,
-    Col,
-    ProgressBar
-} from "react-bootstrap";
-import { Badge4kFill, Badge8kFill, BadgeHdFill } from "react-bootstrap-icons";
+import { EightK, FourK, Hd, Sd } from "@mui/icons-material";
+import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, Grid, LinearProgress, Skeleton, Stack, Typography } from "@mui/material";
+import { IMessage } from "../interfaces";
+import { ellipsis } from "../utils";
 
 type Props = {
-    formattedLog: string,
+    formattedLog: IMessage,
     title: string,
     thumbnail: string,
     resolution: string
     progress: number,
+    stopCallback: VoidFunction,
 }
 
-export function StackableResult({ formattedLog, title, thumbnail, resolution, progress }: Props) {
+export function StackableResult({ formattedLog, title, thumbnail, resolution, progress, stopCallback }: Props) {
 
     const guessResolution = (xByY: string): JSX.Element => {
         if (!xByY) return null;
-        if (xByY.includes('4320')) return (<Badge8kFill></Badge8kFill>);
-        if (xByY.includes('2160')) return (<Badge4kFill></Badge4kFill>);
-        if (xByY.includes('1080')) return (<BadgeHdFill></BadgeHdFill>);
-        if (xByY.includes('720')) return (<BadgeHdFill></BadgeHdFill>);
+        if (xByY.includes('4320')) return (<EightK color="primary" />);
+        if (xByY.includes('2160')) return (<FourK color="primary" />);
+        if (xByY.includes('1080')) return (<Hd color="primary" />);
+        if (xByY.includes('720')) return (<Sd color="primary" />);
         return null;
     }
 
     return (
-        <Fragment>
-            <div className="mt-2 status-box">
-                <Row>
-                    {title ? <p>{title}</p> : null}
-                    <Col sm={9}>
-                        <h6>Status</h6>
-                        {!formattedLog ? <pre>Ready</pre> : null}
-                        <pre id='status'>{formattedLog}</pre>
-                    </Col>
-                    <Col sm={3}>
-                        <br />
-                        <img className="img-fluid rounded" src={thumbnail ? thumbnail : ''} />
-                    </Col>
-                    <div className="float-end">
+        <Card>
+            <CardActionArea>
+                {thumbnail ?
+                    <CardMedia
+                        component="img"
+                        height={180}
+                        image={thumbnail}
+                    /> :
+                    <Skeleton variant="rectangular" height={180} />
+                }
+                <CardContent>
+                    <Typography gutterBottom variant="h6" component="div">
+                        {ellipsis(title, 54)}
+                    </Typography>
+                    <Stack direction="row" spacing={1} py={2}>
+                        <Chip label={formattedLog.status} color="primary" />
+                        <Typography>{formattedLog.progress}</Typography>
+                        <Typography>{formattedLog.dlSpeed}</Typography>
+                        <Typography>{formattedLog.size}</Typography>
                         {guessResolution(resolution)}
-                    </div>
-                </Row>
-            </div>
-            {progress ?
-                <ProgressBar className="container-padding mt-2" now={progress} variant="primary" /> :
-                null
-            }
-        </Fragment>
+                    </Stack>
+                    {progress ?
+                        <LinearProgress variant="determinate" value={progress} /> :
+                        null
+                    }
+                </CardContent>
+            </CardActionArea>
+            <CardActions>
+                <Button variant="contained" size="small" color="primary" onClick={stopCallback}>
+                    Stop
+                </Button>
+            </CardActions>
+        </Card>
     )
 }

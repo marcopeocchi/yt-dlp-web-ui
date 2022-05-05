@@ -2,25 +2,27 @@ export class CliArguments {
     private _extractAudio: boolean;
     private _noMTime: boolean;
 
-    constructor() {
-        this._extractAudio = false;
-        this._noMTime = false;
+    constructor(extractAudio = false, noMTime = false) {
+        this._extractAudio = extractAudio;
+        this._noMTime = noMTime;
     }
 
     public get extractAudio(): boolean {
         return this._extractAudio;
     }
 
-    public set extractAudio(v: boolean) {
-        this._extractAudio = v;
+    public toggleExtractAudio() {
+        this._extractAudio = !this._extractAudio;
+        return this;
     }
 
     public get noMTime(): boolean {
         return this._noMTime;
     }
 
-    public set noMTime(v: boolean) {
-        this._noMTime = v;
+    public toggleNoMTime() {
+        this._noMTime = !this._noMTime;
+        return this;
     }
 
     public toString(): string {
@@ -37,13 +39,16 @@ export class CliArguments {
         return args.trim();
     }
 
-    public fromString(str: string): void {
-        if (str.includes('-x')) {
-            this._extractAudio = true;
-        }
+    public fromString(str: string): CliArguments {
+        if (str) {
+            if (str.includes('-x')) {
+                this._extractAudio = true;
+            }
 
-        if (str.includes('--no-mtime')) {
-            this._noMTime = true;
+            if (str.includes('--no-mtime')) {
+                this._noMTime = true;
+            }
         }
+        return this;
     }
 }

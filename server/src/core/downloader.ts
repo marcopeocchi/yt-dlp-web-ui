@@ -46,7 +46,6 @@ export async function download(socket: Socket, payload: IPayload) {
     const p = new Process(url, params, settings);
 
     p.start().then(downloader => {
-
         pool.add(p)
         let infoLock = true;
         let pid = downloader.getPid();
@@ -91,7 +90,7 @@ export async function download(socket: Socket, payload: IPayload) {
  * @param {Socket} socket current connection socket
  * @returns 
  */
-export async function retriveDownload(socket: Socket) {
+export async function retrieveDownload(socket: Socket) {
     // it's a cold restart: the server has just been started with pending
     // downloads, so fetch them from the database and resume.
     if (coldRestart) {
@@ -110,7 +109,9 @@ export async function retriveDownload(socket: Socket) {
 
     // it's an hot-reload the server it's running and the frontend ask for
     // the pending job: retrieve them from the "in-memory database" (ProcessPool)
-    log.info('dl', `Retrieving ${pool.size()} jobs from pool`)
+    const _poolSize = pool.size()
+    log.info('dl', `Retrieving ${_poolSize} jobs from pool`)
+    socket.emit('pending-jobs', _poolSize)
 
     const it = pool.iterator();
     const tempWorkQueue = new Array();
@@ -167,6 +168,13 @@ export function abortAllDownloads(socket: Socket) {
             socket.emit('progress', { status: 'Aborted' });
             log.info('dl', 'Aborting downloads');
         });
+}
+
+/**
+ * Get pool current size
+ */
+export function getQueueSize(): number {
+    return pool.size();
 }
 
 /**

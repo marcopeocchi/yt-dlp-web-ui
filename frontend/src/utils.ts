@@ -59,8 +59,9 @@ export function detectSpeed(str: string): number {
  */
 export const updateInStateMap = (k: number, v: any, target: Map<number, any>, callback: Function, remove: boolean = false) => {
     if (remove) {
-        target.delete(k)
-        callback(new Map(target))
+        const _target = target
+        _target.delete(k)
+        callback(new Map(_target))
         return;
     }
     callback(new Map(target.set(k, v)));

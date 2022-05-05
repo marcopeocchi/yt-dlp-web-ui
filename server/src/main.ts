@@ -2,8 +2,8 @@ import { logger, splash } from './utils/logger';
 import { join } from 'path';
 import { Server } from 'socket.io';
 import { ytdlpUpdater } from './utils/updater';
-import { download, abortDownload, retriveDownload, abortAllDownloads } from './core/downloader';
-import { retrieveAll, init } from './db/db';
+import { download, abortDownload, retrieveDownload, abortAllDownloads } from './core/downloader';
+import { init } from './db/db';
 import { getFreeDiskSpace } from './utils/procUtils';
 import Logger from './utils/BetterLogger';
 import Jean from './core/HTTPServer';
@@ -36,11 +36,8 @@ io.on('connection', socket => {
     socket.on('update-bin', () => {
         ytdlpUpdater(socket)
     })
-    socket.on('fetch-jobs', () => {
-        socket.emit('pending-jobs', retrieveAll())
-    })
     socket.on('retrieve-jobs', () => {
-        retriveDownload(socket)
+        retrieveDownload(socket)
     })
     socket.on('disk-space', () => {
         getFreeDiskSpace(socket)
