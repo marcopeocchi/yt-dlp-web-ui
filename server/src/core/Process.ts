@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import { join } from 'path';
 import { Readable } from 'stream';
-import { deleteDownloadByPID, insertDownload } from '../db/db';
 import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
 
@@ -53,15 +52,6 @@ class Process {
 
         log.info('proc', `Spawned a new process, pid: ${this.pid}`)
 
-        await insertDownload(
-            this.url,
-            this.info?.title,
-            this.info?.thumbnail,
-            null,
-            this.params.reduce((prev, next) => `${prev} ${next}`),
-            this.pid
-        );
-
         return this;
     }
 
@@ -104,9 +94,7 @@ class Process {
      */
     async kill() {
         spawn('kill', [String(this.pid)]).on('exit', () => {
-            deleteDownloadByPID(this.pid).then(() => {
-                log.info('db', `Deleted ${this.pid} because SIGKILL`)
-            })
+            log.info('db', `Deleted ${this.pid} because SIGKILL`)
         });
     }
 

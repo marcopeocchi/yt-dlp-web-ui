@@ -1,7 +1,6 @@
 import { spawn } from 'child_process';
 import { from, interval } from 'rxjs';
 import { throttle } from 'rxjs/operators';
-import { pruneDownloads } from '../db/db';
 import { killProcess } from '../utils/procUtils';
 import { Socket } from 'socket.io';
 import { IPayload } from '../interfaces/IPayload';
@@ -84,6 +83,7 @@ export async function download(socket: Socket, payload: IPayload) {
 }
 
 /**
+ * @deprecated
  * Retrieve all downloads.  
  * If the server has just been launched retrieve the ones saved to the database.  
  * If the server is running fetches them from the process pool.
@@ -95,7 +95,7 @@ export async function retrieveDownload(socket: Socket) {
     // downloads, so fetch them from the database and resume.
     if (coldRestart) {
         coldRestart = false;
-        let downloads = await pruneDownloads();
+        let downloads = [];
         // sanitize
         downloads = [... new Set(downloads.filter(el => el !== undefined))];
         log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
