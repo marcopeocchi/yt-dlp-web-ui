@@ -8,11 +8,15 @@ RUN apk update
 RUN apk add curl wget psmisc python3 ffmpeg
 COPY . .
 RUN chmod +x ./fetch-yt-dlp.sh
+# install pnpm
+RUN npm install -g pnpm
 # install node dependencies
-RUN npm install
-RUN npm run build-all
+RUN pnpm install
+RUN pnpm fetch
+RUN pnpm build
+RUN pnpm build-server
 # cleanup
-RUN npm remove parcel
+RUN pnpm remove parcel
 RUN rm -rf .parcel-cache
 # expose and run
 EXPOSE 3022

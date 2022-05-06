@@ -1,9 +1,19 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { ThemeProvider } from "@emotion/react";
-import { Badge, Box, Container, createTheme, CssBaseline, Divider, IconButton, List, ListItemIcon, ListItemText, Snackbar, styled, Toolbar, Typography } from "@mui/material"
+import {
+    Badge,
+    Box,
+    createTheme, CssBaseline,
+    Divider,
+    IconButton, List,
+    ListItemIcon, ListItemText,
+    Toolbar,
+    Typography,
+    styled,
+} from "@mui/material"
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { ChevronLeft, Dashboard, Menu, Settings as SettingsIcon } from "@mui/icons-material";
+import { ChevronLeft, Dashboard, Menu, Settings as SettingsIcon, SettingsEthernet, Storage } from "@mui/icons-material";
 import ListItemButton from '@mui/material/ListItemButton';
 import {
     BrowserRouter as Router,
@@ -15,8 +25,7 @@ import Home from "./Home";
 import Settings from "./Settings";
 import { io } from "socket.io-client";
 import { RootState, store } from './stores/store';
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { connected } from "./features/status/statusSlice";
+import { Provider, useSelector } from "react-redux";
 
 const theme = createTheme();
 
@@ -73,13 +82,22 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 function AppContent() {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [freeDiskSpace, setFreeDiskSpace] = useState('');
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
 
+    const settings = useSelector((state: RootState) => state.settings)
     const status = useSelector((state: RootState) => state.status)
-    const dispatch = useDispatch()
+
+    /* Get disk free space */
+    useEffect(() => {
+        socket.on('free-space', (res: string) => {
+            setFreeDiskSpace(res)
+        })
+    }, [])
 
     return (
         <ThemeProvider theme={theme}>
@@ -113,6 +131,26 @@ function AppContent() {
                             >
                                 yt-dlp WebUI
                             </Typography>
+                            {
+                                freeDiskSpace ?
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                    }}>
+                                        <Storage></Storage>
+                                        <span>&nbsp;{freeDiskSpace}&nbsp;</span>
+                                    </div>
+                                    : null
+                            }
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                            }}>
+                                <SettingsEthernet></SettingsEthernet>
+                                <span>&nbsp;{settings.serverAddr}</span>
+                            </div>
                             <IconButton color="inherit">
                                 <Badge badgeContent={0} color="secondary">
                                 </Badge>
