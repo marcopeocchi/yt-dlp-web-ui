@@ -1,6 +1,6 @@
-import http from 'http';
-import url from 'url';
-import fs, { open, close } from 'fs';
+import { createServer, Server } from 'http';
+import { parse as urlParse } from 'url';
+import { open, close, readFile, fstat } from 'fs';
 import { parse, join } from 'path';
 
 namespace server {
@@ -38,10 +38,10 @@ class Jean {
      * Create a static file server
      * @returns an instance of a standard NodeJS http.Server
      */
-    public createServer(): http.Server {
-        return http.createServer((req, res) => {
+    public createServer(): Server {
+        return createServer((req, res) => {
             // parse the current given url
-            const parsedUrl = url.parse(req.url, false)
+            const parsedUrl = urlParse(req.url, false)
             // extract the pathname and guard it with the working dir
             let pathname = join(this.workingDir, `.${parsedUrl.pathname}`);
             // extract the file extension
@@ -56,7 +56,7 @@ class Jean {
                     return;
                 }
                 // something's gone wrong it's not a file or a directory
-                fs.fstat(fd, (err, stat) => {
+                fstat(fd, (err, stat) => {
                     if (err) {
                         res.statusCode = 500;
                         res.end(err);
@@ -66,7 +66,7 @@ class Jean {
                         pathname = join(pathname, 'index.html')
                     }
                     // read the file
-                    fs.readFile(pathname, (err, data) => {
+                    readFile(pathname, (err, data) => {
                         if (err) {
                             res.statusCode = 500;
                             res.end(`Error reading the file: ${err}`);

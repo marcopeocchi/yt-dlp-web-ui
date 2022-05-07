@@ -1,7 +1,6 @@
-const https = require('https');
-const fs = require('fs');
-const path = require('path');
-const { Socket } = require('socket.io');
+import { get } from 'https';
+import { rmSync, createWriteStream, chmod } from 'fs';
+import { join } from 'path';
 
 // endpoint to github API
 const options = {
@@ -37,14 +36,14 @@ function buildDonwloadOptions(release) {
 async function update() {
     // ensure that the binary has been removed
     try {
-        fs.rmSync(path.join(__dirname, '..', 'core', 'yt-dlp'))
+        rmSync(join(__dirname, '..', 'core', 'yt-dlp'))
     }
     catch (e) {
         console.log('file not found!')
     }
     // body buffer
     let chunks = []
-    https.get(options, res => {
+    get(options, res => {
         // push the http packets chunks into the buffer
         res.on('data', chunk => {
             chunks.push(chunk)
@@ -65,16 +64,16 @@ async function update() {
  * @param {string} url yt-dlp GitHub release url
  */
 function downloadBinary(url) {
-    https.get(url, res => {
+    get(url, res => {
         // if it is a redirect follow the url
         if (res.statusCode === 301 || res.statusCode === 302) {
             return downloadBinary(res.headers.location)
         }
-        let bin = fs.createWriteStream(path.join(__dirname, '..', 'core', 'yt-dlp'))
+        let bin = createWriteStream(join(__dirname, '..', 'core', 'yt-dlp'))
         res.pipe(bin)
         // once the connection has ended make the file executable
         res.on('end', () => {
-            fs.chmod(path.join(__dirname, '..', 'core', 'yt-dlp'), 0o775, err => {
+            chmod(join(__dirname, '..', 'core', 'yt-dlp'), 0o775, err => {
                 err ? console.error('failed updating!') : console.log('done!')
             })
         })
@@ -84,12 +83,8 @@ function downloadBinary(url) {
  * Invoke the yt-dlp update procedure
  * @param {Socket} socket the current connection socket
  */
-function updateFromFrontend(socket) {
+export function ytdlpUpdater(socket) {
     update().then(() => {
         socket.emit('updated')
     })
-}
-
-module.exports = {
-    ytdlpUpdater: updateFromFrontend
 }
