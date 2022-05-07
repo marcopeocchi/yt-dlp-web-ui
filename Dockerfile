@@ -10,9 +10,9 @@ COPY . .
 RUN chmod +x ./fetch-yt-dlp.sh
 # install node dependencies
 RUN npm install
-RUN npm fetch
-RUN npm build
-RUN npm build-server
+RUN npm run fetch
+RUN npm run build
+RUN npm run build-server
 # cleanup
 RUN npm remove parcel
 RUN rm -rf .parcel-cache
