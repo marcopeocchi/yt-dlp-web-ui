@@ -64,9 +64,11 @@ export default function Home({ socket }: Props) {
                 setShowBackdrop(false)
             }
             if (!status.downloading) {
+                setShowBackdrop(false)
                 dispatch(downloading())
             }
             if (data.status === 'Done!' || data.status === 'Aborted') {
+                setShowBackdrop(false)
                 updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
                 updateInStateMap(data.pid, 0, progressMap, setProgressMap);
                 socket.emit('disk-space')

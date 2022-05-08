@@ -25,7 +25,11 @@ Refactoring and JSDoc.
 ```
 
 
-<img src="https://i.ibb.co/YyCwS0F/Unsaved-Image-1.png">
+<img src="https://i.imgur.com/gRNYKjI.png">
+
+## Now with dark mode
+
+<img src="https://i.imgur.com/g52mjdD.png">
 
 ## Settings
 
@@ -35,8 +39,9 @@ The avaible settings are currently only:
 -   Extract audio
 -   Switch language
 
-<img src="https://i.ibb.co/VMBhhFX/Unsaved-Image-2.png">
-<img src="https://i.ibb.co/cXJwDp4/Unsaved-Image-3.png">
+<img src="https://i.imgur.com/2zPs8FH.png">
+<img src="https://i.imgur.com/b4Jhkfk.png">
+<img src="https://i.imgur.com/knjLa8c.png">
 
 Future releases will have:
 -   ~~Multi download~~ *done*

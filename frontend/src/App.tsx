@@ -31,8 +31,7 @@ import Home from "./Home";
 import Settings from "./Settings";
 import { io } from "socket.io-client";
 import { RootState, store } from './stores/store';
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { setTheme } from "./features/settings/settingsSlice";
+import { Provider, useSelector } from "react-redux";
 
 
 const drawerWidth: number = 240;
