@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { ThemeProvider } from "@emotion/react";
 import {
     Badge,
@@ -13,7 +13,13 @@ import {
 } from "@mui/material"
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { ChevronLeft, Dashboard, Menu, Settings as SettingsIcon, SettingsEthernet, Storage } from "@mui/icons-material";
+import {
+    ChevronLeft,
+    Dashboard,
+    Menu, Settings as SettingsIcon,
+    SettingsEthernet,
+    Storage,
+} from "@mui/icons-material";
 import ListItemButton from '@mui/material/ListItemButton';
 import {
     BrowserRouter as Router,
@@ -25,9 +31,9 @@ import Home from "./Home";
 import Settings from "./Settings";
 import { io } from "socket.io-client";
 import { RootState, store } from './stores/store';
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { setTheme } from "./features/settings/settingsSlice";
 
-const theme = createTheme();
 
 const drawerWidth: number = 240;
 
@@ -85,12 +91,22 @@ function AppContent() {
     const [open, setOpen] = useState(false);
     const [freeDiskSpace, setFreeDiskSpace] = useState('');
 
+    const settings = useSelector((state: RootState) => state.settings)
+    const status = useSelector((state: RootState) => state.status)
+
+    const mode = settings.theme
+
+    const theme = useMemo(() =>
+        createTheme({
+            palette: {
+                mode,
+            },
+        }), [settings.theme]
+    );
+
     const toggleDrawer = () => {
         setOpen(!open);
     };
-
-    const settings = useSelector((state: RootState) => state.settings)
-    const status = useSelector((state: RootState) => state.status)
 
     /* Get disk free space */
     useEffect(() => {
@@ -175,7 +191,7 @@ function AppContent() {
                             <Link to={'/'} style={
                                 {
                                     textDecoration: 'none',
-                                    color: '#222222'
+                                    color: mode === 'dark' ? '#ffffff' : '#000000DE'
                                 }
                             }>
                                 <ListItemButton disabled={status.downloading}>
@@ -188,7 +204,7 @@ function AppContent() {
                             <Link to={'/settings'} style={
                                 {
                                     textDecoration: 'none',
-                                    color: '#222222'
+                                    color: mode === 'dark' ? '#ffffff' : '#000000DE'
                                 }
                             }>
                                 <ListItemButton disabled={status.downloading}>
@@ -203,10 +219,6 @@ function AppContent() {
                     <Box
                         component="main"
                         sx={{
-                            backgroundColor: (theme) =>
-                                theme.palette.mode === 'light'
-                                    ? theme.palette.grey[100]
-                                    : theme.palette.grey[900],
                             flexGrow: 1,
                             height: '100vh',
                             overflow: 'auto',
