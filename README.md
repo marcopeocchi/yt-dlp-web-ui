@@ -1,8 +1,19 @@
 # yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp.  
-Created for the only purpose of *consuming* videos from my server/nas.  
+Created for the only purpose of *fetching* videos from my server/nas. 
+
+Intended to be used with docker but standalone is fine too. 😎👍
+
+Developed to be as lightweight as possible (because my server is basically an intel atom sbc). 
+
+The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc interface).
+
 I will eventually make this better as soon as I can. Not in the immediate.  
+
+**Format selection is in progress**
+
+---
 
 Changelog:
 ```
@@ -51,24 +62,25 @@ Future releases will have:
 ## Troubleshooting
 -   **It says that it isn't connected/ip in the footer is not defined.**
     - You must set the server ip address in the settings section (gear icon).
--   **The download  doens't start.**
+-   **The download  doesn't start.**
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
 -   **Background jobs are not retrieved.**
     -   As before forking yt-dlp isn't fast so resuming _n_ background jobs takes _n_*_time to exec yt-dlp_ Just have patience.
 
 ## Docker installation
-```
+```shell 
 docker pull marcobaobao/yt-dlp-webui:latest
+# or alternatively docker pull ghcr.io/marcobaobao/yt-dlp-web-ui:master
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads marcobaobao/yt-dlp-webui
 ```
 or  
-```
+```shell
 docker build -t yt-dlp-webui .
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-webui
 ```
 
 ## Manual installation
-```
+```shell
 # the dependencies are: python3, ffmpeg, nodejs, psmisc.
 
 npm i
@@ -91,8 +103,8 @@ node dist/main.js
     - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
 -   **Am I forced to run it on port 3022?**
     -   Well, yes (until now).
--   **Why is it so slow to start a download**
-    - I genuinely don't know. I know that yt-dlp is slow starting up even on my M1 Mac, so....
+-   **Why is it so slow to start a download?**
+    - I genuinely don't know. I know that standalone yt-dlp is slow to start up even on my M1 Mac, so....
 
 ## Todo list
 - ~~retrieve background tasks~~
