@@ -3,6 +3,7 @@ import { join } from 'path';
 import { Readable } from 'stream';
 import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
+import { availableParams } from '../utils/params';
 
 const log = new Logger();
 
@@ -41,9 +42,11 @@ class Process {
     async start(callback?: Function): Promise<this> {
         await this.internalGetInfo();
 
+        const sanitizedParams = this.params.filter((param: string) => availableParams.includes(param));
+
         const ytldp = spawn(this.exePath,
             ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
-                .concat(this.params)
+                .concat(sanitizedParams)
                 .concat([this.url])
         );
 
@@ -119,9 +122,9 @@ class Process {
 
     /**
      * download info getter function
-     * @returns {object}
+     * @returns {*}
      */
-    getInfo(): object {
+    getInfo(): any {
         return this.info
     }
 }
