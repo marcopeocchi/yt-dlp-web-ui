@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { StackableResult } from "./components/StackableResult";
 import { connected, disconnected, downloading, finished } from "./features/status/statusSlice";
-import { IDLInfo, IDLInfoBase, IMessage } from "./interfaces";
+import { IDLInfo, IDLInfoBase, IDownloadInfo, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
 import { updateInStateMap, } from "./utils";
 
@@ -50,6 +50,14 @@ export default function Home({ socket }: Props) {
 
     /* Handle download information sent by server */
     useEffect(() => {
+        socket.on('available-formats', (data: IDownloadInfo) => {
+            setShowBackdrop(false)
+            console.log(data)
+        })
+    }, [])
+
+    /* Handle download information sent by server */
+    useEffect(() => {
         socket.on('info', (data: IDLInfo) => {
             setShowBackdrop(false)
             dispatch(downloading())
@@ -60,13 +68,6 @@ export default function Home({ socket }: Props) {
     /* Handle per-download progress */
     useEffect(() => {
         socket.on('progress', (data: IMessage) => {
-            if (showBackdrop) {
-                setShowBackdrop(false)
-            }
-            if (!status.downloading) {
-                setShowBackdrop(false)
-                dispatch(downloading())
-            }
             if (data.status === 'Done!' || data.status === 'Aborted') {
                 setShowBackdrop(false)
                 updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
@@ -147,11 +148,21 @@ export default function Home({ socket }: Props) {
                         />
                         <Grid container spacing={1} pt={2}>
                             <Grid item>
-                                <Button variant="contained" onClick={() => sendUrl()} disabled={false}>{settings.i18n.t('startButton')}</Button>
+                                <Button
+                                    variant="contained"
+                                    disabled={url === ''}
+                                    onClick={() => sendUrl()}
+                                >
+                                    {settings.i18n.t('startButton')}
+                                </Button>
                             </Grid>
                             <Grid item>
-                                <Button variant="contained" onClick={() => abort()}>{settings.i18n.t('abortAllButton')}</Button>
-
+                                <Button
+                                    variant="contained"
+                                    onClick={() => abort()}
+                                >
+                                    {settings.i18n.t('abortAllButton')}
+                                </Button>
                             </Grid>
                         </Grid>
                     </Paper>

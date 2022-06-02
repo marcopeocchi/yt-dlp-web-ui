@@ -23,6 +23,18 @@ catch (e) {
     new Promise(resolve => setTimeout(resolve, 500))
         .then(() => log.warn('dl', 'settings.json not found, ignore if using Docker'));
 }
+/**
+ * Get download info such as thumbnail, title, resolution and list all formats
+ * @param socket 
+ * @param url 
+ */
+export async function getFormatsAndInfo(socket: Socket, url: string) {
+    let p = new Process(url, [], settings);
+    const formats = await p.getInfo();
+    console.log(formats)
+    socket.emit('available-formats', formats)
+    p = null;
+}
 
 /**
  * Invoke a new download.  
@@ -42,27 +54,21 @@ export async function download(socket: Socket, payload: IPayload) {
         payload.params.split(' ') :
         payload.params;
 
-    const p = new Process(url, params, settings);
+    let p = new Process(url, params, settings);
 
     p.start().then(downloader => {
         pool.add(p)
-        let infoLock = true;
         let pid = downloader.getPid();
+
+        p.getInfo().then(info => {
+            socket.emit('info', { pid: pid, info: info });
+        });
 
         from(downloader.getStdout())              // stdout as observable
             .pipe(throttle(() => interval(500)))  // discard events closer than 500ms
             .subscribe({
                 next: (stdout) => {
-                    if (infoLock) {
-                        if (downloader.getInfo() === null) {
-                            return;
-                        }
-                        socket.emit('info', {
-                            pid: pid, info: downloader.getInfo()
-                        });
-                        infoLock = false;
-                    }
-                    socket.emit('progress', formatter(String(stdout), pid)) // finally, emit
+                    socket.emit('progress', formatter(String(stdout), pid))
                 },
                 complete: () => {
                     downloader.kill().then(() => {
@@ -79,11 +85,10 @@ export async function download(socket: Socket, payload: IPayload) {
                     });
                 }
             });
-    })
+    });
 }
 
 /**
- * @deprecated
  * Retrieve all downloads.  
  * If the server has just been launched retrieve the ones saved to the database.  
  * If the server is running fetches them from the process pool.

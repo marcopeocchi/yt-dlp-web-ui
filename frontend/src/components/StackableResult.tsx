@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { EightK, FourK, Hd, Sd } from "@mui/icons-material";
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, Grid, LinearProgress, Skeleton, Stack, Typography } from "@mui/material";
 import { IMessage } from "../interfaces";
@@ -14,7 +13,6 @@ type Props = {
 }
 
 export function StackableResult({ formattedLog, title, thumbnail, resolution, progress, stopCallback }: Props) {
-
     const guessResolution = (xByY: string): JSX.Element => {
         if (!xByY) return null;
         if (xByY.includes('4320')) return (<EightK color="primary" />);

@@ -39,9 +39,7 @@ class Process {
      * @param callback not yet implemented
      * @returns the process instance
      */
-    async start(callback?: Function): Promise<this> {
-        await this.internalGetInfo();
-
+    public async start(callback?: Function): Promise<this> {
         const sanitizedParams = this.params.filter((param: string) => availableParams.includes(param));
 
         const ytldp = spawn(this.exePath,
@@ -59,37 +57,50 @@ class Process {
     }
 
     /**
-     * @private
      * function used internally by the download process to fetch information, usually thumbnail and title
      * @returns Promise to the lock
      */
-    private async internalGetInfo() {
-        this.lock = true;
+    public getInfo(): Promise<IDownloadInfo> {
         let stdoutChunks = [];
-        const ytdlpInfo = spawn(this.exePath, ['-s', '-j', this.url]);
+        const ytdlpInfo = spawn(this.exePath, ['-j', this.url]);
 
         ytdlpInfo.stdout.on('data', (data) => {
             stdoutChunks.push(data);
         });
 
-        ytdlpInfo.on('exit', () => {
-            try {
-                const buffer = Buffer.concat(stdoutChunks);
-                const json = JSON.parse(buffer.toString());
-                this.info = json;
-                this.lock = false;
+        return new Promise((resolve, reject) => {
+            ytdlpInfo.on('exit', () => {
+                try {
+                    const buffer = Buffer.concat(stdoutChunks);
+                    const json = JSON.parse(buffer.toString());
+                    this.info = json;
+                    this.lock = false;
+                    resolve({
+                        formats: json.formats.map((format: IDownloadInfoSection) => {
+                            return {
+                                format_id: format.format_id ?? '',
+                                format_note: format.format_note ?? '',
+                                fps: format.fps ?? '',
+                                resolution: format.resolution ?? '',
+                                vcodec: format.vcodec ?? '',
+                            }
+                        }),
+                        best: {
+                            format_id: json.format_id ?? '',
+                            format_note: json.format_note ?? '',
+                            fps: json.fps ?? '',
+                            resolution: json.resolution ?? '',
+                            vcodec: json.vcodec ?? '',
+                        },
+                        thumbnail: json.thumbnail,
+                        title: json.title,
+                    });
 
-            } catch (e) {
-                this.info = {
-                    title: "",
-                    thumbnail: "",
-                };
-            }
-        });
-
-        if (!this.lock) {
-            return true;
-        }
+                } catch (e) {
+                    reject('failed fetching formats, downloading best available');
+                }
+            });
+        })
     }
 
     /**
@@ -118,14 +129,6 @@ class Process {
      */
     getStdout(): Readable {
         return this.stdout
-    }
-
-    /**
-     * download info getter function
-     * @returns {*}
-     */
-    getInfo(): any {
-        return this.info
     }
 }
 

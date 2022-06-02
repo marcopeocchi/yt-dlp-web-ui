@@ -16,6 +16,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
     ChevronLeft,
     Dashboard,
+    Download,
     Menu, Settings as SettingsIcon,
     SettingsEthernet,
     Storage,
@@ -32,6 +33,7 @@ import Settings from "./Settings";
 import { io } from "socket.io-client";
 import { RootState, store } from './stores/store';
 import { Provider, useSelector } from "react-redux";
+import ArchivedDownloads from "./Archived";
 
 
 const drawerWidth: number = 240;
@@ -166,10 +168,6 @@ function AppContent() {
                                 <SettingsEthernet></SettingsEthernet>
                                 <span>&nbsp;{settings.serverAddr}</span>
                             </div>
-                            <IconButton color="inherit">
-                                <Badge badgeContent={0} color="secondary">
-                                </Badge>
-                            </IconButton>
                         </Toolbar>
                     </AppBar>
                     <Drawer variant="permanent" open={open}>
@@ -200,6 +198,20 @@ function AppContent() {
                                     <ListItemText primary="Home" />
                                 </ListItemButton>
                             </Link>
+                            {/* Next release: list downloaded files */}
+                            {/* <Link to={'/downloaded'} style={
+                                {
+                                    textDecoration: 'none',
+                                    color: mode === 'dark' ? '#ffffff' : '#000000DE'
+                                }
+                            }>
+                                <ListItemButton disabled={status.downloading}>
+                                    <ListItemIcon>
+                                        <Download />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Downloaded" />
+                                </ListItemButton>
+                            </Link> */}
                             <Link to={'/settings'} style={
                                 {
                                     textDecoration: 'none',
@@ -227,6 +239,7 @@ function AppContent() {
                         <Routes>
                             <Route path="/" element={<Home socket={socket}></Home>}></Route>
                             <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
+                            <Route path="/downloaded" element={<ArchivedDownloads></ArchivedDownloads>}></Route>
                         </Routes>
                     </Box>
                 </Box>
