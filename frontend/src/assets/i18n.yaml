@@ -16,6 +16,7 @@ languages:
     bgReminder: Once you close this page the download will continue in the background.
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
+    formatSelectionEnabler: Enable video/audio formats selection
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato

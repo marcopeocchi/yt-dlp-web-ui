@@ -11,4 +11,5 @@ interface IDownloadInfoSection {
     fps: number,
     resolution: string,
     vcodec: string,
+    acodec: string,
 }

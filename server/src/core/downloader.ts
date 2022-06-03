@@ -31,7 +31,6 @@ catch (e) {
 export async function getFormatsAndInfo(socket: Socket, url: string) {
     let p = new Process(url, [], settings);
     const formats = await p.getInfo();
-    console.log(formats)
     socket.emit('available-formats', formats)
     p = null;
 }
@@ -102,7 +101,7 @@ export async function retrieveDownload(socket: Socket) {
         coldRestart = false;
         let downloads = [];
         // sanitize
-        downloads = [... new Set(downloads.filter(el => el !== undefined))];
+        downloads = [...new Set(downloads.filter(el => el !== undefined))];
         log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
         for (const entry of downloads) {
             if (entry) {

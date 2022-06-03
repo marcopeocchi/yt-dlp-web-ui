@@ -33,6 +33,8 @@ Refactoring and JSDoc.
 04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature
 
 05/05/22: Material UI update
+
+03/06/22: The most requested feature finally implemented: Format Selection!!
 ```
 
 
@@ -49,15 +51,30 @@ The avaible settings are currently only:
 -   Switch theme
 -   Extract audio
 -   Switch language
+-   Optional format selection
 
 <img src="https://i.imgur.com/2zPs8FH.png">
 <img src="https://i.imgur.com/b4Jhkfk.png">
 <img src="https://i.imgur.com/knjLa8c.png">
 
+## Format selection
+
+![](https://i.ibb.co/fNxDHJd/localhost-1234-2.png)
+
+This feature is disabled by default as this WebUI/Wrapper/Software/Bunch of Code is intended to be used to retrieve the best quality automatically.
+
+To enable it go to the settings page:
+
+![](https://i.ibb.co/YdXRwKc/localhost-1234-3.png)
+
+And set it :D
+
 Future releases will have:
 -   ~~Multi download~~ *done*
 -   ~~Exctract audio~~ *done*
--   Format selection *in-progess*
+-   ~~Format selection~~ *done*
+-   Download archive
+-   ARM Build
 
 ## Troubleshooting
 -   **It says that it isn't connected/ip in the footer is not defined.**
@@ -105,8 +122,3 @@ node dist/main.js
     -   Well, yes (until now).
 -   **Why is it so slow to start a download?**
     - I genuinely don't know. I know that standalone yt-dlp is slow to start up even on my M1 Mac, so....
-
-## Todo list
-- ~~retrieve background tasks~~
-- format selection
-- better ui/ux

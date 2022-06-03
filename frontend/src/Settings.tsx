@@ -19,17 +19,15 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Socket } from "socket.io-client";
-import { LanguageUnion, setCliArgs, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
+import { io } from "socket.io-client";
+import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
-type Props = {
-    socket: Socket
-}
+const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
 
-export default function Settings({ socket }: Props) {
+export default function Settings() {
     const settings = useSelector((state: RootState) => state.settings)
     const status = useSelector((state: RootState) => state.status)
     const dispatch = useDispatch()
@@ -154,6 +152,15 @@ export default function Settings({ socket }: Props) {
                                     />
                                 }
                                 label={settings.i18n.t('extractAudioCheckbox')}
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        defaultChecked={settings.formatSelection}
+                                        onChange={() => dispatch(setFormatSelection(!settings.formatSelection))}
+                                    />
+                                }
+                                label={settings.i18n.t('formatSelectionEnabler')}
                             />
                             <Grid>
                                 <Stack direction="row">

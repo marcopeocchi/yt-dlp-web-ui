@@ -237,8 +237,8 @@ function AppContent() {
                     >
                         <Toolbar />
                         <Routes>
-                            <Route path="/" element={<Home socket={socket}></Home>}></Route>
-                            <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
+                            <Route path="/" element={<Home></Home>}></Route>
+                            <Route path="/settings" element={<Settings></Settings>}></Route>
                             <Route path="/downloaded" element={<ArchivedDownloads></ArchivedDownloads>}></Route>
                         </Routes>
                     </Box>

@@ -10,7 +10,8 @@ export interface SettingsState {
     language: LanguageUnion,
     theme: ThemeUnion,
     cliArgs: CliArguments,
-    i18n: I18nBuilder
+    i18n: I18nBuilder,
+    formatSelection: boolean
 }
 
 const initialState: SettingsState = {
@@ -19,6 +20,7 @@ const initialState: SettingsState = {
     theme: (localStorage.getItem("theme") || "light") as ThemeUnion,
     cliArgs: localStorage.getItem("cli-args") ? new CliArguments().fromString(localStorage.getItem("cli-args")) : new CliArguments(false, true),
     i18n: new I18nBuilder((localStorage.getItem("language") || "english")),
+    formatSelection: localStorage.getItem("format-selection") === "true",
 }
 
 export const settingsSlice = createSlice({
@@ -42,9 +44,13 @@ export const settingsSlice = createSlice({
             state.theme = action.payload
             localStorage.setItem("theme", action.payload)
         },
+        setFormatSelection: (state, action: PayloadAction<boolean>) => {
+            state.formatSelection = action.payload
+            localStorage.setItem("format-selection", action.payload.toString())
+        },
     }
 })
 
-export const { setLanguage, setCliArgs, setTheme, setServerAddr } = settingsSlice.actions
+export const { setLanguage, setCliArgs, setTheme, setServerAddr, setFormatSelection } = settingsSlice.actions
 
 export default settingsSlice.reducer

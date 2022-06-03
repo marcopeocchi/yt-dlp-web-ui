@@ -67,6 +67,8 @@ export const updateInStateMap = (k: number, v: any, target: Map<number, any>, ca
     callback(new Map(target.set(k, v)));
 }
 
+export function updateInStateArray<T>(v: T, target: Array<T>, callback: Function) { }
+
 /**
  * Pre like function
  * @param data 
@@ -74,4 +76,15 @@ export const updateInStateMap = (k: number, v: any, target: Map<number, any>, ca
  */
 export function buildMessage(data: IMessage) {
     return `operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`;
+}
+
+
+export function toFormatArgs(codes: string[]): string {
+    if (codes.length > 1) {
+        return codes.reduce((v, a) => ` -f ${v}+${a}`)
+    }
+    if (codes.length === 1) {
+        return ` -f ${codes[0]}`;
+    }
+    return '';
 }

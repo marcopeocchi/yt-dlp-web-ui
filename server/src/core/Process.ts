@@ -83,14 +83,16 @@ class Process {
                                 fps: format.fps ?? '',
                                 resolution: format.resolution ?? '',
                                 vcodec: format.vcodec ?? '',
+                                acodec: format.acodec ?? '',
                             }
-                        }),
+                        }).filter((format: IDownloadInfoSection) => format.format_note !== 'storyboard'),
                         best: {
                             format_id: json.format_id ?? '',
                             format_note: json.format_note ?? '',
                             fps: json.fps ?? '',
                             resolution: json.resolution ?? '',
                             vcodec: json.vcodec ?? '',
+                            acodec: json.acodec ?? '',
                         },
                         thumbnail: json.thumbnail,
                         title: json.title,

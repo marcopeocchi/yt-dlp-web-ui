@@ -11,4 +11,4 @@ src/server/core/yt-dlp
 *.ytdl
 *.part
 *.db
-*.DS_Store
+.DS_Store

@@ -2,7 +2,7 @@ import { stat, createReadStream } from 'fs';
 import { lookup } from 'mime-types';
 
 export function streamer(ctx: any, next: any) {
-    const filepath = '/Users/marco/dev/homebrew/yt-dlp-web-ui/downloads/AleXa (알렉사) – Voting Open in American Song Contest Grand Final!.webm'
+    const filepath = ''
     stat(filepath, (err, stat) => {
         if (err) {
             ctx.response.status = 404;
