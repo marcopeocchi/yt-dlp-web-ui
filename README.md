@@ -59,13 +59,13 @@ The avaible settings are currently only:
 
 ## Format selection
 
-![](https://i.ibb.co/fNxDHJd/localhost-1234-2.png)
+![fs1](https://i.ibb.co/fNxDHJd/localhost-1234-2.png)
 
 This feature is disabled by default as this WebUI/Wrapper/Software/Bunch of Code is intended to be used to retrieve the best quality automatically.
 
 To enable it go to the settings page:
 
-![](https://i.ibb.co/YdXRwKc/localhost-1234-3.png)
+![fs2](https://i.ibb.co/YdXRwKc/localhost-1234-3.png)
 
 And set it :D
 
