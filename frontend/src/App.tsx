@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { ThemeProvider } from "@emotion/react";
 import {
-    Badge,
     Box,
     createTheme, CssBaseline,
     Divider,
@@ -16,7 +15,7 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import {
     ChevronLeft,
     Dashboard,
-    Download,
+    // Download,
     Menu, Settings as SettingsIcon,
     SettingsEthernet,
     Storage,
@@ -34,7 +33,6 @@ import { io } from "socket.io-client";
 import { RootState, store } from './stores/store';
 import { Provider, useSelector } from "react-redux";
 import ArchivedDownloads from "./Archived";
-
 
 const drawerWidth: number = 240;
 
@@ -237,8 +235,8 @@ function AppContent() {
                     >
                         <Toolbar />
                         <Routes>
-                            <Route path="/" element={<Home></Home>}></Route>
-                            <Route path="/settings" element={<Settings></Settings>}></Route>
+                            <Route path="/" element={<Home socket={socket}></Home>}></Route>
+                            <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
                             <Route path="/downloaded" element={<ArchivedDownloads></ArchivedDownloads>}></Route>
                         </Routes>
                     </Box>

@@ -33,6 +33,7 @@ languages:
     bgReminder: Chiusa questa UI il download continuerà in background.
     toastConnected: 'Connesso a '
     toastUpdated: yt-dlp aggiornato con successo!
+    formatSelectionEnabler: Abilita la selezione dei formati audio/video
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -49,6 +50,7 @@ languages:
     bgReminder: 关闭页面后，下载会继续在后台运行。
     toastConnected: '已连接到 '
     toastUpdated: 已更新 yt-dlp 可执行文件！
+    formatSelectionEnabler: Enable video/audio formats selection
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -65,6 +67,7 @@ languages:
     bgReminder: Once you close this page the download will continue in the background.
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
+    formatSelectionEnabler: Enable video/audio formats selection
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -81,6 +84,7 @@ languages:
     bgReminder: Once you close this page the download will continue in the background.
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
+    formatSelectionEnabler: Enable video/audio formats selection
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -97,3 +101,4 @@ languages:
     bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다
     toastConnected: '다음으로 연결됨 '
     toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
+    formatSelectionEnabler: Enable video/audio formats selection

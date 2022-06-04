@@ -19,15 +19,17 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
-const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
+type Props = {
+    socket: Socket
+}
 
-export default function Settings() {
+export default function Settings({ socket }: Props) {
     const settings = useSelector((state: RootState) => state.settings)
     const status = useSelector((state: RootState) => state.status)
     const dispatch = useDispatch()

@@ -8,9 +8,11 @@ import { IDLInfo, IDLInfoBase, IDownloadInfo, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
 import { toFormatArgs, updateInStateMap, } from "./utils";
 
-let socket: Socket;
+type Props = {
+    socket: Socket
+}
 
-export default function Home() {
+export default function Home({ socket }: Props) {
     // redux state
     const settings = useSelector((state: RootState) => state.settings)
     const status = useSelector((state: RootState) => state.status)
@@ -30,26 +32,15 @@ export default function Home() {
     const [showBackdrop, setShowBackdrop] = useState(false);
 
     /* -------------------- Effects -------------------- */
-    useEffect(() => {
-        socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`);
-        return () => {
-            socket.disconnect()
-        };
-    }, [])
-
     /* WebSocket connect event handler*/
     useEffect(() => {
         socket.on('connect', () => {
-            dispatch(connected());
+            dispatch(connected())
             socket.emit('fetch-jobs')
             socket.emit('disk-space')
-            socket.emit('retrieve-jobs');
-        })
-        return () => {
-            socket.disconnect()
-        }
+            socket.emit('retrieve-jobs')
+        });
     }, [])
-
 
     /* Ask server for pending jobs / background jobs */
     useEffect(() => {
@@ -62,7 +53,6 @@ export default function Home() {
     useEffect(() => {
         socket.on('available-formats', (data: IDownloadInfo) => {
             setShowBackdrop(false)
-            console.log(data)
             setDownloadFormats(data);
         })
     }, [])

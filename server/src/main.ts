@@ -51,7 +51,7 @@ io.on('connection', socket => {
         download(socket, args)
     })
     socket.on('send-url-format-selection', (args) => {
-        logger('ws', args?.url)
+        logger('ws', `Formats ${args?.url}`)
         if (args.url) getFormatsAndInfo(socket, args?.url)
     })
     socket.on('abort', (args) => {
