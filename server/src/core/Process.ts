@@ -2,8 +2,8 @@ import { spawn } from 'child_process';
 import { join } from 'path';
 import { Readable } from 'stream';
 import { ISettings } from '../interfaces/ISettings';
-import Logger from '../utils/BetterLogger';
 import { availableParams } from '../utils/params';
+import Logger from '../utils/BetterLogger';
 
 const log = new Logger();
 
@@ -45,6 +45,7 @@ class Process {
         const ytldp = spawn(this.exePath,
             ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
                 .concat(sanitizedParams)
+                .concat((this.settings?.cliArgs ?? []).map(arg => arg.split(' ')).flat())
                 .concat([this.url])
         );
 

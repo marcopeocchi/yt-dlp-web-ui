@@ -17,7 +17,7 @@ const log = new Logger();
 const pool = new ProcessPool();
 
 try {
-    settings = require('../settings.json');
+    settings = require('../../settings.json');
 }
 catch (e) {
     new Promise(resolve => setTimeout(resolve, 500))

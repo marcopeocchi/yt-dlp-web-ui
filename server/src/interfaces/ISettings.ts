@@ -1,3 +1,4 @@
 export interface ISettings {
-    download_path: string
+    download_path: string,
+    cliArgs?: string[],
 }
