@@ -31,16 +31,14 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          username: ${{secrets.DOCKER_HUB_USERNAME}}
+          password: ${{secrets.DOCKER_HUB_PASSWORD}}
       - name: Docker meta
-        id: yt-dlp-web-ui # you'll use this in the next step
+        id: yt-dlp-web-ui 
         uses: docker/metadata-action@v3
         with:
-          # list of Docker images to use as base name for tags
           images: |
-            <specify the image name>
-          # Docker tags based on the following events/attributes
+            yt-dlp-web-ui 
           tags: |
             type=schedule
             type=ref,event=branch
