@@ -89,7 +89,7 @@ Future releases will have:
 ## Docker installation
 ```shell 
 docker pull marcobaobao/yt-dlp-webui:latest #x86 only
-# or alternatively for ARM and x86 devices docker pull ghcr.io/marcobaobao/yt-dlp-web-ui:master
+# or alternatively for ARM and x86 devices docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads marcobaobao/yt-dlp-webui
 ```
 or  
