@@ -95,7 +95,7 @@ export default function Settings({ socket }: Props) {
                         </Typography>
                         <FormGroup>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} md={10}>
+                                <Grid item xs={12} md={12}>
                                     <TextField
                                         fullWidth
                                         label={settings.i18n.t('serverAddressTitle')}
@@ -108,7 +108,7 @@ export default function Settings({ socket }: Props) {
                                         sx={{ mb: 2 }}
                                     />
                                 </Grid>
-                                <Grid item xs={12} md={2}>
+                                {/* <Grid item xs={12} md={2}>
                                     <TextField
                                         fullWidth
                                         label={settings.i18n.t('serverAddressTitle')}
@@ -117,7 +117,7 @@ export default function Settings({ socket }: Props) {
                                         error={invalidIP}
                                         sx={{ mb: 2 }}
                                     />
-                                </Grid>
+                                </Grid> */}
                             </Grid>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={6}>

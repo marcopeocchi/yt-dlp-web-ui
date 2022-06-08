@@ -35,6 +35,8 @@ Refactoring and JSDoc.
 05/05/22: Material UI update
 
 03/06/22: The most requested feature finally implemented: Format Selection!!
+
+08/06/22: ARM builds
 ```
 
 
@@ -74,7 +76,7 @@ Future releases will have:
 -   ~~Exctract audio~~ *done*
 -   ~~Format selection~~ *done*
 -   Download archive
--   ARM Build
+-   ~~ARM Build~~ *done available through ghcr.io*
 
 ## Troubleshooting
 -   **It says that it isn't connected/ip in the footer is not defined.**
@@ -86,8 +88,8 @@ Future releases will have:
 
 ## Docker installation
 ```shell 
-docker pull marcobaobao/yt-dlp-webui:latest
-# or alternatively docker pull ghcr.io/marcobaobao/yt-dlp-web-ui:master
+docker pull marcobaobao/yt-dlp-webui:latest #x86 only
+# or alternatively for ARM and x86 devices docker pull ghcr.io/marcobaobao/yt-dlp-web-ui:master
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads marcobaobao/yt-dlp-webui
 ```
 or  
@@ -113,8 +115,10 @@ node dist/main.js
 
 ## FAQ
 -   **Will it availabe for Raspberry Pi/ generic ARM devices?**
-    - Yes, absolutely a multi-arch docker image is planned to be released.  
-      Alternatively use the **non-docker / Manual** installation method.  
+    - Yes, it's currently available through ghcr.io
+      ```
+      docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+      ```
       If you plan to use it on a Raspberry Pi ensure to have fast and durable storage.
 -   **Why the docker image is so heavy?**
     - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
