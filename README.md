@@ -9,10 +9,6 @@ Developed to be as lightweight as possible (because my server is basically an in
 
 The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc interface).
 
-I will eventually make this better as soon as I can. Not in the immediate.  
-
-**Format selection is in progress**
-
 ---
 
 Changelog:
