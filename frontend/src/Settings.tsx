@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
@@ -94,16 +94,31 @@ export default function Settings({ socket }: Props) {
                             {settings.i18n.t('settingsAnchor')}
                         </Typography>
                         <FormGroup>
-                            <TextField
-                                label={settings.i18n.t('serverAddressTitle')}
-                                defaultValue={settings.serverAddr}
-                                onChange={handleAddrChange}
-                                error={invalidIP}
-                                InputProps={{
-                                    startAdornment: <InputAdornment position="start">ws://</InputAdornment>,
-                                }}
-                                sx={{ mb: 2 }}
-                            />
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={10}>
+                                    <TextField
+                                        fullWidth
+                                        label={settings.i18n.t('serverAddressTitle')}
+                                        defaultValue={settings.serverAddr}
+                                        onChange={handleAddrChange}
+                                        error={invalidIP}
+                                        InputProps={{
+                                            startAdornment: <InputAdornment position="start">ws://</InputAdornment>,
+                                        }}
+                                        sx={{ mb: 2 }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={2}>
+                                    <TextField
+                                        fullWidth
+                                        label={settings.i18n.t('serverAddressTitle')}
+                                        defaultValue={settings.serverAddr}
+                                        onChange={handleAddrChange}
+                                        error={invalidIP}
+                                        sx={{ mb: 2 }}
+                                    />
+                                </Grid>
+                            </Grid>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
