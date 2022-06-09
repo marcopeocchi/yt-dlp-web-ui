@@ -164,7 +164,7 @@ function AppContent() {
                                 flexWrap: 'wrap',
                             }}>
                                 <SettingsEthernet></SettingsEthernet>
-                                <span>&nbsp;{settings.serverAddr}</span>
+                                <span>&nbsp;{status.connected ? settings.serverAddr : 'not connected'}</span>
                             </div>
                         </Toolbar>
                     </AppBar>

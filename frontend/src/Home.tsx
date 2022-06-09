@@ -30,6 +30,7 @@ export default function Home({ socket }: Props) {
     const [url, setUrl] = useState('');
     const [workingUrl, setWorkingUrl] = useState('');
     const [showBackdrop, setShowBackdrop] = useState(false);
+    const [showToast, setShowToast] = useState(true);
 
     /* -------------------- Effects -------------------- */
     /* WebSocket connect event handler*/
@@ -330,10 +331,10 @@ export default function Home({ socket }: Props) {
                 }
             </Grid>
             <Snackbar
-                open={status.connected}
+                open={showToast === status.connected}
                 autoHideDuration={1500}
                 message="Connected"
-                onClose={() => dispatch(disconnected())}
+                onClose={() => setShowToast(false)}
             />
         </Container>
     );

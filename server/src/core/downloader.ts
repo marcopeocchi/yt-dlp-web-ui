@@ -12,7 +12,7 @@ import ProcessPool from './ProcessPool';
 // settings read from settings.json
 let settings: ISettings;
 let coldRestart = true;
-const log = new Logger();
+const log = Logger.instance;
 
 const pool = new ProcessPool();
 

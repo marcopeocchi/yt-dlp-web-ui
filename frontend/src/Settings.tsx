@@ -62,7 +62,7 @@ export default function Settings({ socket }: Props) {
     }
 
     /**
-     * Language toggler handler 
+     * Theme toggler handler 
      */
     const handleThemeChange = (event: SelectChangeEvent<ThemeUnion>) => {
         dispatch(setTheme(event.target.value as ThemeUnion));
@@ -75,7 +75,6 @@ export default function Settings({ socket }: Props) {
         socket.emit('update-bin')
         dispatch(alreadyUpdated())
     }
-
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>

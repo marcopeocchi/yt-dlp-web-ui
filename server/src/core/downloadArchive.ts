@@ -1,15 +1,18 @@
 import { resolve } from "path";
+import { readdir } from "fs";
+
 
 const archived = [
     {
         id: 1,
-        title: 'AleXa (알렉사) – Voting Open in American Song Contest Grand Final!',
-        path: resolve('downloads/AleXa (알렉사) – Voting Open in American Song Contest Grand Final!.webm'),
-        img: 'https://i.ytimg.com/vi/WbBUz7pjUnM/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAi5MNtvpgnY9aRpdFlhAfhdV7Zlg',
+        title: '',
+        path: resolve(''),
+        img: '',
     },
 ]
 
 export function listDownloaded(ctx: any, next: any) {
+    //readdir()
     ctx.body = archived
     next()
 }

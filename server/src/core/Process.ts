@@ -5,11 +5,10 @@ import { ISettings } from '../interfaces/ISettings';
 import { availableParams } from '../utils/params';
 import Logger from '../utils/BetterLogger';
 
-const log = new Logger();
+const log = Logger.instance;
 
 /**
  * Represents a download process that spawns yt-dlp.
- * @constructor
  * @param url - The downlaod url.
  * @param params - The cli arguments passed by the frontend.
  * @param settings - The download settings passed by the frontend.

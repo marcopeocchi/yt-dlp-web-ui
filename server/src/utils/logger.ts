@@ -11,8 +11,13 @@ export const logger = (proto: string, args: string) => {
 /**
  * CLI splash
  */
+
 export const splash = () => {
-    console.log("-------------------------------------------------")
-    console.log("yt-dlp-webUI - A web-ui for yt-dlp, simply enough")
-    console.log("-------------------------------------------------")
+    console.log("        __         ____                  __   __  ______")
+    console.log("  __ __/ /________/ / /__    _    _____ / /  / / / /  _/")
+    console.log(" / // / __/___/ _  / / _ \  | |/|/ / -_) _ \/ /_/ // /  ")
+    console.log(" \_, /\__/    \_,_/_/ .__/  |__,__/\__/_.__/\____/___/  ")
+    console.log("/___/              /_/                                  \n")
+    console.log(" yt-dlp-webUI - A web-ui for yt-dlp, simply enough")
+    console.log("---------------------------------------------------\n")
 }

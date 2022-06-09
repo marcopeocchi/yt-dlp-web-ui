@@ -1,4 +1,4 @@
-import { logger, splash } from './utils/logger';
+import { splash } from './utils/logger';
 import { join } from 'path';
 import { Server } from 'socket.io';
 import { ytdlpUpdater } from './utils/updater';
@@ -16,7 +16,7 @@ import { streamer } from './core/streamer';
 const app = new Koa();
 const server = createServer(app.callback());
 const router = new Router();
-const log = new Logger();
+const log = Logger.instance;
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -44,14 +44,14 @@ router.get('/stream/:filepath', (ctx, next) => {
 // WebSocket listeners
 
 io.on('connection', socket => {
-    logger('ws', `${socket.handshake.address} connected!`)
+    log.info('ws', `${socket.handshake.address} connected!`)
 
     socket.on('send-url', (args) => {
-        logger('ws', args?.url)
+        log.info('ws', args?.url)
         download(socket, args)
     })
     socket.on('send-url-format-selection', (args) => {
-        logger('ws', `Formats ${args?.url}`)
+        log.info('ws', `Formats ${args?.url}`)
         if (args.url) getFormatsAndInfo(socket, args?.url)
     })
     socket.on('abort', (args) => {
@@ -72,7 +72,7 @@ io.on('connection', socket => {
 })
 
 io.on('disconnect', (socket) => {
-    logger('ws', `${socket.handshake.address} disconnected`)
+    log.info('ws', `${socket.handshake.address} disconnected`)
 })
 
 app.use(serve(join(__dirname, 'frontend')))

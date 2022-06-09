@@ -4,9 +4,22 @@ const ansi = {
     cyan: '\u001b[36m',
     green: '\u001b[32m',
     yellow: '\u001b[93m',
+    bold: '\u001b[1m',
+    normal: '\u001b[22m',
 }
 
 class Logger {
+    private static _instance: Logger;
+
+    constructor() { };
+
+    static get instance() {
+        if (this._instance) {
+            return this._instance
+        }
+        this._instance = new Logger()
+        return this._instance;
+    }
     /**
      * Print a standard info message
      * @param {string} proto the context/protocol/section outputting the message
@@ -39,7 +52,7 @@ class Logger {
     }
 
     private formatter(proto: any, args: any) {
-        return `[${proto}]\t${args}\n`
+        return `${ansi.bold}[${proto}]${ansi.normal}\t${args}\n`
     }
 }
 
