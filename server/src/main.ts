@@ -4,14 +4,14 @@ import { Server } from 'socket.io';
 import { ytdlpUpdater } from './utils/updater';
 import { download, abortDownload, retrieveDownload, abortAllDownloads, getFormatsAndInfo } from './core/downloader';
 import { getFreeDiskSpace } from './utils/procUtils';
-import Logger from './utils/BetterLogger';
 import { listDownloaded } from './core/downloadArchive';
 import { createServer } from 'http';
+import { streamer } from './core/streamer';
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
 import * as serve from 'koa-static';
 import * as cors from '@koa/cors';
-import { streamer } from './core/streamer';
+import Logger from './utils/BetterLogger';
 
 const app = new Koa();
 const server = createServer(app.callback());
@@ -25,7 +25,6 @@ const io = new Server(server, {
 });
 
 // Koa routing
-
 router.get('/settings', (ctx, next) => {
     ctx.redirect('/')
     next()
@@ -34,8 +33,16 @@ router.get('/downloaded', (ctx, next) => {
     ctx.redirect('/')
     next()
 })
-router.get('/getAllDownloaded', (ctx, next) => {
-    listDownloaded(ctx, next)
+router.get('/archive', (ctx, next) => {
+    listDownloaded(ctx)
+        .then((res: any) => {
+            ctx.body = res
+            next()
+        })
+        .catch((err: any) => {
+            ctx.body = err;
+            next()
+        })
 })
 router.get('/stream/:filepath', (ctx, next) => {
     streamer(ctx, next)
@@ -76,8 +83,8 @@ io.on('disconnect', (socket) => {
 })
 
 app.use(serve(join(__dirname, 'frontend')))
-app.use(router.routes())
 app.use(cors())
+app.use(router.routes())
 
 server.listen(process.env.PORT || 3022)
 

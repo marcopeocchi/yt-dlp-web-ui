@@ -13,7 +13,7 @@ type Props = {
 }
 
 export function StackableResult({ formattedLog, title, thumbnail, resolution, progress, stopCallback }: Props) {
-    const guessResolution = (xByY: string): JSX.Element => {
+    const guessResolution = (xByY: string): any => {
         if (!xByY) return null;
         if (xByY.includes('4320')) return (<EightK color="primary" />);
         if (xByY.includes('2160')) return (<FourK color="primary" />);

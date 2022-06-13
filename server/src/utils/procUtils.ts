@@ -1,7 +1,9 @@
 import { exec, spawn } from 'child_process';
 import fs = require('fs');
+import Logger from './BetterLogger';
 // import net = require('net');
-import { logger } from './logger';
+
+const log = Logger.instance;
 
 /**
  * Browse /proc in order to find the specific pid
@@ -12,7 +14,7 @@ export function existsInProc(pid: number): any {
     try {
         return fs.statSync(`/proc/${pid}`)
     } catch (e) {
-        logger('proc', `pid ${pid} not found in procfs`)
+        log.warn('proc', `pid ${pid} not found in procfs`)
     }
 }
 
@@ -36,12 +38,11 @@ function retriveStdoutFromProcFd(pid) {
 export async function killProcess(pid: number) {
     const res = spawn('kill', [String(pid)])
     res.on('exit', () => {
-        logger('proc', `Successfully killed yt-dlp process, pid: ${pid}`)
+        log.info('proc', `Successfully killed yt-dlp process, pid: ${pid}`)
     })
 }
 
 export function getFreeDiskSpace(socket: any) {
-    let buffer: string = '';
     let message: string = 'free-space';
     exec("df -h / | tail -1 | awk '{print $4}'", (_, stdout) => {
         socket.emit(message, stdout)

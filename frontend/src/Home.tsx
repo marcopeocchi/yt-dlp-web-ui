@@ -1,9 +1,20 @@
-import { Backdrop, Button, ButtonGroup, CircularProgress, Container, Grid, Paper, Skeleton, Snackbar, TextField, Typography, } from "@mui/material";
 import React, { Fragment, useEffect, useState } from "react";
+import {
+    Backdrop,
+    Button,
+    ButtonGroup,
+    CircularProgress,
+    Container,
+    Grid,
+    Paper,
+    Snackbar,
+    TextField,
+    Typography,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { StackableResult } from "./components/StackableResult";
-import { connected, disconnected, downloading, finished } from "./features/status/statusSlice";
+import { connected, downloading, finished } from "./features/status/statusSlice";
 import { IDLInfo, IDLInfoBase, IDownloadInfo, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
 import { toFormatArgs, updateInStateMap, } from "./utils";
@@ -106,7 +117,7 @@ export default function Home({ socket }: Props) {
             const input = document.getElementById('urlInput') as HTMLInputElement;
             input.value = '';
             setShowBackdrop(true);
-            setDownloadFormats(null);
+            setDownloadFormats(undefined);
         }, 250);
     }
 
@@ -148,7 +159,7 @@ export default function Home({ socket }: Props) {
             socket.emit('abort', { pid: id })
             return
         }
-        setDownloadFormats(null)
+        setDownloadFormats(undefined)
         socket.emit('abort-all')
     }
 
@@ -319,10 +330,10 @@ export default function Home({ socket }: Props) {
                                 <Fragment>
                                     <StackableResult
                                         formattedLog={message[1]}
-                                        title={downloadInfoMap.get(message[0])?.title}
-                                        thumbnail={downloadInfoMap.get(message[0])?.thumbnail}
-                                        resolution={downloadInfoMap.get(message[0])?.resolution}
-                                        progress={progressMap.get(message[0])}
+                                        title={downloadInfoMap.get(message[0])?.title ?? '...'}
+                                        thumbnail={downloadInfoMap.get(message[0])?.thumbnail ?? '...'}
+                                        resolution={downloadInfoMap.get(message[0])?.resolution ?? '...'}
+                                        progress={progressMap.get(message[0]) ?? 0}
                                         stopCallback={() => abort(message[0])}
                                     />
                                 </Fragment>
