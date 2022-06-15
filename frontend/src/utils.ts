@@ -24,6 +24,22 @@ export function validateDomain(domainName: string): boolean {
     return domainRegex.test(domainName) || domainName === 'localhost'
 }
 
+/**
+ * Validate a domain via regex.  
+ * Exapmples
+ * - http://example.com
+ * - https://example.com
+ * - http://www.example.com
+ * - https://www.example.com
+ * - http://10.0.0.1/[something]/[something-else]
+ * @param url 
+ * @returns url validity test
+ */
+export function isValidURL(url: string): boolean {
+    let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
+    return urlRegex.test(url)
+}
+
 export function ellipsis(str: string, lim: number): string {
     if (str) {
         return str.length > lim ? `${str.substring(0, lim)}...` : str
@@ -37,7 +53,7 @@ export function ellipsis(str: string, lim: number): string {
  * @returns download speed in KiB/s
  */
 export function detectSpeed(str: string): number {
-    let effective = str.match(/[\d,]+(\.\d+)?/)[0]
+    let effective = str.match(/[\d,]+(\.\d+)?/)![0]
     const unit = str.replace(effective, '')
     switch (unit) {
         case 'MiB/s':
@@ -57,7 +73,7 @@ export function detectSpeed(str: string): number {
  * @param callback calls React's StateAction function with the newly created Map
  * @param remove -optional- is it an update or a deletion operation?
  */
-export const updateInStateMap = (k: number, v: any, target: Map<number, any>, callback: Function, remove: boolean = false) => {
+export function updateInStateMap<K, V>(k: K, v: any, target: Map<K, V>, callback: Function, remove: boolean = false) {
     if (remove) {
         const _target = target
         _target.delete(k)

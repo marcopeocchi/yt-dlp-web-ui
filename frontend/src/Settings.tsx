@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { debounceTime, distinctUntilChanged, map, of } from "rxjs";
 import { Socket } from "socket.io-client";
 import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
@@ -38,20 +39,28 @@ export default function Settings({ socket }: Props) {
 
     /**
      * Update the server ip address state and localstorage whenever the input value changes.  
-     * Validate the ip-addr then set.
+     * Validate the ip-addr then set.s
      * @param e Input change event
      */
-    const handleAddrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const input = e.target.value;
-        if (validateIP(input)) {
-            setInvalidIP(false)
-            dispatch(setServerAddr(input))
-        } else if (validateDomain(input)) {
-            setInvalidIP(false)
-            dispatch(setServerAddr(input))
-        } else {
-            setInvalidIP(true)
-        }
+    const handleAddrChange = (event: any) => {
+        const $serverAddr = of(event)
+            .pipe(
+                map(event => event.target.value),
+                debounceTime(500),
+                distinctUntilChanged()
+            )
+            .subscribe(addr => {
+                if (validateIP(addr)) {
+                    setInvalidIP(false)
+                    dispatch(setServerAddr(addr))
+                } else if (validateDomain(addr)) {
+                    setInvalidIP(false)
+                    dispatch(setServerAddr(addr))
+                } else {
+                    setInvalidIP(true)
+                }
+            })
+        return $serverAddr.unsubscribe()
     }
 
     /**
@@ -79,7 +88,6 @@ export default function Settings({ socket }: Props) {
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-                {/* Chart */}
                 <Grid item xs={12} md={12} lg={12}>
                     <Paper
                         sx={{
@@ -99,8 +107,8 @@ export default function Settings({ socket }: Props) {
                                         fullWidth
                                         label={settings.i18n.t('serverAddressTitle')}
                                         defaultValue={settings.serverAddr}
-                                        onChange={handleAddrChange}
                                         error={invalidIP}
+                                        onChange={handleAddrChange}
                                         InputProps={{
                                             startAdornment: <InputAdornment position="start">ws://</InputAdornment>,
                                         }}
@@ -165,6 +173,7 @@ export default function Settings({ socket }: Props) {
                                     <Switch
                                         defaultChecked={settings.cliArgs.extractAudio}
                                         onChange={() => dispatch(setCliArgs(settings.cliArgs.toggleExtractAudio()))}
+                                        disabled={settings.formatSelection}
                                     />
                                 }
                                 label={settings.i18n.t('extractAudioCheckbox')}

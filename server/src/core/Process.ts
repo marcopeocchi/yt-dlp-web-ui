@@ -110,7 +110,7 @@ class Process {
      */
     async kill() {
         spawn('kill', [String(this.pid)]).on('exit', () => {
-            log.info('db', `Deleted ${this.pid} because SIGKILL`)
+            log.info('proc', `Stopped ${this.pid} because SIGKILL`)
         });
     }
 

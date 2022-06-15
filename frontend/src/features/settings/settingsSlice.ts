@@ -15,10 +15,10 @@ export interface SettingsState {
 }
 
 const initialState: SettingsState = {
-    serverAddr: localStorage.getItem("server-addr") || "localhost",
+    serverAddr: localStorage.getItem("server-addr") || window.location.hostname,
     language: (localStorage.getItem("language") || "english") as LanguageUnion,
     theme: (localStorage.getItem("theme") || "light") as ThemeUnion,
-    cliArgs: localStorage.getItem("cli-args") ? new CliArguments().fromString(localStorage.getItem("cli-args")) : new CliArguments(false, true),
+    cliArgs: localStorage.getItem("cli-args") ? new CliArguments().fromString(localStorage.getItem("cli-args") ?? "") : new CliArguments(false, true),
     i18n: new I18nBuilder((localStorage.getItem("language") || "english")),
     formatSelection: localStorage.getItem("format-selection") === "true",
 }

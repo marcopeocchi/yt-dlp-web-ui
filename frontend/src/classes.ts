@@ -16,6 +16,11 @@ export class CliArguments {
         return this;
     }
 
+    public disableExtractAudio() {
+        this._extractAudio = false;
+        return this;
+    }
+
     public get noMTime(): boolean {
         return this._noMTime;
     }

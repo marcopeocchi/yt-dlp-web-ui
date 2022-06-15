@@ -6,8 +6,11 @@ import {
     CircularProgress,
     Container,
     Grid,
+    IconButton,
+    InputAdornment,
     Paper,
     Snackbar,
+    styled,
     TextField,
     Typography,
 } from "@mui/material";
@@ -17,7 +20,9 @@ import { StackableResult } from "./components/StackableResult";
 import { connected, downloading, finished } from "./features/status/statusSlice";
 import { IDLInfo, IDLInfoBase, IDownloadInfo, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
-import { toFormatArgs, updateInStateMap, } from "./utils";
+import { isValidURL, toFormatArgs, updateInStateMap, } from "./utils";
+import { FileUpload } from "@mui/icons-material";
+import { Buffer } from 'buffer';
 
 type Props = {
     socket: Socket
@@ -74,7 +79,7 @@ export default function Home({ socket }: Props) {
         socket.on('info', (data: IDLInfo) => {
             setShowBackdrop(false)
             dispatch(downloading())
-            updateInStateMap(data.pid, data.info, downloadInfoMap, setDownloadInfoMap);
+            updateInStateMap<number, IDLInfoBase>(data.pid, data.info, downloadInfoMap, setDownloadInfoMap);
         })
     }, [])
 
@@ -83,15 +88,19 @@ export default function Home({ socket }: Props) {
         socket.on('progress', (data: IMessage) => {
             if (data.status === 'Done!' || data.status === 'Aborted') {
                 setShowBackdrop(false)
-                updateInStateMap(data.pid, 'Done!', messageMap, setMessageMap);
-                updateInStateMap(data.pid, 0, progressMap, setProgressMap);
+                updateInStateMap<number, IMessage>(data.pid, 'Done!', messageMap, setMessageMap);
+                updateInStateMap<number, number>(data.pid, 0, progressMap, setProgressMap);
                 socket.emit('disk-space')
                 dispatch(finished())
                 return;
             }
-            updateInStateMap(data.pid, data, messageMap, setMessageMap);
+            updateInStateMap<number, IMessage>(data.pid, data, messageMap, setMessageMap);
             if (data.progress) {
-                updateInStateMap(data.pid, Math.ceil(Number(data.progress.replace('%', ''))), progressMap, setProgressMap)
+                updateInStateMap<number, number>(data.pid,
+                    Math.ceil(Number(data.progress.replace('%', ''))),
+                    progressMap,
+                    setProgressMap
+                );
             }
         })
     }, [])
@@ -101,14 +110,14 @@ export default function Home({ socket }: Props) {
     /**
      * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
      */
-    const sendUrl = () => {
+    const sendUrl = (immediate?: string) => {
         const codes = new Array<string>();
         if (pickedVideoFormat !== '') codes.push(pickedVideoFormat);
         if (pickedAudioFormat !== '') codes.push(pickedAudioFormat);
         if (pickedBestFormat !== '') codes.push(pickedBestFormat);
 
         socket.emit('send-url', {
-            url: url || workingUrl,
+            url: immediate || url || workingUrl,
             params: settings.cliArgs.toString() + toFormatArgs(codes),
         })
         setUrl('')
@@ -163,6 +172,27 @@ export default function Home({ socket }: Props) {
         socket.emit('abort-all')
     }
 
+    const parseUrlListFile = (event: any) => {
+        const urlList = event.target.files
+        const reader = new FileReader()
+        reader.addEventListener('load', $event => {
+            const base64 = $event.target?.result!.toString().split(',')[1]
+            Buffer.from(base64!, 'base64')
+                .toString()
+                .trimEnd()
+                .split('\n')
+                .filter(_url => isValidURL(_url))
+                .forEach(_url => sendUrl(_url))
+        })
+        reader.readAsDataURL(urlList[0])
+    }
+
+    /* -------------------- styled components -------------------- */
+
+    const Input = styled('input')({
+        display: 'none',
+    });
+
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Backdrop
@@ -185,7 +215,19 @@ export default function Home({ socket }: Props) {
                             label={settings.i18n.t('urlInput')}
                             variant="outlined"
                             onChange={handleUrlChange}
-                            disabled={settings.formatSelection && downloadFormats != null}
+                            disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <label htmlFor="icon-button-file">
+                                            <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
+                                            <IconButton color="primary" aria-label="upload file" component="span">
+                                                <FileUpload />
+                                            </IconButton>
+                                        </label>
+                                    </InputAdornment>
+                                ),
+                            }}
                         />
                         <Grid container spacing={1} pt={2}>
                             <Grid item>
