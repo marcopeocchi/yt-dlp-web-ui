@@ -7,6 +7,7 @@ export type ThemeUnion = "light" | "dark"
 
 export interface SettingsState {
     serverAddr: string,
+    serverPort: string,
     language: LanguageUnion,
     theme: ThemeUnion,
     cliArgs: CliArguments,
@@ -16,6 +17,7 @@ export interface SettingsState {
 
 const initialState: SettingsState = {
     serverAddr: localStorage.getItem("server-addr") || window.location.hostname,
+    serverPort: localStorage.getItem("server-port") || window.location.port,
     language: (localStorage.getItem("language") || "english") as LanguageUnion,
     theme: (localStorage.getItem("theme") || "light") as ThemeUnion,
     cliArgs: localStorage.getItem("cli-args") ? new CliArguments().fromString(localStorage.getItem("cli-args") ?? "") : new CliArguments(false, true),
@@ -30,6 +32,10 @@ export const settingsSlice = createSlice({
         setServerAddr: (state, action: PayloadAction<string>) => {
             state.serverAddr = action.payload
             localStorage.setItem("server-addr", action.payload)
+        },
+        setServerPort: (state, action: PayloadAction<string>) => {
+            state.serverPort = action.payload
+            localStorage.setItem("server-port", action.payload)
         },
         setLanguage: (state, action: PayloadAction<LanguageUnion>) => {
             state.language = action.payload
@@ -51,6 +57,6 @@ export const settingsSlice = createSlice({
     }
 })
 
-export const { setLanguage, setCliArgs, setTheme, setServerAddr, setFormatSelection } = settingsSlice.actions
+export const { setLanguage, setCliArgs, setTheme, setServerAddr, setServerPort, setFormatSelection } = settingsSlice.actions
 
 export default settingsSlice.reducer

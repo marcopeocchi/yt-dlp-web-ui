@@ -19,9 +19,9 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { debounceTime, distinctUntilChanged, map, of } from "rxjs";
+import { debounceTime, distinctUntilChanged, map, of, takeWhile } from "rxjs";
 import { Socket } from "socket.io-client";
-import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
+import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setServerPort, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
@@ -64,6 +64,22 @@ export default function Settings({ socket }: Props) {
     }
 
     /**
+     * Set server port
+     */
+    const handlePortChange = (event: any) => {
+        const $port = of(event)
+            .pipe(
+                map(event => event.target.value),
+                map(val => Number(val)),
+                takeWhile(val => isFinite(val) && val <= 65535),
+            )
+            .subscribe(port => {
+                dispatch(setServerPort(port.toString()))
+            })
+        return $port.unsubscribe()
+    }
+
+    /**
      * Language toggler handler 
      */
     const handleLanguageChange = (event: SelectChangeEvent<LanguageUnion>) => {
@@ -102,7 +118,7 @@ export default function Settings({ socket }: Props) {
                         </Typography>
                         <FormGroup>
                             <Grid container spacing={2}>
-                                <Grid item xs={12} md={12}>
+                                <Grid item xs={12} md={11}>
                                     <TextField
                                         fullWidth
                                         label={settings.i18n.t('serverAddressTitle')}
@@ -115,16 +131,16 @@ export default function Settings({ socket }: Props) {
                                         sx={{ mb: 2 }}
                                     />
                                 </Grid>
-                                {/* <Grid item xs={12} md={2}>
+                                <Grid item xs={12} md={1}>
                                     <TextField
                                         fullWidth
-                                        label={settings.i18n.t('serverAddressTitle')}
-                                        defaultValue={settings.serverAddr}
-                                        onChange={handleAddrChange}
-                                        error={invalidIP}
+                                        label={settings.i18n.t('serverPortTitle')}
+                                        defaultValue={settings.serverPort}
+                                        onChange={handlePortChange}
+                                        error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
                                         sx={{ mb: 2 }}
                                     />
-                                </Grid> */}
+                                </Grid>
                             </Grid>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={6}>

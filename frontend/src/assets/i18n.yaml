@@ -11,6 +11,7 @@ languages:
     lightThemeButton: Light theme
     settingsAnchor: Settings
     serverAddressTitle: Server address
+    serverPortTitle: Port
     extractAudioCheckbox: Extract audio
     noMTimeCheckbox: Don't set file modification time
     bgReminder: Once you close this page the download will continue in the background.
@@ -28,6 +29,7 @@ languages:
     lightThemeButton: Tema chiaro
     settingsAnchor: Impostazioni
     serverAddressTitle: Indirizzo server
+    serverPortTitle: Porta
     extractAudioCheckbox: Estrai l'audio
     noMTimeCheckbox: Non impostare la proprietà "Data ultima modifica"
     bgReminder: Chiusa questa UI il download continuerà in background.
@@ -45,6 +47,7 @@ languages:
     lightThemeButton: 明亮主题
     settingsAnchor: 设置
     serverAddressTitle: 服务器地址
+    serverPortTitle: Port
     extractAudioCheckbox: 提取音频
     noMTimeCheckbox: 不设置文件修改时间
     bgReminder: 关闭页面后，下载会继续在后台运行。
@@ -62,6 +65,7 @@ languages:
     lightThemeButton: Light theme
     settingsAnchor: Settings
     serverAddressTitle: Server address
+    serverPortTitle: Port
     extractAudioCheckbox: Extract audio
     noMTimeCheckbox: Don't set file modification time
     bgReminder: Once you close this page the download will continue in the background.
@@ -79,6 +83,7 @@ languages:
     lightThemeButton: Light theme
     settingsAnchor: Settings
     serverAddressTitle: Server address
+    serverPortTitle: Port
     extractAudioCheckbox: Extract audio
     noMTimeCheckbox: Don't set file modification time
     bgReminder: Once you close this page the download will continue in the background.
@@ -96,6 +101,7 @@ languages:
     lightThemeButton: 라이트 모드
     settingsAnchor: 설정
     serverAddressTitle: 서버 주소
+    serverPortTitle: Port
     extractAudioCheckbox: 오디오 추출
     noMTimeCheckbox: 파일 수정 시간을 설정하지 않음
     bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다

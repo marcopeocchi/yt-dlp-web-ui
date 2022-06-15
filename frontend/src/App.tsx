@@ -36,7 +36,7 @@ import ArchivedDownloads from "./Archived";
 
 const drawerWidth: number = 240;
 
-const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:3022`)
+const socket = io(`http://${localStorage.getItem('server-addr') || 'localhost'}:${localStorage.getItem('server-port') || '3022'}`)
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
