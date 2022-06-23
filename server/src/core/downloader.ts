@@ -1,6 +1,6 @@
 import { spawn } from 'child_process';
 import { from, interval } from 'rxjs';
-import { throttle } from 'rxjs/operators';
+import { map, throttle } from 'rxjs/operators';
 import { killProcess } from '../utils/procUtils';
 import { Socket } from 'socket.io';
 import { IPayload } from '../interfaces/IPayload';
@@ -57,18 +57,22 @@ export async function download(socket: Socket, payload: IPayload) {
 
     p.start().then(downloader => {
         pool.add(p)
-        let pid = downloader.getPid();
+        const pid = downloader.getPid();
 
         p.getInfo().then(info => {
-            socket.emit('info', { pid: pid, info: info });
+            socket.emit('info', {
+                pid: pid,
+                info: info
+            });
         });
 
-        from(downloader.getStdout())              // stdout as observable
-            .pipe(throttle(() => interval(500)))  // discard events closer than 500ms
+        from(downloader.getStdout())            // stdout as observable
+            .pipe(
+                throttle(() => interval(500)),  // discard events closer than 500ms
+                map(stdout => formatter(String(stdout), pid))
+            )
             .subscribe({
-                next: (stdout) => {
-                    socket.emit('progress', formatter(String(stdout), pid))
-                },
+                next: (stdout) => socket.emit('progress', stdout),
                 complete: () => {
                     downloader.kill().then(() => {
                         socket.emit('progress', {
@@ -82,6 +86,7 @@ export async function download(socket: Socket, payload: IPayload) {
                     socket.emit('progress', {
                         status: 'Done!', pid: pid
                     });
+                    pool.remove(downloader);
                 }
             });
     });
@@ -118,7 +123,7 @@ export async function retrieveDownload(socket: Socket) {
     socket.emit('pending-jobs', _poolSize)
 
     const it = pool.iterator();
-    const tempWorkQueue = new Array();
+    const tempWorkQueue = new Array<Process>();
 
     // sanitize
     for (const entry of it) {
@@ -207,6 +212,8 @@ const formatter = (stdout: string, pid: number) => {
                 progress: '100',
             }
         default:
-            return { progress: '0' }
+            return {
+                progress: '0'
+            }
     }
 }

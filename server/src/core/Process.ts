@@ -15,13 +15,11 @@ const log = Logger.instance;
  */
 
 class Process {
-    private url: string;
-    private params: Array<string>;
+    public readonly url: string;
+    public readonly params: Array<string>;
     private settings: ISettings;
     private stdout: Readable;
     private pid: number;
-    private info: any;
-    private lock: boolean;
     private exePath = join(__dirname, 'yt-dlp');
 
     constructor(url: string, params: Array<string>, settings: any) {
@@ -30,7 +28,6 @@ class Process {
         this.settings = settings
         this.stdout = undefined;
         this.pid = undefined;
-        this.info = null;
     }
 
     /**
@@ -73,8 +70,6 @@ class Process {
                 try {
                     const buffer = Buffer.concat(stdoutChunks);
                     const json = JSON.parse(buffer.toString());
-                    this.info = json;
-                    this.lock = false;
                     resolve({
                         formats: json.formats.map((format: IDownloadInfoSection) => {
                             return {

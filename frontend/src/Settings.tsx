@@ -40,7 +40,7 @@ export default function Settings({ socket }: Props) {
     /**
      * Update the server ip address state and localstorage whenever the input value changes.  
      * Validate the ip-addr then set.s
-     * @param e Input change event
+     * @param event Input change event
      */
     const handleAddrChange = (event: any) => {
         const $serverAddr = of(event)

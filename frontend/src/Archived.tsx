@@ -25,7 +25,7 @@ export default function archivedDownloads() {
             >
                 <CircularProgress color="primary" />
             </Backdrop>
-            {
+            {/*
                 archived.length > 0 ?
                     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
                         {
@@ -40,7 +40,7 @@ export default function archivedDownloads() {
                         }
                     </Grid>
                     : null
-            }
+                    */}
         </Container>
     );
 }
