@@ -1,5 +1,5 @@
 import { exec, spawn } from 'child_process';
-import fs = require('fs');
+import { statSync } from 'fs';
 import Logger from './BetterLogger';
 // import net = require('net');
 
@@ -12,7 +12,7 @@ const log = Logger.instance;
  */
 export function existsInProc(pid: number): any {
     try {
-        return fs.statSync(`/proc/${pid}`)
+        return statSync(`/proc/${pid}`)
     } catch (e) {
         log.warn('proc', `pid ${pid} not found in procfs`)
     }
@@ -43,8 +43,8 @@ export async function killProcess(pid: number) {
 }
 
 export function getFreeDiskSpace(socket: any) {
-    let message: string = 'free-space';
-    exec("df -h / | tail -1 | awk '{print $4}'", (_, stdout) => {
+    const message: string = 'free-space';
+    exec("df -P -h | tail -1 | awk '{print $4}'", (_, stdout) => {
         socket.emit(message, stdout)
     })
 }

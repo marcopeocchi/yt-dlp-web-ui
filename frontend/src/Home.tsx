@@ -372,8 +372,8 @@ export default function Home({ socket }: Props) {
                                 <Fragment>
                                     <StackableResult
                                         formattedLog={message[1]}
-                                        title={downloadInfoMap.get(message[0])?.title ?? '...'}
-                                        thumbnail={downloadInfoMap.get(message[0])?.thumbnail ?? '...'}
+                                        title={downloadInfoMap.get(message[0])?.title ?? ''}
+                                        thumbnail={downloadInfoMap.get(message[0])?.thumbnail ?? ''}
                                         resolution={downloadInfoMap.get(message[0])?.resolution ?? '...'}
                                         progress={progressMap.get(message[0]) ?? 0}
                                         stopCallback={() => abort(message[0])}

@@ -21,7 +21,7 @@ export class I18nBuilder {
         const map = this.textMap[this.language]
         if (map) {
             const translation = map[key];
-            return translation ? translation : 'caption not defined';
+            return translation ?? 'caption not defined';
         }
         return 'caption not defined';
     }

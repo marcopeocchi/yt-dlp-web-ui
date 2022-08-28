@@ -1,3 +1,4 @@
+import React from "react";
 import { EightK, FourK, Hd, Sd } from "@mui/icons-material";
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, LinearProgress, Skeleton, Stack, Typography } from "@mui/material";
 import { IMessage } from "../interfaces";
@@ -25,7 +26,7 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
     return (
         <Card>
             <CardActionArea>
-                {thumbnail ?
+                {thumbnail !== '' ?
                     <CardMedia
                         component="img"
                         height={180}
@@ -34,9 +35,12 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
                     <Skeleton variant="rectangular" height={180} />
                 }
                 <CardContent>
-                    <Typography gutterBottom variant="h6" component="div">
-                        {ellipsis(title, 54)}
-                    </Typography>
+                    {title !== '' ?
+                        <Typography gutterBottom variant="h6" component="div">
+                            {ellipsis(title, 54)}
+                        </Typography> :
+                        <Skeleton />
+                    }
                     <Stack direction="row" spacing={1} py={2}>
                         <Chip label={formattedLog.status} color="primary" />
                         <Typography>{formattedLog.progress}</Typography>

@@ -26,13 +26,15 @@ Changelog:
 26/01/22: Multiple downloads are being implemented. Maybe by next release they will be there.
 Refactoring and JSDoc.
 
-04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature
+04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature.
 
-05/05/22: Material UI update
+05/05/22: Material UI update.
 
 03/06/22: The most requested feature finally implemented: Format Selection!!
 
-08/06/22: ARM builds
+08/06/22: ARM builds.
+
+28/02/22: Reworked resume download feature. Now it's pratically instantaneous. It no longer stops and restarts each process, references to each process are saved in memory.
 ```
 
 
@@ -80,7 +82,7 @@ Future releases will have:
 -   **The download  doesn't start.**
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
 -   **Background jobs are not retrieved.**
-    -   As before forking yt-dlp isn't fast so resuming _n_ background jobs takes _n_*_time to exec yt-dlp_ Just have patience.
+    -   ~~As before forking yt-dlp isn't fast so resuming n background jobs takes _n_*_time to exec yt-dlp_ Just have patience.~~ Fixed.
 
 ## Docker installation
 ```shell 

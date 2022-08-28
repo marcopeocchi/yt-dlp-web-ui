@@ -1,17 +1,20 @@
 /**
- * @class
  * Represents a download process that spawns yt-dlp.
  */
 
-import Process from "./Process";
+import Process from "../core/Process";
 
-class ProcessPool {
-    private _pool: Map<number, Process>;
-    private _size: number;
+class MemoryDB {
+    private _pool: Map<number, Process>
+    private _size: number
 
     constructor() {
-        this._pool = new Map();
-        this._size = 0;
+        this.init()
+    }
+
+    private init() {
+        this._pool = new Map<number, Process>()
+        this._size = 0
     }
 
     /**
@@ -19,7 +22,7 @@ class ProcessPool {
      * @returns {number} pool's size
      */
     size(): number {
-        return this._size;
+        return this._size
     }
 
     /**
@@ -28,6 +31,7 @@ class ProcessPool {
      */
     add(process: Process) {
         this._pool.set(process.getPid(), process)
+        this._size++
     }
 
     /**
@@ -36,6 +40,7 @@ class ProcessPool {
      */
     remove(process: Process) {
         this._pool.delete(process.getPid())
+        this._size--
     }
 
     /**
@@ -62,6 +67,13 @@ class ProcessPool {
     getByPid(pid: number): Process {
         return this._pool.get(pid)
     }
+
+    /**
+     * Clear memory db
+     */
+    flush() {
+        this.init()
+    }
 }
 
-export default ProcessPool;
+export default MemoryDB;

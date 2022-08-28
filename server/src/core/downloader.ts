@@ -1,20 +1,19 @@
 import { spawn } from 'child_process';
 import { from, interval } from 'rxjs';
 import { map, throttle } from 'rxjs/operators';
-import { killProcess } from '../utils/procUtils';
 import { Socket } from 'socket.io';
 import { IPayload } from '../interfaces/IPayload';
 import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
 import Process from './Process';
-import ProcessPool from './ProcessPool';
+import MemoryDB from '../db/memoryDB';
 
 // settings read from settings.json
 let settings: ISettings;
 let coldRestart = true;
 const log = Logger.instance;
 
-const pool = new ProcessPool();
+const mem_db = new MemoryDB();
 
 try {
     settings = require('../../settings.json');
@@ -56,40 +55,60 @@ export async function download(socket: Socket, payload: IPayload) {
     let p = new Process(url, params, settings);
 
     p.start().then(downloader => {
-        pool.add(p)
-        const pid = downloader.getPid();
-
-        p.getInfo().then(info => {
-            socket.emit('info', {
-                pid: pid,
-                info: info
-            });
-        });
-
-        from(downloader.getStdout())            // stdout as observable
-            .pipe(
-                throttle(() => interval(500)),  // discard events closer than 500ms
-                map(stdout => formatter(String(stdout), pid))
-            )
-            .subscribe({
-                next: (stdout) => socket.emit('progress', stdout),
-                complete: () => {
-                    downloader.kill().then(() => {
-                        socket.emit('progress', {
-                            status: 'Done!',
-                            pid: pid,
-                        })
-                        pool.remove(downloader);
-                    })
-                },
-                error: () => {
-                    socket.emit('progress', {
-                        status: 'Done!', pid: pid
-                    });
-                    pool.remove(downloader);
-                }
-            });
+        mem_db.add(downloader)
+        displayDownloadInfo(downloader, socket);
+        streamProcess(downloader, socket);
     });
+}
+
+/**
+ * Send via websocket download info "chunk"
+ * @param process 
+ * @param socket 
+ */
+function displayDownloadInfo(process: Process, socket: Socket) {
+    process.getInfo().then(info => {
+        socket.emit('info', {
+            pid: process.getPid(),
+            info: info
+        });
+    });
+}
+
+/**
+ * Stream via websocket download stdoud "chunks"
+ * @param process 
+ * @param socket 
+ */
+function streamProcess(process: Process, socket: Socket) {
+    const emitAbort = () => {
+        socket.emit('progress', {
+            status: 'Done!',
+            pid: process.getPid(),
+        });
+    }
+    const stdout = process.getStdout()
+
+    stdout.removeAllListeners()
+
+    from(stdout)                            // stdout as observable
+        .pipe(
+            throttle(() => interval(500)),  // discard events closer than 500ms
+            map(stdout => formatter(String(stdout), process.getPid()))
+        )
+        .subscribe({
+            next: (stdout) => socket.emit('progress', stdout),
+            complete: () => {
+                process.kill().then(() => {
+                    emitAbort();
+                    mem_db.remove(process);
+                });
+            },
+            error: () => {
+                emitAbort();
+                mem_db.remove(process);
+            }
+        });
 }
 
 /**
@@ -102,43 +121,35 @@ export async function download(socket: Socket, payload: IPayload) {
 export async function retrieveDownload(socket: Socket) {
     // it's a cold restart: the server has just been started with pending
     // downloads, so fetch them from the database and resume.
-    if (coldRestart) {
-        coldRestart = false;
-        let downloads = [];
-        // sanitize
-        downloads = [...new Set(downloads.filter(el => el !== undefined))];
-        log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
-        for (const entry of downloads) {
-            if (entry) {
-                await download(socket, entry);
-            }
-        }
-        return;
-    }
+
+    // if (coldRestart) {
+    //     coldRestart = false;
+    //     let downloads = [];
+    //     // sanitize
+    //     downloads = [...new Set(downloads.filter(el => el !== undefined))];
+    //     log.info('dl', `Cold restart, retrieving ${downloads.length} jobs`)
+    //     for (const entry of downloads) {
+    //         if (entry) {
+    //             await download(socket, entry);
+    //         }
+    //     }
+    //     return;
+    // }
 
     // it's an hot-reload the server it's running and the frontend ask for
     // the pending job: retrieve them from the "in-memory database" (ProcessPool)
-    const _poolSize = pool.size()
+
+    const _poolSize = mem_db.size()
     log.info('dl', `Retrieving ${_poolSize} jobs from pool`)
     socket.emit('pending-jobs', _poolSize)
 
-    const it = pool.iterator();
-    const tempWorkQueue = new Array<Process>();
-
-    // sanitize
-    for (const entry of it) {
-        const [pid, process] = entry;
-        pool.removeByPid(pid);
-        await killProcess(pid);
-        tempWorkQueue.push(process);
-    }
+    const it = mem_db.iterator();
 
     // resume the jobs
-    for (const entry of tempWorkQueue) {
-        await download(socket, {
-            url: entry.url,
-            params: entry.params,
-        });
+    for (const entry of it) {
+        const [, process] = entry
+        displayDownloadInfo(process, socket);
+        streamProcess(process, socket);
     }
 }
 
@@ -177,13 +188,14 @@ export function abortAllDownloads(socket: Socket) {
             socket.emit('progress', { status: 'Aborted' });
             log.info('dl', 'Aborting downloads');
         });
+    mem_db.flush();
 }
 
 /**
  * Get pool current size
  */
 export function getQueueSize(): number {
-    return pool.size();
+    return mem_db.size();
 }
 
 /**
