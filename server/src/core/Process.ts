@@ -20,6 +20,7 @@ class Process {
     private settings: ISettings;
     private stdout: Readable;
     private pid: number;
+    private metadata?: IDownloadInfo;
     private exePath = join(__dirname, 'yt-dlp');
 
     constructor(url: string, params: Array<string>, settings: any) {
@@ -28,6 +29,7 @@ class Process {
         this.settings = settings
         this.stdout = undefined;
         this.pid = undefined;
+        this.metadata = undefined;
     }
 
     /**
@@ -58,46 +60,51 @@ class Process {
      * @returns Promise to the lock
      */
     public getInfo(): Promise<IDownloadInfo> {
-        let stdoutChunks = [];
-        const ytdlpInfo = spawn(this.exePath, ['-j', this.url]);
+        if (!this.metadata) {
+            let stdoutChunks = [];
+            const ytdlpInfo = spawn(this.exePath, ['-j', this.url]);
 
-        ytdlpInfo.stdout.on('data', (data) => {
-            stdoutChunks.push(data);
-        });
-
-        return new Promise((resolve, reject) => {
-            ytdlpInfo.on('exit', () => {
-                try {
-                    const buffer = Buffer.concat(stdoutChunks);
-                    const json = JSON.parse(buffer.toString());
-                    resolve({
-                        formats: json.formats.map((format: IDownloadInfoSection) => {
-                            return {
-                                format_id: format.format_id ?? '',
-                                format_note: format.format_note ?? '',
-                                fps: format.fps ?? '',
-                                resolution: format.resolution ?? '',
-                                vcodec: format.vcodec ?? '',
-                                acodec: format.acodec ?? '',
-                            }
-                        }).filter((format: IDownloadInfoSection) => format.format_note !== 'storyboard'),
-                        best: {
-                            format_id: json.format_id ?? '',
-                            format_note: json.format_note ?? '',
-                            fps: json.fps ?? '',
-                            resolution: json.resolution ?? '',
-                            vcodec: json.vcodec ?? '',
-                            acodec: json.acodec ?? '',
-                        },
-                        thumbnail: json.thumbnail,
-                        title: json.title,
-                    });
-
-                } catch (e) {
-                    reject('failed fetching formats, downloading best available');
-                }
+            ytdlpInfo.stdout.on('data', (data) => {
+                stdoutChunks.push(data);
             });
-        })
+
+            return new Promise((resolve, reject) => {
+                ytdlpInfo.on('exit', () => {
+                    try {
+                        const buffer = Buffer.concat(stdoutChunks);
+                        const json = JSON.parse(buffer.toString());
+                        const info = {
+                            formats: json.formats.map((format: IDownloadInfoSection) => {
+                                return {
+                                    format_id: format.format_id ?? '',
+                                    format_note: format.format_note ?? '',
+                                    fps: format.fps ?? '',
+                                    resolution: format.resolution ?? '',
+                                    vcodec: format.vcodec ?? '',
+                                    acodec: format.acodec ?? '',
+                                }
+                            }).filter((format: IDownloadInfoSection) => format.format_note !== 'storyboard'),
+                            best: {
+                                format_id: json.format_id ?? '',
+                                format_note: json.format_note ?? '',
+                                fps: json.fps ?? '',
+                                resolution: json.resolution ?? '',
+                                vcodec: json.vcodec ?? '',
+                                acodec: json.acodec ?? '',
+                            },
+                            thumbnail: json.thumbnail,
+                            title: json.title,
+                        }
+                        resolve(info);
+                        this.metadata = info;
+
+                    } catch (e) {
+                        reject('failed fetching formats, downloading best available');
+                    }
+                });
+            })
+        }
+        return new Promise((resolve) => { resolve(this.metadata!) });
     }
 
     /**
