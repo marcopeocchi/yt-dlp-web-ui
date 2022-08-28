@@ -39,6 +39,7 @@ class MemoryDB {
      * @param {Process} process 
      */
     remove(process: Process) {
+        if (this._size === 0) return
         this._pool.delete(process.getPid())
         this._size--
     }
