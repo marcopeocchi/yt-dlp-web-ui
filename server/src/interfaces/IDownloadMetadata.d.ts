@@ -1,11 +1,11 @@
-interface IDownloadInfo {
-    formats: Array<IDownloadInfoSection>,
-    best: IDownloadInfoSection,
+export interface IDownloadMetadata {
+    formats: Array<IDownloadFormat>,
+    best: IDownloadFormat,
     thumbnail: string,
     title: string,
 }
 
-interface IDownloadInfoSection {
+export interface IDownloadFormat {
     format_id: string,
     format_note: string,
     fps: number,

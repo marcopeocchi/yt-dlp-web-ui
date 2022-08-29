@@ -6,22 +6,14 @@ export interface IMessage {
     pid: number
 }
 
-export interface IDLInfoBase {
-    title: string,
-    thumbnail: string,
-    upload_date?: string | Date,
-    duration?: number
-    resolution?: string
-}
-
-export interface IDownloadInfo {
-    formats: Array<IDownloadInfoSection>,
-    best: IDownloadInfoSection,
+export interface IDLMetadata {
+    formats: Array<IDLFormat>,
+    best: IDLFormat,
     thumbnail: string,
     title: string,
 }
 
-export interface IDownloadInfoSection {
+export interface IDLFormat {
     format_id: string,
     format_note: string,
     fps: number,
@@ -30,9 +22,9 @@ export interface IDownloadInfoSection {
     acodec: string,
 }
 
-export interface IDLInfo {
+export interface IDLMetadataAndPID {
     pid: number,
-    info: IDLInfoBase
+    metadata: IDLMetadata
 }
 
 export interface IDLSpeed {

@@ -2,7 +2,7 @@ import { splash } from './utils/logger';
 import { join } from 'path';
 import { Server } from 'socket.io';
 import { ytdlpUpdater } from './utils/updater';
-import { download, abortDownload, retrieveDownload, abortAllDownloads, getFormatsAndInfo } from './core/downloader';
+import { download, abortDownload, retrieveDownload, abortAllDownloads, getFormatsAndMetadata } from './core/downloader';
 import { getFreeDiskSpace } from './utils/procUtils';
 import { listDownloaded } from './core/downloadArchive';
 import { createServer } from 'http';
@@ -12,6 +12,7 @@ import * as Router from 'koa-router';
 import * as serve from 'koa-static';
 import * as cors from '@koa/cors';
 import Logger from './utils/BetterLogger';
+import { ISettings } from './interfaces/ISettings';
 
 const app = new Koa();
 const server = createServer(app.callback());
@@ -23,6 +24,14 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
+
+let settings: ISettings;
+
+try {
+    settings = require('../settings.json');
+} catch (e) {
+    log.warn('settings', 'file not found, ignore if using Docker');
+}
 
 // Koa routing
 router.get('/settings', (ctx, next) => {
@@ -49,7 +58,6 @@ router.get('/stream/:filepath', (ctx, next) => {
 })
 
 // WebSocket listeners
-
 io.on('connection', socket => {
     log.info('ws', `${socket.handshake.address} connected!`)
 
@@ -59,7 +67,7 @@ io.on('connection', socket => {
     })
     socket.on('send-url-format-selection', (args) => {
         log.info('ws', `Formats ${args?.url}`)
-        if (args.url) getFormatsAndInfo(socket, args?.url)
+        if (args.url) getFormatsAndMetadata(socket, args?.url)
     })
     socket.on('abort', (args) => {
         abortDownload(socket, args)
@@ -86,10 +94,10 @@ app.use(serve(join(__dirname, 'frontend')))
 app.use(cors())
 app.use(router.routes())
 
-server.listen(process.env.PORT || 3022)
+server.listen(process.env.PORT || settings.port || 3022)
 
 splash()
-log.info('http', `Server started on port ${process.env.PORT || 3022}`)
+log.info('http', `Server started on port ${process.env.PORT || settings.port || 3022}`)
 
 /**
  * Cleanup handler

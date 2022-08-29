@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { StackableResult } from "./components/StackableResult";
 import { connected, downloading, finished } from "./features/status/statusSlice";
-import { IDLInfo, IDLInfoBase, IDownloadInfo, IMessage } from "./interfaces";
+import { IDLMetadata, IDLMetadataAndPID, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
 import { isValidURL, toFormatArgs, updateInStateMap, } from "./utils";
 import { FileUpload } from "@mui/icons-material";
@@ -37,8 +37,8 @@ export default function Home({ socket }: Props) {
     // ephemeral state
     const [progressMap, setProgressMap] = useState(new Map<number, number>());
     const [messageMap, setMessageMap] = useState(new Map<number, IMessage>());
-    const [downloadInfoMap, setDownloadInfoMap] = useState(new Map<number, IDLInfoBase>());
-    const [downloadFormats, setDownloadFormats] = useState<IDownloadInfo>();
+    const [downloadInfoMap, setDownloadInfoMap] = useState(new Map<number, IDLMetadata>());
+    const [downloadFormats, setDownloadFormats] = useState<IDLMetadata>();
     const [pickedVideoFormat, setPickedVideoFormat] = useState('');
     const [pickedAudioFormat, setPickedAudioFormat] = useState('');
     const [pickedBestFormat, setPickedBestFormat] = useState('');
@@ -68,7 +68,7 @@ export default function Home({ socket }: Props) {
 
     /* Handle download information sent by server */
     useEffect(() => {
-        socket.on('available-formats', (data: IDownloadInfo) => {
+        socket.on('available-formats', (data: IDLMetadata) => {
             setShowBackdrop(false)
             setDownloadFormats(data);
         })
@@ -76,10 +76,10 @@ export default function Home({ socket }: Props) {
 
     /* Handle download information sent by server */
     useEffect(() => {
-        socket.on('info', (data: IDLInfo) => {
+        socket.on('metadata', (data: IDLMetadataAndPID) => {
             setShowBackdrop(false)
             dispatch(downloading())
-            updateInStateMap<number, IDLInfoBase>(data.pid, data.info, downloadInfoMap, setDownloadInfoMap);
+            updateInStateMap<number, IDLMetadata>(data.pid, data.metadata, downloadInfoMap, setDownloadInfoMap);
         })
     }, [])
 
@@ -374,9 +374,9 @@ export default function Home({ socket }: Props) {
                                         formattedLog={message[1]}
                                         title={downloadInfoMap.get(message[0])?.title ?? ''}
                                         thumbnail={downloadInfoMap.get(message[0])?.thumbnail ?? ''}
-                                        resolution={downloadInfoMap.get(message[0])?.resolution ?? '...'}
                                         progress={progressMap.get(message[0]) ?? 0}
                                         stopCallback={() => abort(message[0])}
+                                        resolution={''}
                                     />
                                 </Fragment>
                             </Grid>

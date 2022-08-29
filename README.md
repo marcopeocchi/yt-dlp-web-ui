@@ -9,6 +9,12 @@ Developed to be as lightweight as possible (because my server is basically an in
 
 The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc interface).
 
+**I strongly recomend the ghrc build instead of docker hub one.**
+
+```shell
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+```
+
 ---
 
 Changelog:
@@ -86,11 +92,17 @@ Future releases will have:
 
 ## Docker installation
 ```shell 
-docker pull marcobaobao/yt-dlp-webui:latest #x86 only
-# or alternatively for ARM and x86 devices docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
-docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads marcobaobao/yt-dlp-webui
+# recomended for ARM and x86 devices 
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+
+# or even
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/ ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
+
 or  
+
 ```shell
 docker build -t yt-dlp-webui .
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-webui
@@ -103,7 +115,7 @@ docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-
 npm i
 npm run build-all
 
-# edit the settings.json specifying the download path or 
+# edit the settings.json specifying port and download path or 
 # it will default to the following created folder
 
 mkdir downloads

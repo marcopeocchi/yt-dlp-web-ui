@@ -27,9 +27,9 @@ catch (e) {
  * @param socket 
  * @param url 
  */
-export async function getFormatsAndInfo(socket: Socket, url: string) {
+export async function getFormatsAndMetadata(socket: Socket, url: string) {
     let p = new Process(url, [], settings);
-    const formats = await p.getInfo();
+    const formats = await p.getMetadata();
     socket.emit('available-formats', formats)
     p = null;
 }
@@ -56,7 +56,7 @@ export async function download(socket: Socket, payload: IPayload) {
 
     p.start().then(downloader => {
         mem_db.add(downloader)
-        displayDownloadInfo(downloader, socket);
+        displayDownloadMetadata(downloader, socket);
         streamProcess(downloader, socket);
     });
 }
@@ -66,11 +66,11 @@ export async function download(socket: Socket, payload: IPayload) {
  * @param process 
  * @param socket 
  */
-function displayDownloadInfo(process: Process, socket: Socket) {
-    process.getInfo().then(info => {
-        socket.emit('info', {
+function displayDownloadMetadata(process: Process, socket: Socket) {
+    process.getMetadata().then(metadata => {
+        socket.emit('metadata', {
             pid: process.getPid(),
-            info: info
+            metadata: metadata,
         });
     });
 }
@@ -87,11 +87,8 @@ function streamProcess(process: Process, socket: Socket) {
             pid: process.getPid(),
         });
     }
-    const stdout = process.getStdout()
 
-    stdout.removeAllListeners()
-
-    from(stdout)                            // stdout as observable
+    from(process.getStdout().removeAllListeners())                            // stdout as observable
         .pipe(
             throttle(() => interval(500)),  // discard events closer than 500ms
             map(stdout => formatter(String(stdout), process.getPid()))
@@ -148,7 +145,7 @@ export async function retrieveDownload(socket: Socket) {
     // resume the jobs
     for (const entry of it) {
         const [, process] = entry
-        displayDownloadInfo(process, socket);
+        displayDownloadMetadata(process, socket);
         streamProcess(process, socket);
     }
 }

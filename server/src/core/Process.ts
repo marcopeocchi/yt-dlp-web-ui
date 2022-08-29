@@ -4,6 +4,7 @@ import { Readable } from 'stream';
 import { ISettings } from '../interfaces/ISettings';
 import { availableParams } from '../utils/params';
 import Logger from '../utils/BetterLogger';
+import { IDownloadFormat, IDownloadMetadata } from '../interfaces/IDownloadMetadata';
 
 const log = Logger.instance;
 
@@ -20,7 +21,7 @@ class Process {
     private settings: ISettings;
     private stdout: Readable;
     private pid: number;
-    private metadata?: IDownloadInfo;
+    private metadata?: IDownloadMetadata;
     private exePath = join(__dirname, 'yt-dlp');
 
     constructor(url: string, params: Array<string>, settings: any) {
@@ -59,7 +60,7 @@ class Process {
      * function used internally by the download process to fetch information, usually thumbnail and title
      * @returns Promise to the lock
      */
-    public getInfo(): Promise<IDownloadInfo> {
+    public getMetadata(): Promise<IDownloadMetadata> {
         if (!this.metadata) {
             let stdoutChunks = [];
             const ytdlpInfo = spawn(this.exePath, ['-j', this.url]);
@@ -74,7 +75,7 @@ class Process {
                         const buffer = Buffer.concat(stdoutChunks);
                         const json = JSON.parse(buffer.toString());
                         const info = {
-                            formats: json.formats.map((format: IDownloadInfoSection) => {
+                            formats: json.formats.map((format: IDownloadFormat) => {
                                 return {
                                     format_id: format.format_id ?? '',
                                     format_note: format.format_note ?? '',
@@ -83,7 +84,7 @@ class Process {
                                     vcodec: format.vcodec ?? '',
                                     acodec: format.acodec ?? '',
                                 }
-                            }).filter((format: IDownloadInfoSection) => format.format_note !== 'storyboard'),
+                            }).filter((format: IDownloadFormat) => format.format_note !== 'storyboard'),
                             best: {
                                 format_id: json.format_id ?? '',
                                 format_note: json.format_note ?? '',
