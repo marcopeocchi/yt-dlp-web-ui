@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import { FileUpload } from "@mui/icons-material";
 import {
     Backdrop,
     Button,
@@ -12,17 +12,18 @@ import {
     Snackbar,
     styled,
     TextField,
-    Typography,
+    Typography
 } from "@mui/material";
+import { Buffer } from 'buffer';
+import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { StackableResult } from "./components/StackableResult";
+import { serverStates } from "./events";
 import { connected, downloading, finished } from "./features/status/statusSlice";
 import { IDLMetadata, IDLMetadataAndPID, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
-import { isValidURL, toFormatArgs, updateInStateMap, } from "./utils";
-import { FileUpload } from "@mui/icons-material";
-import { Buffer } from 'buffer';
+import { isValidURL, toFormatArgs, updateInStateMap } from "./utils";
 
 type Props = {
     socket: Socket
@@ -86,9 +87,9 @@ export default function Home({ socket }: Props) {
     /* Handle per-download progress */
     useEffect(() => {
         socket.on('progress', (data: IMessage) => {
-            if (data.status === 'Done!' || data.status === 'Aborted') {
+            if (data.status === serverStates.PROG_DONE || data.status === serverStates.PROC_ABORT) {
                 setShowBackdrop(false)
-                updateInStateMap<number, IMessage>(data.pid, 'Done!', messageMap, setMessageMap);
+                updateInStateMap<number, IMessage>(data.pid, serverStates.PROG_DONE, messageMap, setMessageMap);
                 updateInStateMap<number, number>(data.pid, 0, progressMap, setProgressMap);
                 socket.emit('disk-space')
                 dispatch(finished())
@@ -290,11 +291,14 @@ export default function Home({ socket }: Props) {
                                 </Button>
                             </Grid>
                             {/* video only */}
-                            <Grid item xs={12}>
-                                <Typography variant="body1" component="div">
-                                    Video data
-                                </Typography>
-                            </Grid>
+                            {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
+                                <Grid item xs={12}>
+                                    <Typography variant="body1" component="div">
+                                        Video data {downloadFormats.formats[1].acodec}
+                                    </Typography>
+                                </Grid>
+                                : null
+                            }
                             {downloadFormats.formats
                                 .filter(format => format.acodec === 'none' && format.vcodec !== 'none')
                                 .map((format, idx) => (
@@ -312,11 +316,14 @@ export default function Home({ socket }: Props) {
                                     </Grid>
                                 ))
                             }
-                            <Grid item xs={12}>
-                                <Typography variant="body1" component="div">
-                                    Audio data
-                                </Typography>
-                            </Grid>
+                            {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
+                                <Grid item xs={12}>
+                                    <Typography variant="body1" component="div">
+                                        Audio data
+                                    </Typography>
+                                </Grid>
+                                : null
+                            }
                             {downloadFormats.formats
                                 .filter(format => format.acodec !== 'none' && format.vcodec === 'none')
                                 .map((format, idx) => (
@@ -360,7 +367,7 @@ export default function Home({ socket }: Props) {
                     Array
                         .from(messageMap)
                         .filter(flattened => [...flattened][0])
-                        .filter(flattened => [...flattened][1].toString() !== 'Done!')
+                        .filter(flattened => [...flattened][1].toString() !== serverStates.PROG_DONE)
                         .flatMap(message => (
                             <Grid item xs={4} sm={8} md={6} key={message[0]}>
                                 {

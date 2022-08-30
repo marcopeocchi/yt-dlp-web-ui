@@ -2,15 +2,15 @@ import { spawn } from 'child_process';
 import { from, interval } from 'rxjs';
 import { map, throttle } from 'rxjs/operators';
 import { Socket } from 'socket.io';
+import MemoryDB from '../db/memoryDB';
 import { IPayload } from '../interfaces/IPayload';
 import { ISettings } from '../interfaces/ISettings';
 import Logger from '../utils/BetterLogger';
 import Process from './Process';
-import MemoryDB from '../db/memoryDB';
+import { states } from './states';
 
 // settings read from settings.json
 let settings: ISettings;
-let coldRestart = true;
 const log = Logger.instance;
 
 const mem_db = new MemoryDB();
@@ -29,9 +29,18 @@ catch (e) {
  */
 export async function getFormatsAndMetadata(socket: Socket, url: string) {
     let p = new Process(url, [], settings);
-    const formats = await p.getMetadata();
-    socket.emit('available-formats', formats)
-    p = null;
+    try {
+        const formats = await p.getMetadata();
+        socket.emit('available-formats', formats)
+    } catch (e) {
+        log.warn('dl', e)
+        socket.emit('progress', {
+            status: states.PROG_DONE,
+            pid: -1,
+        });
+    } finally {
+        p = null;
+    }
 }
 
 /**
@@ -43,7 +52,7 @@ export async function getFormatsAndMetadata(socket: Socket, url: string) {
  */
 export async function download(socket: Socket, payload: IPayload) {
     if (!payload || payload.url === '' || payload.url === null) {
-        socket.emit('progress', { status: 'Done!' });
+        socket.emit('progress', { status: states.PROG_DONE });
         return;
     }
 
@@ -67,12 +76,20 @@ export async function download(socket: Socket, payload: IPayload) {
  * @param socket 
  */
 function displayDownloadMetadata(process: Process, socket: Socket) {
-    process.getMetadata().then(metadata => {
-        socket.emit('metadata', {
-            pid: process.getPid(),
-            metadata: metadata,
-        });
-    });
+    process.getMetadata()
+        .then(metadata => {
+            socket.emit('metadata', {
+                pid: process.getPid(),
+                metadata: metadata,
+            });
+        })
+        .catch((e) => {
+            socket.emit('progress', {
+                status: states.PROG_DONE,
+                pid: process.getPid(),
+            });
+            log.warn('dl', e)
+        })
 }
 
 /**
@@ -83,7 +100,7 @@ function displayDownloadMetadata(process: Process, socket: Socket) {
 function streamProcess(process: Process, socket: Socket) {
     const emitAbort = () => {
         socket.emit('progress', {
-            status: 'Done!',
+            status: states.PROG_DONE,
             pid: process.getPid(),
         });
     }
@@ -168,7 +185,7 @@ export function abortDownload(socket: Socket, args: any) {
     spawn('kill', [pid])
         .on('exit', () => {
             socket.emit('progress', {
-                status: 'Aborted',
+                status: states.PROC_ABORT,
                 process: pid,
             });
             log.warn('dl', `Aborting download ${pid}`);
@@ -182,7 +199,7 @@ export function abortDownload(socket: Socket, args: any) {
 export function abortAllDownloads(socket: Socket) {
     spawn('killall', ['yt-dlp'])
         .on('exit', () => {
-            socket.emit('progress', { status: 'Aborted' });
+            socket.emit('progress', { status: states.PROC_ABORT });
             log.info('dl', 'Aborting downloads');
         });
     mem_db.flush();
@@ -209,7 +226,7 @@ const formatter = (stdout: string, pid: number) => {
     switch (status) {
         case 'download':
             return {
-                status: 'download',
+                status: states.PROC_DOWNLOAD,
                 progress: cleanStdout[1],
                 size: cleanStdout[3],
                 dlSpeed: cleanStdout[5],
@@ -217,7 +234,7 @@ const formatter = (stdout: string, pid: number) => {
             }
         case 'merge':
             return {
-                status: 'merging',
+                status: states.PROC_MERGING,
                 progress: '100',
             }
         default:
