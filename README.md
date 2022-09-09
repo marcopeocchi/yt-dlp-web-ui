@@ -98,7 +98,7 @@ docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io
 
 # or even
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
-docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/ ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 
 or  
