@@ -9,7 +9,7 @@ Developed to be as lightweight as possible (because my server is basically an in
 
 The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc interface).
 
-**I strongly recomend the ghrc build instead of docker hub one.**
+**I strongly recomend the ghcr build instead of docker hub one.**
 
 ```shell
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
