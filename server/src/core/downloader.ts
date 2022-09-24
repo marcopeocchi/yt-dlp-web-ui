@@ -61,10 +61,12 @@ export async function download(socket: Socket, payload: IPayload) {
         payload.params.split(' ') :
         payload.params;
 
-    const scopedSettings = { ...settings }
-    scopedSettings.download_path = payload.path;
+    const scopedSettings: ISettings = {
+        ...settings,
+        download_path: payload.path
+    }
 
-    let p = new Process(url, params, settings);
+    let p = new Process(url, params, scopedSettings);
 
     p.start().then(downloader => {
         mem_db.add(downloader)
