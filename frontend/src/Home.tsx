@@ -5,10 +5,13 @@ import {
     ButtonGroup,
     CircularProgress,
     Container,
+    FormControl,
     Grid,
     IconButton,
     InputAdornment,
+    MenuItem,
     Paper,
+    Select,
     Snackbar,
     styled,
     TextField,
@@ -43,6 +46,9 @@ export default function Home({ socket }: Props) {
     const [pickedVideoFormat, setPickedVideoFormat] = useState('');
     const [pickedAudioFormat, setPickedAudioFormat] = useState('');
     const [pickedBestFormat, setPickedBestFormat] = useState('');
+
+    const [downloadPath, setDownloadPath] = useState<number>(0);
+    const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([]);
 
     const [url, setUrl] = useState('');
     const [workingUrl, setWorkingUrl] = useState('');
@@ -106,6 +112,14 @@ export default function Home({ socket }: Props) {
         })
     }, [])
 
+    useEffect(() => {
+        fetch(`${window.location.protocol}//${settings.serverAddr}:${settings.serverPort}/tree`)
+            .then(res => res.json())
+            .then(data => {
+                setAvailableDownloadPaths(data.flat)
+            })
+    }, [])
+
     /* -------------------- component functions -------------------- */
 
     /**
@@ -119,6 +133,7 @@ export default function Home({ socket }: Props) {
 
         socket.emit('send-url', {
             url: immediate || url || workingUrl,
+            path: availableDownloadPaths[downloadPath],
             params: settings.cliArgs.toString() + toFormatArgs(codes),
         })
         setUrl('')
@@ -211,25 +226,44 @@ export default function Home({ socket }: Props) {
                             flexDirection: 'column',
                         }}
                     >
-                        <TextField
-                            id="urlInput"
-                            label={settings.i18n.t('urlInput')}
-                            variant="outlined"
-                            onChange={handleUrlChange}
-                            disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <label htmlFor="icon-button-file">
-                                            <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
-                                            <IconButton color="primary" aria-label="upload file" component="span">
-                                                <FileUpload />
-                                            </IconButton>
-                                        </label>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
+                        <Grid container spacing={1}>
+                            <Grid item xs={10}>
+                                <TextField
+                                    fullWidth
+                                    id="urlInput"
+                                    label={settings.i18n.t('urlInput')}
+                                    variant="outlined"
+                                    onChange={handleUrlChange}
+                                    disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <label htmlFor="icon-button-file">
+                                                    <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
+                                                    <IconButton color="primary" aria-label="upload file" component="span">
+                                                        <FileUpload />
+                                                    </IconButton>
+                                                </label>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={2}>
+                                <FormControl fullWidth>
+                                    <Select
+                                        defaultValue={0}
+                                        value={availableDownloadPaths[downloadPath]}
+                                        onChange={(e) => setDownloadPath(e.target.value)}
+                                    >
+
+                                        {availableDownloadPaths.map((val: string, idx: number) => (
+                                            <MenuItem key={idx} value={idx}>{val}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                        </Grid>
                         <Grid container spacing={1} pt={2}>
                             <Grid item>
                                 <Button
@@ -365,7 +399,7 @@ export default function Home({ socket }: Props) {
             <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
                 { /*Super big brain flatMap moment*/
                     Array
-                        .from(messageMap)
+                        .from<any>(messageMap)
                         .filter(flattened => [...flattened][0])
                         .filter(flattened => [...flattened][1].toString() !== serverStates.PROG_DONE)
                         .flatMap(message => (

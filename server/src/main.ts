@@ -2,7 +2,13 @@ import { splash } from './utils/logger';
 import { join } from 'path';
 import { Server } from 'socket.io';
 import { ytdlpUpdater } from './utils/updater';
-import { download, abortDownload, retrieveDownload, abortAllDownloads, getFormatsAndMetadata } from './core/downloader';
+import {
+    download,
+    abortDownload,
+    retrieveDownload,
+    abortAllDownloads,
+    getFormatsAndMetadata
+} from './core/downloader';
 import { getFreeDiskSpace } from './utils/procUtils';
 import { listDownloaded } from './core/downloadArchive';
 import { createServer } from 'http';
@@ -13,6 +19,7 @@ import * as serve from 'koa-static';
 import * as cors from '@koa/cors';
 import Logger from './utils/BetterLogger';
 import { ISettings } from './interfaces/ISettings';
+import { directoryTree } from './utils/directoryUtils';
 
 const app = new Koa();
 const server = createServer(app.callback());
@@ -55,6 +62,10 @@ router.get('/archive', (ctx, next) => {
 })
 router.get('/stream/:filepath', (ctx, next) => {
     streamer(ctx, next)
+})
+router.get('/tree', (ctx, next) => {
+    ctx.body = directoryTree()
+    next()
 })
 
 // WebSocket listeners

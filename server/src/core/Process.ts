@@ -41,6 +41,12 @@ class Process {
     public async start(callback?: Function): Promise<this> {
         const sanitizedParams = this.params.filter((param: string) => availableParams.includes(param));
 
+        if (this.settings?.download_path) {
+            if (this.settings.download_path.charAt(this.settings.download_path.length - 1) !== '/') {
+                this.settings.download_path = `${this.settings.download_path}/`
+            }
+        }
+
         const ytldp = spawn(this.exePath,
             ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
                 .concat(sanitizedParams)
