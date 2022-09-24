@@ -61,6 +61,9 @@ export async function download(socket: Socket, payload: IPayload) {
         payload.params.split(' ') :
         payload.params;
 
+    const scopedSettings = { ...settings }
+    scopedSettings.download_path = payload.path;
+
     let p = new Process(url, params, settings);
 
     p.start().then(downloader => {
@@ -111,7 +114,10 @@ function streamProcess(process: Process, socket: Socket) {
             map(stdout => formatter(String(stdout), process.getPid()))
         )
         .subscribe({
-            next: (stdout) => socket.emit('progress', stdout),
+            next: (stdout) => {
+                socket.emit('progress', stdout)
+                log.info(`proc-${stdout.pid}`, `${stdout.progress}\t${stdout.dlSpeed}`)
+            },
             complete: () => {
                 process.kill().then(() => {
                     emitAbort();
