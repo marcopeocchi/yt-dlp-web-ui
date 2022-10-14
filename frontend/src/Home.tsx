@@ -18,12 +18,14 @@ import {
     Typography
 } from "@mui/material";
 import { Buffer } from 'buffer';
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
+import { CliArguments } from "./classes";
 import { StackableResult } from "./components/StackableResult";
 import { serverStates } from "./events";
 import { connected, downloading, finished } from "./features/status/statusSlice";
+import { I18nBuilder } from "./i18n";
 import { IDLMetadata, IDLMetadataAndPID, IMessage } from "./interfaces";
 import { RootState } from "./stores/store";
 import { isValidURL, toFormatArgs, updateInStateMap } from "./utils";
@@ -54,6 +56,10 @@ export default function Home({ socket }: Props) {
     const [workingUrl, setWorkingUrl] = useState('');
     const [showBackdrop, setShowBackdrop] = useState(false);
     const [showToast, setShowToast] = useState(true);
+
+    // memos
+    const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
+    const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
 
     /* -------------------- Effects -------------------- */
     /* WebSocket connect event handler*/
@@ -134,7 +140,7 @@ export default function Home({ socket }: Props) {
         socket.emit('send-url', {
             url: immediate || url || workingUrl,
             path: availableDownloadPaths[downloadPath],
-            params: settings.cliArgs.toString() + toFormatArgs(codes),
+            params: cliArgs.toString() + toFormatArgs(codes),
         })
         setUrl('')
         setWorkingUrl('')
@@ -231,7 +237,7 @@ export default function Home({ socket }: Props) {
                                 <TextField
                                     fullWidth
                                     id="urlInput"
-                                    label={settings.i18n.t('urlInput')}
+                                    label={i18n.t('urlInput')}
                                     variant="outlined"
                                     onChange={handleUrlChange}
                                     disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
@@ -253,8 +259,8 @@ export default function Home({ socket }: Props) {
                                 <FormControl fullWidth>
                                     <Select
                                         defaultValue={0}
-                                        value={availableDownloadPaths[downloadPath]}
-                                        onChange={(e) => setDownloadPath(e.target.value)}
+                                        value={downloadPath}
+                                        onChange={(e) => setDownloadPath(Number(e.target.value))}
                                     >
 
                                         {availableDownloadPaths.map((val: string, idx: number) => (
@@ -271,7 +277,7 @@ export default function Home({ socket }: Props) {
                                     disabled={url === ''}
                                     onClick={() => settings.formatSelection ? sendUrlFormatSelection() : sendUrl()}
                                 >
-                                    {settings.i18n.t('startButton')}
+                                    {i18n.t('startButton')}
                                 </Button>
                             </Grid>
                             <Grid item>
@@ -279,7 +285,7 @@ export default function Home({ socket }: Props) {
                                     variant="contained"
                                     onClick={() => abort()}
                                 >
-                                    {settings.i18n.t('abortAllButton')}
+                                    {i18n.t('abortAllButton')}
                                 </Button>
                             </Grid>
                         </Grid>

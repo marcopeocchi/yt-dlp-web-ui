@@ -17,12 +17,23 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounceTime, distinctUntilChanged, map, of, takeWhile } from "rxjs";
 import { Socket } from "socket.io-client";
-import { LanguageUnion, setCliArgs, setFormatSelection, setLanguage, setServerAddr, setServerPort, setTheme, ThemeUnion } from "./features/settings/settingsSlice";
+import { CliArguments } from "./classes";
+import {
+    LanguageUnion,
+    setCliArgs,
+    setFormatSelection,
+    setLanguage,
+    setServerAddr,
+    setServerPort,
+    setTheme,
+    ThemeUnion
+} from "./features/settings/settingsSlice";
 import { alreadyUpdated, updated } from "./features/status/statusSlice";
+import { I18nBuilder } from "./i18n";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
@@ -37,6 +48,8 @@ export default function Settings({ socket }: Props) {
 
     const [invalidIP, setInvalidIP] = useState(false);
 
+    const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
+    const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
     /**
      * Update the server ip address state and localstorage whenever the input value changes.  
      * Validate the ip-addr then set.s
@@ -114,14 +127,14 @@ export default function Settings({ socket }: Props) {
                         }}
                     >
                         <Typography pb={2} variant="h6" color="primary">
-                            {settings.i18n.t('settingsAnchor')}
+                            {i18n.t('settingsAnchor')}
                         </Typography>
                         <FormGroup>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} md={11}>
                                     <TextField
                                         fullWidth
-                                        label={settings.i18n.t('serverAddressTitle')}
+                                        label={i18n.t('serverAddressTitle')}
                                         defaultValue={settings.serverAddr}
                                         error={invalidIP}
                                         onChange={handleAddrChange}
@@ -134,7 +147,7 @@ export default function Settings({ socket }: Props) {
                                 <Grid item xs={12} md={1}>
                                     <TextField
                                         fullWidth
-                                        label={settings.i18n.t('serverPortTitle')}
+                                        label={i18n.t('serverPortTitle')}
                                         defaultValue={settings.serverPort}
                                         onChange={handlePortChange}
                                         error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
@@ -173,35 +186,48 @@ export default function Settings({ socket }: Props) {
                                         </Select>
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        fullWidth
+                                        label={'Max download speed' || i18n.t('serverPortTitle')}
+                                        defaultValue={settings.serverPort}
+                                        onChange={handlePortChange}
+                                        error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
+                                        sx={{ mb: 2 }}
+                                    />
+                                </Grid>
                             </Grid>
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        defaultChecked={settings.cliArgs.noMTime}
-                                        onChange={() => dispatch(setCliArgs(settings.cliArgs.toggleNoMTime()))}
+                                        defaultChecked={cliArgs.noMTime}
+                                        onChange={() => dispatch(setCliArgs(cliArgs.toggleNoMTime().toString()))}
                                     />
                                 }
-                                label={settings.i18n.t('noMTimeCheckbox')}
+                                label={i18n.t('noMTimeCheckbox')}
                                 sx={{ mt: 3 }}
                             />
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        defaultChecked={settings.cliArgs.extractAudio}
-                                        onChange={() => dispatch(setCliArgs(settings.cliArgs.toggleExtractAudio()))}
+                                        defaultChecked={cliArgs.extractAudio}
+                                        onChange={() => dispatch(setCliArgs(cliArgs.toggleExtractAudio().toString()))}
                                         disabled={settings.formatSelection}
                                     />
                                 }
-                                label={settings.i18n.t('extractAudioCheckbox')}
+                                label={i18n.t('extractAudioCheckbox')}
                             />
                             <FormControlLabel
                                 control={
                                     <Switch
                                         defaultChecked={settings.formatSelection}
-                                        onChange={() => dispatch(setFormatSelection(!settings.formatSelection))}
+                                        onChange={() => {
+                                            dispatch(setCliArgs(cliArgs.disableExtractAudio().toString()))
+                                            dispatch(setFormatSelection(!settings.formatSelection))
+                                        }}
                                     />
                                 }
-                                label={settings.i18n.t('formatSelectionEnabler')}
+                                label={i18n.t('formatSelectionEnabler')}
                             />
                             <Grid>
                                 <Stack direction="row">
@@ -210,7 +236,7 @@ export default function Settings({ socket }: Props) {
                                         variant="contained"
                                         onClick={() => dispatch(updated())}
                                     >
-                                        {settings.i18n.t('updateBinButton')}
+                                        {i18n.t('updateBinButton')}
                                     </Button>
                                     {/* <Button sx={{ mr: 1, mt: 1 }} variant="outlined">Primary</Button> */}
                                 </Stack>
@@ -222,7 +248,7 @@ export default function Settings({ socket }: Props) {
             <Snackbar
                 open={status.updated}
                 autoHideDuration={1500}
-                message={settings.i18n.t('toastUpdated')}
+                message={i18n.t('toastUpdated')}
                 onClose={updateBinary}
             />
         </Container>

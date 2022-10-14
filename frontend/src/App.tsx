@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { ThemeProvider } from "@emotion/react";
 import {
     Box,
@@ -36,7 +36,9 @@ import ArchivedDownloads from "./Archived";
 
 const drawerWidth: number = 240;
 
-const socket = io(`http://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`)
+const socket = io(
+    `http://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
+)
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;

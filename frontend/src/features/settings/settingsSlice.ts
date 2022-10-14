@@ -10,9 +10,9 @@ export interface SettingsState {
     serverPort: string,
     language: LanguageUnion,
     theme: ThemeUnion,
-    cliArgs: CliArguments,
-    i18n: I18nBuilder,
-    formatSelection: boolean
+    cliArgs: string,
+    formatSelection: boolean,
+    ratelimit: string,
 }
 
 const initialState: SettingsState = {
@@ -20,9 +20,9 @@ const initialState: SettingsState = {
     serverPort: localStorage.getItem("server-port") || window.location.port,
     language: (localStorage.getItem("language") || "english") as LanguageUnion,
     theme: (localStorage.getItem("theme") || "light") as ThemeUnion,
-    cliArgs: localStorage.getItem("cli-args") ? new CliArguments().fromString(localStorage.getItem("cli-args") ?? "") : new CliArguments(false, true),
-    i18n: new I18nBuilder((localStorage.getItem("language") || "english")),
+    cliArgs: localStorage.getItem("cli-args") ?? "",
     formatSelection: localStorage.getItem("format-selection") === "true",
+    ratelimit: localStorage.getItem("rate-limit") ?? "",
 }
 
 export const settingsSlice = createSlice({
@@ -39,12 +39,11 @@ export const settingsSlice = createSlice({
         },
         setLanguage: (state, action: PayloadAction<LanguageUnion>) => {
             state.language = action.payload
-            state.i18n.setLanguage(action.payload)
             localStorage.setItem("language", action.payload)
         },
-        setCliArgs: (state, action: PayloadAction<CliArguments>) => {
+        setCliArgs: (state, action: PayloadAction<string>) => {
             state.cliArgs = action.payload
-            localStorage.setItem("cli-args", action.payload.toString())
+            localStorage.setItem("cli-args", action.payload)
         },
         setTheme: (state, action: PayloadAction<ThemeUnion>) => {
             state.theme = action.payload
@@ -54,9 +53,13 @@ export const settingsSlice = createSlice({
             state.formatSelection = action.payload
             localStorage.setItem("format-selection", action.payload.toString())
         },
+        setRateLimit: (state, action: PayloadAction<string>) => {
+            state.ratelimit = action.payload
+            localStorage.setItem("rate-limit", action.payload)
+        },
     }
 })
 
-export const { setLanguage, setCliArgs, setTheme, setServerAddr, setServerPort, setFormatSelection } = settingsSlice.actions
+export const { setLanguage, setCliArgs, setTheme, setServerAddr, setServerPort, setFormatSelection, setRateLimit } = settingsSlice.actions
 
 export default settingsSlice.reducer

@@ -93,7 +93,7 @@ io.on('connection', socket => {
         retrieveDownload(socket)
     })
     socket.on('disk-space', () => {
-        getFreeDiskSpace(socket)
+        getFreeDiskSpace(socket, settings.download_path || 'downloads/')
     })
 })
 
