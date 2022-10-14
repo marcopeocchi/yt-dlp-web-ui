@@ -37,7 +37,7 @@ import ArchivedDownloads from "./Archived";
 const drawerWidth: number = 240;
 
 const socket = io(
-    `http://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
+    `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
 )
 
 interface AppBarProps extends MuiAppBarProps {
