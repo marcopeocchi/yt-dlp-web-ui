@@ -47,13 +47,13 @@ languages:
     lightThemeButton: 明亮主题
     settingsAnchor: 设置
     serverAddressTitle: 服务器地址
-    serverPortTitle: Port
+    serverPortTitle: 端口
     extractAudioCheckbox: 提取音频
     noMTimeCheckbox: 不设置文件修改时间
     bgReminder: 关闭页面后，下载会继续在后台运行。
     toastConnected: '已连接到 '
     toastUpdated: 已更新 yt-dlp 可执行文件！
-    formatSelectionEnabler: Enable video/audio formats selection
+    formatSelectionEnabler: 启用视频/音频格式选择
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
