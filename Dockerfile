@@ -9,11 +9,10 @@ RUN apk add curl wget psmisc python3 ffmpeg
 COPY . .
 RUN chmod +x ./fetch-yt-dlp.sh
 # install node dependencies
-RUN npm i -g yarn
-RUN yarn
-RUN yarn build
-RUN yarn build-server
-RUN yarn run fetch
+RUN npm
+RUN npm run build
+RUN npm run build-server
+RUN npm run fetch
 # expose and run
 EXPOSE 3022
 CMD [ "node" , "./dist/main.js" ]
