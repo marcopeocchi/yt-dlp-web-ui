@@ -1,4 +1,4 @@
-FROM node:16-alpine3.16
+FROM node:18-alpine3.16
 RUN mkdir -p /usr/src/yt-dlp-webui/download
 VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
