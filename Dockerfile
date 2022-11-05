@@ -1,4 +1,4 @@
-FROM node:16-alpine3.15
+FROM node:16-alpine3.16
 RUN mkdir -p /usr/src/yt-dlp-webui/download
 VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
@@ -9,6 +9,7 @@ RUN apk add curl wget psmisc python3 ffmpeg
 COPY . .
 RUN chmod +x ./fetch-yt-dlp.sh
 # install node dependencies
+RUN npm i -g yarn
 RUN yarn
 RUN yarn build
 RUN yarn build-server
