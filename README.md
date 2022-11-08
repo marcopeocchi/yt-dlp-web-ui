@@ -1,5 +1,9 @@
 # yt-dlp Web UI
 
+
+**To anyone who is interested i'm working on a [RPC server for yt-dlp](https://github.com/marcopeocchi/yt-dlp-rpc).**
+
+
 A not so terrible web ui for yt-dlp.  
 Created for the only purpose of *fetching* videos from my server/nas. 
 
