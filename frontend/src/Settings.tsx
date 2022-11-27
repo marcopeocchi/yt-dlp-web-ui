@@ -170,6 +170,7 @@ export default function Settings({ socket }: Props) {
                                             <MenuItem value="chinese">Chinese</MenuItem>
                                             <MenuItem value="russian">Russian</MenuItem>
                                             <MenuItem value="korean">Korean</MenuItem>
+                                            <MenuItem value="Japanese">Japanese</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>

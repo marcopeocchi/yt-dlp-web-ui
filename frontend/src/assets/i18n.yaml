@@ -123,6 +123,6 @@ languages:
     extractAudioCheckbox: 音質
     noMTimeCheckbox: ファイル時間の修正をしない
     bgReminder: このページを閉じてもバックグラウンドでダウンロードを続けます
-    toastConnected: '接続中'
+    toastConnected: '接続中 '
     toastUpdated: yt-dlpを更新しました!
     formatSelectionEnabler: 選択可能な動画/音源
