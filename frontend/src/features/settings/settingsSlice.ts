@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { CliArguments } from "../../classes"
 import { I18nBuilder } from "../../i18n"
 
-export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spanish" | "korean"
+export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spanish" | "korean" | "japanese"
 export type ThemeUnion = "light" | "dark"
 
 export interface SettingsState {
