@@ -108,3 +108,21 @@ languages:
     toastConnected: '다음으로 연결됨 '
     toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
     formatSelectionEnabler: Enable video/audio formats selection
+  japanese:
+    urlInput: YouTubeまたはサポート済み動画のURL
+    statusTitle: 状態
+    statusReady: 準備
+    startButton: 開始
+    abortAllButton: すべて中止
+    updateBinButton: yt-dlp更新
+    darkThemeButton: 黒テーマ
+    lightThemeButton: 白テーマ
+    settingsAnchor: 設定
+    serverAddressTitle: サーバーアドレス
+    serverPortTitle: ポート番号
+    extractAudioCheckbox: 音質
+    noMTimeCheckbox: ファイル時間の修正をしない
+    bgReminder: このページを閉じてもバックグラウンドでダウンロードを続けます
+    toastConnected: '接続中 '
+    toastUpdated: yt-dlpを更新しました!
+    formatSelectionEnabler: 選択可能な動画/音源
