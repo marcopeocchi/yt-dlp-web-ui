@@ -107,7 +107,7 @@ languages:
     bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다
     toastConnected: '다음으로 연결됨 '
     toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
-    formatSelectionEnabler: Enable video/audio formats selection
+    formatSelectionEnabler: 비디오/오디오 포멧 옵션 표시
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
