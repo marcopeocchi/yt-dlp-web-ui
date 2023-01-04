@@ -5,6 +5,7 @@ import { Socket } from 'socket.io';
 import MemoryDB from '../db/memoryDB';
 import { IPayload } from '../interfaces/IPayload';
 import { ISettings } from '../interfaces/ISettings';
+import { CLIProgress } from '../types';
 import Logger from '../utils/BetterLogger';
 import Process from './Process';
 import { states } from './states';
@@ -118,7 +119,6 @@ function streamProcess(process: Process, socket: Socket) {
         .subscribe({
             next: (stdout) => {
                 socket.emit('progress', stdout)
-                log.info(`proc-${stdout.pid}`, `${stdout.progress}\t${stdout.dlSpeed}`)
             },
             complete: () => {
                 process.kill().then(() => {
@@ -227,27 +227,20 @@ export function getQueueSize(): number {
  * @returns 
  */
 const formatter = (stdout: string, pid: number) => {
-    const cleanStdout = stdout
-        .replace(/\s\s+/g, ' ')
-        .split(' ');
-    const status = cleanStdout[0].replace(/\[|\]|\r/g, '');
-    switch (status) {
-        case 'download':
+    try {
+        const p: CLIProgress = JSON.parse(stdout);
+        if (p) {
             return {
                 status: states.PROC_DOWNLOAD,
-                progress: cleanStdout[1],
-                size: cleanStdout[3],
-                dlSpeed: cleanStdout[5],
+                progress: p.percentage,
+                size: p.size,
+                dlSpeed: p.speed,
                 pid: pid,
             }
-        case 'merge':
-            return {
-                status: states.PROC_MERGING,
-                progress: '100',
-            }
-        default:
-            return {
-                progress: '0'
-            }
+        }
+    } catch (e) {
+        return {
+            progress: 0,
+        }
     }
 }

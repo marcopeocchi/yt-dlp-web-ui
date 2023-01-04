@@ -1,7 +1,7 @@
 export interface IMessage {
     status: string,
     progress?: string,
-    size?: string,
+    size?: number,
     dlSpeed?: string
     pid: number
 }

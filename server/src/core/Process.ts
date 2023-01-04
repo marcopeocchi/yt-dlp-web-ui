@@ -24,6 +24,16 @@ class Process {
     private metadata?: IDownloadMetadata;
     private exePath = join(__dirname, 'yt-dlp');
 
+    private readonly template = `download:
+    {
+        "eta":%(progress.eta)s, 
+        "percentage":"%(progress._percent_str)s",
+        "speed":"%(progress._speed_str)s",
+        "size":%(info.filesize_approx)s
+    }`
+        .replace(/\s\s+/g, ' ')
+        .replace('\n', '');
+
     constructor(url: string, params: Array<string>, settings: any) {
         this.url = url;
         this.params = params || [];
@@ -48,7 +58,11 @@ class Process {
         }
 
         const ytldp = spawn(this.exePath,
-            ['-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`]
+            [
+                '-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`,
+                '--progress-template', this.template,
+                '--no-colors',
+            ]
                 .concat(sanitizedParams)
                 .concat((this.settings?.cliArgs ?? []).map(arg => arg.split(' ')).flat())
                 .concat([this.url])

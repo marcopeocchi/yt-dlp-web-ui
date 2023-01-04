@@ -23,6 +23,8 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
         return null;
     }
 
+    const roundMB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)}MB`
+
     return (
         <Card>
             <CardActionArea>
@@ -45,7 +47,7 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
                         <Chip label={formattedLog.status} color="primary" />
                         <Typography>{formattedLog.progress}</Typography>
                         <Typography>{formattedLog.dlSpeed}</Typography>
-                        <Typography>{formattedLog.size}</Typography>
+                        <Typography>{roundMB(formattedLog.size ?? 0)}</Typography>
                         {guessResolution(resolution)}
                     </Stack>
                     {progress ?

@@ -1,10 +1,12 @@
 export class CliArguments {
     private _extractAudio: boolean;
     private _noMTime: boolean;
+    private _proxy: string;
 
     constructor(extractAudio = false, noMTime = false) {
         this._extractAudio = extractAudio;
         this._noMTime = noMTime;
+        this._proxy = ""
     }
 
     public get extractAudio(): boolean {
