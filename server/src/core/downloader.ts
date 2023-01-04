@@ -74,6 +74,9 @@ export async function download(socket: Socket, payload: IPayload) {
         displayDownloadMetadata(downloader, socket);
         streamProcess(downloader, socket);
     });
+
+    // GC
+    p = null;
 }
 
 /**
