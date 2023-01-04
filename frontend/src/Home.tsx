@@ -423,7 +423,11 @@ export default function Home({ socket }: Props) {
                                         thumbnail={downloadInfoMap.get(message[0])?.thumbnail ?? ''}
                                         progress={progressMap.get(message[0]) ?? 0}
                                         stopCallback={() => abort(message[0])}
-                                        resolution={''}
+                                        resolution={
+                                            settings.formatSelection
+                                                ? ''
+                                                : downloadInfoMap.get(message[0])?.best.resolution ?? ''
+                                        }
                                     />
                                 </Fragment>
                             </Grid>

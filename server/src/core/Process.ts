@@ -83,7 +83,7 @@ class Process {
     public getMetadata(): Promise<IDownloadMetadata> {
         if (!this.metadata) {
             let stdoutChunks = [];
-            const ytdlpInfo = spawn(this.exePath, ['-j', this.url]);
+            const ytdlpInfo = spawn(this.exePath, ['-J', this.url]);
 
             ytdlpInfo.stdout.on('data', (data) => {
                 stdoutChunks.push(data);
