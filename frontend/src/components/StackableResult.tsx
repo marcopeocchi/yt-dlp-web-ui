@@ -22,7 +22,7 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
         return null;
     }
 
-    const roundMB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)}MB`
+    const roundMB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)}MiB`
 
     return (
         <Card>

@@ -56,7 +56,4 @@ try {
     settings = require('../../settings.json');
 } catch (e) { }
 
-export function directoryTree() {
-    const tree = buildTreeDFS(settings.download_path || 'downloads', true)
-    return tree
-}
+export const directoryTree = () => buildTreeDFS(settings.download_path || 'downloads', true)
