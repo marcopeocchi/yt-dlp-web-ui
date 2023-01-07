@@ -62,12 +62,14 @@ export async function download(socket: Socket, payload: IPayload) {
         payload.params.split(' ') :
         payload.params;
 
+    const renameTo = payload.renameTo
+
     const scopedSettings: ISettings = {
         ...settings,
         download_path: payload.path
     }
 
-    let p = new Process(url, params, scopedSettings);
+    let p = new Process(url, params, scopedSettings, renameTo);
 
     p.start().then(downloader => {
         mem_db.add(downloader)
@@ -114,7 +116,7 @@ function streamProcess(process: Process, socket: Socket) {
         });
     }
 
-    from(process.getStdout().removeAllListeners())                            // stdout as observable
+    from(process.getStdout().removeAllListeners()) // stdout as observable
         .pipe(
             throttle(() => interval(500)),  // discard events closer than 500ms
             map(stdout => formatter(String(stdout), process.getPid()))
