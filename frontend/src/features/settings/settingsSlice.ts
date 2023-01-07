@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { CliArguments } from "../../classes"
-import { I18nBuilder } from "../../i18n"
 
 export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spanish" | "korean" | "japanese"
 export type ThemeUnion = "light" | "dark"
@@ -13,6 +11,8 @@ export interface SettingsState {
     cliArgs: string,
     formatSelection: boolean,
     ratelimit: string,
+    fileRenaming: boolean,
+    pathOverriding: boolean,
 }
 
 const initialState: SettingsState = {
@@ -23,6 +23,8 @@ const initialState: SettingsState = {
     cliArgs: localStorage.getItem("cli-args") ?? "",
     formatSelection: localStorage.getItem("format-selection") === "true",
     ratelimit: localStorage.getItem("rate-limit") ?? "",
+    fileRenaming: localStorage.getItem("file-renaming") === "true",
+    pathOverriding: localStorage.getItem("path-overriding") === "true",
 }
 
 export const settingsSlice = createSlice({
@@ -57,9 +59,27 @@ export const settingsSlice = createSlice({
             state.ratelimit = action.payload
             localStorage.setItem("rate-limit", action.payload)
         },
+        setPathOverriding: (state, action: PayloadAction<boolean>) => {
+            state.pathOverriding = action.payload
+            localStorage.setItem("path-overriding", action.payload.toString())
+        },
+        setFileRenaming: (state, action: PayloadAction<boolean>) => {
+            state.fileRenaming = action.payload
+            localStorage.setItem("file-renaming", action.payload.toString())
+        },
     }
 })
 
-export const { setLanguage, setCliArgs, setTheme, setServerAddr, setServerPort, setFormatSelection, setRateLimit } = settingsSlice.actions
+export const {
+    setLanguage,
+    setCliArgs,
+    setTheme,
+    setServerAddr,
+    setServerPort,
+    setFormatSelection,
+    setRateLimit,
+    setFileRenaming,
+    setPathOverriding,
+} = settingsSlice.actions
 
 export default settingsSlice.reducer

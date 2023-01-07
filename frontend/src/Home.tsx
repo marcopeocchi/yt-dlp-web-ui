@@ -9,6 +9,7 @@ import {
     Grid,
     IconButton,
     InputAdornment,
+    InputLabel,
     MenuItem,
     Paper,
     Select,
@@ -49,8 +50,10 @@ export default function Home({ socket }: Props) {
     const [pickedAudioFormat, setPickedAudioFormat] = useState('');
     const [pickedBestFormat, setPickedBestFormat] = useState('');
 
-    const [downloadPath, setDownloadPath] = useState<number>(0);
+    const [downloadPath, setDownloadPath] = useState(0);
     const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([]);
+
+    const [fileNameOverride, setFilenameOverride] = useState('');
 
     const [url, setUrl] = useState('');
     const [workingUrl, setWorkingUrl] = useState('');
@@ -141,14 +144,17 @@ export default function Home({ socket }: Props) {
             url: immediate || url || workingUrl,
             path: availableDownloadPaths[downloadPath],
             params: cliArgs.toString() + toFormatArgs(codes),
+            renameTo: fileNameOverride,
         })
+
         setUrl('')
         setWorkingUrl('')
+        setFilenameOverride('')
+
         setTimeout(() => {
-            const input = document.getElementById('urlInput') as HTMLInputElement;
-            input.value = '';
-            setShowBackdrop(true);
-            setDownloadFormats(undefined);
+            resetInput()
+            setShowBackdrop(true)
+            setDownloadFormats(undefined)
         }, 250);
     }
 
@@ -159,16 +165,17 @@ export default function Home({ socket }: Props) {
         socket.emit('send-url-format-selection', {
             url: url,
         })
+
         setWorkingUrl(url)
         setUrl('')
-        setPickedAudioFormat('');
-        setPickedVideoFormat('');
-        setPickedBestFormat('');
+        setPickedAudioFormat('')
+        setPickedVideoFormat('')
+        setPickedBestFormat('')
+
         setTimeout(() => {
-            const input = document.getElementById('urlInput') as HTMLInputElement;
-            input.value = '';
+            resetInput()
             setShowBackdrop(true)
-        }, 250);
+        }, 250)
     }
 
     /**
@@ -177,6 +184,14 @@ export default function Home({ socket }: Props) {
      */
     const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUrl(e.target.value)
+    }
+
+    /**
+     * Update the filename override state whenever the input value changes
+     * @param e Input change event
+     */
+    const handleFilenameOverrideChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilenameOverride(e.target.value)
     }
 
     /**
@@ -209,6 +224,16 @@ export default function Home({ socket }: Props) {
         reader.readAsDataURL(urlList[0])
     }
 
+    const resetInput = () => {
+        const input = document.getElementById('urlInput') as HTMLInputElement;
+        input.value = '';
+
+        const filename = document.getElementById('customFilenameInput') as HTMLInputElement;
+        if (filename) {
+            filename.value = '';
+        }
+    }
+
     /* -------------------- styled components -------------------- */
 
     const Input = styled('input')({
@@ -232,43 +257,63 @@ export default function Home({ socket }: Props) {
                             flexDirection: 'column',
                         }}
                     >
-                        <Grid container spacing={1}>
-                            <Grid item xs={10}>
-                                <TextField
-                                    fullWidth
-                                    id="urlInput"
-                                    label={i18n.t('urlInput')}
-                                    variant="outlined"
-                                    onChange={handleUrlChange}
-                                    disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
-                                    InputProps={{
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <label htmlFor="icon-button-file">
-                                                    <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
-                                                    <IconButton color="primary" aria-label="upload file" component="span">
-                                                        <FileUpload />
-                                                    </IconButton>
-                                                </label>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={2}>
-                                <FormControl fullWidth>
-                                    <Select
-                                        defaultValue={0}
-                                        value={downloadPath}
-                                        onChange={(e) => setDownloadPath(Number(e.target.value))}
-                                    >
-
-                                        {availableDownloadPaths.map((val: string, idx: number) => (
-                                            <MenuItem key={idx} value={idx}>{val}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Grid>
+                        <Grid container>
+                            <TextField
+                                fullWidth
+                                id="urlInput"
+                                label={i18n.t('urlInput')}
+                                variant="outlined"
+                                onChange={handleUrlChange}
+                                disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <label htmlFor="icon-button-file">
+                                                <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
+                                                <IconButton color="primary" aria-label="upload file" component="span">
+                                                    <FileUpload />
+                                                </IconButton>
+                                            </label>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Grid>
+                        <Grid container spacing={1} sx={{ mt: 1 }}>
+                            {
+                                settings.fileRenaming ?
+                                    <Grid item xs={8}>
+                                        <TextField
+                                            id="customFilenameInput"
+                                            fullWidth
+                                            label={i18n.t('customFilename')}
+                                            variant="outlined"
+                                            onChange={handleFilenameOverrideChange}
+                                            disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                                        />
+                                    </Grid> :
+                                    null
+                            }
+                            {
+                                settings.pathOverriding ?
+                                    <Grid item xs={4}>
+                                        <FormControl fullWidth>
+                                            <InputLabel>{i18n.t('customPath')}</InputLabel>
+                                            <Select
+                                                label={i18n.t('customPath')}
+                                                defaultValue={0}
+                                                variant={'outlined'}
+                                                value={downloadPath}
+                                                onChange={(e) => setDownloadPath(Number(e.target.value))}
+                                            >
+                                                {availableDownloadPaths.map((val: string, idx: number) => (
+                                                    <MenuItem key={idx} value={idx}>{val}</MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid> :
+                                    null
+                            }
                         </Grid>
                         <Grid container spacing={1} pt={2}>
                             <Grid item>
@@ -291,119 +336,121 @@ export default function Home({ socket }: Props) {
                         </Grid>
                     </Paper>
                 </Grid>
-            </Grid>
+            </Grid >
             {/* Format Selection grid */}
-            {downloadFormats ? <Grid container spacing={2} mt={2}>
-                <Grid item xs={12}>
-                    <Paper
-                        sx={{
-                            p: 2,
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}
-                    >
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Typography variant="h6" component="div" pb={1}>
-                                    {downloadFormats.title}
-                                </Typography>
-                                {/* <Skeleton variant="rectangular" height={180} /> */}
-                            </Grid>
-                            <Grid item xs={12} pb={1}>
-                                <img src={downloadFormats.thumbnail} height={260} width="100%" style={{ objectFit: 'cover' }} />
-                            </Grid>
-                            {/* video only */}
-                            <Grid item xs={12}>
-                                <Typography variant="body1" component="div">
-                                    Best quality
-                                </Typography>
-                            </Grid>
-                            <Grid item pr={2} py={1}>
-                                <Button
-                                    variant="contained"
-                                    disabled={pickedBestFormat !== ''}
-                                    onClick={() => {
-                                        setPickedBestFormat(downloadFormats.best.format_id)
-                                        setPickedVideoFormat('')
-                                        setPickedAudioFormat('')
-                                    }}>
-                                    {downloadFormats.best.format_note || downloadFormats.best.format_id} - {downloadFormats.best.vcodec}+{downloadFormats.best.acodec}
-                                </Button>
-                            </Grid>
-                            {/* video only */}
-                            {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
+            {
+                downloadFormats ? <Grid container spacing={2} mt={2}>
+                    <Grid item xs={12}>
+                        <Paper
+                            sx={{
+                                p: 2,
+                                display: 'flex',
+                                flexDirection: 'column',
+                            }}
+                        >
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" component="div" pb={1}>
+                                        {downloadFormats.title}
+                                    </Typography>
+                                    {/* <Skeleton variant="rectangular" height={180} /> */}
+                                </Grid>
+                                <Grid item xs={12} pb={1}>
+                                    <img src={downloadFormats.thumbnail} height={260} width="100%" style={{ objectFit: 'cover' }} />
+                                </Grid>
+                                {/* video only */}
                                 <Grid item xs={12}>
                                     <Typography variant="body1" component="div">
-                                        Video data {downloadFormats.formats[1].acodec}
+                                        Best quality
                                     </Typography>
                                 </Grid>
-                                : null
-                            }
-                            {downloadFormats.formats
-                                .filter(format => format.acodec === 'none' && format.vcodec !== 'none')
-                                .map((format, idx) => (
-                                    <Grid item pr={2} py={1} key={idx}>
-                                        <Button
-                                            variant="contained"
-                                            onClick={() => {
-                                                setPickedVideoFormat(format.format_id)
-                                                setPickedBestFormat('')
-                                            }}
-                                            disabled={pickedVideoFormat === format.format_id}
-                                        >
-                                            {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
-                                        </Button>
-                                    </Grid>
-                                ))
-                            }
-                            {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
-                                <Grid item xs={12}>
-                                    <Typography variant="body1" component="div">
-                                        Audio data
-                                    </Typography>
-                                </Grid>
-                                : null
-                            }
-                            {downloadFormats.formats
-                                .filter(format => format.acodec !== 'none' && format.vcodec === 'none')
-                                .map((format, idx) => (
-                                    <Grid item pr={2} py={1} key={idx}>
-                                        <Button
-                                            variant="contained"
-                                            onClick={() => {
-                                                setPickedAudioFormat(format.format_id)
-                                                setPickedBestFormat('')
-                                            }}
-                                            disabled={pickedAudioFormat === format.format_id}
-                                        >
-                                            {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
-                                        </Button>
-                                    </Grid>
-                                ))
-                            }
-                            <Grid item xs={12} pt={2}>
-                                <ButtonGroup disableElevation variant="contained">
+                                <Grid item pr={2} py={1}>
                                     <Button
-                                        onClick={() => sendUrl()}
-                                        disabled={!pickedBestFormat && !(pickedAudioFormat || pickedVideoFormat)}
-                                    > Download
-                                    </Button>
-                                    <Button
+                                        variant="contained"
+                                        disabled={pickedBestFormat !== ''}
                                         onClick={() => {
-                                            setPickedAudioFormat('');
-                                            setPickedVideoFormat('');
-                                            setPickedBestFormat('');
-                                        }}
-                                    > Clear
+                                            setPickedBestFormat(downloadFormats.best.format_id)
+                                            setPickedVideoFormat('')
+                                            setPickedAudioFormat('')
+                                        }}>
+                                        {downloadFormats.best.format_note || downloadFormats.best.format_id} - {downloadFormats.best.vcodec}+{downloadFormats.best.acodec}
                                     </Button>
-                                </ButtonGroup>
+                                </Grid>
+                                {/* video only */}
+                                {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
+                                    <Grid item xs={12}>
+                                        <Typography variant="body1" component="div">
+                                            Video data {downloadFormats.formats[1].acodec}
+                                        </Typography>
+                                    </Grid>
+                                    : null
+                                }
+                                {downloadFormats.formats
+                                    .filter(format => format.acodec === 'none' && format.vcodec !== 'none')
+                                    .map((format, idx) => (
+                                        <Grid item pr={2} py={1} key={idx}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setPickedVideoFormat(format.format_id)
+                                                    setPickedBestFormat('')
+                                                }}
+                                                disabled={pickedVideoFormat === format.format_id}
+                                            >
+                                                {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
+                                            </Button>
+                                        </Grid>
+                                    ))
+                                }
+                                {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
+                                    <Grid item xs={12}>
+                                        <Typography variant="body1" component="div">
+                                            Audio data
+                                        </Typography>
+                                    </Grid>
+                                    : null
+                                }
+                                {downloadFormats.formats
+                                    .filter(format => format.acodec !== 'none' && format.vcodec === 'none')
+                                    .map((format, idx) => (
+                                        <Grid item pr={2} py={1} key={idx}>
+                                            <Button
+                                                variant="contained"
+                                                onClick={() => {
+                                                    setPickedAudioFormat(format.format_id)
+                                                    setPickedBestFormat('')
+                                                }}
+                                                disabled={pickedAudioFormat === format.format_id}
+                                            >
+                                                {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
+                                            </Button>
+                                        </Grid>
+                                    ))
+                                }
+                                <Grid item xs={12} pt={2}>
+                                    <ButtonGroup disableElevation variant="contained">
+                                        <Button
+                                            onClick={() => sendUrl()}
+                                            disabled={!pickedBestFormat && !(pickedAudioFormat || pickedVideoFormat)}
+                                        > Download
+                                        </Button>
+                                        <Button
+                                            onClick={() => {
+                                                setPickedAudioFormat('');
+                                                setPickedVideoFormat('');
+                                                setPickedBestFormat('');
+                                            }}
+                                        > Clear
+                                        </Button>
+                                    </ButtonGroup>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Paper>
-                </Grid>
-            </Grid> : null}
+                        </Paper>
+                    </Grid>
+                </Grid> : null
+            }
             <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
-                { /*Super big brain flatMap moment*/
+                {
                     Array
                         .from<any>(messageMap)
                         .filter(flattened => [...flattened][0])
@@ -440,6 +487,6 @@ export default function Home({ socket }: Props) {
                 message="Connected"
                 onClose={() => setShowToast(false)}
             />
-        </Container>
+        </Container >
     );
 }

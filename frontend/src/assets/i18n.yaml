@@ -18,6 +18,13 @@ languages:
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
     formatSelectionEnabler: Enable video/audio formats selection
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -36,6 +43,13 @@ languages:
     toastConnected: 'Connesso a '
     toastUpdated: yt-dlp aggiornato con successo!
     formatSelectionEnabler: Abilita la selezione dei formati audio/video
+    themeSelect: 'Tema'
+    languageSelect: 'Lingua'
+    overridesAnchor: Sovrascritture
+    pathOverrideOption: Abilita sovrascrittura percorso di output
+    filenameOverrideOption: Abilita sovrascrittura del nome del file di output
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -54,6 +68,13 @@ languages:
     toastConnected: '已连接到 '
     toastUpdated: 已更新 yt-dlp 可执行文件！
     formatSelectionEnabler: 启用视频/音频格式选择
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -72,6 +93,13 @@ languages:
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
     formatSelectionEnabler: Enable video/audio formats selection
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -90,6 +118,13 @@ languages:
     toastConnected: 'Connected to '
     toastUpdated: Updated yt-dlp binary!
     formatSelectionEnabler: Enable video/audio formats selection
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -108,6 +143,13 @@ languages:
     toastConnected: '다음으로 연결됨 '
     toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
     formatSelectionEnabler: 비디오/오디오 포멧 옵션 표시
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -126,3 +168,10 @@ languages:
     toastConnected: '接続中 '
     toastUpdated: yt-dlpを更新しました!
     formatSelectionEnabler: 選択可能な動画/音源
+    themeSelect: 'Theme'
+    languageSelect: 'Language'
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    filenameOverrideOption: Enable output file name overriding
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path

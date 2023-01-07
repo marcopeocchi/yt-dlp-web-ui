@@ -25,8 +25,10 @@ import { CliArguments } from "./classes";
 import {
   LanguageUnion,
   setCliArgs,
+  setFileRenaming,
   setFormatSelection,
   setLanguage,
+  setPathOverriding,
   setServerAddr,
   setServerPort,
   setTheme,
@@ -158,10 +160,10 @@ export default function Settings({ socket }: Props) {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Language</InputLabel>
+                    <InputLabel>{i18n.t('languageSelect')}</InputLabel>
                     <Select
                       defaultValue={settings.language}
-                      label="Language"
+                      label={i18n.t('languageSelect')}
                       onChange={handleLanguageChange}
                     >
                       <MenuItem value="english">English</MenuItem>
@@ -176,10 +178,10 @@ export default function Settings({ socket }: Props) {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
-                    <InputLabel>Theme</InputLabel>
+                    <InputLabel>{i18n.t('themeSelect')}</InputLabel>
                     <Select
                       defaultValue={settings.theme}
-                      label="Theme"
+                      label={i18n.t('themeSelect')}
                       onChange={handleThemeChange}
                     >
                       <MenuItem value="light">Light</MenuItem>
@@ -231,6 +233,35 @@ export default function Settings({ socket }: Props) {
                 label={i18n.t('formatSelectionEnabler')}
               />
               <Grid>
+                <Typography variant="h6" color="primary" sx={{ mt: 2, mb: 0.5 }}>
+                  {i18n.t('overridesAnchor')}
+                </Typography>
+                <Stack direction="column">
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        defaultChecked={settings.pathOverriding}
+                        onChange={() => {
+                          dispatch(setPathOverriding(!settings.pathOverriding))
+                        }}
+                      />
+                    }
+                    label={i18n.t('pathOverrideOption')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        defaultChecked={settings.fileRenaming}
+                        onChange={() => {
+                          dispatch(setFileRenaming(!settings.fileRenaming))
+                        }}
+                      />
+                    }
+                    label={i18n.t('filenameOverrideOption')}
+                  />
+                </Stack>
+              </Grid>
+              <Grid>
                 <Stack direction="row">
                   <Button
                     sx={{ mr: 1, mt: 3 }}
@@ -239,7 +270,6 @@ export default function Settings({ socket }: Props) {
                   >
                     {i18n.t('updateBinButton')}
                   </Button>
-                  {/* <Button sx={{ mr: 1, mt: 1 }} variant="outlined">Primary</Button> */}
                 </Stack>
               </Grid>
             </FormGroup>

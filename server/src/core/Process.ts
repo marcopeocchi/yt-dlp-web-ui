@@ -23,6 +23,7 @@ class Process {
     private pid: number;
     private metadata?: IDownloadMetadata;
     private exePath = join(__dirname, 'yt-dlp');
+    private customFileName?: string;
 
     private readonly template = `download:
     {
@@ -34,13 +35,14 @@ class Process {
         .replace(/\s\s+/g, ' ')
         .replace('\n', '');
 
-    constructor(url: string, params: Array<string>, settings: any) {
+    constructor(url: string, params: Array<string>, settings: any, customFileName?: string) {
         this.url = url;
         this.params = params || [];
         this.settings = settings
         this.stdout = undefined;
         this.pid = undefined;
         this.metadata = undefined;
+        this.customFileName = customFileName;
     }
 
     /**
@@ -59,7 +61,7 @@ class Process {
 
         const ytldp = spawn(this.exePath,
             [
-                '-o', `${this.settings?.download_path || 'downloads/'}%(title)s.%(ext)s`,
+                '-o', `${this.settings?.download_path || 'downloads/'}${this.customFileName || '%(title)s'}.%(ext)s`,
                 '--progress-template', this.template,
                 '--no-colors',
             ]
@@ -72,6 +74,10 @@ class Process {
         this.stdout = ytldp.stdout;
 
         log.info('proc', `Spawned a new process, pid: ${this.pid}`)
+
+        if (callback) {
+            callback()
+        }
 
         return this;
     }
