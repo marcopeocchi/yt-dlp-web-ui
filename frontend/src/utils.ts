@@ -104,3 +104,7 @@ export function toFormatArgs(codes: string[]): string {
     }
     return '';
 }
+
+export function getWebSocketEndpoint() {
+    return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
+}

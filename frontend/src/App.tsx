@@ -12,11 +12,12 @@ import {
   createTheme, CssBaseline,
   Divider,
   IconButton, List,
-  ListItemIcon, ListItemText, styled, Toolbar,
+  ListItemIcon, ListItemText, Toolbar,
   Typography
 } from "@mui/material";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import MuiDrawer from '@mui/material/Drawer';
+import { grey } from "@mui/material/colors";
+
+
 import ListItemButton from '@mui/material/ListItemButton';
 import { useEffect, useMemo, useState } from "react";
 import { Provider, useSelector } from "react-redux";
@@ -26,63 +27,12 @@ import {
 } from 'react-router-dom';
 import { io } from "socket.io-client";
 import ArchivedDownloads from "./Archived";
+import { AppBar } from "./components/AppBar";
+import { Drawer } from "./components/Drawer";
 import Home from "./Home";
 import Settings from "./Settings";
 import { RootState, store } from './stores/store';
-
-const drawerWidth: number = 240;
-
-const socket = io(
-  `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
-)
-
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    '& .MuiDrawer-paper': {
-      position: 'relative',
-      whiteSpace: 'nowrap',
-      width: drawerWidth,
-      transition: theme.transitions.create('width', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      boxSizing: 'border-box',
-      ...(!open && {
-        overflowX: 'hidden',
-        transition: theme.transitions.create('width', {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen,
-        }),
-        width: theme.spacing(7),
-        [theme.breakpoints.up('sm')]: {
-          width: theme.spacing(9),
-        },
-      }),
-    },
-  }),
-);
+import { getWebSocketEndpoint } from "./utils";
 
 function AppContent() {
   const [open, setOpen] = useState(false);
@@ -91,12 +41,17 @@ function AppContent() {
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
 
+  const socket = useMemo(() => io(getWebSocketEndpoint()), [])
+
   const mode = settings.theme
 
   const theme = useMemo(() =>
     createTheme({
       palette: {
-        mode,
+        mode: settings.theme,
+        background: {
+          default: settings.theme === 'light' ? grey[50] : '#121212'
+        },
       },
     }), [settings.theme]
   );
@@ -151,7 +106,7 @@ function AppContent() {
                     alignItems: 'center',
                     flexWrap: 'wrap',
                   }}>
-                    <Storage></Storage>
+                    <Storage />
                     <span>&nbsp;{freeDiskSpace}&nbsp;</span>
                   </div>
                   : null
@@ -161,7 +116,7 @@ function AppContent() {
                 alignItems: 'center',
                 flexWrap: 'wrap',
               }}>
-                <SettingsEthernet></SettingsEthernet>
+                <SettingsEthernet />
                 <span>&nbsp;{status.connected ? settings.serverAddr : 'not connected'}</span>
               </div>
             </Toolbar>
