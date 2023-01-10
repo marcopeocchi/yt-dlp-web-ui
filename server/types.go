@@ -17,6 +17,23 @@ type DownloadInfo struct {
 	Extension  string `json:"ext"`
 }
 
+type DownloadFormats struct {
+	Formats   []Format `json:"formats"`
+	Best      Format   `json:"best"`
+	Thumbnail string   `json:"thumbnail"`
+	Title     string   `json:"title"`
+	URL       string   `json:"url"`
+}
+
+type Format struct {
+	Format_id   string  `json:"format_id"`
+	Format_note string  `json:"format_note"`
+	FPS         float32 `json:"fps"`
+	Resolution  string  `json:"resolution"`
+	VCodec      string  `json:"vcodec"`
+	ACodec      string  `json:"acodec"`
+}
+
 // struct representing the response sent to the client
 // as JSON-RPC result field
 type ProcessResponse struct {

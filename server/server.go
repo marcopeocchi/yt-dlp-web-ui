@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
 	"net/http"
+	"net/rpc"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -22,6 +24,9 @@ func RunBlocking(ctx context.Context) {
 	fe := ctx.Value("frontend").(fs.SubFS)
 	port := ctx.Value("port")
 
+	service := new(Service)
+	rpc.Register(service)
+
 	app := fiber.New()
 
 	app.Use("/", filesystem.New(filesystem.Config{
@@ -30,32 +35,16 @@ func RunBlocking(ctx context.Context) {
 
 	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
 		for {
-			mtype, msg, err := c.ReadMessage()
+			mtype, reader, err := c.NextReader()
 			if err != nil {
 				break
 			}
-
-			switch string(msg) {
-			case "send-url-format-selection":
-				getFormats(c)
-			case "send-url":
-				download(c)
-			case "abort":
-				abort(c)
-			case "abort-all":
-				abortAll(c)
-			case "status":
-				status(c)
-			case "update-bin":
-				hotUpdate(c)
-			}
-
-			log.Printf("Read: %s", msg)
-
-			err = c.WriteMessage(mtype, msg)
+			writer, err := c.NextWriter(mtype)
 			if err != nil {
 				break
 			}
+			res := NewRPCRequest(reader).Call()
+			io.Copy(writer, res)
 		}
 	}))
 

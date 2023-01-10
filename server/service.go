@@ -34,6 +34,14 @@ func (t *Service) Progess(args Args, progress *DownloadProgress) error {
 	return nil
 }
 
+// Progess retrieves the Progress of a specific Process given its Id
+func (t *Service) Formats(args Args, progress *DownloadFormats) error {
+	var err error
+	p := Process{url: args.URL}
+	*progress, err = p.GetFormatsSync()
+	return err
+}
+
 // Pending retrieves a slice of all Pending/Running processes ids
 func (t *Service) Pending(args NoArgs, pending *Pending) error {
 	*pending = Pending(db.Keys())

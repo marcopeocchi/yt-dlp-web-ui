@@ -137,17 +137,17 @@ func (p *Process) Kill() error {
 	return err
 }
 
-func (p *Process) GetFormatsSync() (DownloadInfo, error) {
+func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd := exec.Command(driver, p.url, "-J")
 	stdout, err := cmd.Output()
 
 	if err != nil {
-		return DownloadInfo{}, err
+		return DownloadFormats{}, err
 	}
 
 	cmd.Wait()
 
-	info := DownloadInfo{URL: p.url}
+	info := DownloadFormats{URL: p.url}
 	json.Unmarshal(stdout, &info)
 
 	return info, nil
