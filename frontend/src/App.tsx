@@ -23,18 +23,16 @@ import {
   BrowserRouter as Router, Link, Route,
   Routes
 } from 'react-router-dom';
-import { io } from "socket.io-client";
 import ArchivedDownloads from "./Archived";
 import { AppBar } from "./components/AppBar";
 import { Drawer } from "./components/Drawer";
 import Home from "./Home";
 import Settings from "./Settings";
 import { RootState, store } from './stores/store';
-import { getWebSocketEndpoint } from "./utils";
+import { formatGiB, getWebSocketEndpoint } from "./utils";
 
 function AppContent() {
   const [open, setOpen] = useState(false);
-  const [freeDiskSpace, setFreeDiskSpace] = useState('');
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
@@ -57,11 +55,6 @@ function AppContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
-  /* Get disk free space */
-  useEffect(() => {
-
-  }, [])
 
   return (
     <ThemeProvider theme={theme}>
@@ -96,14 +89,14 @@ function AppContent() {
                 yt-dlp WebUI
               </Typography>
               {
-                freeDiskSpace ?
+                status.freeSpace ?
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     flexWrap: 'wrap',
                   }}>
                     <Storage />
-                    <span>&nbsp;{freeDiskSpace}&nbsp;</span>
+                    <span>&nbsp;{formatGiB(status.freeSpace)}&nbsp;</span>
                   </div>
                   : null
               }
@@ -145,20 +138,6 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
-              {/* Next release: list downloaded files */}
-              {/* <Link to={'/downloaded'} style={
-                                {
-                                    textDecoration: 'none',
-                                    color: mode === 'dark' ? '#ffffff' : '#000000DE'
-                                }
-                            }>
-                                <ListItemButton disabled={status.downloading}>
-                                    <ListItemIcon>
-                                        <Download />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Downloaded" />
-                                </ListItemButton>
-                            </Link> */}
               <Link to={'/settings'} style={
                 {
                   textDecoration: 'none',

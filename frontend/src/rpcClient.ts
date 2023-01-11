@@ -1,6 +1,8 @@
 import type { RPCRequest, RPCResponse } from "./types"
 import type { IDLMetadata } from './interfaces'
 
+import { getHttpRPCEndpoint } from './utils'
+
 export class RPCClient {
   private socket: WebSocket
   private seq: number
@@ -20,7 +22,7 @@ export class RPCClient {
 
   private sendHTTP<T>(req: RPCRequest) {
     return new Promise<RPCResponse<T>>((resolve, reject) => {
-      fetch('/rpc-http', {
+      fetch(getHttpRPCEndpoint(), {
         method: 'POST',
         body: JSON.stringify(req)
       })
@@ -71,6 +73,20 @@ export class RPCClient {
   public killAll() {
     this.send({
       method: 'Service.KillAll',
+      params: [],
+    })
+  }
+
+  public freeSpace() {
+    return this.sendHTTP<number>({
+      method: 'Service.FreeSpace',
+      params: [],
+    })
+  }
+
+  public directoryTree() {
+    return this.sendHTTP<string[]>({
+      method: 'Service.DirectoryTree',
       params: [],
     })
   }

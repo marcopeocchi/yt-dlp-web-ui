@@ -112,3 +112,7 @@ export function getWebSocketEndpoint() {
 export function getHttpRPCEndpoint() {
     return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/http-rpc`
 }
+
+export function formatGiB(bytes: number) {
+    return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
+}

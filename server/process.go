@@ -157,7 +157,12 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd.Wait()
 
 	info := DownloadFormats{URL: p.url}
+	best := Format{}
+
 	json.Unmarshal(stdout, &info)
+	json.Unmarshal(stdout, &best)
+
+	info.Best = best
 
 	return info, nil
 }

@@ -24,7 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { CliArguments } from "./classes";
 import { StackableResult } from "./components/StackableResult";
 import { serverStates } from "./events";
-import { connected } from "./features/status/statusSlice";
+import { connected, setFreeSpace } from "./features/status/statusSlice";
 import { I18nBuilder } from "./i18n";
 import { IDLMetadata, IMessage } from "./interfaces";
 import { RPCClient } from "./rpcClient";
@@ -73,16 +73,17 @@ export default function Home({ socket }: Props) {
   useEffect(() => {
     socket.onopen = () => {
       dispatch(connected())
-      console.log('oke')
-      socket.send('fetch-jobs')
-      socket.send('disk-space')
-      socket.send('retrieve-jobs')
     }
   }, [])
 
   useEffect(() => {
     const interval = setInterval(() => client.running(), 1000)
     return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    client.freeSpace()
+      .then(bytes => dispatch(setFreeSpace(bytes.result)))
   }, [])
 
   useEffect(() => {
@@ -106,10 +107,9 @@ export default function Home({ socket }: Props) {
   }, [])
 
   useEffect(() => {
-    fetch(`${window.location.protocol}//${settings.serverAddr}:${settings.serverPort}/tree`)
-      .then(res => res.json())
+    client.directoryTree()
       .then(data => {
-        setAvailableDownloadPaths(data.flat)
+        setAvailableDownloadPaths(data.result)
       })
   }, [])
 
@@ -150,10 +150,15 @@ export default function Home({ socket }: Props) {
     setPickedVideoFormat('')
     setPickedBestFormat('')
 
-    setTimeout(() => {
-      resetInput()
-      setShowBackdrop(true)
-    }, 250)
+    setShowBackdrop(true)
+
+    client.formats(url)
+      ?.then(formats => {
+        console.log(formats)
+        setDownloadFormats(formats.result)
+        setShowBackdrop(false)
+        resetInput()
+      })
   }
 
   /**

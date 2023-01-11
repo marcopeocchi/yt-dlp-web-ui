@@ -84,3 +84,9 @@ func (t *Service) FreeSpace(args NoArgs, free *uint64) error {
 	*free = freeSpace
 	return err
 }
+
+func (t *Service) DirectoryTree(args NoArgs, tree *[]string) error {
+	dfsTree, err := sys.DirectoryTree("downloads")
+	*tree = *dfsTree
+	return err
+}

@@ -10,6 +10,7 @@ import (
 	"net/rpc"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/websocket/v2"
 )
@@ -28,6 +29,8 @@ func RunBlocking(ctx context.Context) {
 	rpc.Register(service)
 
 	app := fiber.New()
+
+	app.Use(cors.New())
 
 	app.Use("/", filesystem.New(filesystem.Config{
 		Root: http.FS(fe),
