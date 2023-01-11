@@ -2,6 +2,7 @@ package server
 
 import (
 	"bufio"
+	"regexp"
 
 	"github.com/goccy/go-json"
 
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/marcopeocchi/fazzoletti/slices"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rx"
 )
 
@@ -47,6 +49,13 @@ type Process struct {
 // This approach is anyhow not perfect: quotes are not escaped properly.
 // Each process is not identified by its PID but by a UUIDv2
 func (p *Process) Start() {
+	// escape bash variable escaping and command piping, you'll never know
+	// what they might come with...
+	p.params = slices.Filter(p.params, func(e string) bool {
+		match, _ := regexp.MatchString(`(\$\{)|(\&\&)`, e)
+		return !match
+	})
+
 	params := append([]string{
 		strings.Split(p.url, "?list")[0], //no playlist
 		"--newline",
@@ -87,7 +96,7 @@ func (p *Process) Start() {
 	}()
 
 	// --------------- progress block --------------- //
-	// unbuffered channe connected to stdout
+	// unbuffered channel connected to stdout
 	eventChan := make(chan string)
 
 	// spawn a goroutine that does the dirty job of parsing the stdout
