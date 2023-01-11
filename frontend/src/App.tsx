@@ -39,7 +39,7 @@ function AppContent() {
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
 
-  const socket = useMemo(() => io(getWebSocketEndpoint()), [])
+  const socket = useMemo(() => new WebSocket(getWebSocketEndpoint()), [])
 
   const mode = settings.theme
 
@@ -60,9 +60,7 @@ function AppContent() {
 
   /* Get disk free space */
   useEffect(() => {
-    socket.on('free-space', (res: string) => {
-      setFreeDiskSpace(res)
-    })
+
   }, [])
 
   return (

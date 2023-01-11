@@ -4,15 +4,24 @@ import { IMessage } from "../interfaces";
 import { ellipsis } from "../utils";
 
 type Props = {
-    formattedLog: IMessage,
     title: string,
     thumbnail: string,
     resolution: string
-    progress: number,
+    percentage: string,
+    size: number,
+    speed: number,
     stopCallback: VoidFunction,
 }
 
-export function StackableResult({ formattedLog, title, thumbnail, resolution, progress, stopCallback }: Props) {
+export function StackableResult({
+    title,
+    thumbnail,
+    resolution,
+    percentage,
+    speed,
+    size,
+    stopCallback
+}: Props) {
     const guessResolution = (xByY: string): any => {
         if (!xByY) return null;
         if (xByY.includes('4320')) return (<EightK color="primary" />);
@@ -21,6 +30,8 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
         if (xByY.includes('720')) return (<Sd color="primary" />);
         return null;
     }
+
+    const percentageToNumber = () => Number(percentage.replace('%', ''))
 
     const roundMB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)}MiB`
 
@@ -43,14 +54,14 @@ export function StackableResult({ formattedLog, title, thumbnail, resolution, pr
                         <Skeleton />
                     }
                     <Stack direction="row" spacing={1} py={2}>
-                        <Chip label={formattedLog.status} color="primary" />
-                        <Typography>{formattedLog.progress}</Typography>
-                        <Typography>{formattedLog.dlSpeed}</Typography>
-                        <Typography>{roundMB(formattedLog.size ?? 0)}</Typography>
+                        <Chip label={'Downloading'} color="primary" />
+                        <Typography>{percentage}</Typography>
+                        <Typography>{speed}</Typography>
+                        <Typography>{roundMB(size ?? 0)}</Typography>
                         {guessResolution(resolution)}
                     </Stack>
-                    {progress ?
-                        <LinearProgress variant="determinate" value={progress} /> :
+                    {percentage ?
+                        <LinearProgress variant="determinate" value={percentageToNumber()} /> :
                         null
                     }
                 </CardContent>

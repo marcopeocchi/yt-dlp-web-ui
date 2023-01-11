@@ -40,7 +40,7 @@ import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
 type Props = {
-  socket: Socket
+  socket: WebSocket
 }
 
 export default function Settings({ socket }: Props) {
@@ -112,8 +112,7 @@ export default function Settings({ socket }: Props) {
    * Send via WebSocket a message in order to update the yt-dlp binary from server
    */
   const updateBinary = () => {
-    socket.emit('update-bin')
-    dispatch(alreadyUpdated())
+
   }
 
   return (

@@ -106,5 +106,9 @@ export function toFormatArgs(codes: string[]): string {
 }
 
 export function getWebSocketEndpoint() {
-    return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
+    return `ws://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/ws-rpc`
+}
+
+export function getHttpRPCEndpoint() {
+    return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/http-rpc`
 }

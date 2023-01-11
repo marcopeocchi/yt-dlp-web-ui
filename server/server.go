@@ -33,20 +33,31 @@ func RunBlocking(ctx context.Context) {
 		Root: http.FS(fe),
 	}))
 
-	app.Get("/ws", websocket.New(func(c *websocket.Conn) {
+	app.Get("/ws-rpc", websocket.New(func(c *websocket.Conn) {
 		for {
 			mtype, reader, err := c.NextReader()
 			if err != nil {
 				break
 			}
+			res := NewRPCRequest(reader).Call()
+
 			writer, err := c.NextWriter(mtype)
 			if err != nil {
 				break
 			}
-			res := NewRPCRequest(reader).Call()
 			io.Copy(writer, res)
 		}
 	}))
+
+	app.Post("/http-rpc", func(c *fiber.Ctx) error {
+		reader := c.Context().RequestBodyStream()
+		writer := c.Response().BodyWriter()
+		res := NewRPCRequest(reader).Call()
+		io.Copy(writer, res)
+		return nil
+	})
+
+	app.Server().StreamRequestBody = true
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
 }
