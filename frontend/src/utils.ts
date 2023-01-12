@@ -1,5 +1,3 @@
-import { IMessage } from "./interfaces"
-
 /**
  * Validate an ip v4 via regex
  * @param {string} ipAddr 
@@ -64,36 +62,6 @@ export function detectSpeed(str: string): number {
             return 0
     }
 }
-
-/**
- * Update a map stored in React State, in this specific impl. all maps have integer keys
- * @param k Map key
- * @param v Map value
- * @param target The target map saved in-state
- * @param callback calls React's StateAction function with the newly created Map
- * @param remove -optional- is it an update or a deletion operation?
- */
-export function updateInStateMap<K, V>(k: K, v: any, target: Map<K, V>, callback: Function, remove: boolean = false) {
-    if (remove) {
-        const _target = target
-        _target.delete(k)
-        callback(new Map(_target))
-        return;
-    }
-    callback(new Map(target.set(k, v)));
-}
-
-export function updateInStateArray<T>(v: T, target: Array<T>, callback: Function) { }
-
-/**
- * Pre like function
- * @param data 
- * @returns formatted server message
- */
-export function buildMessage(data: IMessage) {
-    return `operation: ${data.status || '...'} \nprogress: ${data.progress || '?'} \nsize: ${data.size || '?'} \nspeed: ${data.dlSpeed || '?'}`;
-}
-
 
 export function toFormatArgs(codes: string[]): string {
     if (codes.length > 1) {

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/updater"
 )
 
 type Service int
@@ -12,18 +13,27 @@ type Running []ProcessResponse
 type Pending []string
 
 type NoArgs struct{}
+
 type Args struct {
 	Id     string
 	URL    string
 	Params []string
 }
 
+type DownloadSpecificArgs struct {
+	Id     string
+	URL    string
+	Path   string
+	Rename string
+	Params []string
+}
+
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
-func (t *Service) Exec(args Args, result *string) error {
+func (t *Service) Exec(args DownloadSpecificArgs, result *string) error {
 	log.Printf("Spawning new process for %s\n", args.URL)
 	p := Process{mem: &db, url: args.URL, params: args.Params}
-	p.Start()
+	p.Start(args.Path, args.Rename)
 	*result = p.id
 	return nil
 }
@@ -86,7 +96,17 @@ func (t *Service) FreeSpace(args NoArgs, free *uint64) error {
 }
 
 func (t *Service) DirectoryTree(args NoArgs, tree *[]string) error {
-	dfsTree, err := sys.DirectoryTree("downloads")
+	dfsTree, err := sys.DirectoryTree()
 	*tree = *dfsTree
+	return err
+}
+
+func (t *Service) UpdateExecutable(args NoArgs, updated *bool) error {
+	err := updater.UpdateExecutable()
+	if err != nil {
+		*updated = true
+		return err
+	}
+	*updated = false
 	return err
 }

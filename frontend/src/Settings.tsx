@@ -20,8 +20,8 @@ import {
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounceTime, distinctUntilChanged, map, of, takeWhile } from "rxjs";
-import { Socket } from "socket.io-client";
-import { CliArguments } from "./classes";
+import { CliArguments } from "./features/core/argsParser";
+import I18nBuilder from "./features/core/intl";
 import {
   LanguageUnion,
   setCliArgs,
@@ -34,16 +34,11 @@ import {
   setTheme,
   ThemeUnion
 } from "./features/settings/settingsSlice";
-import { alreadyUpdated, updated } from "./features/status/statusSlice";
-import { I18nBuilder } from "./i18n";
+import { updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
-type Props = {
-  socket: WebSocket
-}
-
-export default function Settings({ socket }: Props) {
+export default function Settings() {
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
   const dispatch = useDispatch()

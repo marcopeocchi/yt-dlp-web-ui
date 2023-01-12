@@ -6,6 +6,7 @@ export type RPCMethods =
   | "Service.FreeSpace"
   | "Service.Formats"
   | "Service.DirectoryTree"
+  | "Service.UpdateExecutable"
 
 export type RPCRequest = {
   method: RPCMethods,
@@ -41,4 +42,20 @@ export type RPCResult = {
 export type RPCParams = {
   URL: string
   Params?: string
+}
+
+export interface IDLMetadata {
+  formats: Array<IDLFormat>,
+  best: IDLFormat,
+  thumbnail: string,
+  title: string,
+}
+
+export interface IDLFormat {
+  format_id: string,
+  format_note: string,
+  fps: number,
+  resolution: string,
+  vcodec: string,
+  acodec: string,
 }

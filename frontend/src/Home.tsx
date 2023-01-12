@@ -21,16 +21,14 @@ import {
 import { Buffer } from 'buffer';
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { CliArguments } from "./classes";
 import { StackableResult } from "./components/StackableResult";
-import { serverStates } from "./events";
+import { CliArguments } from "./features/core/argsParser";
+import I18nBuilder from "./features/core/intl";
+import { RPCClient } from "./features/core/rpcClient";
 import { connected, setFreeSpace } from "./features/status/statusSlice";
-import { I18nBuilder } from "./i18n";
-import { IDLMetadata, IMessage } from "./interfaces";
-import { RPCClient } from "./rpcClient";
 import { RootState } from "./stores/store";
-import { RPCResult } from "./types";
-import { isValidURL, toFormatArgs, updateInStateMap } from "./utils";
+import { IDLMetadata, RPCResult } from "./types";
+import { isValidURL, toFormatArgs } from "./utils";
 
 type Props = {
   socket: WebSocket
@@ -43,11 +41,7 @@ export default function Home({ socket }: Props) {
   const dispatch = useDispatch()
 
   // ephemeral state
-  const [progressMap, setProgressMap] = useState(new Map<number, number>());
-  const [messageMap, setMessageMap] = useState(new Map<number, IMessage>());
-
   const [activeDownloads, setActiveDownloads] = useState(new Array<RPCResult>());
-  const [downloadInfoMap, setDownloadInfoMap] = useState(new Map<number, IDLMetadata>());
   const [downloadFormats, setDownloadFormats] = useState<IDLMetadata>();
   const [pickedVideoFormat, setPickedVideoFormat] = useState('');
   const [pickedAudioFormat, setPickedAudioFormat] = useState('');
@@ -60,6 +54,7 @@ export default function Home({ socket }: Props) {
 
   const [url, setUrl] = useState('');
   const [workingUrl, setWorkingUrl] = useState('');
+
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [showToast, setShowToast] = useState(true);
 
@@ -89,9 +84,9 @@ export default function Home({ socket }: Props) {
   useEffect(() => {
     socket.onmessage = (event) => {
       const res = client.decode(event.data)
-      if (showBackdrop) {
-        setShowBackdrop(false)
-      }
+
+      setShowBackdrop(false)
+
       switch (typeof res.result) {
         case 'object':
           setActiveDownloads(
@@ -127,6 +122,8 @@ export default function Home({ socket }: Props) {
     client.download(
       immediate || url || workingUrl,
       cliArgs.toString() + toFormatArgs(codes),
+      availableDownloadPaths[downloadPath] ?? '',
+      fileNameOverride
     )
 
     setUrl('')
@@ -154,7 +151,6 @@ export default function Home({ socket }: Props) {
 
     client.formats(url)
       ?.then(formats => {
-        console.log(formats)
         setDownloadFormats(formats.result)
         setShowBackdrop(false)
         resetInput()

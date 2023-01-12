@@ -9,10 +9,10 @@ export default defineConfig(() => {
             react(),
             ViteYaml(),
         ],
-        root: resolve(__dirname, 'frontend'),
+        root: resolve(__dirname, '.'),
         build: {
             emptyOutDir: true,
-            outDir: resolve(__dirname, 'dist', 'frontend'),
+            outDir: resolve(__dirname, 'dist'),
         }
     }
 })

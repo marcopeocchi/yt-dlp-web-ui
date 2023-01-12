@@ -17,13 +17,12 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import ListItemButton from '@mui/material/ListItemButton';
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import {
   BrowserRouter as Router, Link, Route,
   Routes
 } from 'react-router-dom';
-import ArchivedDownloads from "./Archived";
 import { AppBar } from "./components/AppBar";
 import { Drawer } from "./components/Drawer";
 import Home from "./Home";
@@ -163,9 +162,8 @@ function AppContent() {
           >
             <Toolbar />
             <Routes>
-              <Route path="/" element={<Home socket={socket}></Home>}></Route>
-              <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
-              <Route path="/downloaded" element={<ArchivedDownloads></ArchivedDownloads>}></Route>
+              <Route path="/" element={<Home socket={socket} />} />
+              <Route path="/settings" element={<Settings />} />
             </Routes>
           </Box>
         </Box>

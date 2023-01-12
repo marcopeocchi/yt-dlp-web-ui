@@ -23,7 +23,7 @@ func init() {
 
 func RunBlocking(ctx context.Context) {
 	fe := ctx.Value("frontend").(fs.SubFS)
-	port := ctx.Value("port")
+	port := ctx.Value("port").(int)
 
 	service := new(Service)
 	rpc.Register(service)
@@ -62,5 +62,5 @@ func RunBlocking(ctx context.Context) {
 
 	app.Server().StreamRequestBody = true
 
-	log.Fatal(app.Listen(fmt.Sprintf(":%s", port)))
+	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
 }

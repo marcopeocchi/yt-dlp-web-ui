@@ -1,7 +1,6 @@
-import type { RPCRequest, RPCResponse } from "./types"
-import type { IDLMetadata } from './interfaces'
+import type { RPCRequest, RPCResponse, IDLMetadata } from "../../types"
 
-import { getHttpRPCEndpoint } from './utils'
+import { getHttpRPCEndpoint } from '../../utils'
 
 export class RPCClient {
   private socket: WebSocket
@@ -31,7 +30,7 @@ export class RPCClient {
     })
   }
 
-  public download(url: string, args: string) {
+  public download(url: string, args: string, pathOverride = '', renameTo = '') {
     if (url) {
       this.send({
         id: this.incrementSeq(),
@@ -39,6 +38,8 @@ export class RPCClient {
         params: [{
           URL: url.split("?list").at(0)!,
           Params: args.split(" ").map(a => a.trim()),
+          Path: pathOverride,
+          Rename: renameTo,
         }]
       })
     }

@@ -2,6 +2,7 @@ package server
 
 import (
 	"bufio"
+	"fmt"
 	"regexp"
 
 	"github.com/goccy/go-json"
@@ -13,6 +14,7 @@ import (
 	"time"
 
 	"github.com/marcopeocchi/fazzoletti/slices"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rx"
 )
 
@@ -23,7 +25,9 @@ const template = `download:
 	"speed":%(progress.speed)s
 }`
 
-const driver = "yt-dlp"
+var (
+	cfg = config.Instance()
+)
 
 type ProgressTemplate struct {
 	Percentage string  `json:"percentage"`
@@ -43,18 +47,35 @@ type Process struct {
 	proc     *os.Process
 }
 
+type downloadOutput struct {
+	path     string
+	filaneme string
+}
+
 // Starts spawns/forks a new yt-dlp process and parse its stdout.
 // The process is spawned to outputting a custom progress text that
 // Resembles a JSON Object in order to Unmarshal it later.
 // This approach is anyhow not perfect: quotes are not escaped properly.
 // Each process is not identified by its PID but by a UUIDv2
-func (p *Process) Start() {
+func (p *Process) Start(path, filename string) {
 	// escape bash variable escaping and command piping, you'll never know
 	// what they might come with...
 	p.params = slices.Filter(p.params, func(e string) bool {
 		match, _ := regexp.MatchString(`(\$\{)|(\&\&)`, e)
 		return !match
 	})
+
+	out := downloadOutput{
+		path:     cfg.GetConfig().DownloadPath,
+		filaneme: "%(title)s.%(ext)s",
+	}
+
+	if path != "" {
+		out.path = path
+	}
+	if filename != "" {
+		out.filaneme = filename + ".%(ext)s"
+	}
 
 	params := append([]string{
 		strings.Split(p.url, "?list")[0], //no playlist
@@ -63,11 +84,11 @@ func (p *Process) Start() {
 		"--no-playlist",
 		"--progress-template", strings.ReplaceAll(template, "\n", ""),
 		"-o",
-		"./downloads/%(title)s.%(ext)s",
+		fmt.Sprintf("%s/%s", out.path, out.filaneme),
 	}, p.params...)
 
 	// ----------------- main block ----------------- //
-	cmd := exec.Command(driver, params...)
+	cmd := exec.Command(cfg.GetConfig().DownloaderPath, params...)
 	r, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Panicln(err)
@@ -85,7 +106,7 @@ func (p *Process) Start() {
 	// ----------------- info block ----------------- //
 	// spawn a goroutine that retrieves the info for the download
 	go func() {
-		cmd := exec.Command(driver, p.url, "-J")
+		cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
 		stdout, err := cmd.Output()
 		if err != nil {
 			log.Println("Cannot retrieve info for", p.url)
@@ -100,18 +121,19 @@ func (p *Process) Start() {
 	eventChan := make(chan string)
 
 	// spawn a goroutine that does the dirty job of parsing the stdout
-	// fill the channel with as many stdout line as yt-dlp produces (producer)
+	// filling the channel with as many stdout line as yt-dlp produces (producer)
 	go func() {
-		defer cmd.Wait()
 		defer r.Close()
 		defer p.Complete()
+		defer close(eventChan)
 		for scan.Scan() {
 			eventChan <- scan.Text()
 		}
+		cmd.Wait()
 	}()
 
 	// do the unmarshal operation every 500ms (consumer)
-	go rx.Sample(time.Millisecond*500, eventChan, func(text string) {
+	go rx.Debounce(time.Millisecond*500, eventChan, func(text string) {
 		stdout := ProgressTemplate{}
 		err := json.Unmarshal([]byte(text), &stdout)
 		if err == nil {
@@ -147,7 +169,7 @@ func (p *Process) Kill() error {
 }
 
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
-	cmd := exec.Command(driver, p.url, "-J")
+	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
 	stdout, err := cmd.Output()
 
 	if err != nil {

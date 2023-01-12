@@ -12,3 +12,4 @@ src/server/core/yt-dlp
 *.mp4
 *.ytdl
 *.db
+build/

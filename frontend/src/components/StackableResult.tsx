@@ -1,6 +1,18 @@
 import { EightK, FourK, Hd, Sd } from "@mui/icons-material";
-import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Chip, LinearProgress, Skeleton, Stack, Typography } from "@mui/material";
-import { IMessage } from "../interfaces";
+import {
+  Button,
+  Card,
+  CardActionArea,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  LinearProgress,
+  Skeleton,
+  Stack,
+  Typography
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { ellipsis } from "../utils";
 
 type Props = {
@@ -22,6 +34,14 @@ export function StackableResult({
   size,
   stopCallback
 }: Props) {
+  const [isCompleted, setIsCompleted] = useState(false)
+
+  useEffect(() => {
+    if (percentage === '-1') {
+      setIsCompleted(true)
+    }
+  }, [percentage])
+
   const guessResolution = (xByY: string): any => {
     if (!xByY) return null;
     if (xByY.includes('4320')) return (<EightK color="primary" />);
@@ -31,9 +51,10 @@ export function StackableResult({
     return null;
   }
 
-  const percentageToNumber = () => Number(percentage.replace('%', ''))
+  const percentageToNumber = () => isCompleted ? 100 : Number(percentage.replace('%', ''))
 
-  const roundMB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)}MiB`
+  const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`
+  const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`
 
   return (
     <Card>
@@ -54,21 +75,33 @@ export function StackableResult({
             <Skeleton />
           }
           <Stack direction="row" spacing={1} py={2}>
-            <Chip label={'Downloading'} color="primary" />
-            <Typography>{percentage}</Typography>
-            <Typography>{speed}</Typography>
-            <Typography>{roundMB(size ?? 0)}</Typography>
+            <Chip
+              label={isCompleted ? 'Completed' : 'Downloading'}
+              color="primary"
+              size="small"
+            />
+            <Typography>{!isCompleted ? percentage : ''}</Typography>
+            <Typography> {!isCompleted ? formatSpeedMiB(speed) : ''}</Typography>
+            <Typography>{roundMiB(size ?? 0)}</Typography>
             {guessResolution(resolution)}
           </Stack>
           {percentage ?
-            <LinearProgress variant="determinate" value={percentageToNumber()} /> :
+            <LinearProgress
+              variant="determinate"
+              value={percentageToNumber()}
+              color={isCompleted ? "secondary" : "primary"}
+            /> :
             null
           }
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button variant="contained" size="small" color="primary" onClick={stopCallback}>
-          Stop
+        <Button
+          variant="contained"
+          size="small"
+          color="primary"
+          onClick={stopCallback}>
+          {isCompleted ? "Clear" : "Stop"}
         </Button>
       </CardActions>
     </Card>

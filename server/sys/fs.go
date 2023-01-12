@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"golang.org/x/sys/unix"
 )
@@ -13,19 +14,19 @@ import (
 // FreeSpace gets the available Bytes writable to download directory
 func FreeSpace() (uint64, error) {
 	var stat unix.Statfs_t
-	wd, err := os.Getwd()
-	if err != nil {
-		return 0, err
-	}
-	unix.Statfs(wd+"/downloads", &stat)
+	unix.Statfs(config.Instance().GetConfig().DownloadPath, &stat)
 	return (stat.Bavail * uint64(stat.Bsize)), nil
 }
 
-func DirectoryTree(rootPath string) (*[]string, error) {
+// Build a directory tree started from the specified path using DFS.
+// Then return the flattened tree represented as a list.
+func DirectoryTree() (*[]string, error) {
 	type Node struct {
 		path     string
 		children []Node
 	}
+
+	rootPath := config.Instance().GetConfig().DownloadPath
 
 	stack := internal.Stack[Node]{
 		Nodes: make([]*internal.Node[Node], 5),

@@ -55,6 +55,7 @@ type AbortRequest struct {
 
 // struct representing the intent to start a download
 type DownloadRequest struct {
-	Url    string   `json:"url"`
-	Params []string `json:"params"`
+	Url      string   `json:"url"`
+	Params   []string `json:"params"`
+	RenameTo string   `json:"renameTo"`
 }
