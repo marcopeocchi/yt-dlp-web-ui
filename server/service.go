@@ -31,7 +31,7 @@ type DownloadSpecificArgs struct {
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (t *Service) Exec(args DownloadSpecificArgs, result *string) error {
-	log.Printf("Spawning new process for %s\n", args.URL)
+	log.Println("Spawning new process for", args.URL)
 	p := Process{mem: &db, url: args.URL, params: args.Params}
 	p.Start(args.Path, args.Rename)
 	*result = p.id
@@ -66,6 +66,7 @@ func (t *Service) Running(args NoArgs, running *Running) error {
 
 // Kill kills a process given its id and remove it from the memoryDB
 func (t *Service) Kill(args string, killed *string) error {
+	log.Println("Trying killing process with id", args)
 	proc := db.Get(args)
 	var err error
 	if proc != nil {
@@ -77,6 +78,7 @@ func (t *Service) Kill(args string, killed *string) error {
 // KillAll kills all process unconditionally and removes them from
 // the memory db
 func (t *Service) KillAll(args NoArgs, killed *string) error {
+	log.Println("Killing all spawned processes", args)
 	keys := db.Keys()
 	var err error
 	for _, key := range keys {
@@ -102,6 +104,7 @@ func (t *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 }
 
 func (t *Service) UpdateExecutable(args NoArgs, updated *bool) error {
+	log.Println("Updating yt-dlp executable to the latest release")
 	err := updater.UpdateExecutable()
 	if err != nil {
 		*updated = true

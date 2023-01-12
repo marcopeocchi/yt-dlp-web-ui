@@ -163,7 +163,7 @@ function AppContent() {
             <Toolbar />
             <Routes>
               <Route path="/" element={<Home socket={socket} />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings" element={<Settings socket={socket} />} />
             </Routes>
           </Box>
         </Box>

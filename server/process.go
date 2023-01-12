@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
+	"syscall"
 
 	"github.com/goccy/go-json"
 
@@ -89,6 +90,8 @@ func (p *Process) Start(path, filename string) {
 
 	// ----------------- main block ----------------- //
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, params...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
 	r, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Panicln(err)
@@ -107,6 +110,8 @@ func (p *Process) Start(path, filename string) {
 	// spawn a goroutine that retrieves the info for the download
 	go func() {
 		cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
+		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
 		stdout, err := cmd.Output()
 		if err != nil {
 			log.Println("Cannot retrieve info for", p.url)
@@ -132,8 +137,8 @@ func (p *Process) Start(path, filename string) {
 		cmd.Wait()
 	}()
 
-	// do the unmarshal operation every 500ms (consumer)
-	go rx.Debounce(time.Millisecond*500, eventChan, func(text string) {
+	// do the unmarshal operation every 250ms (consumer)
+	go rx.Debounce(time.Millisecond*250, eventChan, func(text string) {
 		stdout := ProgressTemplate{}
 		err := json.Unmarshal([]byte(text), &stdout)
 		if err == nil {
@@ -162,7 +167,11 @@ func (p *Process) Complete() {
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
-	err := p.proc.Kill()
+	pgid, err := syscall.Getpgid(p.proc.Pid)
+	if err != nil {
+		return err
+	}
+	err = syscall.Kill(-pgid, syscall.SIGTERM)
 	p.mem.Delete(p.id)
 	log.Printf("Killed process %s\n", p.id)
 	return err

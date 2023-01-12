@@ -92,6 +92,13 @@ export class RPCClient {
     })
   }
 
+  public updateExecutable() {
+    return this.sendHTTP({
+      method: 'Service.UpdateExecutable',
+      params: []
+    })
+  }
+
   public decode(data: any): RPCResponse<any> {
     return JSON.parse(data)
   }
