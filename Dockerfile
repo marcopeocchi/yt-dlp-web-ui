@@ -5,7 +5,7 @@ VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
 # install core dependencies
 RUN apk update
-RUN apk add curl wget psmisc python3 ffmpeg nodejs go yt-dlp
+RUN apk add curl wget psmisc python3 ffmpeg nodejs npm go yt-dlp
 # copy srcs
 COPY . .
 # install node dependencies
