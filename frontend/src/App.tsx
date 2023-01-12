@@ -16,35 +16,29 @@ import {
   Typography
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
-
-
 import ListItemButton from '@mui/material/ListItemButton';
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import {
   BrowserRouter as Router, Link, Route,
   Routes
 } from 'react-router-dom';
-import { io } from "socket.io-client";
-import ArchivedDownloads from "./Archived";
 import { AppBar } from "./components/AppBar";
 import { Drawer } from "./components/Drawer";
 import Home from "./Home";
 import Settings from "./Settings";
 import { RootState, store } from './stores/store';
-import { getWebSocketEndpoint } from "./utils";
+import { formatGiB, getWebSocketEndpoint } from "./utils";
 
 function AppContent() {
-  const [open, setOpen] = useState(false);
-  const [freeDiskSpace, setFreeDiskSpace] = useState('');
+  const [open, setOpen] = useState(false)
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
 
-  const socket = useMemo(() => io(getWebSocketEndpoint()), [])
+  const socket = useMemo(() => new WebSocket(getWebSocketEndpoint()), [])
 
   const mode = settings.theme
-
   const theme = useMemo(() =>
     createTheme({
       palette: {
@@ -54,18 +48,11 @@ function AppContent() {
         },
       },
     }), [settings.theme]
-  );
+  )
 
   const toggleDrawer = () => {
-    setOpen(!open);
-  };
-
-  /* Get disk free space */
-  useEffect(() => {
-    socket.on('free-space', (res: string) => {
-      setFreeDiskSpace(res)
-    })
-  }, [])
+    setOpen(!open)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -73,11 +60,7 @@ function AppContent() {
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
           <AppBar position="absolute" open={open}>
-            <Toolbar
-              sx={{
-                pr: '24px', // keep right padding when drawer closed
-              }}
-            >
+            <Toolbar sx={{ pr: '24px' }}>
               <IconButton
                 edge="start"
                 color="inherit"
@@ -100,14 +83,14 @@ function AppContent() {
                 yt-dlp WebUI
               </Typography>
               {
-                freeDiskSpace ?
+                status.freeSpace ?
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     flexWrap: 'wrap',
                   }}>
                     <Storage />
-                    <span>&nbsp;{freeDiskSpace}&nbsp;</span>
+                    <span>&nbsp;{formatGiB(status.freeSpace)}&nbsp;</span>
                   </div>
                   : null
               }
@@ -149,20 +132,6 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
-              {/* Next release: list downloaded files */}
-              {/* <Link to={'/downloaded'} style={
-                                {
-                                    textDecoration: 'none',
-                                    color: mode === 'dark' ? '#ffffff' : '#000000DE'
-                                }
-                            }>
-                                <ListItemButton disabled={status.downloading}>
-                                    <ListItemIcon>
-                                        <Download />
-                                    </ListItemIcon>
-                                    <ListItemText primary="Downloaded" />
-                                </ListItemButton>
-                            </Link> */}
               <Link to={'/settings'} style={
                 {
                   textDecoration: 'none',
@@ -188,9 +157,8 @@ function AppContent() {
           >
             <Toolbar />
             <Routes>
-              <Route path="/" element={<Home socket={socket}></Home>}></Route>
-              <Route path="/settings" element={<Settings socket={socket}></Settings>}></Route>
-              <Route path="/downloaded" element={<ArchivedDownloads></ArchivedDownloads>}></Route>
+              <Route path="/" element={<Home socket={socket} />} />
+              <Route path="/settings" element={<Settings socket={socket} />} />
             </Routes>
           </Box>
         </Box>
@@ -202,7 +170,7 @@ function AppContent() {
 export function App() {
   return (
     <Provider store={store}>
-      <AppContent></AppContent>
+      <AppContent />
     </Provider>
   );
 }

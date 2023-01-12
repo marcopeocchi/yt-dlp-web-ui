@@ -13,3 +13,5 @@ src/server/core/yt-dlp
 *.db
 downloads
 .DS_Store
+build/
+yt-dlp-webui

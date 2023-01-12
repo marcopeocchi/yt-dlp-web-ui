@@ -4,15 +4,16 @@ export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spa
 export type ThemeUnion = "light" | "dark"
 
 export interface SettingsState {
-    serverAddr: string,
-    serverPort: string,
-    language: LanguageUnion,
-    theme: ThemeUnion,
-    cliArgs: string,
-    formatSelection: boolean,
-    ratelimit: string,
-    fileRenaming: boolean,
-    pathOverriding: boolean,
+    serverAddr: string
+    serverPort: string
+    language: LanguageUnion
+    theme: ThemeUnion
+    cliArgs: string
+    formatSelection: boolean
+    ratelimit: string
+    fileRenaming: boolean
+    pathOverriding: boolean
+    enableCustomArgs: boolean
 }
 
 const initialState: SettingsState = {
@@ -25,6 +26,7 @@ const initialState: SettingsState = {
     ratelimit: localStorage.getItem("rate-limit") ?? "",
     fileRenaming: localStorage.getItem("file-renaming") === "true",
     pathOverriding: localStorage.getItem("path-overriding") === "true",
+    enableCustomArgs: localStorage.getItem("enable-custom-args") === "true",
 }
 
 export const settingsSlice = createSlice({
@@ -67,6 +69,10 @@ export const settingsSlice = createSlice({
             state.fileRenaming = action.payload
             localStorage.setItem("file-renaming", action.payload.toString())
         },
+        setEnableCustomArgs: (state, action: PayloadAction<boolean>) => {
+            state.enableCustomArgs = action.payload
+            localStorage.setItem("enable-custom-args", action.payload.toString())
+        },
     }
 })
 
@@ -80,6 +86,7 @@ export const {
     setRateLimit,
     setFileRenaming,
     setPathOverriding,
+    setEnableCustomArgs,
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

@@ -25,6 +25,8 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -50,6 +52,8 @@ languages:
     filenameOverrideOption: Abilita sovrascrittura del nome del file di output
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -75,6 +79,8 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -100,6 +106,8 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -125,6 +133,8 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -150,6 +160,8 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -175,3 +187,5 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments

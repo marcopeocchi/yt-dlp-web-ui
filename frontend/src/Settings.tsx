@@ -20,11 +20,13 @@ import {
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { debounceTime, distinctUntilChanged, map, of, takeWhile } from "rxjs";
-import { Socket } from "socket.io-client";
-import { CliArguments } from "./classes";
+import { CliArguments } from "./features/core/argsParser";
+import I18nBuilder from "./features/core/intl";
+import { RPCClient } from "./features/core/rpcClient";
 import {
   LanguageUnion,
   setCliArgs,
+  setEnableCustomArgs,
   setFileRenaming,
   setFormatSelection,
   setLanguage,
@@ -34,16 +36,11 @@ import {
   setTheme,
   ThemeUnion
 } from "./features/settings/settingsSlice";
-import { alreadyUpdated, updated } from "./features/status/statusSlice";
-import { I18nBuilder } from "./i18n";
+import { updated } from "./features/status/statusSlice";
 import { RootState } from "./stores/store";
 import { validateDomain, validateIP } from "./utils";
 
-type Props = {
-  socket: Socket
-}
-
-export default function Settings({ socket }: Props) {
+export default function Settings({ socket }: { socket: WebSocket }) {
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
   const dispatch = useDispatch()
@@ -51,6 +48,7 @@ export default function Settings({ socket }: Props) {
   const [invalidIP, setInvalidIP] = useState(false);
 
   const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
+  const client = useMemo(() => new RPCClient(socket), [settings.serverAddr, settings.serverPort])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
   /**
    * Update the server ip address state and localstorage whenever the input value changes.  
@@ -112,8 +110,7 @@ export default function Settings({ socket }: Props) {
    * Send via WebSocket a message in order to update the yt-dlp binary from server
    */
   const updateBinary = () => {
-    socket.emit('update-bin')
-    dispatch(alreadyUpdated())
+    client.updateExecutable().then(() => dispatch(updated()))
   }
 
   return (
@@ -258,6 +255,17 @@ export default function Settings({ socket }: Props) {
                       />
                     }
                     label={i18n.t('filenameOverrideOption')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        defaultChecked={settings.enableCustomArgs}
+                        onChange={() => {
+                          dispatch(setEnableCustomArgs(!settings.enableCustomArgs))
+                        }}
+                      />
+                    }
+                    label={i18n.t('customArgs')}
                   />
                 </Stack>
               </Grid>
