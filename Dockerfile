@@ -1,18 +1,20 @@
-FROM node:18-alpine
-RUN mkdir -p /usr/src/yt-dlp-webui/download
+FROM alpine:3.17
+# folder structure
+WORKDIR /usr/src/yt-dlp-webui/downloads
 VOLUME /usr/src/yt-dlp-webui/downloads
 WORKDIR /usr/src/yt-dlp-webui
-COPY package*.json ./
 # install core dependencies
 RUN apk update
-RUN apk add curl wget psmisc python3 ffmpeg
+RUN apk add curl wget psmisc python3 ffmpeg nodejs go yt-dlp
+# copy srcs
 COPY . .
-RUN chmod +x ./fetch-yt-dlp.sh
 # install node dependencies
+WORKDIR /usr/src/yt-dlp-webui/frontend
 RUN npm i
 RUN npm run build
-RUN npm run build-server
-RUN npm run fetch
+# install go dependencies
+WORKDIR /usr/src/yt-dlp-webui
+RUN npm go build -o yt-dlp-webui
 # expose and run
-EXPOSE 3022
-CMD [ "node" , "./dist/main.js" ]
+EXPOSE 3033
+CMD [ "yt-dlp-webui" , "--out", "./downloads" ]
