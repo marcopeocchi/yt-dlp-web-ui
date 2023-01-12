@@ -167,6 +167,10 @@ func (p *Process) Complete() {
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
+	// yt-dlp uses multiple child process the parent process
+	// has been spawned with setPgid = true. To properly kill
+	// all subprocesses a SIGTERM need to be sent to the correct
+	// process group
 	pgid, err := syscall.Getpgid(p.proc.Pid)
 	if err != nil {
 		return err
@@ -177,6 +181,7 @@ func (p *Process) Kill() error {
 	return err
 }
 
+// Returns the available format for this URL
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
 	stdout, err := cmd.Output()

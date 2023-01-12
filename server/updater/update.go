@@ -8,6 +8,7 @@ import (
 
 var path = config.Instance().GetConfig().DownloaderPath
 
+// Update using the builtin function of yt-dlp
 func UpdateExecutable() error {
 	cmd := exec.Command(path, "-U")
 	cmd.Start()

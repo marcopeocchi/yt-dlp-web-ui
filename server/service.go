@@ -97,12 +97,14 @@ func (t *Service) FreeSpace(args NoArgs, free *uint64) error {
 	return err
 }
 
+// Return a flattned tree of the download directory
 func (t *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 	dfsTree, err := sys.DirectoryTree()
 	*tree = *dfsTree
 	return err
 }
 
+// Updates the yt-dlp binary using its builtin function
 func (t *Service) UpdateExecutable(args NoArgs, updated *bool) error {
 	log.Println("Updating yt-dlp executable to the latest release")
 	err := updater.UpdateExecutable()

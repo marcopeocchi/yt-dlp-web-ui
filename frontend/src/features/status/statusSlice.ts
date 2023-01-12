@@ -42,6 +42,14 @@ export const statusSlice = createSlice({
     }
 })
 
-export const { connected, disconnected, updated, alreadyUpdated, downloading, finished, setFreeSpace } = statusSlice.actions
+export const {
+    connected,
+    disconnected,
+    updated,
+    alreadyUpdated,
+    downloading,
+    finished,
+    setFreeSpace
+} = statusSlice.actions
 
 export default statusSlice.reducer 

@@ -31,7 +31,7 @@ import { RootState, store } from './stores/store';
 import { formatGiB, getWebSocketEndpoint } from "./utils";
 
 function AppContent() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
@@ -39,7 +39,6 @@ function AppContent() {
   const socket = useMemo(() => new WebSocket(getWebSocketEndpoint()), [])
 
   const mode = settings.theme
-
   const theme = useMemo(() =>
     createTheme({
       palette: {
@@ -49,11 +48,11 @@ function AppContent() {
         },
       },
     }), [settings.theme]
-  );
+  )
 
   const toggleDrawer = () => {
-    setOpen(!open);
-  };
+    setOpen(!open)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,11 +60,7 @@ function AppContent() {
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
           <AppBar position="absolute" open={open}>
-            <Toolbar
-              sx={{
-                pr: '24px', // keep right padding when drawer closed
-              }}
-            >
+            <Toolbar sx={{ pr: '24px' }}>
               <IconButton
                 edge="start"
                 color="inherit"
@@ -175,7 +170,7 @@ function AppContent() {
 export function App() {
   return (
     <Provider store={store}>
-      <AppContent></AppContent>
+      <AppContent />
     </Provider>
   );
 }

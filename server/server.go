@@ -31,11 +31,12 @@ func RunBlocking(ctx context.Context) {
 	app := fiber.New()
 
 	app.Use(cors.New())
-
 	app.Use("/", filesystem.New(filesystem.Config{
 		Root: http.FS(fe),
 	}))
 
+	// RPC handlers
+	// websocket
 	app.Get("/ws-rpc", websocket.New(func(c *websocket.Conn) {
 		for {
 			mtype, reader, err := c.NextReader()
@@ -51,7 +52,7 @@ func RunBlocking(ctx context.Context) {
 			io.Copy(writer, res)
 		}
 	}))
-
+	// http-post
 	app.Post("/http-rpc", func(c *fiber.Ctx) error {
 		reader := c.Context().RequestBodyStream()
 		writer := c.Response().BodyWriter()

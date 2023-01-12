@@ -1,11 +1,13 @@
 package server
 
+// Progress for the Running call
 type DownloadProgress struct {
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
 	ETA        int     `json:"eta"`
 }
 
+// Used to deser the yt-dlp -J output
 type DownloadInfo struct {
 	URL        string `json:"url"`
 	Title      string `json:"title"`
@@ -17,6 +19,7 @@ type DownloadInfo struct {
 	Extension  string `json:"ext"`
 }
 
+// Used to deser the formats in the -J output
 type DownloadFormats struct {
 	Formats   []Format `json:"formats"`
 	Best      Format   `json:"best"`
@@ -25,6 +28,7 @@ type DownloadFormats struct {
 	URL       string   `json:"url"`
 }
 
+// A skimmed yt-dlp format node
 type Format struct {
 	Format_id   string  `json:"format_id"`
 	Format_note string  `json:"format_note"`
