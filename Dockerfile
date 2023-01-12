@@ -14,7 +14,7 @@ RUN npm i
 RUN npm run build
 # install go dependencies
 WORKDIR /usr/src/yt-dlp-webui
-RUN npm go build -o yt-dlp-webui
+RUN go build -o yt-dlp-webui
 # expose and run
 EXPOSE 3033
 CMD [ "yt-dlp-webui" , "--out", "./downloads" ]
