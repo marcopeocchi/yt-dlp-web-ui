@@ -47,6 +47,7 @@ export default function Home({ socket }: Props) {
   const [pickedAudioFormat, setPickedAudioFormat] = useState('');
   const [pickedBestFormat, setPickedBestFormat] = useState('');
 
+  const [customArgs, setCustomArgs] = useState('');
   const [downloadPath, setDownloadPath] = useState(0);
   const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([]);
 
@@ -68,6 +69,7 @@ export default function Home({ socket }: Props) {
   useEffect(() => {
     socket.onopen = () => {
       dispatch(connected())
+      setCustomArgs(localStorage.getItem('last-input-args') ?? '')
     }
   }, [])
 
@@ -84,9 +86,6 @@ export default function Home({ socket }: Props) {
   useEffect(() => {
     socket.onmessage = (event) => {
       const res = client.decode(event.data)
-
-      setShowBackdrop(false)
-
       switch (typeof res.result) {
         case 'object':
           setActiveDownloads(
@@ -100,6 +99,12 @@ export default function Home({ socket }: Props) {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (activeDownloads.length > 0 && showBackdrop) {
+      setShowBackdrop(false)
+    }
+  }, [activeDownloads, showBackdrop])
 
   useEffect(() => {
     client.directoryTree()
@@ -121,7 +126,7 @@ export default function Home({ socket }: Props) {
 
     client.download(
       immediate || url || workingUrl,
-      cliArgs.toString() + toFormatArgs(codes),
+      `${cliArgs.toString()} ${toFormatArgs(codes)} ${customArgs}`,
       availableDownloadPaths[downloadPath] ?? '',
       fileNameOverride
     )
@@ -171,6 +176,15 @@ export default function Home({ socket }: Props) {
    */
   const handleFilenameOverrideChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilenameOverride(e.target.value)
+  }
+
+  /**
+   * Update the custom args state whenever the input value changes
+   * @param e Input change event
+   */
+  const handleCustomArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomArgs(e.target.value)
+    localStorage.setItem("last-input-args", e.target.value)
   }
 
   /**
@@ -257,6 +271,21 @@ export default function Home({ socket }: Props) {
               />
             </Grid>
             <Grid container spacing={1} sx={{ mt: 1 }}>
+              {
+                settings.enableCustomArgs ?
+                  <Grid item xs={12}>
+                    <TextField
+                      id="customArgsInput"
+                      fullWidth
+                      label={i18n.t('customArgsInput')}
+                      variant="outlined"
+                      onChange={handleCustomArgsChange}
+                      value={customArgs}
+                      disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                    />
+                  </Grid> :
+                  null
+              }
               {
                 settings.fileRenaming ?
                   <Grid item xs={8}>

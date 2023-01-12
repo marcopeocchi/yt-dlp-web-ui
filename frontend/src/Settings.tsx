@@ -26,6 +26,7 @@ import { RPCClient } from "./features/core/rpcClient";
 import {
   LanguageUnion,
   setCliArgs,
+  setEnableCustomArgs,
   setFileRenaming,
   setFormatSelection,
   setLanguage,
@@ -254,6 +255,17 @@ export default function Settings({ socket }: { socket: WebSocket }) {
                       />
                     }
                     label={i18n.t('filenameOverrideOption')}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        defaultChecked={settings.enableCustomArgs}
+                        onChange={() => {
+                          dispatch(setEnableCustomArgs(!settings.enableCustomArgs))
+                        }}
+                      />
+                    }
+                    label={i18n.t('customArgs')}
                   />
                 </Stack>
               </Grid>
