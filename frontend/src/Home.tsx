@@ -74,9 +74,12 @@ export default function Home({ socket }: Props) {
   }, [])
 
   useEffect(() => {
-    const interval = setInterval(() => client.running(), 1000)
-    return () => clearInterval(interval)
-  }, [])
+    if (status.connected) {
+      client.running()
+      const interval = setInterval(() => client.running(), 1000)
+      return () => clearInterval(interval)
+    }
+  }, [status.connected])
 
   useEffect(() => {
     client.freeSpace()
@@ -89,7 +92,7 @@ export default function Home({ socket }: Props) {
       switch (typeof res.result) {
         case 'object':
           setActiveDownloads(
-            res.result
+            (res.result ?? [])
               .filter((r: RPCResult) => !!r.info.url)
               .sort((a: RPCResult, b: RPCResult) => a.info.title.localeCompare(b.info.title))
           )

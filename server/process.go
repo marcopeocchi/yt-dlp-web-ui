@@ -167,6 +167,7 @@ func (p *Process) Complete() {
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
+	p.mem.Delete(p.id)
 	// yt-dlp uses multiple child process the parent process
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct
@@ -176,8 +177,8 @@ func (p *Process) Kill() error {
 		return err
 	}
 	err = syscall.Kill(-pgid, syscall.SIGTERM)
-	p.mem.Delete(p.id)
-	log.Printf("Killed process %s\n", p.id)
+
+	log.Println("Killed process", p.id)
 	return err
 }
 

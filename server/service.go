@@ -90,6 +90,13 @@ func (t *Service) KillAll(args NoArgs, killed *string) error {
 	return err
 }
 
+// Remove a process from the db rendering it unusable if active
+func (t *Service) Clear(args string, killed *string) error {
+	log.Println("Clearing process with id", args)
+	db.Delete(args)
+	return nil
+}
+
 // FreeSpace gets the available from package sys util
 func (t *Service) FreeSpace(args NoArgs, free *uint64) error {
 	freeSpace, err := sys.FreeSpace()
