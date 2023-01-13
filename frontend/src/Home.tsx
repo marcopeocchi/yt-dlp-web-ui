@@ -70,6 +70,7 @@ export default function Home({ socket }: Props) {
     socket.onopen = () => {
       dispatch(connected())
       setCustomArgs(localStorage.getItem('last-input-args') ?? '')
+      setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
     }
   }, [])
 
@@ -136,7 +137,6 @@ export default function Home({ socket }: Props) {
 
     setUrl('')
     setWorkingUrl('')
-    setFilenameOverride('')
 
     setTimeout(() => {
       resetInput()
@@ -179,6 +179,7 @@ export default function Home({ socket }: Props) {
    */
   const handleFilenameOverrideChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilenameOverride(e.target.value)
+    localStorage.setItem('last-filename-override', e.target.value)
   }
 
   /**
@@ -297,6 +298,7 @@ export default function Home({ socket }: Props) {
                       fullWidth
                       label={i18n.t('customFilename')}
                       variant="outlined"
+                      value={fileNameOverride}
                       onChange={handleFilenameOverrideChange}
                       disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
                     />
