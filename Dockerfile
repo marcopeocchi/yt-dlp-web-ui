@@ -1,7 +1,7 @@
 FROM alpine:3.17
 # folder structure
 WORKDIR /usr/src/yt-dlp-webui/downloads
-VOLUME /usr/src/yt-dlp-webui/downloads
+VOLUME /downloads
 WORKDIR /usr/src/yt-dlp-webui
 # install core dependencies
 RUN apk update
@@ -17,4 +17,4 @@ WORKDIR /usr/src/yt-dlp-webui
 RUN go build -o yt-dlp-webui
 # expose and run
 EXPOSE 3033
-CMD [ "yt-dlp-webui" , "--out", "./downloads" ]
+CMD [ "./yt-dlp-webui" , "--out", "/downloads" ]
