@@ -20,10 +20,13 @@ export class RPCClient {
   }
 
   private sendHTTP<T>(req: RPCRequest) {
-    return new Promise<RPCResponse<T>>((resolve, reject) => {
+    return new Promise<RPCResponse<T>>((resolve) => {
       fetch(getHttpRPCEndpoint(), {
         method: 'POST',
-        body: JSON.stringify(req)
+        body: JSON.stringify({
+          id: this.incrementSeq(),
+          ...req
+        })
       })
         .then(res => res.json())
         .then(data => resolve(data))
@@ -59,6 +62,7 @@ export class RPCClient {
 
   public running() {
     this.send({
+      id: this.incrementSeq(),
       method: 'Service.Running',
       params: [],
     })
