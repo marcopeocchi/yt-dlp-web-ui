@@ -7,7 +7,7 @@
 A not so terrible web ui for yt-dlp.  
 Created for the only purpose of *fetching* videos from my server/nas. 
 
-Intended to be used with docker but standalone is fine too. 😎👍
+Intended to be used with docker and in standalone mode. 😎👍
 
 Developed to be as lightweight as possible (because my server is basically an intel atom sbc). 
 
@@ -45,39 +45,36 @@ Refactoring and JSDoc.
 08/06/22: ARM builds.
 
 28/02/22: Reworked resume download feature. Now it's pratically instantaneous. It no longer stops and restarts each process, references to each process are saved in memory.
+
+12/01/23: Switched from TypeScript to Golang on the backend. It was a great effort but it was worth it.
 ```
 
 
-<img src="https://i.imgur.com/gRNYKjI.png">
-
-## Now with dark mode
-
-<img src="https://i.imgur.com/g52mjdD.png">
+![](https://i.ibb.co/RCpfg7q/image.png)
+![](https://i.ibb.co/N2749CD/image.png)
 
 ## Settings
 
-The avaible settings are currently only:
+The currently avaible settings are:
 -   Server address
 -   Switch theme
 -   Extract audio
 -   Switch language
 -   Optional format selection
+-   Override the output filename
+-   Override the output path
+-   Pass custom yt-dlp arguments safely
 
-<img src="https://i.imgur.com/2zPs8FH.png">
-<img src="https://i.imgur.com/b4Jhkfk.png">
-<img src="https://i.imgur.com/knjLa8c.png">
+![](https://i.ibb.co/YdBVcgc/image.png)
+![](https://i.ibb.co/Sf102b1/image.png)
 
 ## Format selection
 
-![fs1](https://i.ibb.co/fNxDHJd/localhost-1234-2.png)
+![fs1](https://i.ibb.co/8dgS6ym/image.png)
 
-This feature is disabled by default as this WebUI/Wrapper/Software/Bunch of Code is intended to be used to retrieve the best quality automatically.
+This feature is disabled by default as this intended to be used to retrieve the best quality automatically.
 
-To enable it go to the settings page:
-
-![fs2](https://i.ibb.co/YdXRwKc/localhost-1234-3.png)
-
-And set it :D
+To enable it just go to the settings page and enable the **Enable video/audio formats selection** flag!
 
 Future releases will have:
 -   ~~Multi download~~ *done*
@@ -87,15 +84,13 @@ Future releases will have:
 -   ~~ARM Build~~ *done available through ghcr.io*
 
 ## Troubleshooting
--   **It says that it isn't connected/ip in the footer is not defined.**
+-   **It says that it isn't connected/ip in the header is not defined.**
     - You must set the server ip address in the settings section (gear icon).
 -   **The download  doesn't start.**
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
--   **Background jobs are not retrieved.**
-    -   ~~As before forking yt-dlp isn't fast so resuming n background jobs takes _n_*_time to exec yt-dlp_ Just have patience.~~ Fixed.
 
 ## Docker installation
-```shell 
+```sh
 # recomended for ARM and x86 devices 
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
@@ -105,26 +100,72 @@ docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 
-or  
+Or with docker but building the container manually.
 
-```shell
+```sh
 docker build -t yt-dlp-webui .
 docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads yt-dlp-webui
 ```
 
-## Manual installation
+## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
+
+```sh
+# download the latest release from the releases page
+mv yt-dlp-webui_linux-[your_system_arch] /usr/local/bin/yt-dlp-webui
+
+# /home/user/downloads as an example and yt-dlp in $PATH
+yt-dlp-webui --out /home/user/downloads
+
+# specifying yt-dlp path
+yt-dlp-webui --out /home/user/downloads --driver /opt/soemdir/yt-dlp
+
+# specifying using a config file
+yt-dlp-webui --conf /home/user/.config/yt-dlp-webui.conf
+```
+
+### Config file
+By running `yt-dlp-webui` in standalone mode you have the ability to also specify a config file.
+The config file **will overwrite what have been passed as cli argument**.
+
+```yaml
+# Simple configuration file for yt-dlp webui
+
+---
+port: 8989
+downloadPath: /home/ren/archive
+downloaderPath: /usr/local/bin/yt-dlp
+```
+
+### Systemd integration
+By defining a service file in `/etc/systemd/system/yt-dlp-webui.service` yt-dlp webui can be launched as in background.
+
+```
+[Unit]
+Description=yt-dlp-webui service file
+After=network.target
+
+[Service]
+User=some_user
+ExecStart=/usr/local/bin/yt-dlp-webui --out /mnt/share/downloads --port 8100
+
+[Install]
+WantedBy=multi-user.target
+```
+
 ```shell
-# the dependencies are: python3, ffmpeg, nodejs, psmisc.
+systemctl enable yt-dlp-webui
+systemctl start yt-dlp-webui
+```
 
+## Manual installation
+```sh
+# the dependencies are: python3, ffmpeg, nodejs, psmisc, go.
+
+cd frontend
 npm i
-npm run build-all
+npm run build
 
-# edit the settings.json specifying port and download path or 
-# it will default to the following created folder
-
-mkdir downloads
-
-node dist/main.js
+go build -o yt-dlp-webui main.go
 ```
 
 ## FAQ
@@ -136,7 +177,9 @@ node dist/main.js
       If you plan to use it on a Raspberry Pi ensure to have fast and durable storage.
 -   **Why the docker image is so heavy?**
     - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
--   **Am I forced to run it on port 3022?**
-    -   Well, yes (until now).
+
 -   **Why is it so slow to start a download?**
     - I genuinely don't know. I know that standalone yt-dlp is slow to start up even on my M1 Mac, so....
+
+## What yt-dlp-webui is not
+`yt-dlp-webui` isn't your ordinary website where downloading stuff from the internet, so don't try asking for links of where this is hosted. It's a self hosted platform for a Linux NAS.
