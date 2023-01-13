@@ -15,9 +15,10 @@ The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc inte
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
 
----
+![](https://i.ibb.co/RCpfg7q/image.png)
+![](https://i.ibb.co/N2749CD/image.png)
 
-Changelog:
+## Changelog
 ```
 05/03/22: Korean translation by kimpig
 
@@ -44,10 +45,6 @@ Refactoring and JSDoc.
 
 12/01/23: Switched from TypeScript to Golang on the backend. It was a great effort but it was worth it.
 ```
-
-
-![](https://i.ibb.co/RCpfg7q/image.png)
-![](https://i.ibb.co/N2749CD/image.png)
 
 ## Settings
 
