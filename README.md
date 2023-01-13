@@ -11,8 +11,8 @@ The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc inte
 
 **I strongly recomend the ghcr build instead of docker hub one.**
 
-```shell
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+```sh
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
 
 ---
@@ -85,15 +85,15 @@ Future releases will have:
 -   **The download  doesn't start.**
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
 
-## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui/63294924?tag=master) installation
+## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) installation
 ```sh
 # recomended for ARM and x86 devices 
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
-docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+docker run -d -p 3022:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 
 # or even
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
-docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:master
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+docker create --name yt-dlp-webui -p 8082:3022 -v <your dir>:/usr/src/yt-dlp-webui/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
 
 Or with docker but building the container manually.
@@ -197,4 +197,4 @@ For more information open an issue on GitHub and I will provide more info ASAP.
     - I genuinely don't know. I know that standalone yt-dlp is slow to start up even on my M1 Mac, so....
 
 ## What yt-dlp-webui is not
-`yt-dlp-webui` isn't your ordinary website where downloading stuff from the internet, so don't try asking for links of where this is hosted. It's a self hosted platform for a Linux NAS.
+`yt-dlp-webui` isn't your ordinary website where to download stuff from the internet, so don't try asking for links of where this is hosted. It's a self hosted platform for a Linux NAS.
