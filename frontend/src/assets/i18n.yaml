@@ -72,15 +72,15 @@ languages:
     toastConnected: '已连接到 '
     toastUpdated: 已更新 yt-dlp 可执行文件！
     formatSelectionEnabler: 启用视频/音频格式选择
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
+    themeSelect: '主题'
+    languageSelect: '语言'
+    overridesAnchor: 覆盖
+    pathOverrideOption: 启用输出路径覆盖
+    filenameOverrideOption: 启用输出文件名覆盖
+    customFilename: 自定义文件名（留空使用默认值）
+    customPath: 自定义路径
+    customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
+    customArgsInput: 自定义 yt-dlp 参数
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
