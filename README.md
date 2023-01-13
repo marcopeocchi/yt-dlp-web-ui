@@ -89,7 +89,7 @@ Future releases will have:
 -   **The download  doesn't start.**
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
 
-## Docker installation
+## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui/63294924?tag=master) installation
 ```sh
 # recomended for ARM and x86 devices 
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
