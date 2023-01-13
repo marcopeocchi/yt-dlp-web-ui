@@ -1,9 +1,5 @@
 # yt-dlp Web UI
 
-
-**To anyone who is interested i'm working on a [RPC server for yt-dlp](https://github.com/marcopeocchi/yt-dlp-rpc).**
-
-
 A not so terrible web ui for yt-dlp.  
 Created for the only purpose of *fetching* videos from my server/nas. 
 
@@ -167,6 +163,25 @@ npm run build
 
 go build -o yt-dlp-webui main.go
 ```
+
+## Extendable
+You dont'like the Material feel?
+Want to build your own frontend? We got you covered 🤠
+
+`yt-dlp-webui` now exposes a nice **JSON-RPC 1.0** interface through Websockets and HTTP-POST
+It is **planned** to also expose a **gRPC** server.
+
+Just as an overview, these are the available methods:
+-   Service.Exec
+-   Service.Progress
+-   Service.Formats
+-   Service.Pending
+-   Service.Running
+-   Service.Kill
+-   Service.KillAll
+-   Service.Clear
+
+For more information open an issue on GitHub and I will provide more info ASAP.
 
 ## FAQ
 -   **Will it availabe for Raspberry Pi/ generic ARM devices?**
