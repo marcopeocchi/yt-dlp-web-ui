@@ -130,7 +130,6 @@ func (p *Process) Start(path, filename string) {
 	go func() {
 		defer r.Close()
 		defer p.Complete()
-		defer close(eventChan)
 		for scan.Scan() {
 			eventChan <- scan.Text()
 		}
