@@ -41,7 +41,7 @@ Refactoring and JSDoc.
 
 08/06/22: ARM builds.
 
-28/02/22: Reworked resume download feature. Now it's pratically instantaneous. It no longer stops and restarts each process, references to each process are saved in memory.
+28/06/22: Reworked resume download feature. Now it's pratically instantaneous. It no longer stops and restarts each process, references to each process are saved in memory.
 
 12/01/23: Switched from TypeScript to Golang on the backend. It was a great effort but it was worth it.
 ```
