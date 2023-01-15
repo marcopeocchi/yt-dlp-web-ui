@@ -7,7 +7,7 @@ Intended to be used with docker and in standalone mode. 😎👍
 
 Developed to be as lightweight as possible (because my server is basically an intel atom sbc). 
 
-The bottleneck remains yt-dlp startup time (until yt-dlp will provide a rpc interface).
+The bottleneck remains yt-dlp startup time.
 
 **I strongly recomend the ghcr build instead of docker hub one.**
 
