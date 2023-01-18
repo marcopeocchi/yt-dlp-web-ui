@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI (Dockerhub)
 
 on:
   push:
@@ -7,11 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Login to Docker Hub
