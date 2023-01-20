@@ -9,6 +9,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/marcopeocchi/fazzoletti v0.0.0-20221114144444-1e802380a7db
 	golang.org/x/sys v0.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -23,5 +24,4 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.43.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
