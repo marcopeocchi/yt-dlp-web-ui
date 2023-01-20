@@ -1,10 +1,9 @@
 name: Docker Image CI (Dockerhub)
 
 on:
-  push:
+  release:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags: [ 'v*.*.*' ]
 
 jobs:
   build:
