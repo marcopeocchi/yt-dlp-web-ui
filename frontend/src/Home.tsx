@@ -19,9 +19,10 @@ import {
   Typography
 } from "@mui/material";
 import { Buffer } from 'buffer';
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { StackableResult } from "./components/StackableResult";
+import { DownloadsCardView } from "./components/DownloadsCardView";
+import { DownloadsListView } from "./components/DownloadsListView";
 import { CliArguments } from "./features/core/argsParser";
 import I18nBuilder from "./features/core/intl";
 import { RPCClient } from "./features/core/rpcClient";
@@ -41,7 +42,7 @@ export default function Home({ socket }: Props) {
   const dispatch = useDispatch()
 
   // ephemeral state
-  const [activeDownloads, setActiveDownloads] = useState(new Array<RPCResult>());
+  const [activeDownloads, setActiveDownloads] = useState<Array<RPCResult>>();
   const [downloadFormats, setDownloadFormats] = useState<IDLMetadata>();
   const [pickedVideoFormat, setPickedVideoFormat] = useState('');
   const [pickedAudioFormat, setPickedAudioFormat] = useState('');
@@ -56,7 +57,7 @@ export default function Home({ socket }: Props) {
   const [url, setUrl] = useState('');
   const [workingUrl, setWorkingUrl] = useState('');
 
-  const [showBackdrop, setShowBackdrop] = useState(false);
+  const [showBackdrop, setShowBackdrop] = useState(true);
   const [showToast, setShowToast] = useState(true);
 
   // memos
@@ -105,10 +106,10 @@ export default function Home({ socket }: Props) {
   }, [])
 
   useEffect(() => {
-    if (activeDownloads.length > 0 && showBackdrop) {
+    if (activeDownloads && activeDownloads.length >= 0) {
       setShowBackdrop(false)
     }
-  }, [activeDownloads, showBackdrop])
+  }, [activeDownloads?.length])
 
   useEffect(() => {
     client.directoryTree()
@@ -137,6 +138,7 @@ export default function Home({ socket }: Props) {
 
     setUrl('')
     setWorkingUrl('')
+    setShowBackdrop(true)
 
     setTimeout(() => {
       resetInput()
@@ -460,25 +462,11 @@ export default function Home({ socket }: Props) {
           </Grid>
         </Grid> : null
       }
-      <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
-        {
-          activeDownloads.map(download => (
-            <Grid item xs={4} sm={8} md={6} key={download.id}>
-              <Fragment>
-                <StackableResult
-                  title={download.info.title}
-                  thumbnail={download.info.thumbnail}
-                  percentage={download.progress.percentage}
-                  stopCallback={() => abort(download.id)}
-                  resolution={download.info.resolution ?? ''}
-                  speed={download.progress.speed}
-                  size={download.info.filesize_approx ?? 0}
-                />
-              </Fragment>
-            </Grid>
-          ))
-        }
-      </Grid>
+      {
+        settings.listView ?
+          <DownloadsListView downloads={activeDownloads ?? []} abortFunction={abort} /> :
+          <DownloadsCardView downloads={activeDownloads ?? []} abortFunction={abort} />
+      }
       <Snackbar
         open={showToast === status.connected}
         autoHideDuration={1500}

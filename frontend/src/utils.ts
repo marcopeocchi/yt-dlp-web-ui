@@ -84,3 +84,6 @@ export function getHttpRPCEndpoint() {
 export function formatGiB(bytes: number) {
     return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
 }
+
+export const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`
+export const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`

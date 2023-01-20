@@ -4,11 +4,13 @@ import {
   Dashboard,
   // Download,
   Menu, Settings as SettingsIcon,
+  FormatListBulleted,
   SettingsEthernet,
   Storage
 } from "@mui/icons-material";
 import {
   Box,
+  CircularProgress,
   createTheme, CssBaseline,
   Divider,
   IconButton, List,
@@ -17,16 +19,16 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import ListItemButton from '@mui/material/ListItemButton';
-import { useMemo, useState } from "react";
-import { Provider, useSelector } from "react-redux";
+import { lazy, Suspense, useMemo, useState } from "react";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import {
   BrowserRouter as Router, Link, Route,
   Routes
 } from 'react-router-dom';
 import { AppBar } from "./components/AppBar";
 import { Drawer } from "./components/Drawer";
+import { toggleListView } from "./features/settings/settingsSlice";
 import Home from "./Home";
-import Settings from "./Settings";
 import { RootState, store } from './stores/store';
 import { formatGiB, getWebSocketEndpoint } from "./utils";
 
@@ -35,6 +37,7 @@ function AppContent() {
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
+  const dispatch = useDispatch()
 
   const socket = useMemo(() => new WebSocket(getWebSocketEndpoint()), [])
 
@@ -53,6 +56,8 @@ function AppContent() {
   const toggleDrawer = () => {
     setOpen(!open)
   }
+
+  const Settings = lazy(() => import('./Settings'))
 
   return (
     <ThemeProvider theme={theme}>
@@ -132,6 +137,12 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
+              <ListItemButton onClick={() => dispatch(toggleListView())}>
+                <ListItemIcon>
+                  <FormatListBulleted />
+                </ListItemIcon>
+                <ListItemText primary="List view" />
+              </ListItemButton>
               <Link to={'/settings'} style={
                 {
                   textDecoration: 'none',
@@ -158,7 +169,11 @@ function AppContent() {
             <Toolbar />
             <Routes>
               <Route path="/" element={<Home socket={socket} />} />
-              <Route path="/settings" element={<Settings socket={socket} />} />
+              <Route path="/settings" element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Settings socket={socket} />
+                </Suspense>
+              } />
             </Routes>
           </Box>
         </Box>

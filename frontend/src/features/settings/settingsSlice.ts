@@ -14,6 +14,7 @@ export interface SettingsState {
     fileRenaming: boolean
     pathOverriding: boolean
     enableCustomArgs: boolean
+    listView: boolean
 }
 
 const initialState: SettingsState = {
@@ -27,6 +28,7 @@ const initialState: SettingsState = {
     fileRenaming: localStorage.getItem("file-renaming") === "true",
     pathOverriding: localStorage.getItem("path-overriding") === "true",
     enableCustomArgs: localStorage.getItem("enable-custom-args") === "true",
+    listView: localStorage.getItem("listview") === "true",
 }
 
 export const settingsSlice = createSlice({
@@ -73,6 +75,10 @@ export const settingsSlice = createSlice({
             state.enableCustomArgs = action.payload
             localStorage.setItem("enable-custom-args", action.payload.toString())
         },
+        toggleListView: (state) => {
+            state.listView = !state.listView
+            localStorage.setItem("listview", state.listView.toString())
+        },
     }
 })
 
@@ -87,6 +93,7 @@ export const {
     setFileRenaming,
     setPathOverriding,
     setEnableCustomArgs,
+    toggleListView
 } = settingsSlice.actions
 
 export default settingsSlice.reducer

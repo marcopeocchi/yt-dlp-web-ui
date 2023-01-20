@@ -13,7 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ellipsis } from "../utils";
+import { ellipsis, formatSpeedMiB, roundMiB } from "../utils";
 
 type Props = {
   title: string,
@@ -42,6 +42,8 @@ export function StackableResult({
     }
   }, [percentage])
 
+  const percentageToNumber = () => isCompleted ? 100 : Number(percentage.replace('%', ''))
+
   const guessResolution = (xByY: string): any => {
     if (!xByY) return null;
     if (xByY.includes('4320')) return (<EightK color="primary" />);
@@ -50,11 +52,6 @@ export function StackableResult({
     if (xByY.includes('720')) return (<Sd color="primary" />);
     return null;
   }
-
-  const percentageToNumber = () => isCompleted ? 100 : Number(percentage.replace('%', ''))
-
-  const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`
-  const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`
 
   return (
     <Card>
