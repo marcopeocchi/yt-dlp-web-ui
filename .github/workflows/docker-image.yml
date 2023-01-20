@@ -22,6 +22,5 @@ jobs:
       with:
         version: latest
     - name: Build the Docker image
-      run: docker buildx build . --file Dockerfile --tag ${{secrets.DOCKER_HUB_USERNAME}}/yt-dlp-webui:latest --platform linux/amd64,linux/arm/v7,linux/arm64
-    - name: Publish the Docker image
-      run: docker push ${{secrets.DOCKER_HUB_USERNAME}}/yt-dlp-webui:latest
+      run: docker buildx build . --file Dockerfile --tag ${{secrets.DOCKER_HUB_USERNAME}}/yt-dlp-webui:latest --push --platform linux/amd64,linux/arm/v7,linux/arm64
+
