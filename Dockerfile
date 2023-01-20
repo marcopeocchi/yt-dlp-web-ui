@@ -6,7 +6,7 @@ FROM alpine:3.17 AS build
 WORKDIR /usr/src/yt-dlp-webui
 # install core dependencies
 RUN apk update && \
-    apk add psmisc nodejs yarn go yt-dlp
+    apk add psmisc nodejs yarn go
 # copia la salsa
 COPY . .
 # build frontend
