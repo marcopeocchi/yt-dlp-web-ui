@@ -9,8 +9,11 @@ Developed to be as lightweight as possible (because my server is basically an in
 
 The bottleneck remains yt-dlp startup time.
 
-**I strongly recomend the ghcr build instead of docker hub one.**
+**Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
 
+```sh
+docker pull marcobaobao/yt-dlp-webui:latest
+```
 ```sh
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
@@ -86,6 +89,8 @@ Future releases will have:
 ```sh
 # recomended for ARM and x86 devices 
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+# or
+# docker pull marcobaobao/yt-dlp-webui:latest
 docker run -d -p 3033:3033 -v <your dir>:/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 
 # or even
