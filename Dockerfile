@@ -27,6 +27,7 @@ RUN apk update && \
     apk add psmisc ffmpeg yt-dlp
 
 COPY --from=build /usr/src/yt-dlp-webui /usr/bin/yt-dlp-webui
+RUN chmod +x /usr/bin/yt-dlp-webui
 
 EXPOSE 3033
 CMD [ "/usr/bin/yt-dlp-webui" , "--out", "/downloads" ]
