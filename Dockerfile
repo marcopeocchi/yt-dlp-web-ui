@@ -28,8 +28,8 @@ WORKDIR /app
 RUN apk update && \
     apk add psmisc ffmpeg yt-dlp
 
-COPY --from=build /usr/src/yt-dlp-webui /app/server
-RUN chmod +x /app/server
+COPY --from=build /usr/src/yt-dlp-webui /app
+RUN chmod +x /app/yt-dlp-webui
 
 EXPOSE 3033
-CMD [ "./server" , "--out", "/downloads" ]
+CMD [ "./yt-dlp-webui" , "--out", "/downloads" ]
