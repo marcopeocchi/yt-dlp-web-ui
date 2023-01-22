@@ -11,8 +11,8 @@ RUN apk update && \
 COPY . .
 # build frontend
 WORKDIR /usr/src/yt-dlp-webui/frontend
-RUN npm install && \
-    npm run build
+RUN npm install
+RUN npm run build
 # build backend + incubator
 WORKDIR /usr/src/yt-dlp-webui
 RUN go build -o yt-dlp-webui
