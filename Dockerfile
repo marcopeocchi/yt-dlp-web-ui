@@ -6,13 +6,13 @@ FROM alpine:3.17 AS build
 WORKDIR /usr/src/yt-dlp-webui
 # install core dependencies
 RUN apk update && \
-    apk add psmisc nodejs yarn go
+    apk add nodejs npm go
 # copia la salsa
 COPY . .
 # build frontend
 WORKDIR /usr/src/yt-dlp-webui/frontend
-RUN yarn install && \
-    yarn build
+RUN npm install && \
+    npm run build
 # build backend + incubator
 WORKDIR /usr/src/yt-dlp-webui
 RUN go build -o yt-dlp-webui
