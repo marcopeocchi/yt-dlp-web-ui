@@ -335,7 +335,7 @@ export default function Home({ socket }: Props) {
                   disabled={url === ''}
                   onClick={() => settings.formatSelection ? sendUrlFormatSelection() : sendUrl()}
                 >
-                  {i18n.t('startButton')}
+                  {settings.formatSelection ? i18n.t('selectFormatButton') : i18n.t('startButton')}
                 </Button>
               </Grid>
               <Grid item>

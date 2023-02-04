@@ -4,6 +4,7 @@ languages:
     urlInput: YouTube or other supported service video URL
     statusTitle: Status
     statusReady: Ready
+    selectFormatButton: Select format
     startButton: Start
     abortAllButton: Abort All
     updateBinButton: Update yt-dlp binary
