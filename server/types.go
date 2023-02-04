@@ -36,6 +36,7 @@ type Format struct {
 	Resolution  string  `json:"resolution"`
 	VCodec      string  `json:"vcodec"`
 	ACodec      string  `json:"acodec"`
+	Size        float32 `json:"filesize_approx"`
 }
 
 // struct representing the response sent to the client

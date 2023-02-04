@@ -387,6 +387,7 @@ export default function Home({ socket }: Props) {
                       setPickedAudioFormat('')
                     }}>
                     {downloadFormats.best.format_note || downloadFormats.best.format_id} - {downloadFormats.best.vcodec}+{downloadFormats.best.acodec}
+                    &nbsp;({downloadFormats.best.resolution}{(downloadFormats.best.filesize_approx>0)?", ~"+Math.round(downloadFormats.best.filesize_approx/1024/1024)+" MiB":""})
                   </Button>
                 </Grid>
                 {/* video only */}
@@ -411,6 +412,7 @@ export default function Home({ socket }: Props) {
                         disabled={pickedVideoFormat === format.format_id}
                       >
                         {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
+                        &nbsp;({format.resolution}{(format.filesize_approx>0)?", ~"+Math.round(format.filesize_approx/1024/1024)+" MiB":""})
                       </Button>
                     </Grid>
                   ))
@@ -436,6 +438,7 @@ export default function Home({ socket }: Props) {
                         disabled={pickedAudioFormat === format.format_id}
                       >
                         {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
+                        {(format.filesize_approx>0)?" (~"+Math.round(format.filesize_approx/1024/1024)+" MiB)":""}
                       </Button>
                     </Grid>
                   ))

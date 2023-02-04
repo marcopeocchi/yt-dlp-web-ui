@@ -59,4 +59,5 @@ export interface IDLFormat {
   resolution: string,
   vcodec: string,
   acodec: string,
+  filesize_approx: number,
 }
