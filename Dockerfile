@@ -17,8 +17,8 @@ RUN npm run build
 WORKDIR /usr/src/yt-dlp-webui
 RUN go build -o yt-dlp-webui
 
-
-FROM alpine:3.17
+# but here yes :)
+FROM alpine:edge
 
 WORKDIR /downloads
 VOLUME /downloads
