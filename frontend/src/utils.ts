@@ -74,7 +74,8 @@ export function toFormatArgs(codes: string[]): string {
 }
 
 export function getWebSocketEndpoint() {
-    return `ws://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/ws-rpc`
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+    return `${protocol}://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/ws-rpc`
 }
 
 export function getHttpRPCEndpoint() {
