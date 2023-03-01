@@ -17,10 +17,6 @@ import (
 
 var db MemoryDB
 
-func init() {
-	db.New()
-}
-
 func RunBlocking(ctx context.Context) {
 	fe := ctx.Value("frontend").(fs.SubFS)
 	port := ctx.Value("port").(int)
