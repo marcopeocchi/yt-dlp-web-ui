@@ -118,7 +118,7 @@ func (p *Process) Start(path, filename string) {
 		}
 		info := DownloadInfo{URL: p.url}
 		json.Unmarshal(stdout, &info)
-		p.mem.Update(p.id, info)
+		p.mem.UpdateInfo(p.id, info)
 	}()
 
 	// --------------- progress block --------------- //

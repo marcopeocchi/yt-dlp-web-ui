@@ -1,6 +1,8 @@
 package server
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -13,86 +15,74 @@ import (
 
 // In-Memory volatile Thread-Safe Key-Value Storage
 type MemoryDB struct {
-	table map[string]*Process
-	mu    sync.Mutex
-}
-
-// Inits the db with an empty map of string->Process pointer
-func (m *MemoryDB) New() {
-	m.table = make(map[string]*Process)
+	table sync.Map
 }
 
 // Get a process pointer given its id
-func (m *MemoryDB) Get(id string) *Process {
-	m.mu.Lock()
-	res := m.table[id]
-	m.mu.Unlock()
-	return res
+func (m *MemoryDB) Get(id string) (*Process, error) {
+	entry, ok := db.table.Load(id)
+	if !ok {
+		return nil, errors.New("no process found for the given key")
+	}
+	return entry.(*Process), nil
 }
 
 // Store a pointer of a process and return its id
 func (m *MemoryDB) Set(process *Process) string {
 	id := uuid.Must(uuid.NewRandom()).String()
-	m.mu.Lock()
-	m.table[id] = process
-	m.mu.Unlock()
+	db.table.Store(id, process)
 	return id
 }
 
 // Update a process info/metadata, given the process id
-func (m *MemoryDB) Update(id string, info DownloadInfo) {
-	m.mu.Lock()
-	if m.table[id] != nil {
-		m.table[id].Info = info
+func (m *MemoryDB) UpdateInfo(id string, info DownloadInfo) error {
+	entry, ok := db.table.Load(id)
+	if ok {
+		entry.(*Process).Info = info
+		db.table.Store(id, entry)
+		return nil
 	}
-	m.mu.Unlock()
+	return fmt.Errorf("can't update row with id %s", id)
 }
 
 // Update a process progress data, given the process id
 // Used for updating completition percentage or ETA
-func (m *MemoryDB) UpdateProgress(id string, progress DownloadProgress) {
-	m.mu.Lock()
-	if m.table[id] != nil {
-		m.table[id].Progress = progress
+func (m *MemoryDB) UpdateProgress(id string, progress DownloadProgress) error {
+	entry, ok := db.table.Load(id)
+	if ok {
+		entry.(*Process).Progress = progress
+		db.table.Store(id, entry)
+		return nil
 	}
-	m.mu.Unlock()
+	return fmt.Errorf("can't update row with id %s", id)
 }
 
 // Removes a process progress, given the process id
 func (m *MemoryDB) Delete(id string) {
-	m.mu.Lock()
-	delete(m.table, id)
-	m.mu.Unlock()
+	db.table.Delete(id)
 }
 
-// Returns a slice of all currently stored processes id
-func (m *MemoryDB) Keys() []string {
-	m.mu.Lock()
-	keys := make([]string, len(m.table))
-	i := 0
-	for k := range m.table {
-		keys[i] = k
-		i++
-	}
-	m.mu.Unlock()
-	return keys
+func (m *MemoryDB) Keys() *[]string {
+	running := []string{}
+	db.table.Range(func(key, value any) bool {
+		running = append(running, key.(string))
+		return true
+	})
+	return &running
 }
 
 // Returns a slice of all currently stored processes progess
-func (m *MemoryDB) All() []ProcessResponse {
-	running := make([]ProcessResponse, len(m.table))
-	i := 0
-	for k, v := range m.table {
-		if v != nil {
-			running[i] = ProcessResponse{
-				Id:       k,
-				Info:     v.Info,
-				Progress: v.Progress,
-			}
-			i++
-		}
-	}
-	return running
+func (m *MemoryDB) All() *[]ProcessResponse {
+	running := []ProcessResponse{}
+	db.table.Range(func(key, value any) bool {
+		running = append(running, ProcessResponse{
+			Id:       key.(string),
+			Info:     value.(*Process).Info,
+			Progress: value.(*Process).Progress,
+		})
+		return true
+	})
+	return &running
 }
 
 // WIP: Persist the database in a single file named "session.dat"
@@ -100,7 +90,7 @@ func (m *MemoryDB) Persist() {
 	running := m.All()
 
 	session, err := json.Marshal(Session{
-		Processes: running,
+		Processes: *running,
 	})
 	if err != nil {
 		log.Println(cli.Red, "Failed to persist database", cli.Reset)

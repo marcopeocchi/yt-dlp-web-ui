@@ -40,7 +40,11 @@ func (t *Service) Exec(args DownloadSpecificArgs, result *string) error {
 
 // Progess retrieves the Progress of a specific Process given its Id
 func (t *Service) Progess(args Args, progress *DownloadProgress) error {
-	*progress = db.Get(args.Id).Progress
+	proc, err := db.Get(args.Id)
+	if err != nil {
+		return err
+	}
+	*progress = proc.Progress
 	return nil
 }
 
@@ -54,21 +58,23 @@ func (t *Service) Formats(args Args, progress *DownloadFormats) error {
 
 // Pending retrieves a slice of all Pending/Running processes ids
 func (t *Service) Pending(args NoArgs, pending *Pending) error {
-	*pending = Pending(db.Keys())
+	*pending = *db.Keys()
 	return nil
 }
 
 // Running retrieves a slice of all Processes progress
 func (t *Service) Running(args NoArgs, running *Running) error {
-	*running = db.All()
+	*running = *db.All()
 	return nil
 }
 
 // Kill kills a process given its id and remove it from the memoryDB
 func (t *Service) Kill(args string, killed *string) error {
 	log.Println("Trying killing process with id", args)
-	proc := db.Get(args)
-	var err error
+	proc, err := db.Get(args)
+	if err != nil {
+		return err
+	}
 	if proc != nil {
 		err = proc.Kill()
 	}
@@ -81,8 +87,11 @@ func (t *Service) KillAll(args NoArgs, killed *string) error {
 	log.Println("Killing all spawned processes", args)
 	keys := db.Keys()
 	var err error
-	for _, key := range keys {
-		proc := db.Get(key)
+	for _, key := range *keys {
+		proc, err := db.Get(key)
+		if err != nil {
+			return err
+		}
 		if proc != nil {
 			proc.Kill()
 		}

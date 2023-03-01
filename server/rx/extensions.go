@@ -18,7 +18,7 @@ import "time"
 //	             -t->    |>
 //
 // --A-----C-----G-------|>
-func Debounce(interval time.Duration, source chan string, cb func(emit string)) {
+func Debounce(interval time.Duration, source chan string, f func(emit string)) {
 	var item string
 	timer := time.NewTimer(interval)
 	for {
@@ -27,7 +27,7 @@ func Debounce(interval time.Duration, source chan string, cb func(emit string)) 
 			timer.Reset(interval)
 		case <-timer.C:
 			if item != "" {
-				cb(item)
+				f(item)
 			}
 		}
 	}
