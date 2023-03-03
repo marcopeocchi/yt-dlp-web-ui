@@ -167,6 +167,7 @@ languages:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
     statusReady: 準備
+    selectFormatButton: フォーマット選択
     startButton: 開始
     abortAllButton: すべて中止
     updateBinButton: yt-dlp更新
@@ -181,12 +182,12 @@ languages:
     toastConnected: '接続中 '
     toastUpdated: yt-dlpを更新しました!
     formatSelectionEnabler: 選択可能な動画/音源
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
+    themeSelect: 'テーマ'
+    languageSelect: '言語'
+    overridesAnchor: 上書き
+    pathOverrideOption: 保存するディレクトリ
+    filenameOverrideOption: ファイル名の上書き
+    customFilename:  (空白の場合は元のファイル名)
+    customPath: 保存先
+    customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
+    customArgsInput: yt-dlpのオプション
