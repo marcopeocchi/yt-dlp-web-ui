@@ -16,15 +16,16 @@ import {
   Switch,
   TextField,
   Typography
-} from "@mui/material";
-import { useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { debounceTime, distinctUntilChanged, map, of, takeWhile } from "rxjs";
-import { CliArguments } from "./features/core/argsParser";
-import I18nBuilder from "./features/core/intl";
-import { RPCClient } from "./features/core/rpcClient";
+} from '@mui/material'
+import { useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { Subject, debounceTime, distinctUntilChanged, map, takeWhile } from 'rxjs'
+import { CliArguments } from './features/core/argsParser'
+import I18nBuilder from './features/core/intl'
+import { RPCClient } from './features/core/rpcClient'
 import {
   LanguageUnion,
+  ThemeUnion,
   setCliArgs,
   setEnableCustomArgs,
   setFileRenaming,
@@ -33,32 +34,31 @@ import {
   setPathOverriding,
   setServerAddr,
   setServerPort,
-  setTheme,
-  ThemeUnion
-} from "./features/settings/settingsSlice";
-import { updated } from "./features/status/statusSlice";
-import { RootState } from "./stores/store";
-import { validateDomain, validateIP } from "./utils";
+  setTheme
+} from './features/settings/settingsSlice'
+import { updated } from './features/status/statusSlice'
+import { RootState } from './stores/store'
+import { validateDomain, validateIP } from './utils'
 
 export default function Settings({ socket }: { socket: WebSocket }) {
-  const settings = useSelector((state: RootState) => state.settings)
-  const status = useSelector((state: RootState) => state.status)
   const dispatch = useDispatch()
+
+  const status = useSelector((state: RootState) => state.status)
+  const settings = useSelector((state: RootState) => state.settings)
 
   const [invalidIP, setInvalidIP] = useState(false);
 
   const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
-  const client = useMemo(() => new RPCClient(socket), [settings.serverAddr, settings.serverPort])
-  const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
-  /**
-   * Update the server ip address state and localstorage whenever the input value changes.  
-   * Validate the ip-addr then set.s
-   * @param event Input change event
-   */
-  const handleAddrChange = (event: any) => {
-    const $serverAddr = of(event)
+
+  const client = useMemo(() => new RPCClient(socket), [])
+  const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [])
+
+  const serverAddr$ = useMemo(() => new Subject<string>(), [])
+  const serverPort$ = useMemo(() => new Subject<string>(), [])
+
+  useEffect(() => {
+    const sub = serverAddr$
       .pipe(
-        map(event => event.target.value),
         debounceTime(500),
         distinctUntilChanged()
       )
@@ -73,24 +73,20 @@ export default function Settings({ socket }: { socket: WebSocket }) {
           setInvalidIP(true)
         }
       })
-    return $serverAddr.unsubscribe()
-  }
+    return () => sub.unsubscribe()
+  }, [serverAddr$])
 
-  /**
-   * Set server port
-   */
-  const handlePortChange = (event: any) => {
-    const $port = of(event)
+  useEffect(() => {
+    const sub = serverPort$
       .pipe(
-        map(event => event.target.value),
         map(val => Number(val)),
         takeWhile(val => isFinite(val) && val <= 65535),
       )
       .subscribe(port => {
         dispatch(setServerPort(port.toString()))
       })
-    return $port.unsubscribe()
-  }
+    return () => sub.unsubscribe()
+  }, [])
 
   /**
    * Language toggler handler 
@@ -107,7 +103,7 @@ export default function Settings({ socket }: { socket: WebSocket }) {
   }
 
   /**
-   * Send via WebSocket a message in order to update the yt-dlp binary from server
+   * Send via WebSocket a message to update yt-dlp binary
    */
   const updateBinary = () => {
     client.updateExecutable().then(() => dispatch(updated()))
@@ -136,7 +132,7 @@ export default function Settings({ socket }: { socket: WebSocket }) {
                     label={i18n.t('serverAddressTitle')}
                     defaultValue={settings.serverAddr}
                     error={invalidIP}
-                    onChange={handleAddrChange}
+                    onChange={(e) => serverAddr$.next(e.currentTarget.value)}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">ws://</InputAdornment>,
                     }}
@@ -148,7 +144,7 @@ export default function Settings({ socket }: { socket: WebSocket }) {
                     fullWidth
                     label={i18n.t('serverPortTitle')}
                     defaultValue={settings.serverPort}
-                    onChange={handlePortChange}
+                    onChange={(e) => serverPort$.next(e.currentTarget.value)}
                     error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
                     sx={{ mb: 2 }}
                   />
@@ -186,16 +182,6 @@ export default function Settings({ socket }: { socket: WebSocket }) {
                     </Select>
                   </FormControl>
                 </Grid>
-                {/* <Grid item xs={12} md={6}>
-                  <TextField
-                    fullWidth
-                    label={'Max download speed' || i18n.t('serverPortTitle')}
-                    defaultValue={settings.serverPort}
-                    onChange={handlePortChange}
-                    error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid> */}
               </Grid>
               <FormControlLabel
                 control={

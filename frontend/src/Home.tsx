@@ -1,8 +1,8 @@
-import { FileUpload } from "@mui/icons-material";
+import { FileUpload } from '@mui/icons-material'
 import {
+  Alert,
   Backdrop,
   Button,
-  ButtonGroup,
   CircularProgress,
   Container,
   FormControl,
@@ -15,21 +15,21 @@ import {
   Select,
   Snackbar,
   styled,
-  TextField,
-  Typography
-} from "@mui/material";
-import { Buffer } from 'buffer';
-import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { DownloadsCardView } from "./components/DownloadsCardView";
-import { DownloadsListView } from "./components/DownloadsListView";
-import { CliArguments } from "./features/core/argsParser";
-import I18nBuilder from "./features/core/intl";
-import { RPCClient } from "./features/core/rpcClient";
-import { connected, setFreeSpace } from "./features/status/statusSlice";
-import { RootState } from "./stores/store";
-import { IDLMetadata, RPCResult } from "./types";
-import { isValidURL, toFormatArgs } from "./utils";
+  TextField
+} from '@mui/material'
+import { Buffer } from 'buffer'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { DownloadsCardView } from './components/DownloadsCardView'
+import { DownloadsListView } from './components/DownloadsListView'
+import FormatsGrid from './components/FormatsGrid'
+import { CliArguments } from './features/core/argsParser'
+import I18nBuilder from './features/core/intl'
+import { RPCClient } from './features/core/rpcClient'
+import { connected, setFreeSpace } from './features/status/statusSlice'
+import { RootState } from './stores/store'
+import type { DLMetadata, RPCResult } from './types'
+import { isValidURL, toFormatArgs } from './utils'
 
 type Props = {
   socket: WebSocket
@@ -42,30 +42,35 @@ export default function Home({ socket }: Props) {
   const dispatch = useDispatch()
 
   // ephemeral state
-  const [activeDownloads, setActiveDownloads] = useState<Array<RPCResult>>();
-  const [downloadFormats, setDownloadFormats] = useState<IDLMetadata>();
-  const [pickedVideoFormat, setPickedVideoFormat] = useState('');
-  const [pickedAudioFormat, setPickedAudioFormat] = useState('');
-  const [pickedBestFormat, setPickedBestFormat] = useState('');
+  const [activeDownloads, setActiveDownloads] = useState<Array<RPCResult>>()
+  const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
+  const [pickedVideoFormat, setPickedVideoFormat] = useState('')
+  const [pickedAudioFormat, setPickedAudioFormat] = useState('')
+  const [pickedBestFormat, setPickedBestFormat] = useState('')
 
-  const [customArgs, setCustomArgs] = useState('');
-  const [downloadPath, setDownloadPath] = useState(0);
-  const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([]);
+  const [customArgs, setCustomArgs] = useState('')
+  const [downloadPath, setDownloadPath] = useState(0)
+  const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([])
 
-  const [fileNameOverride, setFilenameOverride] = useState('');
+  const [fileNameOverride, setFilenameOverride] = useState('')
 
-  const [url, setUrl] = useState('');
-  const [workingUrl, setWorkingUrl] = useState('');
+  const [url, setUrl] = useState('')
+  const [workingUrl, setWorkingUrl] = useState('')
 
-  const [showBackdrop, setShowBackdrop] = useState(true);
-  const [showToast, setShowToast] = useState(true);
+  const [showBackdrop, setShowBackdrop] = useState(true)
+  const [showToast, setShowToast] = useState(true)
 
   // memos
   const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
   const client = useMemo(() => new RPCClient(socket), [settings.serverAddr, settings.serverPort])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
 
+  // refs
+  const urlInputRef = useRef<HTMLInputElement>(null)
+  const customFilenameInputRef = useRef<HTMLInputElement>(null)
+
   /* -------------------- Effects -------------------- */
+
   /* WebSocket connect event handler*/
   useEffect(() => {
     socket.onopen = () => {
@@ -84,8 +89,7 @@ export default function Home({ socket }: Props) {
   }, [status.connected])
 
   useEffect(() => {
-    client.freeSpace()
-      .then(bytes => dispatch(setFreeSpace(bytes.result)))
+    client.freeSpace().then(bytes => dispatch(setFreeSpace(bytes.result)))
   }, [])
 
   useEffect(() => {
@@ -118,7 +122,19 @@ export default function Home({ socket }: Props) {
       })
   }, [])
 
-  /* -------------------- component functions -------------------- */
+  const [socketHasError, setSocketHasError] = useState(false)
+
+  useEffect(() => {
+    socket.onerror = () => {
+      setSocketHasError(true)
+      setShowBackdrop(false)
+    }
+    return () => {
+      socket.onerror = null
+    }
+  }, [socket])
+
+  /* -------------------- callbacks-------------------- */
 
   /**
    * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
@@ -222,12 +238,9 @@ export default function Home({ socket }: Props) {
   }
 
   const resetInput = () => {
-    const input = document.getElementById('urlInput') as HTMLInputElement;
-    input.value = '';
-
-    const filename = document.getElementById('customFilenameInput') as HTMLInputElement;
-    if (filename) {
-      filename.value = '';
+    urlInputRef.current!.value = '';
+    if (customFilenameInputRef.current) {
+      customFilenameInputRef.current!.value = '';
     }
   }
 
@@ -257,7 +270,7 @@ export default function Home({ socket }: Props) {
             <Grid container>
               <TextField
                 fullWidth
-                id="urlInput"
+                ref={urlInputRef}
                 label={i18n.t('urlInput')}
                 variant="outlined"
                 onChange={handleUrlChange}
@@ -278,54 +291,50 @@ export default function Home({ socket }: Props) {
             </Grid>
             <Grid container spacing={1} sx={{ mt: 1 }}>
               {
-                settings.enableCustomArgs ?
-                  <Grid item xs={12}>
-                    <TextField
-                      id="customArgsInput"
-                      fullWidth
-                      label={i18n.t('customArgsInput')}
-                      variant="outlined"
-                      onChange={handleCustomArgsChange}
-                      value={customArgs}
-                      disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
-                    />
-                  </Grid> :
-                  null
+                settings.enableCustomArgs &&
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label={i18n.t('customArgsInput')}
+                    variant="outlined"
+                    onChange={handleCustomArgsChange}
+                    value={customArgs}
+                    disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                  />
+                </Grid>
               }
               {
-                settings.fileRenaming ?
-                  <Grid item xs={8}>
-                    <TextField
-                      id="customFilenameInput"
-                      fullWidth
-                      label={i18n.t('customFilename')}
-                      variant="outlined"
-                      value={fileNameOverride}
-                      onChange={handleFilenameOverrideChange}
-                      disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
-                    />
-                  </Grid> :
-                  null
+                settings.fileRenaming &&
+                <Grid item xs={8}>
+                  <TextField
+                    ref={customFilenameInputRef}
+                    fullWidth
+                    label={i18n.t('customFilename')}
+                    variant="outlined"
+                    value={fileNameOverride}
+                    onChange={handleFilenameOverrideChange}
+                    disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                  />
+                </Grid>
               }
               {
-                settings.pathOverriding ?
-                  <Grid item xs={4}>
-                    <FormControl fullWidth>
-                      <InputLabel>{i18n.t('customPath')}</InputLabel>
-                      <Select
-                        label={i18n.t('customPath')}
-                        defaultValue={0}
-                        variant={'outlined'}
-                        value={downloadPath}
-                        onChange={(e) => setDownloadPath(Number(e.target.value))}
-                      >
-                        {availableDownloadPaths.map((val: string, idx: number) => (
-                          <MenuItem key={idx} value={idx}>{val}</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid> :
-                  null
+                settings.pathOverriding &&
+                <Grid item xs={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>{i18n.t('customPath')}</InputLabel>
+                    <Select
+                      label={i18n.t('customPath')}
+                      defaultValue={0}
+                      variant={'outlined'}
+                      value={downloadPath}
+                      onChange={(e) => setDownloadPath(Number(e.target.value))}
+                    >
+                      {availableDownloadPaths.map((val: string, idx: number) => (
+                        <MenuItem key={idx} value={idx}>{val}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
               }
             </Grid>
             <Grid container spacing={1} pt={2}>
@@ -351,120 +360,31 @@ export default function Home({ socket }: Props) {
         </Grid>
       </Grid >
       {/* Format Selection grid */}
-      {
-        downloadFormats ? <Grid container spacing={2} mt={2}>
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                p: 2,
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Grid container>
-                <Grid item xs={12}>
-                  <Typography variant="h6" component="div" pb={1}>
-                    {downloadFormats.title}
-                  </Typography>
-                  {/* <Skeleton variant="rectangular" height={180} /> */}
-                </Grid>
-                <Grid item xs={12} pb={1}>
-                  <img src={downloadFormats.thumbnail} height={260} width="100%" style={{ objectFit: 'cover' }} />
-                </Grid>
-                {/* video only */}
-                <Grid item xs={12}>
-                  <Typography variant="body1" component="div">
-                    Best quality
-                  </Typography>
-                </Grid>
-                <Grid item pr={2} py={1}>
-                  <Button
-                    variant="contained"
-                    disabled={pickedBestFormat !== ''}
-                    onClick={() => {
-                      setPickedBestFormat(downloadFormats.best.format_id)
-                      setPickedVideoFormat('')
-                      setPickedAudioFormat('')
-                    }}>
-                    {downloadFormats.best.format_note || downloadFormats.best.format_id} - {downloadFormats.best.vcodec}+{downloadFormats.best.acodec}
-                    &nbsp;({downloadFormats.best.resolution}{(downloadFormats.best.filesize_approx>0)?", ~"+Math.round(downloadFormats.best.filesize_approx/1024/1024)+" MiB":""})
-                  </Button>
-                </Grid>
-                {/* video only */}
-                {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
-                  <Grid item xs={12}>
-                    <Typography variant="body1" component="div">
-                      Video data {downloadFormats.formats[1].acodec}
-                    </Typography>
-                  </Grid>
-                  : null
-                }
-                {downloadFormats.formats
-                  .filter(format => format.acodec === 'none' && format.vcodec !== 'none')
-                  .map((format, idx) => (
-                    <Grid item pr={2} py={1} key={idx}>
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          setPickedVideoFormat(format.format_id)
-                          setPickedBestFormat('')
-                        }}
-                        disabled={pickedVideoFormat === format.format_id}
-                      >
-                        {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
-                        &nbsp;({format.resolution}{(format.filesize_approx>0)?", ~"+Math.round(format.filesize_approx/1024/1024)+" MiB":""})
-                      </Button>
-                    </Grid>
-                  ))
-                }
-                {downloadFormats.formats.filter(format => format.acodec === 'none' && format.vcodec !== 'none').length ?
-                  <Grid item xs={12}>
-                    <Typography variant="body1" component="div">
-                      Audio data
-                    </Typography>
-                  </Grid>
-                  : null
-                }
-                {downloadFormats.formats
-                  .filter(format => format.acodec !== 'none' && format.vcodec === 'none')
-                  .map((format, idx) => (
-                    <Grid item pr={2} py={1} key={idx}>
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          setPickedAudioFormat(format.format_id)
-                          setPickedBestFormat('')
-                        }}
-                        disabled={pickedAudioFormat === format.format_id}
-                      >
-                        {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
-                        {(format.filesize_approx>0)?" (~"+Math.round(format.filesize_approx/1024/1024)+" MiB)":""}
-                      </Button>
-                    </Grid>
-                  ))
-                }
-                <Grid item xs={12} pt={2}>
-                  <ButtonGroup disableElevation variant="contained">
-                    <Button
-                      onClick={() => sendUrl()}
-                      disabled={!pickedBestFormat && !(pickedAudioFormat || pickedVideoFormat)}
-                    > Download
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        setPickedAudioFormat('');
-                        setPickedVideoFormat('');
-                        setPickedBestFormat('');
-                      }}
-                    > Clear
-                    </Button>
-                  </ButtonGroup>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-        </Grid> : null
-      }
+      {downloadFormats && <FormatsGrid
+        downloadFormats={downloadFormats}
+        onBestQualitySelected={(id) => {
+          setPickedBestFormat(id)
+          setPickedVideoFormat('')
+          setPickedAudioFormat('')
+        }}
+        onVideoSelected={(id) => {
+          setPickedVideoFormat(id)
+          setPickedBestFormat('')
+        }}
+        onAudioSelected={(id) => {
+          setPickedAudioFormat(id)
+          setPickedBestFormat('')
+        }}
+        onClear={() => {
+          setPickedAudioFormat('');
+          setPickedVideoFormat('');
+          setPickedBestFormat('');
+        }}
+        onSubmit={sendUrl}
+        pickedBestFormat={pickedBestFormat}
+        pickedVideoFormat={pickedVideoFormat}
+        pickedAudioFormat={pickedAudioFormat}
+      />}
       {
         settings.listView ?
           <DownloadsListView downloads={activeDownloads ?? []} abortFunction={abort} /> :
@@ -473,9 +393,17 @@ export default function Home({ socket }: Props) {
       <Snackbar
         open={showToast === status.connected}
         autoHideDuration={1500}
-        message="Connected"
         onClose={() => setShowToast(false)}
-      />
-    </Container >
+      >
+        <Alert variant="filled" severity="success">
+          {`Connected to (${settings.serverAddr}:${settings.serverPort})`}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={socketHasError}>
+        <Alert variant="filled" severity="error">
+          {`${i18n.t('rpcConnErr')} (${settings.serverAddr}:${settings.serverPort})`}
+        </Alert>
+      </Snackbar>
+    </Container>
   );
 }

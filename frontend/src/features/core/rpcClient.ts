@@ -1,4 +1,4 @@
-import type { RPCRequest, RPCResponse, IDLMetadata } from "../../types"
+import type { RPCRequest, RPCResponse, DLMetadata } from "../../types"
 
 import { getHttpRPCEndpoint } from '../../utils'
 
@@ -19,18 +19,17 @@ export class RPCClient {
     this.socket.send(JSON.stringify(req))
   }
 
-  private sendHTTP<T>(req: RPCRequest) {
-    return new Promise<RPCResponse<T>>((resolve) => {
-      fetch(getHttpRPCEndpoint(), {
-        method: 'POST',
-        body: JSON.stringify({
-          id: this.incrementSeq(),
-          ...req
-        })
+  private async sendHTTP<T>(req: RPCRequest) {
+    const res = await fetch(getHttpRPCEndpoint(), {
+      method: 'POST',
+      body: JSON.stringify({
+        ...req,
+        id: this.incrementSeq(),
       })
-        .then(res => res.json())
-        .then(data => resolve(data))
     })
+    const data: RPCResponse<T> = await res.json()
+
+    return data
   }
 
   public download(url: string, args: string, pathOverride = '', renameTo = '') {
@@ -50,7 +49,7 @@ export class RPCClient {
 
   public formats(url: string) {
     if (url) {
-      return this.sendHTTP<IDLMetadata>({
+      return this.sendHTTP<DLMetadata>({
         id: this.incrementSeq(),
         method: 'Service.Formats',
         params: [{

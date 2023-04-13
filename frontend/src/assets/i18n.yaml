@@ -28,6 +28,7 @@ languages:
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
+    rpcConnErr: Error while conencting to RPC server
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -55,6 +56,7 @@ languages:
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
+    rpcConnErr: Error nella connessione al server RPC
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -82,6 +84,7 @@ languages:
     customPath: 自定义路径
     customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
     customArgsInput: 自定义 yt-dlp 参数
+    rpcConnErr: Error while conencting to RPC server
   spanish:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -109,6 +112,7 @@ languages:
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
+    rpcConnErr: Error while conencting to RPC server
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -136,6 +140,7 @@ languages:
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
+    rpcConnErr: Error while conencting to RPC server
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -163,6 +168,7 @@ languages:
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
+    rpcConnErr: Error while conencting to RPC server
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -191,3 +197,4 @@ languages:
     customPath: 保存先
     customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
     customArgsInput: yt-dlpのオプション
+    rpcConnErr: Error while conencting to RPC server

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"flag"
 	"io/fs"
@@ -10,8 +9,6 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
-
-type ContextKey interface{}
 
 var (
 	port           int
@@ -48,9 +45,5 @@ func main() {
 	cfg.DownloadPath(downloadPath)
 	cfg.DownloaderPath(downloaderPath)
 
-	ctx := context.Background()
-	ctx = context.WithValue(ctx, ContextKey("port"), port)
-	ctx = context.WithValue(ctx, ContextKey("frontend"), frontend)
-
-	server.RunBlocking(ctx)
+	server.RunBlocking(port, frontend)
 }

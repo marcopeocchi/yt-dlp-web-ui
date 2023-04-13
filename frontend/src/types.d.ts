@@ -45,14 +45,14 @@ export type RPCParams = {
   Params?: string
 }
 
-export interface IDLMetadata {
-  formats: Array<IDLFormat>,
-  best: IDLFormat,
+export interface DLMetadata {
+  formats: Array<DLFormat>,
+  best: DLFormat,
   thumbnail: string,
   title: string,
 }
 
-export interface IDLFormat {
+export interface DLFormat {
   format_id: string,
   format_note: string,
   fps: number,

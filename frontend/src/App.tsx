@@ -1,36 +1,38 @@
-import { ThemeProvider } from "@emotion/react";
+import { ThemeProvider } from '@emotion/react'
 import {
   ChevronLeft,
   Dashboard,
-  // Download,
-  Menu, Settings as SettingsIcon,
   FormatListBulleted,
+  Menu,
   SettingsEthernet,
+  Settings as SettingsIcon,
   Storage
-} from "@mui/icons-material";
+} from '@mui/icons-material'
 import {
   Box,
   CircularProgress,
-  createTheme, CssBaseline,
+  CssBaseline,
   Divider,
   IconButton, List,
   ListItemIcon, ListItemText, Toolbar,
-  Typography
-} from "@mui/material";
-import { grey } from "@mui/material/colors";
-import ListItemButton from '@mui/material/ListItemButton';
-import { lazy, Suspense, useMemo, useState } from "react";
-import { Provider, useDispatch, useSelector } from "react-redux";
+  Typography,
+  createTheme
+} from '@mui/material'
+import ListItemButton from '@mui/material/ListItemButton'
+import { grey } from '@mui/material/colors'
+import { Suspense, lazy, useMemo, useState } from 'react'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import {
-  BrowserRouter as Router, Link, Route,
+  Link, Route,
+  BrowserRouter as Router,
   Routes
-} from 'react-router-dom';
-import { AppBar } from "./components/AppBar";
-import { Drawer } from "./components/Drawer";
-import { toggleListView } from "./features/settings/settingsSlice";
-import Home from "./Home";
-import { RootState, store } from './stores/store';
-import { formatGiB, getWebSocketEndpoint } from "./utils";
+} from 'react-router-dom'
+import Home from './Home'
+import { AppBar } from './components/AppBar'
+import { Drawer } from './components/Drawer'
+import { toggleListView } from './features/settings/settingsSlice'
+import { RootState, store } from './stores/store'
+import { formatGiB, getWebSocketEndpoint } from './utils'
 
 function AppContent() {
   const [open, setOpen] = useState(false)
@@ -179,7 +181,7 @@ function AppContent() {
         </Box>
       </Router>
     </ThemeProvider>
-  );
+  )
 }
 
 export function App() {
@@ -187,5 +189,5 @@ export function App() {
     <Provider store={store}>
       <AppContent />
     </Provider>
-  );
+  )
 }

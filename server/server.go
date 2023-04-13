@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"io/fs"
@@ -17,10 +16,7 @@ import (
 
 var db MemoryDB
 
-func RunBlocking(ctx context.Context) {
-	fe := ctx.Value("frontend").(fs.SubFS)
-	port := ctx.Value("port").(int)
-
+func RunBlocking(port int, frontend fs.FS) {
 	service := new(Service)
 	rpc.Register(service)
 
@@ -28,8 +24,12 @@ func RunBlocking(ctx context.Context) {
 
 	app.Use(cors.New())
 	app.Use("/", filesystem.New(filesystem.Config{
-		Root: http.FS(fe),
+		Root: http.FS(frontend),
 	}))
+
+	app.Get("/settings", func(c *fiber.Ctx) error {
+		return c.Redirect("/")
+	})
 
 	// RPC handlers
 	// websocket
@@ -52,8 +52,10 @@ func RunBlocking(ctx context.Context) {
 	app.Post("/http-rpc", func(c *fiber.Ctx) error {
 		reader := c.Context().RequestBodyStream()
 		writer := c.Response().BodyWriter()
+
 		res := NewRPCRequest(reader).Call()
 		io.Copy(writer, res)
+
 		return nil
 	})
 

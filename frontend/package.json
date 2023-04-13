@@ -1,6 +1,6 @@
 {
   "name": "yt-dlp-webui",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Frontend compontent of yt-dlp-webui",
   "scripts": {
     "dev": "vite",
@@ -9,28 +9,28 @@
   "author": "marcopeocchi",
   "license": "MPL-2.0",
   "dependencies": {
-    "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
-    "@mui/icons-material": "^5.11.0",
-    "@mui/material": "^5.11.5",
-    "@reduxjs/toolkit": "^1.9.1",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.0",
+    "@reduxjs/toolkit": "^1.9.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.7.0",
+    "react-router-dom": "^6.9.0",
     "rxjs": "^7.8.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.0.4",
-    "@types/node": "^18.11.18",
-    "@types/react": "^18.0.21",
+    "@types/node": "^18.15.11",
+    "@types/react": "^18.0.35",
     "@types/react-dom": "^18.0.10",
     "@types/react-router-dom": "^5.3.3",
-    "@types/uuid": "^9.0.0",
-    "@vitejs/plugin-react": "^3.0.1",
+    "@types/uuid": "^9.0.1",
+    "@vitejs/plugin-react": "^3.1.0",
     "buffer": "^6.0.3",
-    "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "typescript": "^5.0.4",
+    "vite": "^4.2.1"
   }
 }
