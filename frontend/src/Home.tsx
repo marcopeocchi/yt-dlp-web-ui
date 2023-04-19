@@ -77,6 +77,10 @@ export default function Home() {
         setCustomArgs(localStorage.getItem('last-input-args') ?? '')
         setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
       },
+      error: () => {
+        setSocketHasError(true)
+        setShowBackdrop(false)
+      },
       complete: () => {
         setSocketHasError(true)
         setShowBackdrop(false)
