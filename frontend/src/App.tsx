@@ -1,23 +1,25 @@
 import { ThemeProvider } from '@emotion/react'
-import {
-  ChevronLeft,
-  Dashboard,
-  FormatListBulleted,
-  Menu,
-  SettingsEthernet,
-  Settings as SettingsIcon,
-  Storage
-} from '@mui/icons-material'
-import {
-  Box,
-  CircularProgress,
-  CssBaseline,
-  Divider,
-  IconButton, List,
-  ListItemIcon, ListItemText, Toolbar,
-  Typography,
-  createTheme
-} from '@mui/material'
+
+import ChevronLeft from '@mui/icons-material/ChevronLeft'
+import Dashboard from '@mui/icons-material/Dashboard'
+import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
+import Menu from '@mui/icons-material/Menu'
+import SettingsIcon from '@mui/icons-material/Settings'
+import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
+import Storage from '@mui/icons-material/Storage'
+
+import { Box, createTheme } from '@mui/material'
+
+import CircularProgress from '@mui/material/CircularProgress'
+import CssBaseline from '@mui/material/CssBaseline'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import Toolbar from '@mui/material/Toolbar'
+import Typography from '@mui/material/Typography'
+
 import ListItemButton from '@mui/material/ListItemButton'
 import { grey } from '@mui/material/colors'
 import { Suspense, lazy, useMemo, useState } from 'react'
@@ -27,9 +29,8 @@ import {
   BrowserRouter as Router,
   Routes
 } from 'react-router-dom'
-import Home from './Home'
-import { AppBar } from './components/AppBar'
-import { Drawer } from './components/Drawer'
+import AppBar from './components/AppBar'
+import Drawer from './components/Drawer'
 import { toggleListView } from './features/settings/settingsSlice'
 import { RootState, store } from './stores/store'
 import { formatGiB } from './utils'
@@ -57,6 +58,7 @@ function AppContent() {
     setOpen(!open)
   }
 
+  const Home = lazy(() => import('./Home'))
   const Settings = lazy(() => import('./Settings'))
 
   return (
@@ -168,7 +170,11 @@ function AppContent() {
           >
             <Toolbar />
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Home />
+                </Suspense>
+              } />
               <Route path="/settings" element={
                 <Suspense fallback={<CircularProgress />}>
                   <Settings />

@@ -7,7 +7,7 @@ interface AppBarProps extends MuiAppBarProps {
 
 const drawerWidth = 240;
 
-export const AppBar = styled(MuiAppBar, {
+const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
@@ -24,3 +24,5 @@ export const AppBar = styled(MuiAppBar, {
     }),
   }),
 }));
+
+export default AppBar
