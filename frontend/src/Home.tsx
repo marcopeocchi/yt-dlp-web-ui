@@ -71,23 +71,25 @@ export default function Home() {
 
   /* WebSocket connect event handler*/
   useEffect(() => {
-    const sub = socket$.subscribe({
-      next: () => {
-        dispatch(connected())
-        setCustomArgs(localStorage.getItem('last-input-args') ?? '')
-        setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
-      },
-      error: () => {
-        setSocketHasError(true)
-        setShowBackdrop(false)
-      },
-      complete: () => {
-        setSocketHasError(true)
-        setShowBackdrop(false)
-      },
-    })
-    return () => sub.unsubscribe()
-  }, [socket$])
+    if (!status.connected) {
+      const sub = socket$.subscribe({
+        next: () => {
+          dispatch(connected())
+          setCustomArgs(localStorage.getItem('last-input-args') ?? '')
+          setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
+        },
+        error: () => {
+          setSocketHasError(true)
+          setShowBackdrop(false)
+        },
+        complete: () => {
+          setSocketHasError(true)
+          setShowBackdrop(false)
+        },
+      })
+      return () => sub.unsubscribe()
+    }
+  }, [socket$, status.connected])
 
   useEffect(() => {
     if (status.connected) {
