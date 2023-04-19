@@ -1,6 +1,18 @@
-import { Button, CircularProgress, Grid, LinearProgress, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
-import { RPCResult } from "../types"
+import {
+  Button,
+  Grid,
+  LinearProgress,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from "@mui/material"
 import { ellipsis, formatSpeedMiB, roundMiB } from "../utils"
+import type { RPCResult } from "../types"
 
 type Props = {
   downloads: RPCResult[]

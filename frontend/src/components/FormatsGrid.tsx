@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Grid, Paper, Typography } from "@mui/material"
-import type { DLMetadata } from "../types"
+import type { DLMetadata } from '../types'
 
 type Props = {
   downloadFormats: DLMetadata

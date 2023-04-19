@@ -25,17 +25,13 @@ import { DownloadsListView } from './components/DownloadsListView'
 import FormatsGrid from './components/FormatsGrid'
 import { CliArguments } from './features/core/argsParser'
 import I18nBuilder from './features/core/intl'
-import { RPCClient } from './features/core/rpcClient'
+import { RPCClient, socket$ } from './features/core/rpcClient'
 import { connected, setFreeSpace } from './features/status/statusSlice'
 import { RootState } from './stores/store'
-import type { DLMetadata, RPCResult } from './types'
+import type { DLMetadata, RPCResponse, RPCResult } from './types'
 import { isValidURL, toFormatArgs } from './utils'
 
-type Props = {
-  socket: WebSocket
-}
-
-export default function Home({ socket }: Props) {
+export default function Home() {
   // redux state
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
@@ -60,9 +56,11 @@ export default function Home({ socket }: Props) {
   const [showBackdrop, setShowBackdrop] = useState(true)
   const [showToast, setShowToast] = useState(true)
 
+  const [socketHasError, setSocketHasError] = useState(false)
+
   // memos
   const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
-  const client = useMemo(() => new RPCClient(socket), [settings.serverAddr, settings.serverPort])
+  const client = useMemo(() => new RPCClient(), [settings.serverAddr, settings.serverPort])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
 
   // refs
@@ -73,12 +71,19 @@ export default function Home({ socket }: Props) {
 
   /* WebSocket connect event handler*/
   useEffect(() => {
-    socket.onopen = () => {
-      dispatch(connected())
-      setCustomArgs(localStorage.getItem('last-input-args') ?? '')
-      setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
-    }
-  }, [])
+    const sub = socket$.subscribe({
+      next: () => {
+        dispatch(connected())
+        setCustomArgs(localStorage.getItem('last-input-args') ?? '')
+        setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
+      },
+      complete: () => {
+        setSocketHasError(true)
+        setShowBackdrop(false)
+      },
+    })
+    return () => sub.unsubscribe()
+  }, [socket$])
 
   useEffect(() => {
     if (status.connected) {
@@ -93,21 +98,23 @@ export default function Home({ socket }: Props) {
   }, [])
 
   useEffect(() => {
-    socket.onmessage = (event) => {
-      const res = client.decode(event.data)
-      switch (typeof res.result) {
-        case 'object':
-          setActiveDownloads(
-            (res.result ?? [])
-              .filter((r: RPCResult) => !!r.info.url)
-              .sort((a: RPCResult, b: RPCResult) => a.info.title.localeCompare(b.info.title))
-          )
-          break
-        default:
-          break
-      }
+    if (status.connected) {
+      const sub = socket$.subscribe((event: RPCResponse<RPCResult[]>) => {
+        switch (typeof event.result) {
+          case 'object':
+            setActiveDownloads(
+              (event.result ?? [])
+                .filter((r) => !!r.info.url)
+                .sort((a, b) => a.info.title.localeCompare(b.info.title))
+            )
+            break
+          default:
+            break
+        }
+      })
+      return () => sub.unsubscribe()
     }
-  }, [])
+  }, [socket$, status.connected])
 
   useEffect(() => {
     if (activeDownloads && activeDownloads.length >= 0) {
@@ -121,18 +128,6 @@ export default function Home({ socket }: Props) {
         setAvailableDownloadPaths(data.result)
       })
   }, [])
-
-  const [socketHasError, setSocketHasError] = useState(false)
-
-  useEffect(() => {
-    socket.onerror = () => {
-      setSocketHasError(true)
-      setShowBackdrop(false)
-    }
-    return () => {
-      socket.onerror = null
-    }
-  }, [socket])
 
   /* -------------------- callbacks-------------------- */
 

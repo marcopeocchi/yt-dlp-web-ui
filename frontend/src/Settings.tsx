@@ -40,7 +40,7 @@ import { updated } from './features/status/statusSlice'
 import { RootState } from './stores/store'
 import { validateDomain, validateIP } from './utils'
 
-export default function Settings({ socket }: { socket: WebSocket }) {
+export default function Settings() {
   const dispatch = useDispatch()
 
   const status = useSelector((state: RootState) => state.status)
@@ -50,7 +50,7 @@ export default function Settings({ socket }: { socket: WebSocket }) {
 
   const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
 
-  const client = useMemo(() => new RPCClient(socket), [])
+  const client = useMemo(() => new RPCClient(), [])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [])
 
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
@@ -79,6 +79,7 @@ export default function Settings({ socket }: { socket: WebSocket }) {
   useEffect(() => {
     const sub = serverPort$
       .pipe(
+        debounceTime(500),
         map(val => Number(val)),
         takeWhile(val => isFinite(val) && val <= 65535),
       )

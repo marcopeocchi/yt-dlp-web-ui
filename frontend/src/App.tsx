@@ -32,7 +32,7 @@ import { AppBar } from './components/AppBar'
 import { Drawer } from './components/Drawer'
 import { toggleListView } from './features/settings/settingsSlice'
 import { RootState, store } from './stores/store'
-import { formatGiB, getWebSocketEndpoint } from './utils'
+import { formatGiB } from './utils'
 
 function AppContent() {
   const [open, setOpen] = useState(false)
@@ -40,8 +40,6 @@ function AppContent() {
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
   const dispatch = useDispatch()
-
-  const socket = useMemo(() => new WebSocket(getWebSocketEndpoint()), [])
 
   const mode = settings.theme
   const theme = useMemo(() =>
@@ -170,10 +168,10 @@ function AppContent() {
           >
             <Toolbar />
             <Routes>
-              <Route path="/" element={<Home socket={socket} />} />
+              <Route path="/" element={<Home />} />
               <Route path="/settings" element={
                 <Suspense fallback={<CircularProgress />}>
-                  <Settings socket={socket} />
+                  <Settings />
                 </Suspense>
               } />
             </Routes>

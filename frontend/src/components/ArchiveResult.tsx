@@ -1,5 +1,12 @@
-import { Card, CardActionArea, CardContent, CardMedia, Skeleton, Typography } from "@mui/material";
-import { ellipsis } from "../utils";
+import {
+    Card,
+    CardActionArea,
+    CardContent,
+    CardMedia,
+    Skeleton,
+    Typography
+} from '@mui/material'
+import { ellipsis } from '../utils'
 
 type Props = {
     title: string,

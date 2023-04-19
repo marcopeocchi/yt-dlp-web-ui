@@ -1,5 +1,6 @@
 import { Grid } from "@mui/material"
 import { Fragment } from "react"
+
 import type { RPCResult } from "../types"
 import { StackableResult } from "./StackableResult"
 

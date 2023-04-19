@@ -14,7 +14,7 @@ on:
   pull_request:
     branches: [ master ]
   schedule:
-    - cron : '0 1 * * *'
+    - cron : '0 1 * * 0'
 
 env:
   # Use docker.io for Docker Hub if empty

@@ -34,6 +34,10 @@ func RunBlocking(port int, frontend fs.FS) {
 	// RPC handlers
 	// websocket
 	app.Get("/ws-rpc", websocket.New(func(c *websocket.Conn) {
+		c.WriteMessage(websocket.TextMessage, []byte(`{
+			"status": "connected"
+		}`))
+
 		for {
 			mtype, reader, err := c.NextReader()
 			if err != nil {

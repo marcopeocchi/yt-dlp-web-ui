@@ -1,13 +1,14 @@
-import type { RPCRequest, RPCResponse, DLMetadata } from "../../types"
+import type { DLMetadata, RPCRequest, RPCResponse } from '../../types'
 
-import { getHttpRPCEndpoint } from '../../utils'
+import { webSocket } from 'rxjs/webSocket'
+import { getHttpRPCEndpoint, getWebSocketEndpoint } from '../../utils'
+
+export const socket$ = webSocket<any>(getWebSocketEndpoint())
 
 export class RPCClient {
-  private socket: WebSocket
   private seq: number
 
-  constructor(socket: WebSocket) {
-    this.socket = socket
+  constructor() {
     this.seq = 0
   }
 
@@ -16,7 +17,10 @@ export class RPCClient {
   }
 
   private send(req: RPCRequest) {
-    this.socket.send(JSON.stringify(req))
+    socket$.next({
+      ...req,
+      id: this.incrementSeq(),
+    })
   }
 
   private async sendHTTP<T>(req: RPCRequest) {
@@ -35,7 +39,6 @@ export class RPCClient {
   public download(url: string, args: string, pathOverride = '', renameTo = '') {
     if (url) {
       this.send({
-        id: this.incrementSeq(),
         method: 'Service.Exec',
         params: [{
           URL: url.split("?list").at(0)!,
@@ -50,7 +53,6 @@ export class RPCClient {
   public formats(url: string) {
     if (url) {
       return this.sendHTTP<DLMetadata>({
-        id: this.incrementSeq(),
         method: 'Service.Formats',
         params: [{
           URL: url.split("?list").at(0)!,
@@ -61,7 +63,6 @@ export class RPCClient {
 
   public running() {
     this.send({
-      id: this.incrementSeq(),
       method: 'Service.Running',
       params: [],
     })
@@ -100,9 +101,5 @@ export class RPCClient {
       method: 'Service.UpdateExecutable',
       params: []
     })
-  }
-
-  public decode(data: any): RPCResponse<any> {
-    return JSON.parse(data)
   }
 }

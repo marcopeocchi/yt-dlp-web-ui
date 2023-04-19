@@ -11,6 +11,7 @@ import "time"
 //
 // Debounce emits a string from the source channel only after a particular
 // time span determined a Go Interval
+//
 // --A--B--CD--EFG-------|>
 //
 //	-t->                 |>
