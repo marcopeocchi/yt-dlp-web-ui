@@ -12,6 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/websocket/v2"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 )
 
 var db MemoryDB
@@ -30,6 +31,10 @@ func RunBlocking(port int, frontend fs.FS) {
 	app.Get("/settings", func(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	})
+
+	app.Get("/downloaded", rest.ListDownloaded)
+	app.Post("/delete", rest.DeleteFile)
+	app.Post("/play", rest.PlayFile)
 
 	// RPC handlers
 	// websocket
