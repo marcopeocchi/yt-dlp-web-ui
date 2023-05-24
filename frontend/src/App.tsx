@@ -19,21 +19,22 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-
 import ListItemButton from '@mui/material/ListItemButton'
+
 import { grey } from '@mui/material/colors'
+
 import { Suspense, lazy, useMemo, useState } from 'react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import {
-  Link, Route,
-  BrowserRouter as Router,
-  Routes
-} from 'react-router-dom'
-import AppBar from './components/AppBar'
-import Drawer from './components/Drawer'
+
+import { Link, Route, BrowserRouter, Routes } from 'react-router-dom'
 import { toggleListView } from './features/settings/settingsSlice'
 import { RootState, store } from './stores/store'
+
+import AppBar from './components/AppBar'
+import Drawer from './components/Drawer'
+
 import { formatGiB } from './utils'
+import Downloaded from './Downloaded'
 
 function AppContent() {
   const [open, setOpen] = useState(false)
@@ -63,7 +64,7 @@ function AppContent() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Router>
+      <BrowserRouter>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
           <AppBar position="absolute" open={open}>
@@ -180,10 +181,15 @@ function AppContent() {
                   <Settings />
                 </Suspense>
               } />
+              <Route path="/downloaded" element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Downloaded />
+                </Suspense>
+              } />
             </Routes>
           </Box>
         </Box>
-      </Router>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }

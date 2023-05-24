@@ -10,13 +10,13 @@ export type RPCMethods =
   | "Service.UpdateExecutable"
 
 export type RPCRequest = {
-  method: RPCMethods,
-  params?: any[],
+  method: RPCMethods
+  params?: any[]
   id?: string
 }
 
 export type RPCResponse<T> = {
-  result: T,
+  result: T
   error: number | null
   id?: string
 }
@@ -46,18 +46,29 @@ export type RPCParams = {
 }
 
 export interface DLMetadata {
-  formats: Array<DLFormat>,
-  best: DLFormat,
-  thumbnail: string,
-  title: string,
+  formats: Array<DLFormat>
+  best: DLFormat
+  thumbnail: string
+  title: string
 }
 
-export interface DLFormat {
-  format_id: string,
-  format_note: string,
-  fps: number,
-  resolution: string,
-  vcodec: string,
-  acodec: string,
-  filesize_approx: number,
+export type DLFormat = {
+  format_id: string
+  format_note: string
+  fps: number
+  resolution: string
+  vcodec: string
+  acodec: string
+  filesize_approx: number
 }
+
+export type DirectoryEntry = {
+  name: string
+  path: string
+  shaSum: string
+}
+
+export type DeleteRequest = Omit<DirectoryEntry, 'name'>
+
+export type PlayRequest = Omit<DirectoryEntry, 'shaSum' | 'name'>
+

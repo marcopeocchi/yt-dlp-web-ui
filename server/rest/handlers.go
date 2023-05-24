@@ -3,7 +3,9 @@ package rest
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"io/fs"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,6 +52,7 @@ func ListDownloaded(ctx *fiber.Ctx) error {
 		return err
 	}
 
+	ctx.Status(http.StatusOK)
 	return ctx.JSON(files)
 }
 
@@ -74,6 +77,10 @@ func DeleteFile(ctx *fiber.Ctx) error {
 		return e.Path == req.Path && e.SHASum == req.SHASum
 	})
 
+	if index == -1 {
+		ctx.SendString("shasum doesn't match")
+	}
+
 	if index >= 0 {
 		err := os.Remove(req.Path)
 		if err != nil {
@@ -81,6 +88,7 @@ func DeleteFile(ctx *fiber.Ctx) error {
 		}
 	}
 
+	ctx.Status(fiber.StatusOK)
 	return ctx.JSON(index)
 }
 
@@ -89,18 +97,26 @@ type PlayRequest struct {
 }
 
 func PlayFile(ctx *fiber.Ctx) error {
-	req := new(PlayRequest)
+	path := ctx.Query("path")
 
-	err := ctx.BodyParser(req)
+	if path == "" {
+		return errors.New("inexistent path")
+	}
+
+	decoded, err := hex.DecodeString(path)
 	if err != nil {
 		return err
 	}
 
 	root := config.Instance().GetConfig().DownloadPath
 
-	if strings.Contains(filepath.Dir(req.Path), root) {
-		return ctx.SendFile(req.Path)
+	//TODO: further path / file validations
+
+	if strings.Contains(filepath.Dir(string(decoded)), root) {
+		ctx.SendStatus(fiber.StatusPartialContent)
+		return ctx.SendFile(string(decoded))
 	}
 
+	ctx.Status(fiber.StatusOK)
 	return ctx.SendStatus(fiber.StatusUnauthorized)
 }
