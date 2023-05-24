@@ -186,7 +186,7 @@ function AppContent() {
                   <Settings />
                 </Suspense>
               } />
-              <Route path="/downloaded" element={
+              <Route path="/archive" element={
                 <Suspense fallback={<CircularProgress />}>
                   <Downloaded />
                 </Suspense>
