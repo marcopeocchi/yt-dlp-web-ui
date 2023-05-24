@@ -1,4 +1,5 @@
 import { FileUpload } from '@mui/icons-material'
+import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
 import {
   Alert,
   Backdrop,
@@ -14,6 +15,9 @@ import {
   Paper,
   Select,
   Snackbar,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
   styled,
   TextField
 } from '@mui/material'
@@ -26,6 +30,7 @@ import FormatsGrid from './components/FormatsGrid'
 import { CliArguments } from './features/core/argsParser'
 import I18nBuilder from './features/core/intl'
 import { RPCClient, socket$ } from './features/core/rpcClient'
+import { toggleListView } from './features/settings/settingsSlice'
 import { connected, setFreeSpace } from './features/status/statusSlice'
 import { RootState } from './stores/store'
 import type { DLMetadata, RPCResponse, RPCResult } from './types'
@@ -405,6 +410,18 @@ export default function Home() {
           {`${i18n.t('rpcConnErr')} (${settings.serverAddr}:${settings.serverPort})`}
         </Alert>
       </Snackbar>
+      <SpeedDial
+        ariaLabel="SpeedDial basic example"
+        sx={{ position: 'absolute', bottom: 32, right: 32 }}
+        icon={<SpeedDialIcon />}
+      >
+        <SpeedDialAction
+          icon={<FormatListBulleted />}
+          tooltipTitle={`Table view`}
+          tooltipOpen
+          onClick={() => dispatch(toggleListView())}
+        />
+      </SpeedDial>
     </Container>
   );
 }

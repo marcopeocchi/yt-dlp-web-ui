@@ -20,15 +20,15 @@ import {
   SpeedDialIcon
 } from '@mui/material'
 
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 import { Buffer } from 'buffer'
 import { useEffect, useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { BehaviorSubject, combineLatestWith, map, share } from 'rxjs'
+import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { useObservable } from './hooks/observable'
 import { RootState } from './stores/store'
 import { DeleteRequest, DirectoryEntry } from './types'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 
 export default function Downloaded() {
   const settings = useSelector((state: RootState) => state.settings)
@@ -38,7 +38,7 @@ export default function Downloaded() {
   const serverAddr =
     `${window.location.protocol}//${settings.serverAddr}:${settings.serverPort}`
 
-  const files$ = useMemo(() => new BehaviorSubject<DirectoryEntry[]>([]), [])
+  const files$ = useMemo(() => new Subject<DirectoryEntry[]>(), [])
   const selected$ = useMemo(() => new BehaviorSubject<string[]>([]), [])
 
   const fetcher = () => fetch(`${serverAddr}/downloaded`)
@@ -86,7 +86,7 @@ export default function Downloaded() {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={selectable.length === 0}
+        open={!(files$.observed)}
       >
         <CircularProgress color="primary" />
       </Backdrop>
@@ -96,6 +96,7 @@ export default function Downloaded() {
         flexDirection: 'column',
       }}>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+          {selectable.length === 0 && 'No files found'}
           {selectable.map((file) => (
             <ListItem
               key={file.shaSum}

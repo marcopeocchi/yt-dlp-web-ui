@@ -2,7 +2,6 @@ import { ThemeProvider } from '@emotion/react'
 
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
-import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
@@ -15,33 +14,32 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import ListItemButton from '@mui/material/ListItemButton'
+import DownloadIcon from '@mui/icons-material/Download';
 
 import { grey } from '@mui/material/colors'
 
 import { Suspense, lazy, useMemo, useState } from 'react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
 
-import { Link, Route, BrowserRouter, Routes } from 'react-router-dom'
-import { toggleListView } from './features/settings/settingsSlice'
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import { RootState, store } from './stores/store'
 
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
 
-import { formatGiB } from './utils'
 import Downloaded from './Downloaded'
+import { formatGiB } from './utils'
 
 function AppContent() {
   const [open, setOpen] = useState(false)
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
-  const dispatch = useDispatch()
 
   const mode = settings.theme
   const theme = useMemo(() =>
@@ -140,12 +138,19 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
-              <ListItemButton onClick={() => dispatch(toggleListView())}>
-                <ListItemIcon>
-                  <FormatListBulleted />
-                </ListItemIcon>
-                <ListItemText primary="List view" />
-              </ListItemButton>
+              <Link to={'/downloaded'} style={
+                {
+                  textDecoration: 'none',
+                  color: mode === 'dark' ? '#ffffff' : '#000000DE'
+                }
+              }>
+                <ListItemButton disabled={status.downloading}>
+                  <ListItemIcon>
+                    <DownloadIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Downloaded" />
+                </ListItemButton>
+              </Link>
               <Link to={'/settings'} style={
                 {
                   textDecoration: 'none',
