@@ -138,7 +138,7 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
-              <Link to={'/downloaded'} style={
+              <Link to={'/archive'} style={
                 {
                   textDecoration: 'none',
                   color: mode === 'dark' ? '#ffffff' : '#000000DE'

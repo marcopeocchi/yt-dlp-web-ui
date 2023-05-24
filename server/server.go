@@ -31,6 +31,9 @@ func RunBlocking(port int, frontend fs.FS) {
 	app.Get("/settings", func(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	})
+	app.Get("/archive", func(c *fiber.Ctx) error {
+		return c.Redirect("/")
+	})
 
 	app.Get("/downloaded", rest.ListDownloaded)
 	app.Post("/delete", rest.DeleteFile)
