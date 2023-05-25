@@ -108,4 +108,14 @@ func (m *MemoryDB) Restore() {
 	feed, _ := os.ReadFile("session.dat")
 	session := Session{}
 	json.Unmarshal(feed, &session)
+
+	for _, proc := range session.Processes {
+		db.table.Store(proc.Id, &Process{
+			id:       proc.Id,
+			url:      proc.Info.URL,
+			Info:     proc.Info,
+			Progress: proc.Progress,
+			mem:      m,
+		})
+	}
 }

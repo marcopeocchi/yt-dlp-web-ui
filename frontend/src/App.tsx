@@ -2,7 +2,6 @@ import { ThemeProvider } from '@emotion/react'
 
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
-import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
@@ -15,24 +14,25 @@ import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
+import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import DownloadIcon from '@mui/icons-material/Download';
 
-import ListItemButton from '@mui/material/ListItemButton'
 import { grey } from '@mui/material/colors'
+
 import { Suspense, lazy, useMemo, useState } from 'react'
 import { Provider, useDispatch, useSelector } from 'react-redux'
-import {
-  Link, Route,
-  BrowserRouter as Router,
-  Routes
-} from 'react-router-dom'
+
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { RootState, store } from './stores/store'
+
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
-import { toggleListView } from './features/settings/settingsSlice'
-import { RootState, store } from './stores/store'
+
+import Archive from './Archive'
 import { formatGiB } from './utils'
 
 function AppContent() {
@@ -40,7 +40,6 @@ function AppContent() {
 
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
-  const dispatch = useDispatch()
 
   const mode = settings.theme
   const theme = useMemo(() =>
@@ -63,7 +62,7 @@ function AppContent() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Router>
+      <BrowserRouter>
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
           <AppBar position="absolute" open={open}>
@@ -139,12 +138,19 @@ function AppContent() {
                   <ListItemText primary="Home" />
                 </ListItemButton>
               </Link>
-              <ListItemButton onClick={() => dispatch(toggleListView())}>
-                <ListItemIcon>
-                  <FormatListBulleted />
-                </ListItemIcon>
-                <ListItemText primary="List view" />
-              </ListItemButton>
+              <Link to={'/archive'} style={
+                {
+                  textDecoration: 'none',
+                  color: mode === 'dark' ? '#ffffff' : '#000000DE'
+                }
+              }>
+                <ListItemButton disabled={status.downloading}>
+                  <ListItemIcon>
+                    <DownloadIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Archive" />
+                </ListItemButton>
+              </Link>
               <Link to={'/settings'} style={
                 {
                   textDecoration: 'none',
@@ -180,10 +186,15 @@ function AppContent() {
                   <Settings />
                 </Suspense>
               } />
+              <Route path="/archive" element={
+                <Suspense fallback={<CircularProgress />}>
+                  <Archive />
+                </Suspense>
+              } />
             </Routes>
           </Box>
         </Box>
-      </Router>
+      </BrowserRouter>
     </ThemeProvider>
   )
 }

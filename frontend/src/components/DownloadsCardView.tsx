@@ -6,7 +6,7 @@ import { StackableResult } from "./StackableResult"
 
 type Props = {
   downloads: RPCResult[]
-  abortFunction: Function
+  abortFunction: (id: string) => void
 }
 
 export function DownloadsCardView({ downloads, abortFunction }: Props) {
