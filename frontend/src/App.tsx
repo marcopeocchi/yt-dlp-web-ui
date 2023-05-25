@@ -32,7 +32,7 @@ import { RootState, store } from './stores/store'
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
 
-import Downloaded from './Downloaded'
+import Archive from './Archive'
 import { formatGiB } from './utils'
 
 function AppContent() {
@@ -148,7 +148,7 @@ function AppContent() {
                   <ListItemIcon>
                     <DownloadIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Downloaded" />
+                  <ListItemText primary="Archive" />
                 </ListItemButton>
               </Link>
               <Link to={'/settings'} style={
@@ -188,7 +188,7 @@ function AppContent() {
               } />
               <Route path="/archive" element={
                 <Suspense fallback={<CircularProgress />}>
-                  <Downloaded />
+                  <Archive />
                 </Suspense>
               } />
             </Routes>

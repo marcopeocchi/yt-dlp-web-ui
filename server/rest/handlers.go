@@ -21,6 +21,13 @@ type DirectoryEntry struct {
 	SHASum string `json:"shaSum"`
 }
 
+func isValidEntry(d fs.DirEntry) bool {
+	return !d.IsDir() &&
+		!strings.HasPrefix(d.Name(), ".") &&
+		!strings.HasSuffix(d.Name(), ".part") &&
+		!strings.HasSuffix(d.Name(), ".ytdl")
+}
+
 func walkDir(root string) (*[]DirectoryEntry, error) {
 	files := []DirectoryEntry{}
 
@@ -28,7 +35,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 		if err != nil {
 			return err
 		}
-		if !d.IsDir() && !strings.HasPrefix(d.Name(), ".") {
+		if isValidEntry(d) {
 			h := sha256.New()
 			h.Write([]byte(path))
 

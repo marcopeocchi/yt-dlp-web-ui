@@ -130,7 +130,11 @@ export default function Downloaded() {
           icon={<DeleteForeverIcon />}
           tooltipTitle={`Delete selected`}
           tooltipOpen
-          onClick={() => setOpenDialog(true)}
+          onClick={() => {
+            if (selected$.value.length > 0) {
+              setOpenDialog(true)
+            }
+          }}
         />
       </SpeedDial>
       <Dialog

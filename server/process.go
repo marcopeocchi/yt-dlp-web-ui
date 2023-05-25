@@ -171,14 +171,17 @@ func (p *Process) Kill() error {
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct
 	// process group
-	pgid, err := syscall.Getpgid(p.proc.Pid)
-	if err != nil {
+	if p.proc != nil {
+		pgid, err := syscall.Getpgid(p.proc.Pid)
+		if err != nil {
+			return err
+		}
+		err = syscall.Kill(-pgid, syscall.SIGTERM)
+
+		log.Println("Killed process", p.id)
 		return err
 	}
-	err = syscall.Kill(-pgid, syscall.SIGTERM)
-
-	log.Println("Killed process", p.id)
-	return err
+	return nil
 }
 
 // Returns the available format for this URL

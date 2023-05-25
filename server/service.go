@@ -72,12 +72,15 @@ func (t *Service) Running(args NoArgs, running *Running) error {
 func (t *Service) Kill(args string, killed *string) error {
 	log.Println("Trying killing process with id", args)
 	proc, err := db.Get(args)
+
 	if err != nil {
 		return err
 	}
 	if proc != nil {
 		err = proc.Kill()
 	}
+
+	db.Delete(proc.id)
 	return err
 }
 

@@ -1,4 +1,4 @@
-import { EightK, FourK, Hd, Sd } from "@mui/icons-material";
+import { EightK, FourK, Hd, Sd } from '@mui/icons-material'
 import {
   Button,
   Card,
@@ -11,9 +11,9 @@ import {
   Skeleton,
   Stack,
   Typography
-} from "@mui/material";
-import { useEffect, useState } from "react";
-import { ellipsis, formatSpeedMiB, roundMiB } from "../utils";
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { ellipsis, formatSpeedMiB, roundMiB } from '../utils'
 
 type Props = {
   title: string,
@@ -97,7 +97,8 @@ export function StackableResult({
           variant="contained"
           size="small"
           color="primary"
-          onClick={stopCallback}>
+          onClick={stopCallback}
+        >
           {isCompleted ? "Clear" : "Stop"}
         </Button>
       </CardActions>
