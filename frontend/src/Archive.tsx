@@ -70,8 +70,6 @@ export default function Downloaded() {
       ? ['.', ..._upperLevel].join('/')
       : _upperLevel.join('/')
 
-    console.log('sub:', sub, 'upper:', upperLevel)
-
     fetch(`${serverAddr}/downloaded`, {
       method: 'POST',
       headers: {
