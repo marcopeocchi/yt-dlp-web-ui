@@ -45,7 +45,7 @@ func RunBlocking(port int, frontend fs.FS) {
 	app.Post("/downloaded", rest.ListDownloaded)
 
 	app.Post("/delete", rest.DeleteFile)
-	app.Get("/play", rest.PlayFile)
+	app.Get("/d/:id", rest.SendFile)
 
 	// RPC handlers
 	// websocket

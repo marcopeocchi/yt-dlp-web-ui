@@ -66,7 +66,6 @@ export default function Downloaded() {
       ? folders.slice(-(folders.length - 1)).join('/')
       : folders.pop()
 
-
     const _upperLevel = folders.slice(1, -1)
     const upperLevel = _upperLevel.length === 2
       ? ['.', ..._upperLevel].join('/')
@@ -131,7 +130,7 @@ export default function Downloaded() {
 
 
   const onFileClick = (path: string) => startTransition(() => {
-    window.open(`${serverAddr}/play?path=${Buffer.from(path).toString('hex')}`)
+    window.open(`${serverAddr}/d/${Buffer.from(path).toString('hex')}`)
   })
 
   const onFolderClick = (path: string) => startTransition(() => {

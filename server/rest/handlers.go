@@ -94,12 +94,8 @@ func DeleteFile(ctx *fiber.Ctx) error {
 	return ctx.JSON("ok")
 }
 
-type PlayRequest struct {
-	Path string
-}
-
-func PlayFile(ctx *fiber.Ctx) error {
-	path := ctx.Query("path")
+func SendFile(ctx *fiber.Ctx) error {
+	path := ctx.Params("id")
 
 	if path == "" {
 		return errors.New("inexistent path")
@@ -114,10 +110,9 @@ func PlayFile(ctx *fiber.Ctx) error {
 
 	// TODO: further path / file validations
 	if strings.Contains(filepath.Dir(string(decoded)), root) {
-		ctx.SendStatus(fiber.StatusPartialContent)
+		ctx.SendStatus(fiber.StatusOK)
 		return ctx.SendFile(string(decoded))
 	}
 
-	ctx.Status(fiber.StatusOK)
 	return ctx.SendStatus(fiber.StatusUnauthorized)
 }
