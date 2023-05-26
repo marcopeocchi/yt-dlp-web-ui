@@ -184,16 +184,10 @@ For more information open an issue on GitHub and I will provide more info ASAP.
 
 ## FAQ
 -   **Will it availabe for Raspberry Pi/ generic ARM devices?**
-    - Yes, it's currently available through ghcr.io
-      ```
-      docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
-      ```
+    - Yes, it's cross platform :)
       If you plan to use it on a Raspberry Pi ensure to have fast and durable storage.
 -   **Why the docker image is so heavy?**
     - Originally it was 1.8GB circa, now it has been slimmed to ~340MB compressed. This is due to the fact that it encapsule a basic Alpine linux image + FFmpeg + Node.js + Python3 + yt-dlp.
-
--   **Why is it so slow to start a download?**
-    - I genuinely don't know. I know that standalone yt-dlp is slow to start up even on my M1 Mac, so....
-
+    - **Update**: Since Golang migration and Multi-Stage builds the Docker image is now 75MB circa. A reduction of over 400% in size :D.
 ## What yt-dlp-webui is not
 `yt-dlp-webui` isn't your ordinary website where to download stuff from the internet, so don't try asking for links of where this is hosted. It's a self hosted platform for a Linux NAS.
