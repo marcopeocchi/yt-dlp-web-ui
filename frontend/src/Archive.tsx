@@ -60,9 +60,17 @@ export default function Downloaded() {
       ? sub.substring(1).split('/')
       : sub.split('/')
 
-    const relpath = folders.length > 2
+    const relpath = folders.length >= 2
       ? folders.slice(-(folders.length - 1)).join('/')
       : folders.pop()
+
+
+    const _upperLevel = sub.split('/').slice(1, -1)
+    const upperLevel = _upperLevel.length === 2
+      ? ['.', ..._upperLevel].join('/')
+      : _upperLevel.join('/')
+
+    console.log('sub:', sub, 'upper:', upperLevel)
 
     fetch(`${serverAddr}/downloaded`, {
       method: 'POST',
@@ -73,11 +81,14 @@ export default function Downloaded() {
     })
       .then(res => res.json())
       .then(data => {
-        files$.next([{
-          isDirectory: true,
-          name: '..',
-          path: '',
-        }, ...data])
+        files$.next(sub
+          ? [{
+            name: '..',
+            isDirectory: true,
+            path: upperLevel,
+          }, ...data]
+          : data
+        )
       })
   }
 
