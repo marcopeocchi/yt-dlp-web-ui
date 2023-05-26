@@ -88,14 +88,8 @@ Future releases will have:
 ## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) installation
 ```sh
 # recomended for ARM and x86 devices 
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
-# or
-# docker pull marcobaobao/yt-dlp-webui:latest
-docker run -d -p 3033:3033 -v <your dir>:/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
-
-# or even
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
-docker create --name yt-dlp-webui -p 8082:3033 -v <your dir>:/downloads ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+docker pull marcobaobao/yt-dlp-webui
+docker run -d -p 3033:3033 -v <your dir>:/downloads marcobaobao/yt-dlp-webui
 ```
 
 Or with docker but building the container manually.
