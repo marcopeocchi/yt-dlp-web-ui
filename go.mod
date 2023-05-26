@@ -8,7 +8,6 @@ require (
 	github.com/gofiber/websocket/v2 v2.1.5
 	github.com/google/uuid v1.3.0
 	github.com/marcopeocchi/fazzoletti v0.0.0-20230308161120-c545580f79fa
-	golang.org/x/exp v0.0.0-20230515195305-f3d0a9c9a5cc
 	golang.org/x/sys v0.7.0
 	gopkg.in/yaml.v3 v3.0.1
 )

@@ -19,7 +19,13 @@ import {
 } from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Subject, debounceTime, distinctUntilChanged, map, takeWhile } from 'rxjs'
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  takeWhile
+} from 'rxjs'
 import { CliArguments } from './features/core/argsParser'
 import I18nBuilder from './features/core/intl'
 import { RPCClient } from './features/core/rpcClient'
@@ -122,7 +128,7 @@ export default function Settings() {
               minHeight: 240,
             }}
           >
-            <Typography pb={2} variant="h6" color="primary">
+            <Typography pb={3} variant="h5" color="primary">
               {i18n.t('settingsAnchor')}
             </Typography>
             <FormGroup>

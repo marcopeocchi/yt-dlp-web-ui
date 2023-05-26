@@ -17,7 +17,8 @@ import {
   Paper,
   SpeedDial,
   SpeedDialAction,
-  SpeedDialIcon
+  SpeedDialIcon,
+  Typography
 } from '@mui/material'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -114,9 +115,6 @@ export default function Downloaded() {
     fetcher()
   }, [settings.serverAddr, settings.serverPort])
 
-  useEffect(() => {
-    console.log('rendering')
-  }, [])
 
   const onFileClick = (path: string) => startTransition(() => {
     window.open(`${serverAddr}/play?path=${Buffer.from(path).toString('hex')}`)
@@ -139,6 +137,9 @@ export default function Downloaded() {
         display: 'flex',
         flexDirection: 'column',
       }}>
+        <Typography pb={0} variant="h5" color="primary">
+          {'Archive'}
+        </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {selectable.length === 0 && 'No files found'}
           {selectable.map((file) => (
