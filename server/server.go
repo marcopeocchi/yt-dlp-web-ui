@@ -42,7 +42,8 @@ func RunBlocking(port int, frontend fs.FS) {
 		return c.Redirect("/")
 	})
 
-	app.Get("/downloaded", rest.ListDownloaded)
+	app.Post("/downloaded", rest.ListDownloaded)
+
 	app.Post("/delete", rest.DeleteFile)
 	app.Get("/play", rest.PlayFile)
 
