@@ -66,10 +66,15 @@ export type DirectoryEntry = {
   name: string
   path: string
   shaSum: string
+  isVideo: boolean,
   isDirectory: boolean
 }
 
-export type DeleteRequest = Omit<DirectoryEntry, 'name' | 'isDirectory'>
+export type DeleteRequest = Omit<
+  DirectoryEntry, 'name' | 'isDirectory' | 'isVideo'
+>
 
-export type PlayRequest = Omit<DirectoryEntry, 'shaSum' | 'name' | 'isDirectory'>
+export type PlayRequest = Omit<
+  DirectoryEntry, 'shaSum' | 'name' | 'isDirectory' | 'isVideo'
+>
 

@@ -1,10 +1,8 @@
 package rest
 
 import (
-	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,25 +10,15 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
 type DirectoryEntry struct {
 	Name        string `json:"name"`
 	Path        string `json:"path"`
 	SHASum      string `json:"shaSum"`
+	IsVideo     bool   `json:"isVideo"`
 	IsDirectory bool   `json:"isDirectory"`
-}
-
-func isValidEntry(d fs.DirEntry) bool {
-	return !strings.HasPrefix(d.Name(), ".") &&
-		!strings.HasSuffix(d.Name(), ".part") &&
-		!strings.HasSuffix(d.Name(), ".ytdl")
-}
-
-func shaSumString(path string) string {
-	h := sha256.New()
-	h.Write([]byte(path))
-	return hex.EncodeToString(h.Sum(nil))
 }
 
 func walkDir(root string) (*[]DirectoryEntry, error) {
@@ -42,7 +30,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 	}
 
 	for _, d := range dirs {
-		if !isValidEntry(d) {
+		if !utils.IsValidEntry(d) {
 			continue
 		}
 
@@ -51,7 +39,8 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 		files = append(files, DirectoryEntry{
 			Path:        path,
 			Name:        d.Name(),
-			SHASum:      shaSumString(path),
+			SHASum:      utils.ShaSumString(path),
+			IsVideo:     utils.IsVideo(d),
 			IsDirectory: d.IsDir(),
 		})
 	}
@@ -91,7 +80,7 @@ func DeleteFile(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	sum := shaSumString(req.Path)
+	sum := utils.ShaSumString(req.Path)
 	if sum != req.SHASum {
 		return errors.New("shasum mismatch")
 	}

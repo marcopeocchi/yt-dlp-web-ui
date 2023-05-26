@@ -22,8 +22,10 @@ import {
 } from '@mui/material'
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import VideoFileIcon from '@mui/icons-material/VideoFile'
 import FolderIcon from '@mui/icons-material/Folder'
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
+import VideoFileIcon from '@mui/icons-material/VideoFile'
+
 import { Buffer } from 'buffer'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useSelector } from 'react-redux'
@@ -174,7 +176,9 @@ export default function Downloaded() {
                 <ListItemIcon>
                   {file.isDirectory
                     ? <FolderIcon />
-                    : <VideoFileIcon />
+                    : file.isVideo
+                      ? <VideoFileIcon />
+                      : <InsertDriveFileIcon />
                   }
                 </ListItemIcon>
                 <ListItemText primary={file.name} />
