@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
@@ -14,11 +16,13 @@ import (
 )
 
 type DirectoryEntry struct {
-	Name        string `json:"name"`
-	Path        string `json:"path"`
-	SHASum      string `json:"shaSum"`
-	IsVideo     bool   `json:"isVideo"`
-	IsDirectory bool   `json:"isDirectory"`
+	Name        string    `json:"name"`
+	Path        string    `json:"path"`
+	Size        int64     `json:"size"`
+	SHASum      string    `json:"shaSum"`
+	ModTime     time.Time `json:"modTime"`
+	IsVideo     bool      `json:"isVideo"`
+	IsDirectory bool      `json:"isDirectory"`
 }
 
 func walkDir(root string) (*[]DirectoryEntry, error) {
@@ -36,12 +40,19 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 
 		path := filepath.Join(root, d.Name())
 
+		info, err := d.Info()
+		if err != nil {
+			return nil, err
+		}
+
 		files = append(files, DirectoryEntry{
 			Path:        path,
 			Name:        d.Name(),
+			Size:        info.Size(),
 			SHASum:      utils.ShaSumString(path),
 			IsVideo:     utils.IsVideo(d),
 			IsDirectory: d.IsDir(),
+			ModTime:     info.ModTime(),
 		})
 	}
 
@@ -49,7 +60,8 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 }
 
 type ListRequest struct {
-	SubDir string `json:"subdir"`
+	SubDir  string `json:"subdir"`
+	OrderBy string `json:"orderBy"`
 }
 
 func ListDownloaded(ctx *fiber.Ctx) error {
@@ -64,6 +76,12 @@ func ListDownloaded(ctx *fiber.Ctx) error {
 	files, err := walkDir(filepath.Join(root, req.SubDir))
 	if err != nil {
 		return err
+	}
+
+	if req.OrderBy == "modtime" {
+		sort.SliceStable(*files, func(i, j int) bool {
+			return (*files)[i].ModTime.After((*files)[j].ModTime)
+		})
 	}
 
 	ctx.Status(http.StatusOK)
@@ -105,13 +123,18 @@ func SendFile(ctx *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	decodedStr := string(decoded)
 
 	root := config.Instance().GetConfig().DownloadPath
 
 	// TODO: further path / file validations
-	if strings.Contains(filepath.Dir(string(decoded)), root) {
+	if strings.Contains(filepath.Dir(decodedStr), root) {
+		// ctx.Response().Header.Set(
+		// 	"Content-Disposition",
+		// 	"inline; filename="+filepath.Base(decodedStr),
+		// )
 		ctx.SendStatus(fiber.StatusOK)
-		return ctx.SendFile(string(decoded))
+		return ctx.SendFile(decodedStr)
 	}
 
 	return ctx.SendStatus(fiber.StatusUnauthorized)

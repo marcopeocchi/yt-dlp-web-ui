@@ -65,16 +65,14 @@ export type DLFormat = {
 export type DirectoryEntry = {
   name: string
   path: string
+  size: number
   shaSum: string
-  isVideo: boolean,
+  modTime: string
+  isVideo: boolean
   isDirectory: boolean
 }
 
-export type DeleteRequest = Omit<
-  DirectoryEntry, 'name' | 'isDirectory' | 'isVideo'
->
+export type DeleteRequest = Pick<DirectoryEntry, 'path' | 'shaSum'>
 
-export type PlayRequest = Omit<
-  DirectoryEntry, 'shaSum' | 'name' | 'isDirectory' | 'isVideo'
->
+export type PlayRequest = Pick<DirectoryEntry, 'path'>
 

@@ -33,6 +33,7 @@ import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { useObservable } from './hooks/observable'
 import { RootState } from './stores/store'
 import { DeleteRequest, DirectoryEntry } from './types'
+import { roundMiB } from './utils'
 
 export default function Downloaded() {
   const settings = useSelector((state: RootState) => state.settings)
@@ -52,7 +53,9 @@ export default function Downloaded() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ subdir: '' })
+    body: JSON.stringify({
+      subdir: '',
+    })
   })
     .then(res => res.json())
     .then(data => files$.next(data))
@@ -150,7 +153,7 @@ export default function Downloaded() {
         display: 'flex',
         flexDirection: 'column',
       }}>
-        <Typography pb={0} variant="h5" color="primary">
+        <Typography py={1} variant="h5" color="primary">
           {'Archive'}
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
@@ -159,11 +162,20 @@ export default function Downloaded() {
             <ListItem
               key={idx}
               secondaryAction={
-                !file.isDirectory && <Checkbox
-                  edge="end"
-                  checked={file.selected}
-                  onChange={() => addSelected(file.name)}
-                />
+                <div>
+                  {!file.isDirectory && <Typography
+                    variant="caption"
+                    component="span"
+                  >
+                    {roundMiB(file.size)}
+                  </Typography>
+                  }
+                  {!file.isDirectory && <Checkbox
+                    edge="end"
+                    checked={file.selected}
+                    onChange={() => addSelected(file.name)}
+                  />}
+                </div>
               }
               disablePadding
             >
@@ -180,7 +192,10 @@ export default function Downloaded() {
                       : <InsertDriveFileIcon />
                   }
                 </ListItemIcon>
-                <ListItemText primary={file.name} />
+                <ListItemText
+                  primary={file.name}
+                  secondary={file.name != '..' && new Date(file.modTime).toLocaleString()}
+                />
               </ListItemButton>
             </ListItem>
           ))}
