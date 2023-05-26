@@ -56,9 +56,11 @@ export default function Downloaded() {
     .then(data => files$.next(data))
 
   const fetcherSubfolder = (sub: string) => {
-    const folders = sub.split('/')
+    const folders = sub.startsWith('/')
+      ? sub.substring(1).split('/')
+      : sub.split('/')
 
-    let subdir = folders.length > 2
+    const relpath = folders.length > 2
       ? folders.slice(-(folders.length - 1)).join('/')
       : folders.pop()
 
@@ -67,7 +69,7 @@ export default function Downloaded() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ subdir: subdir })
+      body: JSON.stringify({ subdir: relpath })
     })
       .then(res => res.json())
       .then(data => {

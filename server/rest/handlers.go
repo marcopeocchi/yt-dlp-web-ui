@@ -123,8 +123,7 @@ func PlayFile(ctx *fiber.Ctx) error {
 
 	root := config.Instance().GetConfig().DownloadPath
 
-	//TODO: further path / file validations
-
+	// TODO: further path / file validations
 	if strings.Contains(filepath.Dir(string(decoded)), root) {
 		ctx.SendStatus(fiber.StatusPartialContent)
 		return ctx.SendFile(string(decoded))
