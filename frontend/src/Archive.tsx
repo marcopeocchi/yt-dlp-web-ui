@@ -65,7 +65,7 @@ export default function Downloaded() {
       : folders.pop()
 
 
-    const _upperLevel = sub.split('/').slice(1, -1)
+    const _upperLevel = folders.slice(1, -1)
     const upperLevel = _upperLevel.length === 2
       ? ['.', ..._upperLevel].join('/')
       : _upperLevel.join('/')
