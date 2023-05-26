@@ -57,8 +57,9 @@ export default function Downloaded() {
 
   const fetcherSubfolder = (sub: string) => {
     const folders = sub.split('/')
+
     let subdir = folders.length > 2
-      ? folders.slice(-2).join('/')
+      ? folders.slice(-(folders.length - 1)).join('/')
       : folders.pop()
 
     fetch(`${serverAddr}/downloaded`, {
@@ -142,9 +143,9 @@ export default function Downloaded() {
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {selectable.length === 0 && 'No files found'}
-          {selectable.map((file) => (
+          {selectable.map((file, idx) => (
             <ListItem
-              key={file.shaSum}
+              key={idx}
               secondaryAction={
                 !file.isDirectory && <Checkbox
                   edge="end"

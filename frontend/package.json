@@ -9,28 +9,28 @@
   "author": "marcopeocchi",
   "license": "MPL-2.0",
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
-    "@mui/material": "^5.12.0",
-    "@reduxjs/toolkit": "^1.9.3",
+    "@mui/material": "^5.13.2",
+    "@reduxjs/toolkit": "^1.9.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
-    "react-router-dom": "^6.9.0",
-    "rxjs": "^7.8.0",
+    "react-router-dom": "^6.11.2",
+    "rxjs": "^7.8.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@modyfi/vite-plugin-yaml": "^1.0.4",
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.35",
+    "@types/node": "^20.2.4",
+    "@types/react": "^18.2.7",
     "@types/react-dom": "^18.0.10",
     "@types/react-router-dom": "^5.3.3",
     "@types/uuid": "^9.0.1",
-    "@vitejs/plugin-react": "^3.1.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "buffer": "^6.0.3",
     "typescript": "^5.0.4",
-    "vite": "^4.2.1"
+    "vite": "^4.3.8"
   }
 }

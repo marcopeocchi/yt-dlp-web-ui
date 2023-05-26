@@ -13,7 +13,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 )
 
-// In-Memory volatile Thread-Safe Key-Value Storage
+// In-Memory Thread-Safe Key-Value Storage with optional persistence
 type MemoryDB struct {
 	table sync.Map
 }
