@@ -12,10 +12,13 @@ The bottleneck remains yt-dlp startup time.
 **Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
 
 ```sh
-docker pull marcobaobao/yt-dlp-webui:latest
+docker pull marcobaobao/yt-dlp-webui
 ```
 ```sh
+# latest stable
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
+# latest dev version
+docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 
 ![](https://i.ibb.co/RCpfg7q/image.png)
