@@ -22,8 +22,9 @@ import {
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
+import FolderIcon from '@mui/icons-material/Folder'
 import { Buffer } from 'buffer'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useSelector } from 'react-redux'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { useObservable } from './hooks/observable'
@@ -41,9 +42,40 @@ export default function Downloaded() {
   const files$ = useMemo(() => new Subject<DirectoryEntry[]>(), [])
   const selected$ = useMemo(() => new BehaviorSubject<string[]>([]), [])
 
-  const fetcher = () => fetch(`${serverAddr}/downloaded`)
+  const [isPending, startTransition] = useTransition()
+
+  const fetcher = () => fetch(`${serverAddr}/downloaded`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ subdir: '' })
+  })
     .then(res => res.json())
     .then(data => files$.next(data))
+
+  const fetcherSubfolder = (sub: string) => {
+    const folders = sub.split('/')
+    let subdir = folders.length > 2
+      ? folders.slice(-2).join('/')
+      : folders.pop()
+
+    fetch(`${serverAddr}/downloaded`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ subdir: subdir })
+    })
+      .then(res => res.json())
+      .then(data => {
+        files$.next([{
+          isDirectory: true,
+          name: '..',
+          path: '',
+        }, ...data])
+      })
+  }
 
   const selectable$ = useMemo(() => files$.pipe(
     combineLatestWith(selected$),
@@ -82,11 +114,23 @@ export default function Downloaded() {
     fetcher()
   }, [settings.serverAddr, settings.serverPort])
 
+  useEffect(() => {
+    console.log('rendering')
+  }, [])
+
+  const onFileClick = (path: string) => startTransition(() => {
+    window.open(`${serverAddr}/play?path=${Buffer.from(path).toString('hex')}`)
+  })
+
+  const onFolderClick = (path: string) => startTransition(() => {
+    fetcherSubfolder(path)
+  })
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={!(files$.observed)}
+        open={!(files$.observed) || isPending}
       >
         <CircularProgress color="primary" />
       </Backdrop>
@@ -101,7 +145,7 @@ export default function Downloaded() {
             <ListItem
               key={file.shaSum}
               secondaryAction={
-                <Checkbox
+                !file.isDirectory && <Checkbox
                   edge="end"
                   checked={file.selected}
                   onChange={() => addSelected(file.name)}
@@ -109,13 +153,18 @@ export default function Downloaded() {
               }
               disablePadding
             >
-              <ListItemButton>
+              <ListItemButton onClick={
+                () => file.isDirectory
+                  ? onFolderClick(file.path)
+                  : onFileClick(file.path)
+              }>
                 <ListItemIcon>
-                  <VideoFileIcon />
+                  {file.isDirectory
+                    ? <FolderIcon />
+                    : <VideoFileIcon />
+                  }
                 </ListItemIcon>
-                <ListItemText primary={file.name} onClick={() => window.open(
-                  `${serverAddr}/play?path=${Buffer.from(file.path).toString('hex')}`
-                )} />
+                <ListItemText primary={file.name} />
               </ListItemButton>
             </ListItem>
           ))}
@@ -159,7 +208,8 @@ export default function Downloaded() {
           <Button onClick={() => {
             deleteSelected()
             setOpenDialog(false)
-          }} autoFocus>
+          }} autoFocus
+          >
             Ok
           </Button>
         </DialogActions>
