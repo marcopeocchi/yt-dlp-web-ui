@@ -24,6 +24,11 @@ docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ![](https://i.ibb.co/RCpfg7q/image.png)
 ![](https://i.ibb.co/N2749CD/image.png)
 
+### Integrated File browser
+Stream or download your content, easily.
+
+![](https://i.ibb.co/k0qzLds/image.png)
+
 ## Changelog
 ```
 05/03/22: Korean translation by kimpig
