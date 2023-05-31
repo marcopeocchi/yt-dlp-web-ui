@@ -81,8 +81,8 @@ func RunBlocking(port int, frontend fs.FS) {
 
 	app.Server().StreamRequestBody = true
 
-	go periodicallyPersist()
 	go gracefulShutdown(app)
+	go autoPersist(time.Minute * 5)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
 }
@@ -106,9 +106,9 @@ func gracefulShutdown(app *fiber.App) {
 	}()
 }
 
-func periodicallyPersist() {
+func autoPersist(d time.Duration) {
 	for {
 		db.Persist()
-		time.Sleep(time.Minute * 5)
+		time.Sleep(d)
 	}
 }

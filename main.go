@@ -12,9 +12,9 @@ import (
 
 var (
 	port           int
+	configFile     string
 	downloadPath   string
 	downloaderPath string
-	configFile     string
 
 	//go:embed frontend/dist
 	frontend embed.FS
@@ -22,9 +22,9 @@ var (
 
 func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
+	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Directory where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
-	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
 	flag.Parse()
 }
 
@@ -35,15 +35,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	cfg := config.Instance()
+	c := config.Instance()
+
+	c.SetPort(port)
+	c.DownloadPath(downloadPath)
+	c.DownloaderPath(downloaderPath)
 
 	if configFile != "" {
-		cfg.LoadFromFile(configFile)
+		c.LoadFromFile(configFile)
 	}
-
-	cfg.SetPort(port)
-	cfg.DownloadPath(downloadPath)
-	cfg.DownloaderPath(downloaderPath)
 
 	server.RunBlocking(port, frontend)
 }

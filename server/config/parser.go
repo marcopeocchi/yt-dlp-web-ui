@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var lock = &sync.Mutex{}
+var lock sync.Mutex
 
 type serverConfig struct {
 	Port           int    `yaml:"port"`
