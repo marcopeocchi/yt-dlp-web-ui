@@ -166,13 +166,37 @@ export default function Settings() {
                       label={i18n.t('languageSelect')}
                       onChange={handleLanguageChange}
                     >
-                      <MenuItem value="english">English</MenuItem>
+                      <MenuItem value="bulgarian">Bulgarian</MenuItem>
+                      <MenuItem value="czech">Czech</MenuItem>
+                      <MenuItem value="danish">Danish</MenuItem>
+                      <MenuItem value="german">German</MenuItem>
+                      <MenuItem value="greek">Greek</MenuItem>
+                      <MenuItem value="english_gb">English (British)</MenuItem>
+                      <MenuItem value="english">English (American)</MenuItem>
                       <MenuItem value="spanish">Spanish</MenuItem>
+                      <MenuItem value="estonian">Estonian</MenuItem>
+                      <MenuItem value="finnish">Finnish</MenuItem>
+                      <MenuItem value="french">French</MenuItem>
+                      <MenuItem value="hungarian">Hungarian</MenuItem>
+                      <MenuItem value="indonesian">Indonesian</MenuItem>
                       <MenuItem value="italian">Italian</MenuItem>
-                      <MenuItem value="chinese">Chinese</MenuItem>
-                      <MenuItem value="russian">Russian</MenuItem>
-                      <MenuItem value="korean">Korean</MenuItem>
                       <MenuItem value="japanese">Japanese</MenuItem>
+                      <MenuItem value="korean">Korean</MenuItem>
+                      <MenuItem value="lithuanian">Lithuanian</MenuItem>
+                      <MenuItem value="latvian">Latvian</MenuItem>
+                      <MenuItem value="norwegian">Norwegian (Bokmål)</MenuItem>
+                      <MenuItem value="dutch">Dutch</MenuItem>
+                      <MenuItem value="polish">Polish</MenuItem>
+                      <MenuItem value="portuguese_br">Portuguese (Brazilian)</MenuItem>
+                      <MenuItem value="portuguese">Portuguese</MenuItem>
+                      <MenuItem value="romanian">Romanian</MenuItem>
+                      <MenuItem value="russian">Russian</MenuItem>
+                      <MenuItem value="slovak">Slovak</MenuItem>
+                      <MenuItem value="slovenian">Slovenian</MenuItem>
+                      <MenuItem value="swedish">Swedish</MenuItem>
+                      <MenuItem value="turkish">Turkish</MenuItem>
+                      <MenuItem value="ukrainian">Ukrainian</MenuItem>
+                      <MenuItem value="chinese">Chinese (simplified)</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

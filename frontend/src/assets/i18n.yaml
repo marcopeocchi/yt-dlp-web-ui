@@ -1,200 +1,901 @@
 ---
 languages:
-  english:
-    urlInput: YouTube or other supported service video URL
-    statusTitle: Status
-    statusReady: Ready
-    selectFormatButton: Select format
+  bulgarian:
+    abortAllButton: Прекъсване на всички
+    bgReminder: След като затворите тази страница, изтеглянето ще продължи във фонов режим.
+    customArgs: Активиране на потребителски аргументи на yt-dlp (голяма власт = големи отговорности)
+    customArgsInput: Потребителски аргументи на yt-dlp
+    customFilename: Потребителско име на файла (оставете празно, за да използвате името по подразбиране)
+    customPath: Потребителски път
+    darkThemeButton: Тъмна тема
+    extractAudioCheckbox: Извличане на аудио
+    filenameOverrideOption: Активиране на пренаписването на името на изходния файл
+    formatSelectionEnabler: Разрешаване на избора на видео/аудио формати
+    languageSelect: 'Език'
+    lightThemeButton: Светлинна тема
+    noMTimeCheckbox: Не задавайте време за модификация на файла
+    overridesAnchor: Заменя
+    pathOverrideOption: Активиране на надписването на изходния път
+    rpcConnErr: Грешка при свързване с RPC сървър
+    selectFormatButton: Изберете формат
+    serverAddressTitle: Адрес на сървъра
+    serverPortTitle: Пристанище
+    settingsAnchor: Настройки
+    startButton: Начало
+    statusReady: Ready oder auch nicht
+    statusTitle: Статус
+    themeSelect: 'Тема'
+    toastConnected: 'Свързан с '
+    toastUpdated: Актуализиран двоичен файл yt-dlp!
+    updateBinButton: Актуализиране на двоичния файл yt-dlp
+    urlInput: URL адрес на видеоклип в YouTube или друга поддържана услуга
+  czech:
+    abortAllButton: Přerušit vše
+    bgReminder: Po zavření této stránky bude stahování pokračovat na pozadí.
+    customArgs: Povolení vlastních argumentů yt-dlp (velká moc = velká zodpovědnost)
+    customArgsInput: Vlastní argumenty yt-dlp
+    customFilename: Vlastní název souboru (pro použití výchozího ponechte prázdné)
+    customPath: Vlastní cesta
+    darkThemeButton: Tmavé téma
+    extractAudioCheckbox: Výpis zvuku
+    filenameOverrideOption: Povolit přepisování názvu výstupního souboru
+    formatSelectionEnabler: Povolení výběru video/audio formátů
+    languageSelect: 'Jazyk'
+    lightThemeButton: Téma světla
+    noMTimeCheckbox: Nenastavujte čas modifikace souboru
+    overridesAnchor: Přepisuje
+    pathOverrideOption: Povolení přepisu výstupní cesty
+    rpcConnErr: Chyba při připojení k serveru RPC
+    selectFormatButton: Zvolte formát
+    serverAddressTitle: Adresa serveru
+    serverPortTitle: Přístav
+    settingsAnchor: Nastavení
     startButton: Start
-    abortAllButton: Abort All
-    updateBinButton: Update yt-dlp binary
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    serverPortTitle: Port
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
-    toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
-    formatSelectionEnabler: Enable video/audio formats selection
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
-  italian:
-    urlInput: URL di YouTube o di qualsiasi altro servizio supportato
-    statusTitle: Stato
-    startButton: Inizia
-    statusReady: Pronto
-    abortAllButton: Termina tutto
-    updateBinButton: Aggiorna yt-dlp
-    darkThemeButton: Tema scuro
-    lightThemeButton: Tema chiaro
-    settingsAnchor: Impostazioni
-    serverAddressTitle: Indirizzo server
-    serverPortTitle: Porta
-    extractAudioCheckbox: Estrai l'audio
-    noMTimeCheckbox: Non impostare la proprietà "Data ultima modifica"
-    bgReminder: Chiusa questa UI il download continuerà in background.
-    toastConnected: 'Connesso a '
-    toastUpdated: yt-dlp aggiornato con successo!
-    formatSelectionEnabler: Abilita la selezione dei formati audio/video
+    statusReady: Ready oder auch nicht
+    statusTitle: Stav
+    themeSelect: 'Téma'
+    toastConnected: 'Připojeno k '
+    toastUpdated: Aktualizovaný binární soubor yt-dlp!
+    updateBinButton: Aktualizace binárního souboru yt-dlp
+    urlInput: Adresa URL videa YouTube nebo jiné podporované služby
+  danish:
+    abortAllButton: Afbryd alle
+    bgReminder: Når du lukker denne side, fortsætter download i baggrunden.
+    customArgs: Aktiver brugerdefinerede yt-dlp-args (stor magt = stort ansvar)
+    customArgsInput: Brugerdefinerede yt-dlp-argumenter
+    customFilename: Brugerdefineret filnavn (lad det være tomt for at bruge standard)
+    customPath: Brugerdefineret sti
+    darkThemeButton: Mørkt tema
+    extractAudioCheckbox: Udtræk lyd
+    filenameOverrideOption: Aktiver tilsidesættelse af output-filnavn
+    formatSelectionEnabler: Aktiver valg af video/lydformater
+    languageSelect: 'Sprog'
+    lightThemeButton: Lys tema
+    noMTimeCheckbox: Indstil ikke filændringstid
+    overridesAnchor: Tilsidesættelser
+    pathOverrideOption: Aktiver tilsidesættelse af udgangssti
+    rpcConnErr: Fejl under opkobling til RPC-server
+    selectFormatButton: Vælg format
+    serverAddressTitle: Server-adresse
+    serverPortTitle: Havn
+    settingsAnchor: Indstillinger
+    startButton: Start
+    statusReady: Klar eller også ikke
+    statusTitle: Status
     themeSelect: 'Tema'
-    languageSelect: 'Lingua'
-    overridesAnchor: Sovrascritture
-    pathOverrideOption: Abilita sovrascrittura percorso di output
-    filenameOverrideOption: Abilita sovrascrittura del nome del file di output
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
+    toastConnected: 'Forbundet til '
+    toastUpdated: Opdateret yt-dlp binær!
+    updateBinButton: Opdater yt-dlp binær
+    urlInput: URL til YouTube eller anden understøttet videotjeneste
+  german:
+    abortAllButton: Alle abbrechen
+    bgReminder: Sobald Sie diese Seite schließen, wird der Download im Hintergrund fortgesetzt.
+    customArgs: Benutzerdefinierte yt-dlp-Argumente aktivieren (große Macht = große Verantwortlichkeiten)
+    customArgsInput: Benutzerdefinierte yt-dlp Argumente
+    customFilename: Benutzerdefinierter Dateiname (leer lassen, um Standard zu verwenden)
+    customPath: Benutzerdefinierter Pfad
+    darkThemeButton: Dunkles Thema
+    extractAudioCheckbox: Audio extrahieren
+    filenameOverrideOption: Überschreiben des Ausgabedateinamens aktivieren
+    formatSelectionEnabler: Auswahl der Video-/Audioformate aktivieren
+    languageSelect: 'Sprache'
+    lightThemeButton: Thema Licht
+    noMTimeCheckbox: Datei-Änderungszeitpunkt nicht festlegen
+    overridesAnchor: Überschreibt
+    pathOverrideOption: Übersteuerung des Ausgabepfads einschalten
+    rpcConnErr: Fehler beim Herstellen einer Verbindung zum RPC-Server
+    selectFormatButton: Format auswählen
+    serverAddressTitle: Server-Adresse
+    serverPortTitle: Hafen
+    settingsAnchor: Einstellungen
+    startButton: Start
+    statusReady: Bereit oder auch nicht
+    statusTitle: Status
+    themeSelect: 'Thema'
+    toastConnected: 'Verbunden mit '
+    toastUpdated: Aktualisierte yt-dlp Binärdatei!
+    updateBinButton: yt-dlp binär aktualisieren
+    urlInput: Video-URL von YouTube oder einem anderen unterstützten Dienst
+  greek:
+    abortAllButton: Διακοπή όλων
+    bgReminder: Μόλις κλείσετε αυτή τη σελίδα, η λήψη θα συνεχιστεί στο παρασκήνιο.
+    customArgs: Ενεργοποίηση προσαρμοσμένων yt-dlp args (μεγάλη δύναμη = μεγάλες ευθύνες)
+    customArgsInput: Προσαρμοσμένα ορίσματα yt-dlp
+    customFilename: Προσαρμοσμένο όνομα αρχείου (αφήστε το κενό για να χρησιμοποιήσετε το προεπιλεγμένο)
+    customPath: Προσαρμοσμένη διαδρομή
+    darkThemeButton: Σκοτεινό θέμα
+    extractAudioCheckbox: Απόσπασμα ήχου
+    filenameOverrideOption: Ενεργοποίηση παράκαμψης ονόματος αρχείου εξόδου
+    formatSelectionEnabler: Ενεργοποίηση επιλογής μορφών βίντεο/ήχου
+    languageSelect: 'Γλώσσα'
+    lightThemeButton: Θέμα φωτός
+    noMTimeCheckbox: Μην ορίζετε χρόνο τροποποίησης αρχείου
+    overridesAnchor: Παρακάμπτει το
+    pathOverrideOption: Ενεργοποίηση της παράκαμψης της διαδρομής εξόδου
+    rpcConnErr: Σφάλμα κατά τη σύνδεση με διακομιστή RPC
+    selectFormatButton: Επιλέξτε μορφή
+    serverAddressTitle: Διεύθυνση διακομιστή
+    serverPortTitle: Λιμάνι
+    settingsAnchor: Ρυθμίσεις
+    startButton: Έναρξη
+    statusReady: Ready oder auch nicht
+    statusTitle: Κατάσταση
+    themeSelect: 'Θέμα'
+    toastConnected: 'Συνδέεται με '
+    toastUpdated: Ενημερωμένο δυαδικό yt-dlp!
+    updateBinButton: Ενημέρωση του δυαδικού αρχείου yt-dlp
+    urlInput: YouTube ή άλλη υποστηριζόμενη υπηρεσία URL βίντεο
+  english_gb:
+    abortAllButton: Abort All
+    bgReminder: Once you close this page the download will continue in the background.
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error nella connessione al server RPC
-  chinese:
-    urlInput: YouTube 或其他受支持服务的视频网址
-    statusTitle: 状态
-    startButton: 开始
-    statusReady: 就绪
-    abortAllButton: 全部中止
-    updateBinButton: 更新 yt-dlp 可执行文件
-    darkThemeButton: 黑暗主题
-    lightThemeButton: 明亮主题
-    settingsAnchor: 设置
-    serverAddressTitle: 服务器地址
-    serverPortTitle: 端口
-    extractAudioCheckbox: 提取音频
-    noMTimeCheckbox: 不设置文件修改时间
-    bgReminder: 关闭页面后，下载会继续在后台运行。
-    toastConnected: '已连接到 '
-    toastUpdated: 已更新 yt-dlp 可执行文件！
-    formatSelectionEnabler: 启用视频/音频格式选择
-    themeSelect: '主题'
-    languageSelect: '语言'
-    overridesAnchor: 覆盖
-    pathOverrideOption: 启用输出路径覆盖
-    filenameOverrideOption: 启用输出文件名覆盖
-    customFilename: 自定义文件名（留空使用默认值）
-    customPath: 自定义路径
-    customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
-    customArgsInput: 自定义 yt-dlp 参数
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
+    darkThemeButton: Dark theme
+    extractAudioCheckbox: Extract audio
+    filenameOverrideOption: Enable output file name overriding
+    formatSelectionEnabler: Enable video/audio formats selection
+    languageSelect: 'Language'
+    lightThemeButton: Light theme
+    noMTimeCheckbox: Don't set file modification time
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
     rpcConnErr: Error while conencting to RPC server
+    selectFormatButton: Select format
+    serverAddressTitle: Server address
+    serverPortTitle: Port
+    settingsAnchor: Settings
+    startButton: Start
+    statusReady: Ready oder auch nicht
+    statusTitle: Status
+    themeSelect: 'Theme'
+    toastConnected: 'Connected to '
+    toastUpdated: Updated yt-dlp binary!
+    updateBinButton: Update yt-dlp binary
+    urlInput: YouTube or other supported service video URL
+  english:
+    abortAllButton: Abort All
+    bgReminder: Once you close this page the download will continue in the background.
+    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgsInput: Custom yt-dlp arguments
+    customFilename: Custom filemame (leave blank to use default)
+    customPath: Custom path
+    darkThemeButton: Dark theme
+    extractAudioCheckbox: Extract audio
+    filenameOverrideOption: Enable output file name overriding
+    formatSelectionEnabler: Enable video/audio formats selection
+    languageSelect: 'Language'
+    lightThemeButton: Light theme
+    noMTimeCheckbox: Don't set file modification time
+    overridesAnchor: Overrides
+    pathOverrideOption: Enable output path overriding
+    rpcConnErr: Error while conencting to RPC server
+    selectFormatButton: Select format
+    serverAddressTitle: Server address
+    serverPortTitle: Port
+    settingsAnchor: Settings
+    startButton: Start
+    statusReady: Ready oder auch nicht
+    statusTitle: Status
+    themeSelect: 'Theme'
+    toastConnected: 'Connected to '
+    toastUpdated: Updated yt-dlp binary!
+    updateBinButton: Update yt-dlp binary
+    urlInput: YouTube or other supported service video URL
   spanish:
-    urlInput: YouTube or other supported service video url
-    statusTitle: Status
+    abortAllButton: Abortar todo
+    bgReminder: Una vez que cierre esta página, la descarga continuará en segundo plano.
+    customArgs: Habilitar argumentos yt-dlp personalizados (gran poder = grandes responsabilidades)
+    customArgsInput: Argumentos yt-dlp personalizados
+    customFilename: Nombre de archivo personalizado (déjelo en blanco para utilizar el predeterminado)
+    customPath: Ruta personalizada
+    darkThemeButton: Tema oscuro
+    extractAudioCheckbox: Extraer audio
+    filenameOverrideOption: Activar la anulación del nombre del archivo de salida
+    formatSelectionEnabler: Activar la selección de formatos de vídeo/audio
+    languageSelect: 'Lengua'
+    lightThemeButton: Tema luminoso
+    noMTimeCheckbox: No fijar la hora de modificación del fichero
+    overridesAnchor: Anula
+    pathOverrideOption: Activar la anulación de la ruta de salida
+    rpcConnErr: Error al conectar con el servidor RPC
+    selectFormatButton: Seleccionar formato
+    serverAddressTitle: Dirección del servidor
+    serverPortTitle: Puerto
+    settingsAnchor: Ajustes
+    startButton: Inicio
+    statusReady: Ready ouch nicht
+    statusTitle: Estado
+    themeSelect: 'Tema'
+    toastConnected: 'Conectado a '
+    toastUpdated: ¡Actualizado el binario yt-dlp!
+    updateBinButton: Actualizar el binario yt-dlp
+    urlInput: URL de vídeo de YouTube u otro servicio compatible
+  estonian:
+    abortAllButton: Kõik katkestada
+    bgReminder: Kui sulgete selle lehe, jätkub allalaadimine taustal.
+    customArgs: Lubage kohandatud yt-dlp args (suur võimsus = suur vastutus)
+    customArgsInput: Kohandatud yt-dlp argumendid
+    customFilename: Kohandatud failinimi (jäta tühjaks, et kasutada vaikimisi)
+    customPath: Kohandatud tee
+    darkThemeButton: Tume teema
+    extractAudioCheckbox: Väljavõte heli
+    filenameOverrideOption: Võimaldab väljundfaili nime ületamise
+    formatSelectionEnabler: Võimaldab video/audio formaatide valiku
+    languageSelect: 'Keel'
+    lightThemeButton: Valgus teema
+    noMTimeCheckbox: Ärge määrake faili muutmise aega
+    overridesAnchor: Kõrvaldab
+    pathOverrideOption: Võimaldab väljundtee ületamise
+    rpcConnErr: Viga RPC serveriga ühenduse võtmisel
+    selectFormatButton: Valige formaat
+    serverAddressTitle: Serveri aadress
+    serverPortTitle: Sadam
+    settingsAnchor: Seaded
     startButton: Start
-    statusReady: Ready
-    abortAllButton: Abort All
-    updateBinButton: Update yt-dlp binary
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    serverPortTitle: Port
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
+    statusReady: Ready oder auch nicht
+    statusTitle: Staatus
+    themeSelect: 'Teema'
+    toastConnected: 'Ühendatud '
+    toastUpdated: Uuendatud yt-dlp binaarne!
+    updateBinButton: Värskenda yt-dlp binaarset versiooni
+    urlInput: YouTube'i või muu toetatud teenuse video URL
+  finnish:
+    abortAllButton: Keskeytä kaikki
+    bgReminder: Kun suljet tämän sivun, lataus jatkuu taustalla.
+    customArgs: Ota käyttöön mukautetut yt-dlp-argit (suuri valta = suuri vastuu)
+    customArgsInput: Mukautetut yt-dlp-argumentit
+    customFilename: Mukautettu tiedostonimi (jätä tyhjäksi, jos haluat käyttää oletusarvoa)
+    customPath: Mukautettu polku
+    darkThemeButton: Tumma teema
+    extractAudioCheckbox: Pura ääni
+    filenameOverrideOption: Ota tulostustiedoston nimen ohittaminen käyttöön
+    formatSelectionEnabler: Ota video-/ääniformaattien valinta käyttöön
+    languageSelect: 'Kieli'
+    lightThemeButton: Valo teema
+    noMTimeCheckbox: Älä aseta tiedoston muutosaikaa
+    overridesAnchor: Ohittaa
+    pathOverrideOption: Ottaa käyttöön ulostulopolun ohittamisen
+    rpcConnErr: Virhe RPC-palvelimeen muodostettaessa yhteyttä
+    selectFormatButton: Valitse muoto
+    serverAddressTitle: Palvelimen osoite
+    serverPortTitle: Satama
+    settingsAnchor: Asetukset
+    startButton: Aloita
+    statusReady: Ready oder auch nicht
+    statusTitle: Tila
+    themeSelect: 'Teema'
     toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
-    formatSelectionEnabler: Enable video/audio formats selection
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
-  russian:
-    urlInput: YouTube or other supported service video url
+    toastUpdated: Päivitetty yt-dlp binääri!
+    updateBinButton: Päivitä yt-dlp binääri
+    urlInput: YouTuben tai muun tuetun palvelun videon URL-osoite
+  french:
+    abortAllButton: Abandonner tout
+    bgReminder: Une fois que vous aurez fermé cette page, le téléchargement se poursuivra en arrière-plan.
+    customArgs: Activer les args yt-dlp personnalisés (grand pouvoir = grandes responsabilités)
+    customArgsInput: Arguments personnalisés pour yt-dlp
+    customFilename: Nom de fichier personnalisé (laisser vide pour utiliser le nom par défaut)
+    customPath: Chemin personnalisé
+    darkThemeButton: Thème sombre
+    extractAudioCheckbox: Extraire l'audio
+    filenameOverrideOption: Activation de l'écrasement du nom du fichier de sortie
+    formatSelectionEnabler: Activer la sélection des formats vidéo/audio
+    languageSelect: 'Langue'
+    lightThemeButton: Thème lumineux
+    noMTimeCheckbox: Ne pas définir le temps de modification des fichiers
+    overridesAnchor: Remplacements
+    pathOverrideOption: Activation de l'annulation du chemin de sortie
+    rpcConnErr: Erreur lors de la connexion au serveur RPC
+    selectFormatButton: Sélectionner le format
+    serverAddressTitle: Adresse du serveur
+    serverPortTitle: Port
+    settingsAnchor: Paramètres
+    startButton: Démarrage
+    statusReady: Ready oder auch nicht
+    statusTitle: Statut
+    themeSelect: 'Thème'
+    toastConnected: 'Connecté à '
+    toastUpdated: Mise à jour du binaire yt-dlp !
+    updateBinButton: Mise à jour du binaire yt-dlp
+    urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
+  hungarian:
+    abortAllButton: Mindent megszakítani
+    bgReminder: Ha bezárja ezt az oldalt, a letöltés a háttérben folytatódik.
+    customArgs: Egyéni yt-dlp args engedélyezése (nagy hatalom = nagy felelősség)
+    customArgsInput: Egyedi yt-dlp argumentumok
+    customFilename: Egyéni fájlnév (hagyja üresen az alapértelmezettet)
+    customPath: Egyéni útvonal
+    darkThemeButton: Sötét téma
+    extractAudioCheckbox: Audió kivonatolása
+    filenameOverrideOption: Kimeneti fájlnév felülírásának engedélyezése
+    formatSelectionEnabler: Videó/hangformátumok kiválasztásának engedélyezése
+    languageSelect: 'Nyelv'
+    lightThemeButton: Fény téma
+    noMTimeCheckbox: Ne állítsa be a fájl módosítási idejét
+    overridesAnchor: Felülbírálja a
+    pathOverrideOption: Kimeneti útvonal felülírásának engedélyezése
+    rpcConnErr: Hiba az RPC-kiszolgálóval való kapcsolatfelvétel során
+    selectFormatButton: Formátum kiválasztása
+    serverAddressTitle: Kiszolgáló címe
+    serverPortTitle: Port
+    settingsAnchor: Beállítások
+    startButton: Indítsa el a  oldalt.
+    statusReady: Ready oder auch nicht
+    statusTitle: Állapot
+    themeSelect: 'Téma'
+    toastConnected: 'Csatlakoztatva a '
+    toastUpdated: Frissített yt-dlp bináris!
+    updateBinButton: yt-dlp bináris frissítése
+    urlInput: YouTube vagy más támogatott szolgáltatás videó URL címe
+  indonesian:
+    abortAllButton: Batalkan Semua
+    bgReminder: Setelah Anda menutup halaman ini, pengunduhan akan berlanjut di latar belakang.
+    customArgs: Aktifkan argumen yt-dlp khusus (kekuatan besar = tanggung jawab besar)
+    customArgsInput: Argumen yt-dlp khusus
+    customFilename: Nama file khusus (biarkan kosong untuk menggunakan default)
+    customPath: Jalur khusus
+    darkThemeButton: Tema gelap
+    extractAudioCheckbox: Ekstrak audio
+    filenameOverrideOption: Mengaktifkan penimpaan nama file keluaran
+    formatSelectionEnabler: Mengaktifkan pemilihan format video/audio
+    languageSelect: 'Bahasa'
+    lightThemeButton: Tema cahaya
+    noMTimeCheckbox: Jangan mengatur waktu modifikasi file
+    overridesAnchor: Menimpa
+    pathOverrideOption: Mengaktifkan penimpaan jalur output
+    rpcConnErr: Kesalahan saat melakukan koneksi ke server RPC
+    selectFormatButton: Pilih format
+    serverAddressTitle: Alamat server
+    serverPortTitle: Pelabuhan
+    settingsAnchor: Pengaturan
+    startButton: Mulai
+    statusReady: Siap atau juga tidak
     statusTitle: Status
-    startButton: Start
-    statusReady: Ready
-    abortAllButton: Abort All
-    updateBinButton: Update yt-dlp binary
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    serverPortTitle: Port
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
-    toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
-    formatSelectionEnabler: Enable video/audio formats selection
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
-  korean:
-    urlInput: YouTube나 다른 지원되는 사이트의 URL
-    statusTitle: 상태
-    startButton: 시작
-    statusReady: 준비됨
-    abortAllButton: 모두 중단
-    updateBinButton: yt-dlp 바이너리 업데이트
-    darkThemeButton: 다크 모드
-    lightThemeButton: 라이트 모드
-    settingsAnchor: 설정
-    serverAddressTitle: 서버 주소
-    serverPortTitle: Port
-    extractAudioCheckbox: 오디오 추출
-    noMTimeCheckbox: 파일 수정 시간을 설정하지 않음
-    bgReminder: 이 페이지를 닫아도 백그라운드에서 다운로드가 계속됩니다
-    toastConnected: '다음으로 연결됨 '
-    toastUpdated: yt-dlp 바이너리를 업데이트 했습니다
-    formatSelectionEnabler: 비디오/오디오 포멧 옵션 표시
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
+    themeSelect: 'Tema'
+    toastConnected: 'Terhubung ke '
+    toastUpdated: Biner yt-dlp yang diperbarui!
+    updateBinButton: Perbarui biner yt-dlp
+    urlInput: YouTube atau URL video layanan lain yang didukung
+  italian:
+    abortAllButton: Interrompere tutto
+    bgReminder: Una volta chiusa questa pagina, il download continuerà in background.
+    customArgs: Abilitare gli argomenti personalizzati di yt-dlp (grande potere = grandi responsabilità)
+    customArgsInput: Argomenti personalizzati di yt-dlp
+    customFilename: Nome file personalizzato (lasciare vuoto per utilizzare quello predefinito)
+    customPath: Percorso personalizzato
+    darkThemeButton: Tema scuro
+    extractAudioCheckbox: Estrarre l'audio
+    filenameOverrideOption: Abilita la sovrascrittura del nome del file di output
+    formatSelectionEnabler: Abilita la selezione dei formati video/audio
+    languageSelect: 'Lingua'
+    lightThemeButton: Tema luminoso
+    noMTimeCheckbox: Non impostare il tempo di modifica dei file
+    overridesAnchor: Sovrascritte
+    pathOverrideOption: Abilita l'override del percorso di uscita
+    rpcConnErr: Errore durante la connessione al server RPC
+    selectFormatButton: Selezionare il formato
+    serverAddressTitle: Indirizzo del server
+    serverPortTitle: Porto
+    settingsAnchor: Impostazioni
+    startButton: Inizio
+    statusReady: Pronto o anche no
+    statusTitle: Stato
+    themeSelect: 'Tema'
+    toastConnected: 'Collegato all '
+    toastUpdated: Aggiornamento del binario yt-dlp!
+    updateBinButton: Aggiornamento di yt-dlp binario
+    urlInput: URL video di YouTube o di altri servizi supportati
   japanese:
-    urlInput: YouTubeまたはサポート済み動画のURL
-    statusTitle: 状態
-    statusReady: 準備
-    selectFormatButton: フォーマット選択
-    startButton: 開始
-    abortAllButton: すべて中止
-    updateBinButton: yt-dlp更新
-    darkThemeButton: 黒テーマ
-    lightThemeButton: 白テーマ
-    settingsAnchor: 設定
-    serverAddressTitle: サーバーアドレス
-    serverPortTitle: ポート番号
-    extractAudioCheckbox: 音質
-    noMTimeCheckbox: ファイル時間の修正をしない
-    bgReminder: このページを閉じてもバックグラウンドでダウンロードを続けます
-    toastConnected: '接続中 '
-    toastUpdated: yt-dlpを更新しました!
-    formatSelectionEnabler: 選択可能な動画/音源
-    themeSelect: 'テーマ'
+    abortAllButton: すべて中止する
+    bgReminder: このページを閉じると、ダウンロードはバックグラウンドで継続されます。
+    customArgs: カスタムyt-dlpアーギュメントを有効にする（大きな力＝大きな責任）。
+    customArgsInput: yt-dlpのカスタム引数
+    customFilename: カスタムファイル名（デフォルトを使用する場合は空白にします。）
+    customPath: カスタムパス
+    darkThemeButton: ダークテーマ
+    extractAudioCheckbox: 音声を抽出する
+    filenameOverrideOption: 出力ファイル名の上書きを有効にする
+    formatSelectionEnabler: ビデオ/オーディオフォーマットの選択を可能にする
     languageSelect: '言語'
-    overridesAnchor: 上書き
-    pathOverrideOption: 保存するディレクトリ
-    filenameOverrideOption: ファイル名の上書き
-    customFilename:  (空白の場合は元のファイル名)
-    customPath: 保存先
-    customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
-    customArgsInput: yt-dlpのオプション
-    rpcConnErr: Error while conencting to RPC server
+    lightThemeButton: ライトテーマ
+    noMTimeCheckbox: ファイルの修正時間を設定しない
+    overridesAnchor: オーバーライド
+    pathOverrideOption: 出力パスのオーバーライドを有効にする
+    rpcConnErr: RPCサーバーへの接続時にエラーが発生する。
+    selectFormatButton: フォーマットを選択
+    serverAddressTitle: サーバーアドレス
+    serverPortTitle: ポート
+    settingsAnchor: 設定方法
+    startButton: スタート
+    statusReady: Ready oder auch nicht
+    statusTitle: ステータス
+    themeSelect: 'テーマ'
+    toastConnected: 'に接続されている。'
+    toastUpdated: yt-dlpバイナリを更新しました！
+    updateBinButton: yt-dlpバイナリーの更新
+    urlInput: YouTubeなど対応サービスの動画URL
+  korean:
+    abortAllButton: 모두 중단
+    bgReminder: 이 페이지를 닫으면 다운로드가 백그라운드에서 계속 진행됩니다.
+    customArgs: 사용자 지정 yt-dlp 인수 활성화(강력한 기능 = 강력한 책임)
+    customArgsInput: 사용자 지정 yt-dlp 인수
+    customFilename: 사용자 지정 파일명(기본값을 사용하려면 비워둡니다)
+    customPath: 사용자 지정 경로
+    darkThemeButton: 어두운 테마
+    extractAudioCheckbox: 오디오 추출
+    filenameOverrideOption: 출력 파일 이름 재정의 사용
+    formatSelectionEnabler: 비디오/오디오 형식 선택 활성화
+    languageSelect: '언어'
+    lightThemeButton: 조명 테마
+    noMTimeCheckbox: 파일 수정 시간 설정하지 않기
+    overridesAnchor: 오버라이드
+    pathOverrideOption: 출력 경로 재정의 사용
+    rpcConnErr: RPC 서버에 연결하는 동안 오류가 발생했습니다.
+    selectFormatButton: 형식 선택
+    serverAddressTitle: 서버 주소
+    serverPortTitle: 포트
+    settingsAnchor: 설정
+    startButton: 시작
+    statusReady: 준비됨 또는 준비되지 않음
+    statusTitle: 상태
+    themeSelect: '테마'
+    toastConnected: '에 연결됨 '
+    toastUpdated: yt-dlp 바이너리 업데이트!
+    updateBinButton: yt-dlp 바이너리 업데이트
+    urlInput: YouTube 또는 기타 지원되는 서비스 동영상 URL
+  lithuanian:
+    abortAllButton: Nutraukti viską
+    bgReminder: Uždarius šį puslapį, atsisiuntimas bus tęsiamas fone.
+    customArgs: Įgalinti pasirinktinius yt-dlp argumentus (didelė galia = didelė atsakomybė)
+    customArgsInput: Pasirinktiniai yt-dlp argumentai
+    customFilename: Pasirinktinis failo pavadinimas (palikite tuščią, jei norite naudoti numatytąjį)
+    customPath: Pasirinktinis kelias
+    darkThemeButton: Tamsi tema
+    extractAudioCheckbox: Garso ištraukimas
+    filenameOverrideOption: Įjungti išvesties failo pavadinimo keitimą
+    formatSelectionEnabler: Įgalinti vaizdo ir garso formatų pasirinkimą
+    languageSelect: 'Kalba'
+    lightThemeButton: Šviesos tema
+    noMTimeCheckbox: Nenustatykite failo modifikavimo laiko
+    overridesAnchor: Viršija
+    pathOverrideOption: Įjungti išvesties kelio pakeitimą
+    rpcConnErr: Klaida jungiantis prie RPC serverio
+    selectFormatButton: Pasirinkite formatą
+    serverAddressTitle: Serverio adresas
+    serverPortTitle: Uostas
+    settingsAnchor: Nustatymai
+    startButton: Pradžia
+    statusReady: Ready oder auch nicht
+    statusTitle: Statusas
+    themeSelect: 'Tema'
+    toastConnected: 'Prijungta prie '
+    toastUpdated: Atnaujinta yt-dlp dvejetainė programa!
+    updateBinButton: Atnaujinti yt-dlp dvejetainis
+    urlInput: "YouTube" arba kitos palaikomos paslaugos vaizdo įrašo URL
+  latvian:
+    abortAllButton: Pārtraukt visu
+    bgReminder: Kad aizvērsiet šo lapu, lejupielāde turpināsies fonā.
+    customArgs: Iespējot pielāgotu yt-dlp args (liela vara = liela atbildība)
+    customArgsInput: Pielāgotie yt-dlp argumenti
+    customFilename: Pielāgotais faila nosaukums (atstājiet tukšu, lai izmantotu noklusējumu)
+    customPath: Pielāgotais ceļš
+    darkThemeButton: Tumšais temats
+    extractAudioCheckbox: Audio izvilkums
+    filenameOverrideOption: Iespējot izvades faila nosaukuma pārrakstīšanu
+    formatSelectionEnabler: Video/audio formātu atlases iespējošana
+    languageSelect: 'Valoda'
+    lightThemeButton: Gaismas tēma
+    noMTimeCheckbox: Nenoteikt faila modificēšanas laiku
+    overridesAnchor: Pārsvarā
+    pathOverrideOption: Ieslēgt izejas ceļa pārrakstīšanu
+    rpcConnErr: Kļūda, savienojoties ar RPC serveri
+    selectFormatButton: Izvēlieties formātu
+    serverAddressTitle: Servera adrese
+    serverPortTitle: Osta
+    settingsAnchor: Iestatījumi
+    startButton: Sākt
+    statusReady: Ready oder auch nicht
+    statusTitle: Statuss
+    themeSelect: 'Tēma'
+    toastConnected: 'Savienots ar '
+    toastUpdated: Atjaunināts yt-dlp binārais!
+    updateBinButton: Atjaunināt yt-dlp bināro
+    urlInput: YouTube vai cita atbalstītā pakalpojuma video URL
+  norwegian:
+    abortAllButton: Avbryt alle
+    bgReminder: Når du lukker denne siden, fortsetter nedlastingen i bakgrunnen.
+    customArgs: Aktiver egendefinerte yt-dlp-args (stor makt = stort ansvar)
+    customArgsInput: Egendefinerte yt-dlp-argumenter
+    customFilename: Egendefinert filnavn (la det stå tomt for å bruke standardnavnet)
+    customPath: Tilpasset bane
+    darkThemeButton: Mørkt tema
+    extractAudioCheckbox: Trekk ut lyd
+    filenameOverrideOption: Aktiver overstyring av utdatafilnavn
+    formatSelectionEnabler: Aktiver valg av video-/lydformater
+    languageSelect: 'Språk'
+    lightThemeButton: Lystema
+    noMTimeCheckbox: Ikke angi tid for filendring
+    overridesAnchor: Tilsidesettelser
+    pathOverrideOption: Aktiver overstyring av utgangsbane
+    rpcConnErr: Feil ved tilkobling til RPC-server
+    selectFormatButton: Velg format
+    serverAddressTitle: Serveradresse
+    serverPortTitle: Havn
+    settingsAnchor: Innstillinger
+    startButton: Start
+    statusReady: Klar eller også ikke
+    statusTitle: Status
+    themeSelect: 'Tema'
+    toastConnected: 'Tilkoblet til '
+    toastUpdated: Oppdatert yt-dlp binær!
+    updateBinButton: Oppdater yt-dlp binær
+    urlInput: URL-adressen til YouTube eller en annen støttet videotjeneste
+  dutch:
+    abortAllButton: Alles afbreken
+    bgReminder: Zodra u deze pagina sluit, wordt het downloaden op de achtergrond voortgezet.
+    customArgs: Aangepaste yt-dlp argumenten inschakelen (grote macht = grote verantwoordelijkheden)
+    customArgsInput: Aangepaste yt-dlp argumenten
+    customFilename: Aangepaste bestandsnaam (laat leeg om de standaard te gebruiken)
+    customPath: Aangepast pad
+    darkThemeButton: Donker thema
+    extractAudioCheckbox: Audio uitpakken
+    filenameOverrideOption: Uitvoerbestand naam overschrijven
+    formatSelectionEnabler: Selectie van video/audioformaten mogelijk maken
+    languageSelect: 'Taal'
+    lightThemeButton: Licht thema
+    noMTimeCheckbox: Stel geen wijzigingstijd voor bestanden in
+    overridesAnchor: Overschrijft
+    pathOverrideOption: Uitgangspad overschrijven inschakelen
+    rpcConnErr: Fout bij verbinding met RPC server
+    selectFormatButton: Selecteer formaat
+    serverAddressTitle: Adres van de server
+    serverPortTitle: Haven
+    settingsAnchor: Instellingen
+    startButton: Start
+    statusReady: Klaar of niet.
+    statusTitle: Status
+    themeSelect: 'Thema'
+    toastConnected: 'Verbonden met '
+    toastUpdated: Bijgewerkt yt-dlp binair!
+    updateBinButton: Update yt-dlp binair
+    urlInput: YouTube of andere ondersteunde service video-URL
+  polish:
+    abortAllButton: Przerwij wszystko
+    bgReminder: Po zamknięciu tej strony pobieranie będzie kontynuowane w tle.
+    customArgs: Włącz niestandardowe argumenty yt-dlp (duża moc = duża odpowiedzialność)
+    customArgsInput: Niestandardowe argumenty yt-dlp
+    customFilename: Niestandardowa nazwa pliku (pozostaw puste, aby użyć domyślnej)
+    customPath: Ścieżka niestandardowa
+    darkThemeButton: Ciemny motyw
+    extractAudioCheckbox: Wyodrębnianie dźwięku
+    filenameOverrideOption: Włącz nadpisywanie nazwy pliku wyjściowego
+    formatSelectionEnabler: Włączanie wyboru formatów wideo/audio
+    languageSelect: 'Język'
+    lightThemeButton: Motyw świetlny
+    noMTimeCheckbox: Nie ustawiaj czasu modyfikacji pliku
+    overridesAnchor: Zastąpienia
+    pathOverrideOption: Włącz nadpisywanie ścieżki wyjściowej
+    rpcConnErr: Błąd podczas łączenia się z serwerem RPC
+    selectFormatButton: Wybierz format
+    serverAddressTitle: Adres serwera
+    serverPortTitle: Port
+    settingsAnchor: Ustawienia
+    startButton: Start
+    statusReady: Gotowy lub nie
+    statusTitle: Status
+    themeSelect: 'Temat'
+    toastConnected: 'Połączony z '
+    toastUpdated: Zaktualizowany binarny yt-dlp!
+    updateBinButton: Aktualizacja yt-dlp binary
+    urlInput: Adres URL wideo YouTube lub innej obsługiwanej usługi
+  portuguese_br:
+    abortAllButton: Abortar tudo
+    bgReminder: Quando você fechar esta página, o download continuará em segundo plano.
+    customArgs: Habilitar args yt-dlp personalizados (grande poder = grandes responsabilidades)
+    customArgsInput: Argumentos personalizados do yt-dlp
+    customFilename: Nome de arquivo personalizado (deixe em branco para usar o padrão)
+    customPath: Caminho personalizado
+    darkThemeButton: Tema escuro
+    extractAudioCheckbox: Extrair áudio
+    filenameOverrideOption: Ativar a substituição do nome do arquivo de saída
+    formatSelectionEnabler: Habilitar a seleção de formatos de vídeo/áudio
+    languageSelect: 'Idioma'
+    lightThemeButton: Tema leve
+    noMTimeCheckbox: Não defina o tempo de modificação do arquivo
+    overridesAnchor: Substituições
+    pathOverrideOption: Ativar a substituição do caminho de saída
+    rpcConnErr: Erro ao se conectar ao servidor RPC
+    selectFormatButton: Selecione o formato
+    serverAddressTitle: Endereço do servidor
+    serverPortTitle: Porto
+    settingsAnchor: Configurações
+    startButton: Início
+    statusReady: Pronto ou não
+    statusTitle: Status
+    themeSelect: 'Tema'
+    toastConnected: 'Conectado a '
+    toastUpdated: Binário yt-dlp atualizado!
+    updateBinButton: Atualizar o binário yt-dlp
+    urlInput: URL de vídeo do YouTube ou de outro serviço compatível
+  portuguese:
+    abortAllButton: Abortar tudo
+    bgReminder: Quando fechar esta página, a transferência continuará em segundo plano.
+    customArgs: Activar args yt-dlp personalizados (grande poder = grandes responsabilidades)
+    customArgsInput: Argumentos yt-dlp personalizados
+    customFilename: Nome de ficheiro personalizado (deixar em branco para utilizar a predefinição)
+    customPath: Caminho personalizado
+    darkThemeButton: Tema escuro
+    extractAudioCheckbox: Extrair áudio
+    filenameOverrideOption: Activar a substituição do nome do ficheiro de saída
+    formatSelectionEnabler: Activar a selecção de formatos de vídeo/áudio
+    languageSelect: 'Língua'
+    lightThemeButton: Tema de luz
+    noMTimeCheckbox: Não definir a hora de modificação do ficheiro
+    overridesAnchor: Substituições
+    pathOverrideOption: Activar a substituição da via de saída
+    rpcConnErr: Erro ao ligar-se ao servidor RPC
+    selectFormatButton: Seleccionar formato
+    serverAddressTitle: Endereço do servidor
+    serverPortTitle: Porto
+    settingsAnchor: Definições
+    startButton: Início
+    statusReady: Pronto ou não
+    statusTitle: Estado
+    themeSelect: 'Tema'
+    toastConnected: 'Ligado a '
+    toastUpdated: Binário yt-dlp actualizado!
+    updateBinButton: Actualizar yt-dlp binary
+    urlInput: URL de vídeo do YouTube ou de outro serviço suportado
+  romanian:
+    abortAllButton: Abandonați toate
+    bgReminder: După ce închideți această pagină, descărcarea va continua în fundal.
+    customArgs: Activați argetele yt-dlp personalizate (putere mare = responsabilități mari)
+    customArgsInput: Argumente yt-dlp personalizate
+    customFilename: Nume de fișier personalizat (lăsați în alb pentru a utiliza numele implicit)
+    customPath: Calea personalizată
+    darkThemeButton: Tema întunecată
+    extractAudioCheckbox: Extrage audio
+    filenameOverrideOption: Activați suprapunerea numelui fișierului de ieșire
+    formatSelectionEnabler: Activați selectarea formatelor video/audio
+    languageSelect: 'Limba'
+    lightThemeButton: Tema luminii
+    noMTimeCheckbox: Nu setați timpul de modificare a fișierelor
+    overridesAnchor: Suprascrie
+    pathOverrideOption: Activați suprapunerea căii de ieșire
+    rpcConnErr: Eroare la conectarea la serverul RPC
+    selectFormatButton: Selectați formatul
+    serverAddressTitle: Adresa serverului
+    serverPortTitle: Port
+    settingsAnchor: Setări
+    startButton: Start
+    statusReady: Ready oder auch nicht
+    statusTitle: Stare
+    themeSelect: 'Tema'
+    toastConnected: 'Conectat la '
+    toastUpdated: Actualizat yt-dlp binar!
+    updateBinButton: Actualizare yt-dlp binar
+    urlInput: URL-ul video YouTube sau al altui serviciu acceptat
+  russian:
+    abortAllButton: Прервать все
+    bgReminder: После закрытия этой страницы загрузка будет продолжаться в фоновом режиме.
+    customArgs: Включите пользовательские yt-dlp args (большая власть = большая ответственность)
+    customArgsInput: Пользовательские аргументы yt-dlp
+    customFilename: Пользовательское имя файла (оставьте пустым, чтобы использовать имя по умолчанию)
+    customPath: Пользовательский путь
+    darkThemeButton: Темная тема
+    extractAudioCheckbox: Извлечение аудио
+    filenameOverrideOption: Разрешить переопределение имени выходного файла
+    formatSelectionEnabler: Включить выбор форматов видео/аудио
+    languageSelect: 'Язык'
+    lightThemeButton: Светлая тема
+    noMTimeCheckbox: Не устанавливайте время модификации файла
+    overridesAnchor: Переопределяет
+    pathOverrideOption: Включить переопределение выходного тракта
+    rpcConnErr: Ошибка при подключении к серверу RPC
+    selectFormatButton: Выберите формат
+    serverAddressTitle: Адрес сервера
+    serverPortTitle: Порт
+    settingsAnchor: Настройки
+    startButton: Начало
+    statusReady: Готов или нет
+    statusTitle: Статус
+    themeSelect: 'Тема'
+    toastConnected: 'Подключен к '
+    toastUpdated: Обновленный двоичный файл yt-dlp!
+    updateBinButton: Обновление двоичного кода yt-dlp
+    urlInput: URL видео YouTube или другого поддерживаемого сервиса
+  slovak:
+    abortAllButton: Zrušiť všetko
+    bgReminder: Po zatvorení tejto stránky bude sťahovanie pokračovať na pozadí.
+    customArgs: Povolenie vlastných argumentov yt-dlp (veľká moc = veľká zodpovednosť)
+    customArgsInput: Vlastné argumenty yt-dlp
+    customFilename: Vlastný názov súboru (ponechajte prázdne, ak chcete použiť predvolený názov)
+    customPath: Vlastná cesta
+    darkThemeButton: Tmavá téma
+    extractAudioCheckbox: Výpis zvuku
+    filenameOverrideOption: Povolenie prepisovania názvu výstupného súboru
+    formatSelectionEnabler: Povolenie výberu video/audio formátov
+    languageSelect: 'Jazyk'
+    lightThemeButton: Téma svetla
+    noMTimeCheckbox: Nenastavujte čas modifikácie súboru
+    overridesAnchor: Prednosť pred
+    pathOverrideOption: Povolenie prepisovania výstupnej cesty
+    rpcConnErr: Chyba pri pripojení k serveru RPC
+    selectFormatButton: Vyberte formát
+    serverAddressTitle: Adresa servera
+    serverPortTitle: Prístav
+    settingsAnchor: Nastavenia
+    startButton: Štart
+    statusReady: Ready oder auch nicht
+    statusTitle: Stav
+    themeSelect: 'Téma'
+    toastConnected: 'Pripojené k '
+    toastUpdated: Aktualizovaný binárny súbor yt-dlp!
+    updateBinButton: Aktualizácia binárnej verzie yt-dlp
+    urlInput: URL adresa videa YouTube alebo inej podporovanej služby
+  slovenian:
+    abortAllButton: Prekinitev vseh
+    bgReminder: Ko zaprete to stran, se prenos nadaljuje v ozadju.
+    customArgs: Omogočiti po meri yt-dlp args (velika moč = velika odgovornost)
+    customArgsInput: Argumenti yt-dlp po meri
+    customFilename: Ime datoteke po meri (pustite prazno, če želite uporabiti privzeto)
+    customPath: Pot po meri
+    darkThemeButton: Temna tema
+    extractAudioCheckbox: Izvleček zvoka
+    filenameOverrideOption: Omogočite prevlado imena izhodne datoteke
+    formatSelectionEnabler: Omogočanje izbire video/avdio formatov
+    languageSelect: 'Jezik'
+    lightThemeButton: Tema svetlobe
+    noMTimeCheckbox: Ne nastavite časa spreminjanja datotek
+    overridesAnchor: Prevlada
+    pathOverrideOption: Omogočanje nadomeščanja izhodne poti
+    rpcConnErr: Napaka pri vzpostavljanju povezave s strežnikom RPC
+    selectFormatButton: Izberite format
+    serverAddressTitle: Naslov strežnika
+    serverPortTitle: Pristanišče
+    settingsAnchor: Nastavitve
+    startButton: Začetek
+    statusReady: Ready oder auch nicht
+    statusTitle: Status
+    themeSelect: 'Tema'
+    toastConnected: 'Povezano z '
+    toastUpdated: Posodobljena binarna datoteka yt-dlp!
+    updateBinButton: Posodobitev binarnega sistema yt-dlp
+    urlInput: URL videoposnetka YouTube ali druge podprte storitve
+  swedish:
+    abortAllButton: Avbryt alla
+    bgReminder: När du stänger den här sidan fortsätter nedladdningen i bakgrunden.
+    customArgs: Aktivera anpassade yt-dlp args (stor makt = stort ansvar)
+    customArgsInput: Anpassade yt-dlp argument
+    customFilename: Anpassat filnamn (lämna tomt för att använda standard)
+    customPath: Anpassad väg
+    darkThemeButton: Mörkt tema
+    extractAudioCheckbox: Extrahera ljud
+    filenameOverrideOption: Aktivera åsidosättande av utdatafilnamn
+    formatSelectionEnabler: Aktivera val av video-/audioformat
+    languageSelect: 'Språk'
+    lightThemeButton: Ljus tema
+    noMTimeCheckbox: Ange inte tid för filmodifiering
+    overridesAnchor: Åsidosätter
+    pathOverrideOption: Aktivera överstyrning av utmatningsväg
+    rpcConnErr: Fel vid anslutning till RPC-server
+    selectFormatButton: Välj format
+    serverAddressTitle: Serveradress
+    serverPortTitle: Port
+    settingsAnchor: Inställningar
+    startButton: Start
+    statusReady: Klar eller också inte
+    statusTitle: Status
+    themeSelect: 'Tema'
+    toastConnected: 'Ansluten till '
+    toastUpdated: Uppdaterad yt-dlp binär!
+    updateBinButton: Uppdatera yt-dlp binär
+    urlInput: YouTube eller annan stödd tjänst video URL
+  turkish:
+    abortAllButton: Tümünü İptal Et
+    bgReminder: Bu sayfayı kapattığınızda indirme işlemi arka planda devam edecektir.
+    customArgs: Özel yt-dlp argümanlarını etkinleştirin (büyük güç = büyük sorumluluklar)
+    customArgsInput: Özel yt-dlp argümanları
+    customFilename: Özel dosya adı (varsayılanı kullanmak için boş bırakın)
+    customPath: Özel yol
+    darkThemeButton: Koyu tema
+    extractAudioCheckbox: Ses çıkarma
+    filenameOverrideOption: Çıktı dosyası adını geçersiz kılmayı etkinleştir
+    formatSelectionEnabler: Video/ses formatları seçimini etkinleştirin
+    languageSelect: 'Dil'
+    lightThemeButton: Işık teması
+    noMTimeCheckbox: Dosya değiştirme zamanını ayarlamayın
+    overridesAnchor: Geçersiz kılmalar
+    pathOverrideOption: Çıkış yolu geçersiz kılmayı etkinleştir
+    rpcConnErr: RPC sunucusuna bağlanırken hata oluştu
+    selectFormatButton: Format seçin
+    serverAddressTitle: Sunucu adresi
+    serverPortTitle: Liman
+    settingsAnchor: Ayarlar
+    startButton: Başlangıç
+    statusReady: Hazır ya da değil
+    statusTitle: Durum
+    themeSelect: 'Tema'
+    toastConnected: 'Bağlı '
+    toastUpdated: Yt-dlp ikilisi güncellendi!
+    updateBinButton: Yt-dlp ikili dosyasını güncelle
+    urlInput: YouTube veya diğer desteklenen hizmet video URL'si
+  ukrainian:
+    abortAllButton: Відмінити все.
+    bgReminder: Коли ви закриєте цю сторінку, завантаження продовжиться у фоновому режимі.
+    customArgs: Увімкнути користувацькі аргументи yt-dlp (велика потужність = велика відповідальність)
+    customArgsInput: Користувацькі аргументи yt-dlp
+    customFilename: Користувацьке ім'я файлу (залиште порожнім, щоб використовувати за замовчуванням)
+    customPath: Спеціальний шлях
+    darkThemeButton: Темна тема
+    extractAudioCheckbox: Витягнути аудіо
+    filenameOverrideOption: Увімкнути перевизначення імені вихідного файлу
+    formatSelectionEnabler: Увімкнути вибір форматів відео/аудіо
+    languageSelect: 'Мова'
+    lightThemeButton: Світла тема
+    noMTimeCheckbox: Не встановлюйте час модифікації файлу
+    overridesAnchor: Перевизначення
+    pathOverrideOption: Увімкнути перевизначення шляху виводу
+    rpcConnErr: Помилка під час підключення до RPC-сервера
+    selectFormatButton: Виберіть формат
+    serverAddressTitle: Адреса сервера
+    serverPortTitle: Порт
+    settingsAnchor: Налаштування
+    startButton: Старт
+    statusReady: Готові або ні
+    statusTitle: Статус
+    themeSelect: 'Тема'
+    toastConnected: 'Підключено до '
+    toastUpdated: Оновлений бінарник yt-dlp!
+    updateBinButton: Оновлення бінарного файлу yt-dlp
+    urlInput: URL-адреса відео на YouTube або іншому підтримуваному сервісі
+  chinese:
+    abortAllButton: 全部中止
+    bgReminder: 一旦你关闭这个页面，下载将在后台继续。
+    customArgs: 启用自定义的yt-dlp参数（巨大的权力=巨大的责任）。
+    customArgsInput: 自定义 yt-dlp 参数
+    customFilename: 自定义文件名（留空以使用默认值）。
+    customPath: 自定义路径
+    darkThemeButton: 深色主题
+    extractAudioCheckbox: 提取音频
+    filenameOverrideOption: 启用输出文件名覆盖
+    formatSelectionEnabler: 启用视频/音频格式选择
+    languageSelect: '语言'
+    lightThemeButton: 灯光主题
+    noMTimeCheckbox: 不要设置文件修改时间
+    overridesAnchor: 覆盖
+    pathOverrideOption: 启用输出路径重写功能
+    rpcConnErr: 连接到RPC服务器时出错
+    selectFormatButton: 选择格式
+    serverAddressTitle: 服务器地址
+    serverPortTitle: 港口
+    settingsAnchor: 设置
+    startButton: 开始
+    statusReady: 准备或不准备
+    statusTitle: 状况
+    themeSelect: '主题'。'
+    toastConnected: '连接到 '
+    toastUpdated: 更新了yt-dlp二进制!
+    updateBinButton: 更新yt-dlp二进制
+    urlInput: YouTube或其他支持的服务视频URL
