@@ -90,7 +90,7 @@ languages:
     statusTitle: Estado
     startButton: Iniciar
     statusReady: Listo
-    abortAllButton: Abortar Todo
+    abortAllButton: Cancelar Todo
     updateBinButton: Actualizar el binario yt-dlp
     darkThemeButton: Tema oscuro
     lightThemeButton: Tema claro
@@ -101,7 +101,7 @@ languages:
     noMTimeCheckbox: No guardar el tiempo de modificación del archivo
     bgReminder: Si cierras esta página, la descarga continuará en segundo plano.
     toastConnected: 'Conectado a'
-    toastUpdated: ¡El binario yt-dlp esta actualizado!
+    toastUpdated: ¡El binario yt-dlp está actualizado!
     formatSelectionEnabler: Habilitar la selección de formatos de video/audio
     themeSelect: 'Tema'
     languageSelect: 'Idiomas'
@@ -110,7 +110,7 @@ languages:
     filenameOverrideOption: Sobreescribir el nombre del fichero
     customFilename: Nombre de archivo personalizado (en blanco para usar el predeterminado)
     customPath: Ruta personalizada
-    customArgs: Habilitar los argumentos yt-dlp personalizados (gran poder = grandes responsabilidades)
+    customArgs: Habilitar los argumentos yt-dlp personalizados (un gran poder conlleva una gran responsabilidad)
     customArgsInput: Argumentos yt-dlp personalizados
     rpcConnErr: Error al conectarse al servidor RPC
   russian:
