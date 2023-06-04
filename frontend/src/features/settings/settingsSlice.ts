@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
-export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spanish" | "korean" | "japanese"
+export type LanguageUnion = "english" | "chinese" | "russian" | "italian" | "spanish" | "korean" | "japanese" | "catalan"
 export type ThemeUnion = "light" | "dark"
 
 export interface SettingsState {
