@@ -30,13 +30,16 @@ import { Buffer } from 'buffer'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useSelector } from 'react-redux'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
-import { useObservable } from './hooks/observable'
-import { RootState } from './stores/store'
-import { DeleteRequest, DirectoryEntry } from './types'
-import { roundMiB } from './utils'
+import { useObservable } from '../hooks/observable'
+import { RootState } from '../stores/store'
+import { DeleteRequest, DirectoryEntry } from '../types'
+import { roundMiB } from '../utils'
+import { useNavigate } from 'react-router-dom'
+import { ffetch } from '../lib/httpClient'
 
 export default function Downloaded() {
   const settings = useSelector((state: RootState) => state.settings)
+  const navigate = useNavigate()
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -48,17 +51,20 @@ export default function Downloaded() {
 
   const [isPending, startTransition] = useTransition()
 
-  const fetcher = () => fetch(`${serverAddr}/downloaded`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      subdir: '',
-    })
-  })
-    .then(res => res.json())
-    .then(data => files$.next(data))
+  const fetcher = () => ffetch<DirectoryEntry[]>(
+    `${serverAddr}/archive/downloaded`,
+    (d) => files$.next(d),
+    () => navigate('/login'),
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        subdir: '',
+      })
+    }
+  )
 
   const fetcherSubfolder = (sub: string) => {
     const folders = sub.startsWith('/')
@@ -74,7 +80,7 @@ export default function Downloaded() {
       ? ['.', ..._upperLevel].join('/')
       : _upperLevel.join('/')
 
-    fetch(`${serverAddr}/downloaded`, {
+    fetch(`${serverAddr}/archive/downloaded`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -114,7 +120,7 @@ export default function Downloaded() {
   const deleteSelected = () => {
     Promise.all(selectable
       .filter(entry => entry.selected)
-      .map(entry => fetch(`${serverAddr}/delete`, {
+      .map(entry => fetch(`${serverAddr}/archive/delete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +139,7 @@ export default function Downloaded() {
 
 
   const onFileClick = (path: string) => startTransition(() => {
-    window.open(`${serverAddr}/d/${Buffer.from(path).toString('hex')}`)
+    window.open(`${serverAddr}/archive/d/${Buffer.from(path).toString('hex')}`)
   })
 
   const onFolderClick = (path: string) => startTransition(() => {

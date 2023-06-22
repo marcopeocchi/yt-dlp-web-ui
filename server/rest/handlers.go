@@ -11,8 +11,13 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
+)
+
+const (
+	TOKEN_COOKIE_NAME = "jwt"
 )
 
 type DirectoryEntry struct {
@@ -138,4 +143,53 @@ func SendFile(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.SendStatus(fiber.StatusUnauthorized)
+}
+
+type LoginRequest struct {
+	Secret string `json:"secret"`
+}
+
+func Login(ctx *fiber.Ctx) error {
+	req := new(LoginRequest)
+	err := ctx.BodyParser(req)
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	if config.Instance().GetConfig().RPCSecret != req.Secret {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"expiresAt": time.Now().Add(time.Minute * 30),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWTSECRET")))
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	ctx.Cookie(&fiber.Cookie{
+		Name:     TOKEN_COOKIE_NAME,
+		HTTPOnly: true,
+		Secure:   false,
+		Expires:  time.Now().Add(time.Hour * 24 * 30), // 30 days
+		Value:    tokenString,
+		Path:     "/",
+	})
+
+	return ctx.SendStatus(fiber.StatusOK)
+}
+
+func Logout(ctx *fiber.Ctx) error {
+	ctx.Cookie(&fiber.Cookie{
+		Name:     TOKEN_COOKIE_NAME,
+		HTTPOnly: true,
+		Secure:   false,
+		Expires:  time.Now(),
+		Value:    "",
+		Path:     "/",
+	})
+
+	return ctx.SendStatus(fiber.StatusOK)
 }

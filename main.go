@@ -16,15 +16,22 @@ var (
 	downloadPath   string
 	downloaderPath string
 
+	requireAuth bool
+	rpcSecret   string
 	//go:embed frontend/dist
 	frontend embed.FS
 )
 
 func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
+
 	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
-	flag.StringVar(&downloadPath, "out", ".", "Directory where files will be saved")
+	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
+
+	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
+	flag.StringVar(&rpcSecret, "secret", "", "Secret required for auth")
+
 	flag.Parse()
 }
 
@@ -40,6 +47,9 @@ func main() {
 	c.SetPort(port)
 	c.DownloadPath(downloadPath)
 	c.DownloaderPath(downloaderPath)
+
+	c.RequireAuth(requireAuth)
+	c.RPCSecret(rpcSecret)
 
 	if configFile != "" {
 		c.LoadFromFile(configFile)

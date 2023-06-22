@@ -24,17 +24,17 @@ import {
 import { Buffer } from 'buffer'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { DownloadsCardView } from './components/DownloadsCardView'
-import { DownloadsListView } from './components/DownloadsListView'
-import FormatsGrid from './components/FormatsGrid'
-import { CliArguments } from './features/core/argsParser'
-import I18nBuilder from './features/core/intl'
-import { RPCClient, socket$ } from './features/core/rpcClient'
-import { toggleListView } from './features/settings/settingsSlice'
-import { connected, setFreeSpace } from './features/status/statusSlice'
-import { RootState } from './stores/store'
-import type { DLMetadata, RPCResponse, RPCResult } from './types'
-import { isValidURL, toFormatArgs } from './utils'
+import { DownloadsCardView } from '../components/DownloadsCardView'
+import { DownloadsListView } from '../components/DownloadsListView'
+import FormatsGrid from '../components/FormatsGrid'
+import { CliArguments } from '../lib/argsParser'
+import I18nBuilder from '../lib/intl'
+import { RPCClient, socket$ } from '../lib/rpcClient'
+import { toggleListView } from '../features/settings/settingsSlice'
+import { connected, setFreeSpace } from '../features/status/statusSlice'
+import { RootState } from '../stores/store'
+import type { DLMetadata, RPCResponse, RPCResult } from '../types'
+import { isValidURL, toFormatArgs } from '../utils'
 
 export default function Home() {
   // redux state
@@ -76,24 +76,24 @@ export default function Home() {
 
   /* WebSocket connect event handler*/
   useEffect(() => {
-    if (!status.connected) {
-      const sub = socket$.subscribe({
-        next: () => {
-          dispatch(connected())
-          setCustomArgs(localStorage.getItem('last-input-args') ?? '')
-          setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
-        },
-        error: () => {
-          setSocketHasError(true)
-          setShowBackdrop(false)
-        },
-        complete: () => {
-          setSocketHasError(true)
-          setShowBackdrop(false)
-        },
-      })
-      return () => sub.unsubscribe()
-    }
+    if (status.connected) { return }
+
+    const sub = socket$.subscribe({
+      next: () => {
+        dispatch(connected())
+        setCustomArgs(localStorage.getItem('last-input-args') ?? '')
+        setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
+      },
+      error: () => {
+        setSocketHasError(true)
+        setShowBackdrop(false)
+      },
+      complete: () => {
+        setSocketHasError(true)
+        setShowBackdrop(false)
+      },
+    })
+    return () => sub.unsubscribe()
   }, [socket$, status.connected])
 
   useEffect(() => {
@@ -109,22 +109,22 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    if (status.connected) {
-      const sub = socket$.subscribe((event: RPCResponse<RPCResult[]>) => {
-        switch (typeof event.result) {
-          case 'object':
-            setActiveDownloads(
-              (event.result ?? [])
-                .filter((r) => !!r.info.url)
-                .sort((a, b) => a.info.title.localeCompare(b.info.title))
-            )
-            break
-          default:
-            break
-        }
-      })
-      return () => sub.unsubscribe()
-    }
+    if (!status.connected) { return }
+
+    const sub = socket$.subscribe((event: RPCResponse<RPCResult[]>) => {
+      switch (typeof event.result) {
+        case 'object':
+          setActiveDownloads(
+            (event.result ?? [])
+              .filter((r) => !!r.info.url)
+              .sort((a, b) => a.info.title.localeCompare(b.info.title))
+          )
+          break
+        default:
+          break
+      }
+    })
+    return () => sub.unsubscribe()
   }, [socket$, status.connected])
 
   useEffect(() => {
@@ -166,7 +166,7 @@ export default function Home() {
       resetInput()
       setShowBackdrop(true)
       setDownloadFormats(undefined)
-    }, 250);
+    }, 250)
   }
 
   /**
@@ -246,7 +246,7 @@ export default function Home() {
   const resetInput = () => {
     urlInputRef.current!.value = '';
     if (customFilenameInputRef.current) {
-      customFilenameInputRef.current!.value = '';
+      customFilenameInputRef.current!.value = ''
     }
   }
 
@@ -254,7 +254,7 @@ export default function Home() {
 
   const Input = styled('input')({
     display: 'none',
-  });
+  })
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
@@ -423,5 +423,5 @@ export default function Home() {
         />
       </SpeedDial>
     </Container>
-  );
+  )
 }

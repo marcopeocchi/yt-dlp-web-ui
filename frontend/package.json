@@ -14,6 +14,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.2",
     "@reduxjs/toolkit": "^1.9.5",
+    "fp-ts": "^2.16.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",

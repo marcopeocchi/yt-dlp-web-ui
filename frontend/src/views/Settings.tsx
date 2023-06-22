@@ -26,9 +26,9 @@ import {
   map,
   takeWhile
 } from 'rxjs'
-import { CliArguments } from './features/core/argsParser'
-import I18nBuilder from './features/core/intl'
-import { RPCClient } from './features/core/rpcClient'
+import { CliArguments } from '../lib/argsParser'
+import I18nBuilder from '../lib/intl'
+import { RPCClient } from '../lib/rpcClient'
 import {
   LanguageUnion,
   ThemeUnion,
@@ -41,10 +41,10 @@ import {
   setServerAddr,
   setServerPort,
   setTheme
-} from './features/settings/settingsSlice'
-import { updated } from './features/status/statusSlice'
-import { RootState } from './stores/store'
-import { validateDomain, validateIP } from './utils'
+} from '../features/settings/settingsSlice'
+import { updated } from '../features/status/statusSlice'
+import { RootState } from '../stores/store'
+import { validateDomain, validateIP } from '../utils'
 
 export default function Settings() {
   const dispatch = useDispatch()

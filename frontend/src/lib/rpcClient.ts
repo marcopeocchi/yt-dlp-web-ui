@@ -1,7 +1,7 @@
-import type { DLMetadata, RPCRequest, RPCResponse } from '../../types'
+import type { DLMetadata, RPCRequest, RPCResponse } from '../types'
 
 import { webSocket } from 'rxjs/webSocket'
-import { getHttpRPCEndpoint, getWebSocketEndpoint } from '../../utils'
+import { getHttpRPCEndpoint, getWebSocketEndpoint } from '../utils'
 
 export const socket$ = webSocket<any>(getWebSocketEndpoint())
 

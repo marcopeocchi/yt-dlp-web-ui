@@ -1,39 +1,39 @@
 export class CliArguments {
-    private _extractAudio: boolean;
-    private _noMTime: boolean;
-    private _proxy: string;
+    private _extractAudio: boolean
+    private _noMTime: boolean
+    private _proxy: string
 
-    constructor(extractAudio = false, noMTime = false) {
-        this._extractAudio = extractAudio;
-        this._noMTime = noMTime;
+    constructor(extractAudio = false, noMTime = true) {
+        this._extractAudio = extractAudio
+        this._noMTime = noMTime
         this._proxy = ""
     }
 
     public get extractAudio(): boolean {
-        return this._extractAudio;
+        return this._extractAudio
     }
 
     public toggleExtractAudio() {
-        this._extractAudio = !this._extractAudio;
-        return this;
+        this._extractAudio = !this._extractAudio
+        return this
     }
 
     public disableExtractAudio() {
-        this._extractAudio = false;
-        return this;
+        this._extractAudio = false
+        return this
     }
 
     public get noMTime(): boolean {
-        return this._noMTime;
+        return this._noMTime
     }
 
     public toggleNoMTime() {
-        this._noMTime = !this._noMTime;
-        return this;
+        this._noMTime = !this._noMTime
+        return this
     }
 
     public toString(): string {
-        let args = '';
+        let args = ''
 
         if (this._extractAudio) {
             args += '-x '
@@ -43,19 +43,19 @@ export class CliArguments {
             args += '--no-mtime '
         }
 
-        return args.trim();
+        return args.trim()
     }
 
     public fromString(str: string): CliArguments {
         if (str) {
             if (str.includes('-x')) {
-                this._extractAudio = true;
+                this._extractAudio = true
             }
 
             if (str.includes('--no-mtime')) {
-                this._noMTime = true;
+                this._noMTime = true
             }
         }
-        return this;
+        return this
     }
 }

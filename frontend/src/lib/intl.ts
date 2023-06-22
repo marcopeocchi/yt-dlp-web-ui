@@ -1,5 +1,5 @@
 // @ts-nocheck
-import i18n from "../../assets/i18n.yaml"
+import i18n from "../assets/i18n.yaml"
 
 export default class I18nBuilder {
     private language: string

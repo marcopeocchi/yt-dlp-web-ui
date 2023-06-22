@@ -17,6 +17,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/websocket/v2"
+	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 )
 
@@ -35,21 +36,32 @@ func RunBlocking(port int, frontend fs.FS) {
 		Root: http.FS(frontend),
 	}))
 
+	// Client side routes
 	app.Get("/settings", func(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	})
 	app.Get("/archive", func(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	})
+	app.Get("/login", func(c *fiber.Ctx) error {
+		return c.Redirect("/")
+	})
 
-	app.Post("/downloaded", rest.ListDownloaded)
+	// Archive routes
+	archive := app.Group("archive", middlewares.Authenticated)
+	archive.Post("/downloaded", rest.ListDownloaded)
+	archive.Post("/delete", rest.DeleteFile)
+	archive.Get("/d/:id", rest.SendFile)
 
-	app.Post("/delete", rest.DeleteFile)
-	app.Get("/d/:id", rest.SendFile)
+	// Authentication routes
+	app.Post("/auth/login", rest.Login)
+	app.Get("/auth/logout", rest.Logout)
 
 	// RPC handlers
 	// websocket
-	app.Get("/ws-rpc", websocket.New(func(c *websocket.Conn) {
+	rpc := app.Group("/rpc", middlewares.Authenticated)
+
+	rpc.Get("/ws", websocket.New(func(c *websocket.Conn) {
 		c.WriteMessage(websocket.TextMessage, []byte(`{
 			"status": "connected"
 		}`))
@@ -69,7 +81,7 @@ func RunBlocking(port int, frontend fs.FS) {
 		}
 	}))
 	// http-post
-	app.Post("/http-rpc", func(c *fiber.Ctx) error {
+	rpc.Post("/http", func(c *fiber.Ctx) error {
 		reader := c.Context().RequestBodyStream()
 		writer := c.Response().BodyWriter()
 

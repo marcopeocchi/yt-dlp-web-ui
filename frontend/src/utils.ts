@@ -4,8 +4,8 @@
  * @returns ip validity test
  */
 export function validateIP(ipAddr: string): boolean {
-    let ipRegex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm
-    return ipRegex.test(ipAddr)
+  let ipRegex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm
+  return ipRegex.test(ipAddr)
 }
 
 /**
@@ -18,8 +18,8 @@ export function validateIP(ipAddr: string): boolean {
  * @returns domain validity test
  */
 export function validateDomain(domainName: string): boolean {
-    let domainRegex = /[^@ \t\r\n]+.[^@ \t\r\n]+\.[^@ \t\r\n]+/
-    return domainRegex.test(domainName) || domainName === 'localhost'
+  let domainRegex = /[^@ \t\r\n]+.[^@ \t\r\n]+\.[^@ \t\r\n]+/
+  return domainRegex.test(domainName) || domainName === 'localhost'
 }
 
 /**
@@ -34,15 +34,15 @@ export function validateDomain(domainName: string): boolean {
  * @returns url validity test
  */
 export function isValidURL(url: string): boolean {
-    let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
-    return urlRegex.test(url)
+  let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
+  return urlRegex.test(url)
 }
 
 export function ellipsis(str: string, lim: number): string {
-    if (str) {
-        return str.length > lim ? `${str.substring(0, lim)}...` : str
-    }
-    return ''
+  if (str) {
+    return str.length > lim ? `${str.substring(0, lim)}...` : str
+  }
+  return ''
 }
 
 /**
@@ -51,43 +51,43 @@ export function ellipsis(str: string, lim: number): string {
  * @returns download speed in KiB/s
  */
 export function detectSpeed(str: string): number {
-    let effective = str.match(/[\d,]+(\.\d+)?/)![0]
-    const unit = str.replace(effective, '')
-    switch (unit) {
-        case 'MiB/s':
-            return Number(effective) * 1000
-        case 'KiB/s':
-            return Number(effective)
-        default:
-            return 0
-    }
+  let effective = str.match(/[\d,]+(\.\d+)?/)![0]
+  const unit = str.replace(effective, '')
+  switch (unit) {
+    case 'MiB/s':
+      return Number(effective) * 1000
+    case 'KiB/s':
+      return Number(effective)
+    default:
+      return 0
+  }
 }
 
 export function toFormatArgs(codes: string[]): string {
-    if (codes.length > 1) {
-        return codes.reduce((v, a) => ` -f ${v}+${a}`)
-    }
-    if (codes.length === 1) {
-        return ` -f ${codes[0]}`;
-    }
-    return '';
+  if (codes.length > 1) {
+    return codes.reduce((v, a) => ` -f ${v}+${a}`)
+  }
+  if (codes.length === 1) {
+    return ` -f ${codes[0]}`;
+  }
+  return '';
 }
 
 export function getWebSocketEndpoint() {
-    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-    return `${protocol}://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/ws-rpc`
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+  return `${protocol}://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/rpc/ws`
 }
 
 export function getHttpRPCEndpoint() {
-    return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/http-rpc`
+  return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/rpc/http`
 }
 
 export function getHttpEndpoint() {
-    return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
+  return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
 }
 
 export function formatGiB(bytes: number) {
-    return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
+  return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
 }
 
 export const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`

@@ -13,6 +13,8 @@ type serverConfig struct {
 	Port           int    `yaml:"port"`
 	DownloadPath   string `yaml:"downloadPath"`
 	DownloaderPath string `yaml:"downloaderPath"`
+	RequireAuth    bool   `yaml:"require_auth"`
+	RPCSecret      string `yaml:"rpc_secret"`
 }
 
 type config struct {
@@ -44,6 +46,13 @@ func (c *config) DownloadPath(path string) {
 
 func (c *config) DownloaderPath(path string) {
 	c.cfg.DownloaderPath = path
+}
+
+func (c *config) RequireAuth(value bool) {
+	c.cfg.RequireAuth = value
+}
+func (c *config) RPCSecret(secret string) {
+	c.cfg.RPCSecret = secret
 }
 
 var instance *config
