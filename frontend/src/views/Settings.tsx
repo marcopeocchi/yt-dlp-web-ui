@@ -17,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Subject,
@@ -26,9 +26,6 @@ import {
   map,
   takeWhile
 } from 'rxjs'
-import { CliArguments } from '../lib/argsParser'
-import I18nBuilder from '../lib/intl'
-import { RPCClient } from '../lib/rpcClient'
 import {
   LanguageUnion,
   ThemeUnion,
@@ -43,6 +40,9 @@ import {
   setTheme
 } from '../features/settings/settingsSlice'
 import { updated } from '../features/status/statusSlice'
+import { CliArguments } from '../lib/argsParser'
+import { I18nContext } from '../providers/i18nProvider'
+import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import { validateDomain, validateIP } from '../utils'
 
@@ -54,9 +54,9 @@ export default function Settings() {
 
   const [invalidIP, setInvalidIP] = useState(false);
 
-  const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
+  const { i18n } = useContext(I18nContext)
+  const { client } = useContext(RPCClientContext)
 
-  const client = useMemo(() => new RPCClient(), [])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [])
 
   const serverAddr$ = useMemo(() => new Subject<string>(), [])

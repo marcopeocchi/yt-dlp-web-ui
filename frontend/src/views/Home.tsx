@@ -12,7 +12,7 @@ import {
   SpeedDialIcon,
   styled
 } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import DownloadDialog from '../components/DownloadDialog'
 import { DownloadsCardView } from '../components/DownloadsCardView'
@@ -20,8 +20,9 @@ import { DownloadsListView } from '../components/DownloadsListView'
 import Splash from '../components/Splash'
 import { toggleListView } from '../features/settings/settingsSlice'
 import { connected, setFreeSpace } from '../features/status/statusSlice'
-import I18nBuilder from '../lib/intl'
-import { RPCClient, socket$ } from '../lib/rpcClient'
+import { socket$ } from '../lib/rpcClient'
+import { I18nContext } from '../providers/i18nProvider'
+import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { RPCResponse, RPCResult } from '../types'
 import { dateTimeComparatorFunc } from '../utils'
@@ -41,9 +42,9 @@ export default function Home() {
   const [openDialog, setOpenDialog] = useState(false)
   const [socketHasError, setSocketHasError] = useState(false)
 
-  // memos
-  const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
-  const client = useMemo(() => new RPCClient(), [settings.serverAddr, settings.serverPort])
+  // context
+  const { i18n } = useContext(I18nContext)
+  const { client } = useContext(RPCClientContext)
 
   /* -------------------- Effects -------------------- */
 
@@ -119,7 +120,6 @@ export default function Home() {
     }
     client.killAll()
   }
-
 
   /* -------------------- styled components -------------------- */
 

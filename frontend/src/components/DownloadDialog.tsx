@@ -21,12 +21,12 @@ import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import { Buffer } from 'buffer'
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import FormatsGrid from '../components/FormatsGrid'
 import { CliArguments } from '../lib/argsParser'
-import I18nBuilder from '../lib/intl'
-import { RPCClient } from '../lib/rpcClient'
+import { I18nContext } from '../providers/i18nProvider'
+import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
@@ -67,9 +67,11 @@ export default function DownloadDialog({ open, onClose }: Props) {
   const [workingUrl, setWorkingUrl] = useState('')
 
   // memos
-  const i18n = useMemo(() => new I18nBuilder(settings.language), [settings.language])
-  const client = useMemo(() => new RPCClient(), [settings.serverAddr, settings.serverPort])
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
+
+  // context
+  const { i18n } = useContext(I18nContext)
+  const { client } = useContext(RPCClientContext)
 
   // refs
   const urlInputRef = useRef<HTMLInputElement>(null)

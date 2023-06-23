@@ -27,7 +27,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 
 import { Buffer } from 'buffer'
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useContext, useEffect, useMemo, useState, useTransition } from 'react'
 import { useSelector } from 'react-redux'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { useObservable } from '../hooks/observable'
@@ -36,10 +36,13 @@ import { DeleteRequest, DirectoryEntry } from '../types'
 import { roundMiB } from '../utils'
 import { useNavigate } from 'react-router-dom'
 import { ffetch } from '../lib/httpClient'
+import { I18nContext } from '../providers/i18nProvider'
 
 export default function Downloaded() {
   const settings = useSelector((state: RootState) => state.settings)
   const navigate = useNavigate()
+
+  const { i18n } = useContext(I18nContext)
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -160,7 +163,7 @@ export default function Downloaded() {
         flexDirection: 'column',
       }}>
         <Typography py={1} variant="h5" color="primary">
-          {'Archive'}
+          {i18n.t('archiveTitle')}
         </Typography>
         <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
           {selectable.length === 0 && 'No files found'}

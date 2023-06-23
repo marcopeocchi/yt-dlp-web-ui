@@ -29,6 +29,8 @@ languages:
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
     rpcConnErr: Error while conencting to RPC server
+    splashText: No active downloads
+    archiveTitle: Archive
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -57,6 +59,8 @@ languages:
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
     rpcConnErr: Error nella connessione al server RPC
+    splashText: Nessun download attivo
+    archiveTitle: Archivio
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -85,6 +89,8 @@ languages:
     customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
     customArgsInput: 自定义 yt-dlp 参数
     rpcConnErr: Error while conencting to RPC server
+    splashText: No active downloads
+    archiveTitle: Archive
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -113,6 +119,8 @@ languages:
     customArgs: Habilitar los argumentos yt-dlp personalizados (un gran poder conlleva una gran responsabilidad)
     customArgsInput: Argumentos yt-dlp personalizados
     rpcConnErr: Error al conectarse al servidor RPC
+    splashText: No active downloads
+    archiveTitle: Archive
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -141,6 +149,8 @@ languages:
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
     rpcConnErr: Error while conencting to RPC server
+    splashText: No active downloads
+    archiveTitle: Archive
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -169,6 +179,8 @@ languages:
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
     rpcConnErr: Error while conencting to RPC server
+    splashText: No active downloads
+    archiveTitle: Archive
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -198,6 +210,8 @@ languages:
     customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
     customArgsInput: yt-dlpのオプション
     rpcConnErr: Error while conencting to RPC server
+    splashText: No active downloads
+    archiveTitle: Archive
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -226,3 +240,5 @@ languages:
     customArgs: Habilitar els arguments yt-dlp personalitzats (un gran poder comporta una gran responsabilitat)
     customArgsInput: Arguments yt-dlp personalitzats
     rpcConnErr: Error en connectar-se al servidor RPC
+    splashText: No active downloads
+    archiveTitle: Archive

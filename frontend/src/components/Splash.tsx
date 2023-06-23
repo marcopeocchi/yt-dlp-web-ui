@@ -1,5 +1,7 @@
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import { Container, SvgIcon, Typography, styled } from '@mui/material'
+import { useContext } from 'react'
+import { I18nContext } from '../providers/i18nProvider'
 
 const FlexContainer = styled(Container)({
   display: 'flex',
@@ -19,6 +21,8 @@ const Title = styled(Typography)({
 })
 
 export default function Splash() {
+  const { i18n } = useContext(I18nContext)
+
   return (
     <FlexContainer>
       <Title fontWeight={'500'} fontSize={72} color={'gray'}>
@@ -27,7 +31,7 @@ export default function Splash() {
         </SvgIcon>
       </Title>
       <Title fontWeight={'500'} fontSize={36} color={'gray'}>
-        No active downloads
+        {i18n.t('splashText')}
       </Title>
     </FlexContainer>
   )
