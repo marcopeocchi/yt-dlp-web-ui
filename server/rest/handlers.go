@@ -160,8 +160,10 @@ func Login(ctx *fiber.Ctx) error {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
 
+	expiresAt := time.Now().Add(time.Hour * 24 * 30)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"expiresAt": time.Now().Add(time.Minute * 30),
+		"expiresAt": expiresAt,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
@@ -173,7 +175,7 @@ func Login(ctx *fiber.Ctx) error {
 		Name:     TOKEN_COOKIE_NAME,
 		HTTPOnly: true,
 		Secure:   false,
-		Expires:  time.Now().Add(time.Hour * 24 * 30), // 30 days
+		Expires:  expiresAt, // 30 days
 		Value:    tokenString,
 		Path:     "/",
 	})

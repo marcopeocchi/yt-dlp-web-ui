@@ -95,7 +95,7 @@ export function formatGiB(bytes: number) {
 export const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`
 export const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`
 
-export const dateTimeComparatorFunc = (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+export const datetimeCompareFunc = (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
 
 export function isRPCResponse(object: any): object is RPCResponse<any> {
   return 'result' in object && 'id' in object

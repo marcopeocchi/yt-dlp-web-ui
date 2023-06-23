@@ -24,7 +24,7 @@ import { I18nContext } from '../providers/i18nProvider'
 import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { RPCResponse, RPCResult } from '../types'
-import { dateTimeComparatorFunc, isRPCResponse } from '../utils'
+import { datetimeCompareFunc, isRPCResponse } from '../utils'
 
 export default function Home() {
   // redux state
@@ -87,7 +87,7 @@ export default function Home() {
 
       setActiveDownloads((event.result ?? [])
         .filter(f => !!f.info.url)
-        .sort((a, b) => dateTimeComparatorFunc(
+        .sort((a, b) => datetimeCompareFunc(
           b.info.created_at,
           a.info.created_at,
         )))
