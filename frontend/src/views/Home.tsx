@@ -24,7 +24,7 @@ import { I18nContext } from '../providers/i18nProvider'
 import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { RPCResponse, RPCResult } from '../types'
-import { dateTimeComparatorFunc } from '../utils'
+import { dateTimeComparatorFunc, isRPCResponse } from '../utils'
 
 export default function Home() {
   // redux state
@@ -83,20 +83,14 @@ export default function Home() {
     if (!status.connected) { return }
 
     const sub = socket$.subscribe((event: RPCResponse<RPCResult[]>) => {
-      switch (typeof event.result) {
-        case 'object':
-          setActiveDownloads(
-            (event.result ?? [])
-              .filter((r) => !!r.info.url)
-              .sort((a, b) => dateTimeComparatorFunc(
-                b.info.created_at,
-                a.info.created_at,
-              ))
-          )
-          break
-        default:
-          break
-      }
+      if (!isRPCResponse(event)) { return }
+
+      setActiveDownloads((event.result ?? [])
+        .filter(f => !!f.info.url)
+        .sort((a, b) => dateTimeComparatorFunc(
+          b.info.created_at,
+          a.info.created_at,
+        )))
     })
     return () => sub.unsubscribe()
   }, [socket$, status.connected])
@@ -105,7 +99,7 @@ export default function Home() {
     if (activeDownloads && activeDownloads.length >= 0) {
       setShowBackdrop(false)
     }
-  }, [activeDownloads?.length])
+  }, [activeDownloads])
 
   /**
    * Abort a specific download if id's provided, other wise abort all running ones.

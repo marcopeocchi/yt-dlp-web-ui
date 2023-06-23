@@ -34,7 +34,7 @@ import Drawer from './components/Drawer'
 import Logout from './components/Logout'
 import ThemeToggler from './components/ThemeToggler'
 import I18nProvider from './providers/i18nProvider'
-import RPCCLientProvider from './providers/rpcClientProvider'
+import RPCClientProvider from './providers/rpcClientProvider'
 import { formatGiB } from './utils'
 
 export default function Layout() {
@@ -62,7 +62,7 @@ export default function Layout() {
   return (
     <ThemeProvider theme={theme}>
       <I18nProvider>
-        <RPCCLientProvider>
+        <RPCClientProvider>
           <Box sx={{ display: 'flex' }}>
             <CssBaseline />
             <AppBar position="absolute" open={open}>
@@ -184,7 +184,7 @@ export default function Layout() {
               <Outlet />
             </Box>
           </Box>
-        </RPCCLientProvider>
+        </RPCClientProvider>
       </I18nProvider>
     </ThemeProvider>
   )

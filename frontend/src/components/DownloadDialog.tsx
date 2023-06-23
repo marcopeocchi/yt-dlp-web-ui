@@ -49,7 +49,6 @@ export default function DownloadDialog({ open, onClose }: Props) {
   // redux state
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
-  const dispatch = useDispatch()
 
   // ephemeral state
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
@@ -67,7 +66,8 @@ export default function DownloadDialog({ open, onClose }: Props) {
   const [workingUrl, setWorkingUrl] = useState('')
 
   // memos
-  const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
+  const cliArgs = useMemo(() =>
+    new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
 
   // context
   const { i18n } = useContext(I18nContext)
@@ -210,7 +210,7 @@ export default function DownloadDialog({ open, onClose }: Props) {
             </Typography>
           </Toolbar>
         </AppBar>
-        <Container sx={{ mt: 4 }}>
+        <Container sx={{ my: 4 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Paper

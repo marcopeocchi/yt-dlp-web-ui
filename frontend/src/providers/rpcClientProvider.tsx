@@ -1,7 +1,7 @@
 import { createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RPCClient } from '../lib/rpcClient'
-import { RootState } from '../stores/store'
+import type { RootState } from '../stores/store'
 
 type Props = {
   children: React.ReactNode
@@ -15,7 +15,7 @@ export const RPCClientContext = createContext<Context>({
   client: new RPCClient()
 })
 
-export default function RPCCLientProvider({ children }: Props) {
+export default function RPCClientProvider({ children }: Props) {
   const settings = useSelector((state: RootState) => state.settings)
 
   const client = useMemo(() => new RPCClient(), [

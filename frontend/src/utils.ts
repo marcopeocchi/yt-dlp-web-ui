@@ -1,3 +1,5 @@
+import type { RPCResponse } from "./types"
+
 /**
  * Validate an ip v4 via regex
  * @param {string} ipAddr 
@@ -68,9 +70,9 @@ export function toFormatArgs(codes: string[]): string {
     return codes.reduce((v, a) => ` -f ${v}+${a}`)
   }
   if (codes.length === 1) {
-    return ` -f ${codes[0]}`;
+    return ` -f ${codes[0]}`
   }
-  return '';
+  return ''
 }
 
 export function getWebSocketEndpoint() {
@@ -94,3 +96,7 @@ export const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} Mi
 export const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`
 
 export const dateTimeComparatorFunc = (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+
+export function isRPCResponse(object: any): object is RPCResponse<any> {
+  return 'result' in object && 'id' in object
+}
