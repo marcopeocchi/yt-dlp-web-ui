@@ -23,7 +23,7 @@ export function DownloadsListView({ downloads, abortFunction }: Props) {
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
       <Grid item xs={12}>
-        <TableContainer component={Paper} sx={{ minHeight: '65vh' }} elevation={2}>
+        <TableContainer component={Paper} sx={{ minHeight: '80vh' }} elevation={2}>
           <Table>
             <TableHead>
               <TableRow>
