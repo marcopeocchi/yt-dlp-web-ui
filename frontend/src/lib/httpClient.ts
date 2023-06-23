@@ -1,11 +1,3 @@
-import * as E from 'fp-ts/Either'
-import { pipe } from 'fp-ts/function'
-
-type FetchInit = {
-  url: string,
-  opt?: RequestInit
-}
-
 export async function ffetch<T>(
   url: string,
   onSuccess: (res: T) => void,
