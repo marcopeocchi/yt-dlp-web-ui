@@ -18,7 +18,7 @@ export default function Logout() {
       <ListItemIcon>
         <LogoutIcon />
       </ListItemIcon>
-      <ListItemText primary="Authentication" />
+      <ListItemText primary="RPC authentication" />
     </ListItemButton>
   )
 }

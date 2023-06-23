@@ -24,6 +24,7 @@ import I18nBuilder from '../lib/intl'
 import { RPCClient, socket$ } from '../lib/rpcClient'
 import { RootState } from '../stores/store'
 import type { RPCResponse, RPCResult } from '../types'
+import { dateTimeComparatorFunc } from '../utils'
 
 export default function Home() {
   // redux state
@@ -87,7 +88,10 @@ export default function Home() {
           setActiveDownloads(
             (event.result ?? [])
               .filter((r) => !!r.info.url)
-              .sort((a, b) => a.info.title.localeCompare(b.info.title))
+              .sort((a, b) => dateTimeComparatorFunc(
+                b.info.created_at,
+                a.info.created_at,
+              ))
           )
           break
         default:

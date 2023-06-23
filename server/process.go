@@ -116,7 +116,10 @@ func (p *Process) Start(path, filename string) {
 		if err != nil {
 			log.Println("Cannot retrieve info for", p.url)
 		}
-		info := DownloadInfo{URL: p.url}
+		info := DownloadInfo{
+			URL:       p.url,
+			CreatedAt: time.Now(),
+		}
 		json.Unmarshal(stdout, &info)
 		p.mem.UpdateInfo(p.id, info)
 	}()
