@@ -29,7 +29,7 @@ var Authenticated = func(c *fiber.Ctx) error {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return []byte(os.Getenv("JWTSECRET")), nil
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {

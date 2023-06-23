@@ -27,5 +27,7 @@ RUN apk update && \
 
 COPY --from=build /usr/src/yt-dlp-webui/yt-dlp-webui /app
 
+ENV JWT_SECRET=secret
+
 EXPOSE 3033
-CMD [ "./yt-dlp-webui" , "--out", "/downloads" ]
+ENTRYPOINT [ "./yt-dlp-webui" , "--out", "/downloads" ]

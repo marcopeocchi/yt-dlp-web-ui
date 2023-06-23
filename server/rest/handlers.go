@@ -164,7 +164,7 @@ func Login(ctx *fiber.Ctx) error {
 		"expiresAt": time.Now().Add(time.Minute * 30),
 	})
 
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWTSECRET")))
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
 	}

@@ -43,9 +43,7 @@ export default function Login() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        secret
-      })
+      body: JSON.stringify({ secret })
     })
     res.ok ? navigate('/') : setFormHasError(true)
   }
@@ -59,6 +57,11 @@ export default function Login() {
           </Title>
           <Title fontWeight={'500'} fontSize={16} color={'gray'}>
             Authentication token will expire after 30 days.
+          </Title>
+          <Title fontWeight={'500'} fontSize={16} color={'gray'}>
+            In order to enable RPC authentication append the --auth
+            <br />
+            and --secret [secret] flags.
           </Title>
           <TextField
             id="outlined-password-input"
