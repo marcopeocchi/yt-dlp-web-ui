@@ -107,6 +107,17 @@ docker build -t yt-dlp-webui .
 docker run -d -p 3033:3033 -v <your dir>:/downloads yt-dlp-webui
 ```
 
+If you opt to add RPC authentication...
+```sh
+docker run -d \
+    -p 3033:3033 \
+    -e JWT_SECRET randomsecret
+    -v /path/to/downloads:/downloads \
+    marcobaobao/yt-dlp-webui \
+    --auth \
+    --secret your_rpc_secret
+```
+
 ## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
 
 ```sh
@@ -134,6 +145,10 @@ The config file **will overwrite what have been passed as cli argument**.
 port: 8989
 downloadPath: /home/ren/archive
 downloaderPath: /usr/local/bin/yt-dlp
+
+# Optional settings
+require_auth: true
+rpc_secret: my_random_secret
 ```
 
 ### Systemd integration
