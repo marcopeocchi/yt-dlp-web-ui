@@ -86,33 +86,33 @@ languages:
     customArgsInput: 自定义 yt-dlp 参数
     rpcConnErr: Error while conencting to RPC server
   spanish:
-    urlInput: YouTube or other supported service video url
-    statusTitle: Status
-    startButton: Start
-    statusReady: Ready
-    abortAllButton: Abort All
-    updateBinButton: Update yt-dlp binary
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    serverPortTitle: Port
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
-    toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
-    formatSelectionEnabler: Enable video/audio formats selection
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
+    urlInput: URL de YouTube u otro servicio compatible
+    statusTitle: Estado
+    startButton: Iniciar
+    statusReady: Listo
+    abortAllButton: Cancelar Todo
+    updateBinButton: Actualizar el binario yt-dlp
+    darkThemeButton: Tema oscuro
+    lightThemeButton: Tema claro
+    settingsAnchor: Ajustes
+    serverAddressTitle: Dirección del servidor
+    serverPortTitle: Puerto
+    extractAudioCheckbox: Extraer audio
+    noMTimeCheckbox: No guardar el tiempo de modificación del archivo
+    bgReminder: Si cierras esta página, la descarga continuará en segundo plano.
+    toastConnected: 'Conectado a'
+    toastUpdated: ¡El binario yt-dlp está actualizado!
+    formatSelectionEnabler: Habilitar la selección de formatos de video/audio
+    themeSelect: 'Tema'
+    languageSelect: 'Idiomas'
+    overridesAnchor: Anulaciones
+    pathOverrideOption: Sobreescribir en la ruta de salida
+    filenameOverrideOption: Sobreescribir el nombre del fichero
+    customFilename: Nombre de archivo personalizado (en blanco para usar el predeterminado)
+    customPath: Ruta personalizada
+    customArgs: Habilitar los argumentos yt-dlp personalizados (un gran poder conlleva una gran responsabilidad)
+    customArgsInput: Argumentos yt-dlp personalizados
+    rpcConnErr: Error al conectarse al servidor RPC
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -198,3 +198,31 @@ languages:
     customArgs: yt-dlpのオプションの有効化 (最適設定にする場合)
     customArgsInput: yt-dlpのオプション
     rpcConnErr: Error while conencting to RPC server
+  catalan:
+    urlInput: URL de YouTube o d'un altre servei compatible
+    statusTitle: Estat
+    startButton: Iniciar
+    statusReady: Llest
+    abortAllButton: Cancel·lar Tot
+    updateBinButton: Actualitzar el binari yt-dlp
+    darkThemeButton: Tema fosc
+    lightThemeButton: Tema clar
+    settingsAnchor: Configuració
+    serverAddressTitle: Direcció del servidor
+    serverPortTitle: Port
+    extractAudioCheckbox: Extreure àudio
+    noMTimeCheckbox: No guardar el temps de modificació de l'arxiu
+    bgReminder: Si tanques aquesta pàgina, la descàrrega continuarà en segon pla.
+    toastConnected: 'Connectat a'
+    toastUpdated: El binari yt-dlp està actualitzat!
+    formatSelectionEnabler: Habilitar la selecció de formats de vídeo/àudio
+    themeSelect: 'Tema'
+    languageSelect: 'Idiomes'
+    overridesAnchor: Anul·lacions
+    pathOverrideOption: Sobreescriure en la ruta de sortida
+    filenameOverrideOption: Sobreescriure el nom del fitxer
+    customFilename: Nom d'arxiu personalitzat (en blanc per utilitzar el predeterminat)
+    customPath: Ruta personalitzada
+    customArgs: Habilitar els arguments yt-dlp personalitzats (un gran poder comporta una gran responsabilitat)
+    customArgsInput: Arguments yt-dlp personalitzats
+    rpcConnErr: Error en connectar-se al servidor RPC
