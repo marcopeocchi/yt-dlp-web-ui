@@ -99,7 +99,7 @@ export default function Home() {
     if (activeDownloads && activeDownloads.length >= 0) {
       setShowBackdrop(false)
     }
-  }, [activeDownloads])
+  }, [activeDownloads?.length])
 
   /**
    * Abort a specific download if id's provided, other wise abort all running ones.
@@ -165,12 +165,17 @@ export default function Home() {
           onClick={() => setOpenDialog(true)}
         />
       </SpeedDial>
-      <DownloadDialog open={openDialog} onClose={() => {
-        setOpenDialog(false)
-        activeDownloads?.length === 0
-          ? setShowBackdrop(false)
-          : setShowBackdrop(true)
-      }} />
+      <DownloadDialog
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false)
+          setShowBackdrop(false)
+        }}
+        onDownloadStart={() => {
+          setOpenDialog(false)
+          setShowBackdrop(true)
+        }}
+      />
     </Container>
   )
 }

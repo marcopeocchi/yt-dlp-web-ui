@@ -1,6 +1,7 @@
 import { FileUpload } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import {
+  Backdrop,
   Button,
   Container,
   FormControl,
@@ -21,7 +22,7 @@ import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import { Buffer } from 'buffer'
-import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useContext, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import FormatsGrid from '../components/FormatsGrid'
 import { CliArguments } from '../lib/argsParser'
@@ -30,6 +31,7 @@ import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
+import { isPending } from '@reduxjs/toolkit'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -43,9 +45,14 @@ const Transition = forwardRef(function Transition(
 type Props = {
   open: boolean
   onClose: () => void
+  onDownloadStart: () => void
 }
 
-export default function DownloadDialog({ open, onClose }: Props) {
+export default function DownloadDialog({
+  open,
+  onClose,
+  onDownloadStart
+}: Props) {
   // redux state
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
@@ -90,9 +97,12 @@ export default function DownloadDialog({ open, onClose }: Props) {
     setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
   }, [])
 
+  // transitions
+  const [isPending, startTransition] = useTransition()
+
   /**
-     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
-     */
+    * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
+  */
   const sendUrl = (immediate?: string) => {
     const codes = new Array<string>()
     if (pickedVideoFormat !== '') codes.push(pickedVideoFormat)
@@ -112,7 +122,7 @@ export default function DownloadDialog({ open, onClose }: Props) {
     setTimeout(() => {
       resetInput()
       setDownloadFormats(undefined)
-      onClose()
+      onDownloadStart()
     }, 250)
   }
 
@@ -195,6 +205,10 @@ export default function DownloadDialog({ open, onClose }: Props) {
         onClose={onClose}
         TransitionComponent={Transition}
       >
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={isPending}
+        />
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
             <IconButton
@@ -295,7 +309,10 @@ export default function DownloadDialog({ open, onClose }: Props) {
                     <Button
                       variant="contained"
                       disabled={url === ''}
-                      onClick={() => settings.formatSelection ? sendUrlFormatSelection() : sendUrl()}
+                      onClick={() => settings.formatSelection
+                        ? startTransition(() => sendUrlFormatSelection())
+                        : sendUrl()
+                      }
                     >
                       {settings.formatSelection ? i18n.t('selectFormatButton') : i18n.t('startButton')}
                     </Button>
