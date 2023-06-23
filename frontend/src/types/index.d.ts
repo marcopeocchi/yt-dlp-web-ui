@@ -21,23 +21,28 @@ export type RPCResponse<T> = {
   id?: string
 }
 
+type DownloadInfo = {
+  url: string
+  filesize_approx?: number
+  resolution?: string
+  thumbnail: string
+  title: string
+  vcodec?: string
+  acodec?: string
+  ext?: string
+  created_at: string
+}
+
+type DownloadProgress = {
+  speed: number
+  eta: number
+  percentage: string
+}
+
 export type RPCResult = {
   id: string
-  progress: {
-    speed: number
-    eta: number
-    percentage: string
-  }
-  info: {
-    url: string
-    filesize_approx?: number
-    resolution?: string
-    thumbnail: string
-    title: string
-    vcodec?: string
-    acodec?: string
-    ext?: string
-  }
+  progress: DownloadProgress
+  info: DownloadInfo
 }
 
 export type RPCParams = {
