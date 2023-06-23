@@ -31,6 +31,7 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -61,6 +62,7 @@ languages:
     rpcConnErr: Error nella connessione al server RPC
     splashText: Nessun download attivo
     archiveTitle: Archivio
+    clipboardAction: URL copiato negli appunti
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -91,6 +93,7 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -121,6 +124,7 @@ languages:
     rpcConnErr: Error al conectarse al servidor RPC
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   russian:
     urlInput: YouTube or other supported service video url
     statusTitle: Status
@@ -151,6 +155,7 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -181,6 +186,7 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -212,6 +218,7 @@ languages:
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -242,3 +249,4 @@ languages:
     rpcConnErr: Error en connectar-se al servidor RPC
     splashText: No active downloads
     archiveTitle: Archive
+    clipboardAction: Copied URL to clipboard

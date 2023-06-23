@@ -9,8 +9,7 @@ import {
   Snackbar,
   SpeedDial,
   SpeedDialAction,
-  SpeedDialIcon,
-  styled
+  SpeedDialIcon
 } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -121,12 +120,6 @@ export default function Home() {
     client.killAll()
   }
 
-  /* -------------------- styled components -------------------- */
-
-  const Input = styled('input')({
-    display: 'none',
-  })
-
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Backdrop
@@ -140,8 +133,8 @@ export default function Home() {
       }
       {
         settings.listView ?
-          <DownloadsListView downloads={activeDownloads ?? []} abortFunction={abort} /> :
-          <DownloadsCardView downloads={activeDownloads ?? []} abortFunction={abort} />
+          <DownloadsListView downloads={activeDownloads ?? []} onStop={abort} /> :
+          <DownloadsCardView downloads={activeDownloads ?? []} onStop={abort} />
       }
       <Snackbar
         open={showToast === status.connected}

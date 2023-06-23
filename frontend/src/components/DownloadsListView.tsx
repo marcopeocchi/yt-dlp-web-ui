@@ -16,10 +16,10 @@ import type { RPCResult } from "../types"
 
 type Props = {
   downloads: RPCResult[]
-  abortFunction: Function
+  onStop: (id: string) => void
 }
 
-export function DownloadsListView({ downloads, abortFunction }: Props) {
+export function DownloadsListView({ downloads, onStop }: Props) {
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
       <Grid item xs={12}>
@@ -65,7 +65,7 @@ export function DownloadsListView({ downloads, abortFunction }: Props) {
                       <Button
                         variant="contained"
                         size="small"
-                        onClick={() => abortFunction(download.id)}
+                        onClick={() => onStop(download.id)}
                       >
                         {download.progress.percentage === '-1' ? 'Remove' : 'Stop'}
                       </Button>

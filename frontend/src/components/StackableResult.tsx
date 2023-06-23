@@ -16,14 +16,15 @@ import { useEffect, useState } from 'react'
 import { ellipsis, formatSpeedMiB, roundMiB } from '../utils'
 
 type Props = {
-  title: string,
-  url: string,
-  thumbnail: string,
+  title: string
+  url: string
+  thumbnail: string
   resolution: string
-  percentage: string,
-  size: number,
-  speed: number,
-  stopCallback: VoidFunction,
+  percentage: string
+  size: number
+  speed: number
+  onStop: () => void
+  onCopy: () => void
 }
 
 export function StackableResult({
@@ -34,7 +35,8 @@ export function StackableResult({
   percentage,
   speed,
   size,
-  stopCallback
+  onStop,
+  onCopy,
 }: Props) {
   const [isCompleted, setIsCompleted] = useState(false)
 
@@ -57,7 +59,10 @@ export function StackableResult({
 
   return (
     <Card>
-      <CardActionArea onClick={() => navigator.clipboard.writeText(url)}>
+      <CardActionArea onClick={() => {
+        navigator.clipboard.writeText(url)
+        onCopy()
+      }}>
         {thumbnail !== '' ?
           <CardMedia
             component="img"
@@ -99,7 +104,7 @@ export function StackableResult({
           variant="contained"
           size="small"
           color="primary"
-          onClick={stopCallback}
+          onClick={onStop}
         >
           {isCompleted ? "Clear" : "Stop"}
         </Button>
