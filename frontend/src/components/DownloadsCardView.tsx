@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material"
 import { Fragment } from "react"
-
 import type { RPCResult } from "../types"
 import { StackableResult } from "./StackableResult"
 
@@ -17,6 +16,7 @@ export function DownloadsCardView({ downloads, abortFunction }: Props) {
           <Grid item xs={4} sm={8} md={6} key={download.id}>
             <Fragment>
               <StackableResult
+                url={download.info.url}
                 title={download.info.title}
                 thumbnail={download.info.thumbnail}
                 percentage={download.progress.percentage}

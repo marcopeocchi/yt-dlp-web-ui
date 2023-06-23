@@ -17,6 +17,7 @@ import { ellipsis, formatSpeedMiB, roundMiB } from '../utils'
 
 type Props = {
   title: string,
+  url: string,
   thumbnail: string,
   resolution: string
   percentage: string,
@@ -27,6 +28,7 @@ type Props = {
 
 export function StackableResult({
   title,
+  url,
   thumbnail,
   resolution,
   percentage,
@@ -45,17 +47,17 @@ export function StackableResult({
   const percentageToNumber = () => isCompleted ? 100 : Number(percentage.replace('%', ''))
 
   const guessResolution = (xByY: string): any => {
-    if (!xByY) return null;
-    if (xByY.includes('4320')) return (<EightK color="primary" />);
-    if (xByY.includes('2160')) return (<FourK color="primary" />);
-    if (xByY.includes('1080')) return (<Hd color="primary" />);
-    if (xByY.includes('720')) return (<Sd color="primary" />);
-    return null;
+    if (!xByY) return null
+    if (xByY.includes('4320')) return (<EightK color="primary" />)
+    if (xByY.includes('2160')) return (<FourK color="primary" />)
+    if (xByY.includes('1080')) return (<Hd color="primary" />)
+    if (xByY.includes('720')) return (<Sd color="primary" />)
+    return null
   }
 
   return (
     <Card>
-      <CardActionArea>
+      <CardActionArea onClick={() => navigator.clipboard.writeText(url)}>
         {thumbnail !== '' ?
           <CardMedia
             component="img"
