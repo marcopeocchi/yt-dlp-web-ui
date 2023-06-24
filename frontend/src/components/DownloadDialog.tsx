@@ -22,8 +22,16 @@ import Toolbar from '@mui/material/Toolbar'
 import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
 import { Buffer } from 'buffer'
-import { forwardRef, useContext, useEffect, useMemo, useRef, useState, useTransition } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import {
+  forwardRef,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition
+} from 'react'
+import { useSelector } from 'react-redux'
 import FormatsGrid from '../components/FormatsGrid'
 import { CliArguments } from '../lib/argsParser'
 import { I18nContext } from '../providers/i18nProvider'
@@ -31,7 +39,6 @@ import { RPCClientContext } from '../providers/rpcClientProvider'
 import { RootState } from '../stores/store'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
-import { isPending } from '@reduxjs/toolkit'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -241,13 +248,25 @@ export default function DownloadDialog({
                     label={i18n.t('urlInput')}
                     variant="outlined"
                     onChange={handleUrlChange}
-                    disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                    disabled={
+                      !status.connected
+                      || (settings.formatSelection && downloadFormats != null)
+                    }
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
                           <label htmlFor="icon-button-file">
-                            <Input id="icon-button-file" type="file" accept=".txt" onChange={parseUrlListFile} />
-                            <IconButton color="primary" aria-label="upload file" component="span">
+                            <Input
+                              id="icon-button-file"
+                              type="file"
+                              accept=".txt"
+                              onChange={parseUrlListFile}
+                            />
+                            <IconButton
+                              color="primary"
+                              aria-label="upload file"
+                              component="span"
+                            >
                               <FileUpload />
                             </IconButton>
                           </label>
