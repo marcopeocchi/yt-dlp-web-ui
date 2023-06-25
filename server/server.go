@@ -21,12 +21,17 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 )
 
-var db MemoryDB
+var (
+	db MemoryDB
+	mq = NewMessageQueue()
+)
 
 func RunBlocking(port int, frontend fs.FS) {
 	db.Restore()
+	go mq.SetupConsumer()
 
-	service := new(Service)
+	service := &Service{mq: mq}
+
 	rpc.Register(service)
 
 	app := fiber.New()

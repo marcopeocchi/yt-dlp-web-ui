@@ -30,6 +30,7 @@ export function DownloadsCardView({ downloads, onStop }: Props) {
                 resolution={download.info.resolution ?? ''}
                 speed={download.progress.speed}
                 size={download.info.filesize_approx ?? 0}
+                status={download.progress.process_status}
               />
             </Fragment>
           </Grid>

@@ -37,6 +37,7 @@ type DownloadProgress = {
   speed: number
   eta: number
   percentage: string
+  process_status: number
 }
 
 export type RPCResult = {
