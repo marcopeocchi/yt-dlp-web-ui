@@ -1,17 +1,19 @@
-package server
+package rpc
 
 import (
 	"log"
 
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/updater"
 )
 
 type Service struct {
-	mq *MessageQueue
+	db *internal.MemoryDB
+	mq *internal.MessageQueue
 }
 
-type Running []ProcessResponse
+type Running []internal.ProcessResponse
 type Pending []string
 
 type NoArgs struct{}
@@ -30,30 +32,37 @@ type DownloadSpecificArgs struct {
 	Params []string
 }
 
+func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
+	return &Service{
+		db: db,
+		mq: mq,
+	}
+}
+
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
 	log.Println("Sending new process to message queue", args.URL)
 
-	p := Process{
-		mem:    &db,
-		url:    args.URL,
-		params: args.Params,
-		output: downloadOutput{
-			path:     args.Path,
-			filename: args.Rename,
+	p := internal.Process{
+		DB:     s.db,
+		Url:    args.URL,
+		Params: args.Params,
+		Output: internal.DownloadOutput{
+			Path:     args.Path,
+			Filename: args.Rename,
 		},
 	}
 
 	s.mq.Publish(p)
-	*result = p.id
+	*result = p.Id
 
 	return nil
 }
 
 // Progess retrieves the Progress of a specific Process given its Id
-func (s *Service) Progess(args Args, progress *DownloadProgress) error {
-	proc, err := db.Get(args.Id)
+func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error {
+	proc, err := s.db.Get(args.Id)
 	if err != nil {
 		return err
 	}
@@ -62,29 +71,29 @@ func (s *Service) Progess(args Args, progress *DownloadProgress) error {
 }
 
 // Progess retrieves the Progress of a specific Process given its Id
-func (s *Service) Formats(args Args, progress *DownloadFormats) error {
+func (s *Service) Formats(args Args, progress *internal.DownloadFormats) error {
 	var err error
-	p := Process{url: args.URL}
+	p := internal.Process{Url: args.URL}
 	*progress, err = p.GetFormatsSync()
 	return err
 }
 
 // Pending retrieves a slice of all Pending/Running processes ids
 func (s *Service) Pending(args NoArgs, pending *Pending) error {
-	*pending = *db.Keys()
+	*pending = *s.db.Keys()
 	return nil
 }
 
 // Running retrieves a slice of all Processes progress
 func (s *Service) Running(args NoArgs, running *Running) error {
-	*running = *db.All()
+	*running = *s.db.All()
 	return nil
 }
 
 // Kill kills a process given its id and remove it from the memoryDB
 func (s *Service) Kill(args string, killed *string) error {
 	log.Println("Trying killing process with id", args)
-	proc, err := db.Get(args)
+	proc, err := s.db.Get(args)
 
 	if err != nil {
 		return err
@@ -93,7 +102,7 @@ func (s *Service) Kill(args string, killed *string) error {
 		err = proc.Kill()
 	}
 
-	db.Delete(proc.id)
+	s.db.Delete(proc.Id)
 	return err
 }
 
@@ -101,10 +110,10 @@ func (s *Service) Kill(args string, killed *string) error {
 // the memory db
 func (s *Service) KillAll(args NoArgs, killed *string) error {
 	log.Println("Killing all spawned processes", args)
-	keys := db.Keys()
+	keys := s.db.Keys()
 	var err error
 	for _, key := range *keys {
-		proc, err := db.Get(key)
+		proc, err := s.db.Get(key)
 		if err != nil {
 			return err
 		}
@@ -118,7 +127,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 // Remove a process from the db rendering it unusable if active
 func (s *Service) Clear(args string, killed *string) error {
 	log.Println("Clearing process with id", args)
-	db.Delete(args)
+	s.db.Delete(args)
 	return nil
 }
 

@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"bufio"
@@ -46,19 +46,19 @@ type ProgressTemplate struct {
 
 // Process descriptor
 type Process struct {
-	id       string
-	url      string
-	params   []string
+	Id       string
+	Url      string
+	Params   []string
 	Info     DownloadInfo
 	Progress DownloadProgress
-	mem      *MemoryDB
+	DB       *MemoryDB
+	Output   DownloadOutput
 	proc     *os.Process
-	output   downloadOutput
 }
 
-type downloadOutput struct {
-	path     string
-	filename string
+type DownloadOutput struct {
+	Path     string
+	Filename string
 }
 
 // Starts spawns/forks a new yt-dlp process and parse its stdout.
@@ -69,32 +69,32 @@ type downloadOutput struct {
 func (p *Process) Start() {
 	// escape bash variable escaping and command piping, you'll never know
 	// what they might come with...
-	p.params = slices.Filter(p.params, func(e string) bool {
+	p.Params = slices.Filter(p.Params, func(e string) bool {
 		match, _ := regexp.MatchString(`(\$\{)|(\&\&)`, e)
 		return !match
 	})
 
-	out := downloadOutput{
-		path:     cfg.GetConfig().DownloadPath,
-		filename: "%(title)s.%(ext)s",
+	out := DownloadOutput{
+		Path:     cfg.GetConfig().DownloadPath,
+		Filename: "%(title)s.%(ext)s",
 	}
 
-	if p.output.path != "" {
-		out.path = p.output.path
+	if p.Output.Path != "" {
+		out.Path = p.Output.Path
 	}
-	if p.output.filename != "" {
-		out.filename = p.output.filename + ".%(ext)s"
+	if p.Output.Filename != "" {
+		out.Filename = p.Output.Filename + ".%(ext)s"
 	}
 
 	params := append([]string{
-		strings.Split(p.url, "?list")[0], //no playlist
+		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
 		"--progress-template", strings.ReplaceAll(template, "\n", ""),
 		"-o",
-		fmt.Sprintf("%s/%s", out.path, out.filename),
-	}, p.params...)
+		fmt.Sprintf("%s/%s", out.Path, out.Filename),
+	}, p.Params...)
 
 	// ----------------- main block ----------------- //
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, params...)
@@ -135,14 +135,14 @@ func (p *Process) Start() {
 		stdout := ProgressTemplate{}
 		err := json.Unmarshal([]byte(text), &stdout)
 		if err == nil {
-			p.mem.UpdateProgress(p.id, DownloadProgress{
+			p.DB.UpdateProgress(p.Id, DownloadProgress{
 				Status:     StatusDownloading,
 				Percentage: stdout.Percentage,
 				Speed:      stdout.Speed,
 				ETA:        stdout.Eta,
 			})
-			shortId := strings.Split(p.id, "-")[0]
-			log.Printf("[%s] %s %s\n", shortId, p.url, p.Progress.Percentage)
+			shortId := strings.Split(p.Id, "-")[0]
+			log.Printf("[%s] %s %s\n", shortId, p.Url, p.Progress.Percentage)
 		}
 	})
 	// ------------- end progress block ------------- //
@@ -153,7 +153,7 @@ func (p *Process) Start() {
 // Convention: All completed processes has progress -1
 // and speed 0 bps.
 func (p *Process) Complete() {
-	p.mem.UpdateProgress(p.id, DownloadProgress{
+	p.DB.UpdateProgress(p.Id, DownloadProgress{
 		Status:     StatusCompleted,
 		Percentage: "-1",
 		Speed:      0,
@@ -163,7 +163,7 @@ func (p *Process) Complete() {
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
-	p.mem.Delete(p.id)
+	p.DB.Delete(p.Id)
 	// yt-dlp uses multiple child process the parent process
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct
@@ -175,7 +175,7 @@ func (p *Process) Kill() error {
 		}
 		err = syscall.Kill(-pgid, syscall.SIGTERM)
 
-		log.Println("Killed process", p.id)
+		log.Println("Killed process", p.Id)
 		return err
 	}
 	return nil
@@ -183,7 +183,7 @@ func (p *Process) Kill() error {
 
 // Returns the available format for this URL
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
-	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
+	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
 	stdout, err := cmd.Output()
 
 	if err != nil {
@@ -192,7 +192,7 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 
 	cmd.Wait()
 
-	info := DownloadFormats{URL: p.url}
+	info := DownloadFormats{URL: p.Url}
 	best := Format{}
 
 	json.Unmarshal(stdout, &info)
@@ -204,25 +204,22 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 }
 
 func (p *Process) SetPending() {
-	fmt.Println("retrieving info")
-	p.id = p.mem.Set(p)
+	p.Id = p.DB.Set(p)
 
 	go func() {
-		cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.url, "-J")
+		cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
 		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 		stdout, err := cmd.Output()
 		if err != nil {
-			log.Println("Cannot retrieve info for", p.url)
+			log.Println("Cannot retrieve info for", p.Url)
 		}
 		info := DownloadInfo{
-			URL:       p.url,
+			URL:       p.Url,
 			CreatedAt: time.Now(),
 		}
 		json.Unmarshal(stdout, &info)
-		p.mem.UpdateInfo(p.id, info)
-
-		fmt.Println(info)
+		p.DB.UpdateInfo(p.Id, info)
 	}()
 
 	p.Progress.Status = StatusPending

@@ -17,20 +17,22 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/websocket/v2"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
+	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
 )
 
 var (
-	db MemoryDB
-	mq = NewMessageQueue()
+	db internal.MemoryDB
+	mq = internal.NewMessageQueue()
 )
 
 func RunBlocking(port int, frontend fs.FS) {
 	db.Restore()
 	go mq.SetupConsumer()
 
-	service := &Service{mq: mq}
+	service := ytdlpRPC.Container(&db, mq)
 
 	rpc.Register(service)
 
