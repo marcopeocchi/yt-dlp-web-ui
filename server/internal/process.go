@@ -16,7 +16,6 @@ import (
 
 	"github.com/marcopeocchi/fazzoletti/slices"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/rx"
 )
 
 const template = `download:
@@ -65,7 +64,7 @@ type DownloadOutput struct {
 // The process is spawned to outputting a custom progress text that
 // Resembles a JSON Object in order to Unmarshal it later.
 // This approach is anyhow not perfect: quotes are not escaped properly.
-// Each process is not identified by its PID but by a UUIDv2
+// Each process is not identified by its PID but by a UUIDv4
 func (p *Process) Start() {
 	// escape bash variable escaping and command piping, you'll never know
 	// what they might come with...
@@ -118,33 +117,31 @@ func (p *Process) Start() {
 
 	// --------------- progress block --------------- //
 	// unbuffered channel connected to stdout
-	eventChan := make(chan string)
 
 	// spawn a goroutine that does the dirty job of parsing the stdout
 	// filling the channel with as many stdout line as yt-dlp produces (producer)
 	go func() {
-		defer r.Close()
-		defer p.Complete()
+		defer func() {
+			r.Close()
+			p.Complete()
+		}()
+
 		for scan.Scan() {
-			eventChan <- scan.Text()
+			stdout := ProgressTemplate{}
+			err := json.Unmarshal([]byte(scan.Text()), &stdout)
+			if err == nil {
+				p.Progress = DownloadProgress{
+					Status:     StatusDownloading,
+					Percentage: stdout.Percentage,
+					Speed:      stdout.Speed,
+					ETA:        stdout.Eta,
+				}
+				shortId := strings.Split(p.Id, "-")[0]
+				log.Printf("[%s] %s %s\n", shortId, p.Url, p.Progress.Percentage)
+			}
 		}
 	}()
 
-	// do the unmarshal operation every 250ms (consumer)
-	go rx.Debounce(time.Millisecond*250, eventChan, func(text string) {
-		stdout := ProgressTemplate{}
-		err := json.Unmarshal([]byte(text), &stdout)
-		if err == nil {
-			p.DB.UpdateProgress(p.Id, DownloadProgress{
-				Status:     StatusDownloading,
-				Percentage: stdout.Percentage,
-				Speed:      stdout.Speed,
-				ETA:        stdout.Eta,
-			})
-			shortId := strings.Split(p.Id, "-")[0]
-			log.Printf("[%s] %s %s\n", shortId, p.Url, p.Progress.Percentage)
-		}
-	})
 	// ------------- end progress block ------------- //
 	cmd.Wait()
 }
@@ -153,17 +150,16 @@ func (p *Process) Start() {
 // Convention: All completed processes has progress -1
 // and speed 0 bps.
 func (p *Process) Complete() {
-	p.DB.UpdateProgress(p.Id, DownloadProgress{
+	p.Progress = DownloadProgress{
 		Status:     StatusCompleted,
 		Percentage: "-1",
 		Speed:      0,
 		ETA:        0,
-	})
+	}
 }
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
-	p.DB.Delete(p.Id)
 	// yt-dlp uses multiple child process the parent process
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct
@@ -178,6 +174,8 @@ func (p *Process) Kill() error {
 		log.Println("Killed process", p.Id)
 		return err
 	}
+
+	p.DB.Delete(p.Id)
 	return nil
 }
 
@@ -206,21 +204,21 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 func (p *Process) SetPending() {
 	p.Id = p.DB.Set(p)
 
-	go func() {
-		cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
-		cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
-		stdout, err := cmd.Output()
-		if err != nil {
-			log.Println("Cannot retrieve info for", p.Url)
-		}
-		info := DownloadInfo{
-			URL:       p.Url,
-			CreatedAt: time.Now(),
-		}
-		json.Unmarshal(stdout, &info)
-		p.DB.UpdateInfo(p.Id, info)
-	}()
+	stdout, err := cmd.Output()
+	if err != nil {
+		log.Println("Cannot retrieve info for", p.Url)
+	}
+
+	info := DownloadInfo{
+		URL:       p.Url,
+		CreatedAt: time.Now(),
+	}
+
+	json.Unmarshal(stdout, &info)
+	p.Info = info
 
 	p.Progress.Status = StatusPending
 }

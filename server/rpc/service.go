@@ -44,7 +44,7 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
 	log.Println("Sending new process to message queue", args.URL)
 
-	p := internal.Process{
+	p := &internal.Process{
 		DB:     s.db,
 		Url:    args.URL,
 		Params: args.Params,

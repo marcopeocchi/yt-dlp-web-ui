@@ -3,12 +3,11 @@ package internal
 import (
 	"log"
 	"os"
-	"runtime"
 	"strconv"
 )
 
 type MessageQueue struct {
-	ch         chan Process
+	ch         chan *Process
 	consumerCh chan struct{}
 }
 
@@ -17,7 +16,7 @@ type MessageQueue struct {
 // CPU cores.
 // The queue size can be set via the QUEUE_SIZE environmental variable.
 func NewMessageQueue() *MessageQueue {
-	size := runtime.NumCPU()
+	size := 2
 
 	sizeEnv := os.Getenv("QUEUE_SIZE")
 	if sizeEnv != "" {
@@ -29,14 +28,14 @@ func NewMessageQueue() *MessageQueue {
 	}
 
 	return &MessageQueue{
-		ch:         make(chan Process, size),
+		ch:         make(chan *Process, size),
 		consumerCh: make(chan struct{}, size),
 	}
 }
 
 // Publish a message to the queue and set the task to a peding state.
-func (m *MessageQueue) Publish(p Process) {
-	p.SetPending()
+func (m *MessageQueue) Publish(p *Process) {
+	go p.SetPending()
 	m.ch <- p
 }
 
@@ -44,8 +43,8 @@ func (m *MessageQueue) Publish(p Process) {
 func (m *MessageQueue) SetupConsumer() {
 	for msg := range m.ch {
 		m.consumerCh <- struct{}{}
-		go func(i Process) {
-			i.Start()
+		go func(p *Process) {
+			p.Start()
 			<-m.consumerCh
 		}(msg)
 	}
