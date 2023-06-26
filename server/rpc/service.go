@@ -32,6 +32,7 @@ type DownloadSpecificArgs struct {
 	Params []string
 }
 
+// Dependency injection container.
 func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 	return &Service{
 		db: db,

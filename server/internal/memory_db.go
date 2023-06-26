@@ -35,6 +35,8 @@ func (m *MemoryDB) Set(process *Process) string {
 }
 
 // Update a process info/metadata, given the process id
+//
+// Deprecated: will be removed anytime soon.
 func (m *MemoryDB) UpdateInfo(id string, info DownloadInfo) error {
 	entry, ok := m.table.Load(id)
 	if ok {
@@ -46,7 +48,9 @@ func (m *MemoryDB) UpdateInfo(id string, info DownloadInfo) error {
 }
 
 // Update a process progress data, given the process id
-// Used for updating completition percentage or ETA
+// Used for updating completition percentage or ETA.
+//
+// Deprecated: will be removed anytime soon.
 func (m *MemoryDB) UpdateProgress(id string, progress DownloadProgress) error {
 	entry, ok := m.table.Load(id)
 	if ok {
