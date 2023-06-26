@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io/fs"
 	"log"
+	"runtime"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
@@ -12,20 +13,23 @@ import (
 
 var (
 	port           int
+	queueSize      int
 	configFile     string
 	downloadPath   string
 	downloaderPath string
 
 	requireAuth bool
 	rpcSecret   string
+
 	//go:embed frontend/dist
 	frontend embed.FS
 )
 
 func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
+	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
-	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
+	flag.StringVar(&configFile, "conf", "", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 
@@ -45,6 +49,7 @@ func main() {
 	c := config.Instance()
 
 	c.SetPort(port)
+	c.QueueSize(queueSize)
 	c.DownloadPath(downloadPath)
 	c.DownloaderPath(downloaderPath)
 

@@ -1,4 +1,4 @@
-package server
+package internal
 
 import (
 	"errors"
@@ -20,7 +20,7 @@ type MemoryDB struct {
 
 // Get a process pointer given its id
 func (m *MemoryDB) Get(id string) (*Process, error) {
-	entry, ok := db.table.Load(id)
+	entry, ok := m.table.Load(id)
 	if !ok {
 		return nil, errors.New("no process found for the given key")
 	}
@@ -30,28 +30,32 @@ func (m *MemoryDB) Get(id string) (*Process, error) {
 // Store a pointer of a process and return its id
 func (m *MemoryDB) Set(process *Process) string {
 	id := uuid.Must(uuid.NewRandom()).String()
-	db.table.Store(id, process)
+	m.table.Store(id, process)
 	return id
 }
 
 // Update a process info/metadata, given the process id
+//
+// Deprecated: will be removed anytime soon.
 func (m *MemoryDB) UpdateInfo(id string, info DownloadInfo) error {
-	entry, ok := db.table.Load(id)
+	entry, ok := m.table.Load(id)
 	if ok {
 		entry.(*Process).Info = info
-		db.table.Store(id, entry)
+		m.table.Store(id, entry)
 		return nil
 	}
 	return fmt.Errorf("can't update row with id %s", id)
 }
 
 // Update a process progress data, given the process id
-// Used for updating completition percentage or ETA
+// Used for updating completition percentage or ETA.
+//
+// Deprecated: will be removed anytime soon.
 func (m *MemoryDB) UpdateProgress(id string, progress DownloadProgress) error {
-	entry, ok := db.table.Load(id)
+	entry, ok := m.table.Load(id)
 	if ok {
 		entry.(*Process).Progress = progress
-		db.table.Store(id, entry)
+		m.table.Store(id, entry)
 		return nil
 	}
 	return fmt.Errorf("can't update row with id %s", id)
@@ -59,12 +63,12 @@ func (m *MemoryDB) UpdateProgress(id string, progress DownloadProgress) error {
 
 // Removes a process progress, given the process id
 func (m *MemoryDB) Delete(id string) {
-	db.table.Delete(id)
+	m.table.Delete(id)
 }
 
 func (m *MemoryDB) Keys() *[]string {
 	running := []string{}
-	db.table.Range(func(key, value any) bool {
+	m.table.Range(func(key, value any) bool {
 		running = append(running, key.(string))
 		return true
 	})
@@ -74,7 +78,7 @@ func (m *MemoryDB) Keys() *[]string {
 // Returns a slice of all currently stored processes progess
 func (m *MemoryDB) All() *[]ProcessResponse {
 	running := []ProcessResponse{}
-	db.table.Range(func(key, value any) bool {
+	m.table.Range(func(key, value any) bool {
 		running = append(running, ProcessResponse{
 			Id:       key.(string),
 			Info:     value.(*Process).Info,
@@ -110,12 +114,12 @@ func (m *MemoryDB) Restore() {
 	json.Unmarshal(feed, &session)
 
 	for _, proc := range session.Processes {
-		db.table.Store(proc.Id, &Process{
-			id:       proc.Id,
-			url:      proc.Info.URL,
+		m.table.Store(proc.Id, &Process{
+			Id:       proc.Id,
+			Url:      proc.Info.URL,
 			Info:     proc.Info,
 			Progress: proc.Progress,
-			mem:      m,
+			DB:       m,
 		})
 	}
 }

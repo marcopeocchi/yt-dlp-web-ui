@@ -13,7 +13,7 @@ import {
   Typography
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { ellipsis, formatSpeedMiB, roundMiB } from '../utils'
+import { ellipsis, formatSpeedMiB, mapProcessStatus, roundMiB } from '../utils'
 
 type Props = {
   title: string
@@ -23,6 +23,7 @@ type Props = {
   percentage: string
   size: number
   speed: number
+  status: number
   onStop: () => void
   onCopy: () => void
 }
@@ -35,6 +36,7 @@ export function StackableResult({
   percentage,
   speed,
   size,
+  status,
   onStop,
   onCopy,
 }: Props) {
@@ -80,7 +82,7 @@ export function StackableResult({
           }
           <Stack direction="row" spacing={1} py={2}>
             <Chip
-              label={isCompleted ? 'Completed' : 'Downloading'}
+              label={isCompleted ? 'Completed' : mapProcessStatus(status)}
               color="primary"
               size="small"
             />

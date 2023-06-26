@@ -17,16 +17,21 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/websocket/v2"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
+	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
 )
 
-var db MemoryDB
-
 func RunBlocking(port int, frontend fs.FS) {
+	var db internal.MemoryDB
 	db.Restore()
 
-	service := new(Service)
+	mq := internal.NewMessageQueue()
+	go mq.SetupConsumer()
+
+	service := ytdlpRPC.Container(&db, mq)
+
 	rpc.Register(service)
 
 	app := fiber.New()
@@ -93,13 +98,13 @@ func RunBlocking(port int, frontend fs.FS) {
 
 	app.Server().StreamRequestBody = true
 
-	go gracefulShutdown(app)
-	go autoPersist(time.Minute * 5)
+	go gracefulShutdown(app, &db)
+	go autoPersist(time.Minute*5, &db)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
 }
 
-func gracefulShutdown(app *fiber.App) {
+func gracefulShutdown(app *fiber.App, db *internal.MemoryDB) {
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -118,7 +123,7 @@ func gracefulShutdown(app *fiber.App) {
 	}()
 }
 
-func autoPersist(d time.Duration) {
+func autoPersist(d time.Duration, db *internal.MemoryDB) {
 	for {
 		db.Persist()
 		time.Sleep(d)

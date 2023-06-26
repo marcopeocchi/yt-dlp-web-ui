@@ -15,6 +15,7 @@ type serverConfig struct {
 	DownloaderPath string `yaml:"downloaderPath"`
 	RequireAuth    bool   `yaml:"require_auth"`
 	RPCSecret      string `yaml:"rpc_secret"`
+	QueueSize      int    `yaml:"queue_size"`
 }
 
 type config struct {
@@ -51,8 +52,13 @@ func (c *config) DownloaderPath(path string) {
 func (c *config) RequireAuth(value bool) {
 	c.cfg.RequireAuth = value
 }
+
 func (c *config) RPCSecret(secret string) {
 	c.cfg.RPCSecret = secret
+}
+
+func (c *config) QueueSize(size int) {
+	c.cfg.QueueSize = size
 }
 
 var instance *config

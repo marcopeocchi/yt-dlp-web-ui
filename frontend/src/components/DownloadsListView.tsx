@@ -55,7 +55,11 @@ export function DownloadsListView({ downloads, onStop }: Props) {
                           download.progress.percentage === '-1' ? 100 :
                             Number(download.progress.percentage.replace('%', ''))
                         }
-                        variant="determinate"
+                        variant={
+                          download.progress.process_status === 0
+                            ? 'indeterminate'
+                            : 'determinate'
+                        }
                         color={download.progress.percentage === '-1' ? 'success' : 'primary'}
                       />
                     </TableCell>

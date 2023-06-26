@@ -1,9 +1,10 @@
-package server
+package internal
 
 import "time"
 
 // Progress for the Running call
 type DownloadProgress struct {
+	Status     int     `json:"process_status"`
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
 	ETA        int     `json:"eta"`
@@ -66,4 +67,8 @@ type DownloadRequest struct {
 	Url      string   `json:"url"`
 	Params   []string `json:"params"`
 	RenameTo string   `json:"renameTo"`
+	Id       string
+	URL      string
+	Path     string
+	Rename   string
 }

@@ -100,3 +100,18 @@ export const datetimeCompareFunc = (a: string, b: string) => new Date(a).getTime
 export function isRPCResponse(object: any): object is RPCResponse<any> {
   return 'result' in object && 'id' in object
 }
+
+export function mapProcessStatus(status: number) {
+  switch (status) {
+    case 0:
+      return 'Pending'
+    case 1:
+      return 'Downloading'
+    case 2:
+      return 'Completed'
+    case 3:
+      return 'Error'
+    default:
+      return 'Pending'
+  }
+}
