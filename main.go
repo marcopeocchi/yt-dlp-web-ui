@@ -13,7 +13,7 @@ import (
 
 var (
 	port           int
-	QueueSize      int
+	queueSize      int
 	configFile     string
 	downloadPath   string
 	downloaderPath string
@@ -27,7 +27,7 @@ var (
 
 func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
-	flag.IntVar(&QueueSize, "qs", runtime.NumCPU(), "download queue size")
+	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "download queue size")
 
 	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
@@ -49,6 +49,7 @@ func main() {
 	c := config.Instance()
 
 	c.SetPort(port)
+	c.QueueSize(queueSize)
 	c.DownloadPath(downloadPath)
 	c.DownloaderPath(downloaderPath)
 
