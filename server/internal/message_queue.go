@@ -2,9 +2,8 @@ package internal
 
 import (
 	"log"
-	"os"
-	"runtime"
-	"strconv"
+
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
 type MessageQueue struct {
@@ -15,17 +14,12 @@ type MessageQueue struct {
 // Creates a new message queue.
 // By default it will be created with a size equals to nthe number of logical
 // CPU cores.
-// The queue size can be set via the QUEUE_SIZE environmental variable.
+// The queue size can be set via the qs flag.
 func NewMessageQueue() *MessageQueue {
-	size := runtime.NumCPU()
+	size := config.Instance().GetConfig().QueueSize
 
-	sizeEnv := os.Getenv("QUEUE_SIZE")
-	if sizeEnv != "" {
-		_size, err := strconv.Atoi(sizeEnv)
-		if err != nil {
-			log.Fatalln("invalid queue size")
-		}
-		size = _size
+	if size <= 0 {
+		log.Fatalln("invalid queue size")
 	}
 
 	return &MessageQueue{
