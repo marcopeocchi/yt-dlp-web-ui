@@ -3,6 +3,7 @@ package internal
 import (
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 )
 
@@ -16,7 +17,7 @@ type MessageQueue struct {
 // CPU cores.
 // The queue size can be set via the QUEUE_SIZE environmental variable.
 func NewMessageQueue() *MessageQueue {
-	size := 2
+	size := runtime.NumCPU()
 
 	sizeEnv := os.Getenv("QUEUE_SIZE")
 	if sizeEnv != "" {
