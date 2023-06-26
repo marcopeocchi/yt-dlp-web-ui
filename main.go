@@ -27,9 +27,9 @@ var (
 
 func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
-	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "download queue size")
+	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
-	flag.StringVar(&configFile, "conf", "", "yt-dlp-WebUI config file path")
+	flag.StringVar(&configFile, "conf", "", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 

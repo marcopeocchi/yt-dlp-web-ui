@@ -23,13 +23,11 @@ import (
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
 )
 
-var (
-	db internal.MemoryDB
-	mq = internal.NewMessageQueue()
-)
-
 func RunBlocking(port int, frontend fs.FS) {
+	var db internal.MemoryDB
 	db.Restore()
+
+	mq := internal.NewMessageQueue()
 	go mq.SetupConsumer()
 
 	service := ytdlpRPC.Container(&db, mq)
@@ -100,13 +98,13 @@ func RunBlocking(port int, frontend fs.FS) {
 
 	app.Server().StreamRequestBody = true
 
-	go gracefulShutdown(app)
-	go autoPersist(time.Minute * 5)
+	go gracefulShutdown(app, &db)
+	go autoPersist(time.Minute*5, &db)
 
 	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
 }
 
-func gracefulShutdown(app *fiber.App) {
+func gracefulShutdown(app *fiber.App, db *internal.MemoryDB) {
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -125,7 +123,7 @@ func gracefulShutdown(app *fiber.App) {
 	}()
 }
 
-func autoPersist(d time.Duration) {
+func autoPersist(d time.Duration, db *internal.MemoryDB) {
 	for {
 		db.Persist()
 		time.Sleep(d)

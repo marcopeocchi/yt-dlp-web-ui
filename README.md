@@ -68,6 +68,7 @@ The currently avaible settings are:
 -   Override the output filename
 -   Override the output path
 -   Pass custom yt-dlp arguments safely
+-   Download queue (limit concurrent downloads)
 
 ![](https://i.ibb.co/YdBVcgc/image.png)
 ![](https://i.ibb.co/Sf102b1/image.png)
@@ -84,8 +85,9 @@ Future releases will have:
 -   ~~Multi download~~ *done*
 -   ~~Exctract audio~~ *done*
 -   ~~Format selection~~ *done*
--   Download archive
+-   ~~Download archive~~ *done*
 -   ~~ARM Build~~ *done available through ghcr.io*
+-   Playlist support
 
 ## Troubleshooting
 -   **It says that it isn't connected/ip in the header is not defined.**
@@ -118,6 +120,18 @@ docker run -d \
     --secret your_rpc_secret
 ```
 
+If you wish for limiting the download queue size...
+
+e.g. limiting max 2 concurrent download.
+```sh
+docker run -d \
+    -p 3033:3033 \
+    -e JWT_SECRET randomsecret
+    -v /path/to/downloads:/downloads \
+    marcobaobao/yt-dlp-webui \
+    --qs 2
+```
+
 ## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
 
 ```sh
@@ -132,6 +146,25 @@ yt-dlp-webui --out /home/user/downloads --driver /opt/soemdir/yt-dlp
 
 # specifying using a config file
 yt-dlp-webui --conf /home/user/.config/yt-dlp-webui.conf
+```
+
+### Arguments
+```sh
+Usage yt-dlp-webui:
+  -auth
+        Enable RPC authentication
+  -conf string
+        Config file path
+  -driver string
+        yt-dlp executable path (default "yt-dlp")
+  -out string
+        Where files will be saved (default ".")
+  -port int
+        Port where server will listen at (default 3033)
+  -qs int
+        Download queue size (default 8)
+  -secret string
+        Secret required for auth
 ```
 
 ### Config file
@@ -149,6 +182,7 @@ downloaderPath: /usr/local/bin/yt-dlp
 # Optional settings
 require_auth: true
 rpc_secret: my_random_secret
+queue_size: 4
 ```
 
 ### Systemd integration
