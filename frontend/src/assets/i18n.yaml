@@ -126,36 +126,36 @@ languages:
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
   russian:
-    urlInput: YouTube or other supported service video url
-    statusTitle: Status
-    startButton: Start
-    statusReady: Ready
-    abortAllButton: Abort All
-    updateBinButton: Update yt-dlp binary
-    darkThemeButton: Dark theme
-    lightThemeButton: Light theme
-    settingsAnchor: Settings
-    serverAddressTitle: Server address
-    serverPortTitle: Port
-    extractAudioCheckbox: Extract audio
-    noMTimeCheckbox: Don't set file modification time
-    bgReminder: Once you close this page the download will continue in the background.
-    toastConnected: 'Connected to '
-    toastUpdated: Updated yt-dlp binary!
-    formatSelectionEnabler: Enable video/audio formats selection
-    themeSelect: 'Theme'
-    languageSelect: 'Language'
-    overridesAnchor: Overrides
-    pathOverrideOption: Enable output path overriding
-    filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
-    customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
-    customArgsInput: Custom yt-dlp arguments
-    rpcConnErr: Error while conencting to RPC server
-    splashText: No active downloads
-    archiveTitle: Archive
-    clipboardAction: Copied URL to clipboard
+    urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
+    statusTitle: Статус
+    startButton: Начать
+    statusReady: Готово
+    abortAllButton: Прервать все
+    updateBinButton: Обновить бинарный файл yt-dlp
+    darkThemeButton: Темная тема
+    lightThemeButton: Светлая тема
+    settingsAnchor: Настройки
+    serverAddressTitle: Адрес сервера
+    serverPortTitle: Порт
+    extractAudioCheckbox: Извлечь аудио
+    noMTimeCheckbox: Не устанавливать время модификации файла
+    bgReminder: Как только вы закроете эту страницу, загрузка продолжится в фоновом режиме.
+    toastConnected: 'Подключен к '
+    toastUpdated: Бинарный файл yt-dlp обновлен!
+    formatSelectionEnabler: Активировать выбор видео/аудио форматов
+    themeSelect: 'Тема'
+    languageSelect: 'Язык'
+    overridesAnchor: Переопределить
+    pathOverrideOption: Активировать переопределение выходного пути
+    filenameOverrideOption: Активировать переопределение имени выходного файла
+    customFilename: Задать имя файла (оставьте пустым, чтобы использовать значение по умолчанию)
+    customPath: Задать путь
+    customArgs: Включить настраиваемые аргументы yt-dlp (большая сила = большая ответственность)
+    customArgsInput: Пользовательские аргументы yt-dlp
+    rpcConnErr: Ошибка при подключении к серверу RPC
+    splashText: Нет активных загрузок
+    archiveTitle: Архив
+    clipboardAction: URL скопирован в буфер обмена
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
