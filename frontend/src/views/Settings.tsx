@@ -174,6 +174,7 @@ export default function Settings() {
                       <MenuItem value="korean">Korean</MenuItem>
                       <MenuItem value="japanese">Japanese</MenuItem>
                       <MenuItem value="catalan">Catalan</MenuItem>
+                      <MenuItem value="ukrainian">Ukrainian</MenuItem>                      
                     </Select>
                   </FormControl>
                 </Grid>
