@@ -66,8 +66,9 @@ languages:
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
-    startButton: 开始
     statusReady: 就绪
+    selectFormatButton: 选择格式
+    startButton: 开始
     abortAllButton: 全部中止
     updateBinButton: 更新 yt-dlp 可执行文件
     darkThemeButton: 黑暗主题
@@ -90,10 +91,10 @@ languages:
     customPath: 自定义路径
     customArgs: 启用自定义 yt-dlp 参数（能力越大 = 责任越大）
     customArgsInput: 自定义 yt-dlp 参数
-    rpcConnErr: Error while conencting to RPC server
-    splashText: No active downloads
-    archiveTitle: Archive
-    clipboardAction: Copied URL to clipboard
+    rpcConnErr: 连接 RPC 服务器发生错误
+    splashText: 没有正在进行的下载
+    archiveTitle: 归档
+    clipboardAction: 复制 URL 到剪贴板
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
