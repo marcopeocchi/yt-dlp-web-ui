@@ -9,13 +9,19 @@ type Stack[T any] struct {
 	count int
 }
 
-func (s *Stack[T]) Push(n *Node[T]) {
+func NewStack[T any]() *Stack[T] {
+	return &Stack[T]{
+		Nodes: make([]*Node[T], 10),
+	}
+}
+
+func (s *Stack[T]) Push(val T) {
 	if s.count >= len(s.Nodes) {
 		Nodes := make([]*Node[T], len(s.Nodes)*2)
 		copy(Nodes, s.Nodes)
 		s.Nodes = Nodes
 	}
-	s.Nodes[s.count] = n
+	s.Nodes[s.count] = &Node[T]{Value: val}
 	s.count++
 }
 

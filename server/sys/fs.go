@@ -28,15 +28,11 @@ func DirectoryTree() (*[]string, error) {
 
 	rootPath := config.Instance().GetConfig().DownloadPath
 
-	stack := internal.Stack[Node]{
-		Nodes: make([]*internal.Node[Node], 5),
-	}
+	stack := internal.NewStack[Node]()
 	flattened := make([]string, 0)
 
-	root := Node{path: rootPath}
-	stack.Push(&internal.Node[Node]{
-		Value: root,
-	})
+	stack.Push(Node{path: rootPath})
+
 	flattened = append(flattened, rootPath)
 
 	for stack.IsNotEmpty() {
@@ -51,9 +47,7 @@ func DirectoryTree() (*[]string, error) {
 
 			if entry.IsDir() {
 				current.children = append(current.children, childNode)
-				stack.Push(&internal.Node[Node]{
-					Value: childNode,
-				})
+				stack.Push(childNode)
 				flattened = append(flattened, childNode.path)
 			}
 		}

@@ -6,13 +6,14 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
-var path = config.Instance().GetConfig().DownloaderPath
-
 // Update using the builtin function of yt-dlp
 func UpdateExecutable() error {
-	cmd := exec.Command(path, "-U")
-	cmd.Start()
+	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, "-U")
 
-	err := cmd.Wait()
-	return err
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	return cmd.Wait()
 }

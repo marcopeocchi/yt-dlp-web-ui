@@ -2,7 +2,6 @@ package rest
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
