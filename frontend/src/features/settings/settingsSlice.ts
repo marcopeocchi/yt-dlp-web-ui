@@ -10,6 +10,7 @@ export type LanguageUnion =
   | "japanese"
   | "catalan"
   | "ukrainian"
+  | "polish"
 
 export type ThemeUnion = "light" | "dark"
 
