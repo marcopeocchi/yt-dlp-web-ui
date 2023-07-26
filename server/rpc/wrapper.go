@@ -1,4 +1,4 @@
-package server
+package rpc
 
 import (
 	"bytes"
@@ -13,7 +13,7 @@ type rpcRequest struct {
 	done chan bool
 }
 
-func NewRPCRequest(r io.Reader) *rpcRequest {
+func newRequest(r io.Reader) *rpcRequest {
 	var buf bytes.Buffer
 	done := make(chan bool)
 	return &rpcRequest{r, &buf, done}

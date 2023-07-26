@@ -1,13 +1,12 @@
 package internal
 
 import (
+	"encoding/gob"
 	"errors"
 	"fmt"
 	"log"
 	"os"
 	"sync"
-
-	"github.com/goccy/go-json"
 
 	"github.com/google/uuid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
@@ -93,25 +92,36 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 func (m *MemoryDB) Persist() {
 	running := m.All()
 
-	session, err := json.Marshal(Session{
-		Processes: *running,
-	})
+	fd, err := os.Create("session.dat")
 	if err != nil {
-		log.Println(cli.Red, "Failed to persist database", cli.Reset)
-		return
+		log.Println(cli.Red, "Failed to persist session", cli.Reset)
 	}
 
-	err = os.WriteFile("session.dat", session, 0700)
-	if err != nil {
-		log.Println(cli.Red, "Failed to persist database", cli.Reset)
+	session := Session{
+		Processes: *running,
 	}
+
+	err = gob.NewEncoder(fd).Encode(session)
+	if err != nil {
+		log.Println(cli.Red, "Failed to persist session", cli.Reset)
+	}
+
+	log.Println(cli.BgBlue, "Successfully serialized session", cli.Reset)
 }
 
 // WIP: Restore a persisted state
 func (m *MemoryDB) Restore() {
-	feed, _ := os.ReadFile("session.dat")
+	fd, err := os.Open("session.dat")
+	if err != nil {
+		return
+	}
+
 	session := Session{}
-	json.Unmarshal(feed, &session)
+
+	err = gob.NewDecoder(fd).Decode(&session)
+	if err != nil {
+		return
+	}
 
 	for _, proc := range session.Processes {
 		m.table.Store(proc.Id, &Process{
@@ -122,4 +132,6 @@ func (m *MemoryDB) Restore() {
 			DB:       m,
 		})
 	}
+
+	log.Println(cli.BgGreen, "Successfully restored session", cli.Reset)
 }

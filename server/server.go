@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"io"
 	"io/fs"
 	"log"
 	"net/http"
@@ -13,98 +12,86 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/filesystem"
-	"github.com/gofiber/websocket/v2"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
 )
 
+type serverConfig struct {
+	frontend fs.FS
+	port     int
+	db       *internal.MemoryDB
+	mq       *internal.MessageQueue
+}
+
 func RunBlocking(port int, frontend fs.FS) {
 	var db internal.MemoryDB
 	db.Restore()
 
 	mq := internal.NewMessageQueue()
-	go mq.SetupConsumer()
+	go mq.Subscriber()
 
-	service := ytdlpRPC.Container(&db, mq)
-
-	rpc.Register(service)
-
-	app := fiber.New()
-
-	app.Use(cors.New())
-	app.Use("/", filesystem.New(filesystem.Config{
-		Root: http.FS(frontend),
-	}))
-
-	// Client side routes
-	app.Get("/settings", func(c *fiber.Ctx) error {
-		return c.Redirect("/")
-	})
-	app.Get("/archive", func(c *fiber.Ctx) error {
-		return c.Redirect("/")
-	})
-	app.Get("/login", func(c *fiber.Ctx) error {
-		return c.Redirect("/")
+	srv := newServer(serverConfig{
+		frontend: frontend,
+		port:     port,
+		db:       &db,
+		mq:       mq,
 	})
 
-	// Archive routes
-	archive := app.Group("archive", middlewares.Authenticated)
-	archive.Post("/downloaded", rest.ListDownloaded)
-	archive.Post("/delete", rest.DeleteFile)
-	archive.Get("/d/:id", rest.SendFile)
-
-	// Authentication routes
-	app.Post("/auth/login", rest.Login)
-	app.Get("/auth/logout", rest.Logout)
-
-	// RPC handlers
-	// websocket
-	rpc := app.Group("/rpc", middlewares.Authenticated)
-
-	rpc.Get("/ws", websocket.New(func(c *websocket.Conn) {
-		c.WriteMessage(websocket.TextMessage, []byte(`{
-			"status": "connected"
-		}`))
-
-		for {
-			mtype, reader, err := c.NextReader()
-			if err != nil {
-				break
-			}
-			res := NewRPCRequest(reader).Call()
-
-			writer, err := c.NextWriter(mtype)
-			if err != nil {
-				break
-			}
-			io.Copy(writer, res)
-		}
-	}))
 	// http-post
-	rpc.Post("/http", func(c *fiber.Ctx) error {
-		reader := c.Context().RequestBodyStream()
-		writer := c.Response().BodyWriter()
-
-		res := NewRPCRequest(reader).Call()
-		io.Copy(writer, res)
-
-		return nil
-	})
-
-	app.Server().StreamRequestBody = true
-
-	go gracefulShutdown(app, &db)
+	go gracefulShutdown(srv, &db)
 	go autoPersist(time.Minute*5, &db)
 
-	log.Fatal(app.Listen(fmt.Sprintf(":%d", port)))
+	log.Fatal(srv.ListenAndServe())
 }
 
-func gracefulShutdown(app *fiber.App, db *internal.MemoryDB) {
+func newServer(c serverConfig) *http.Server {
+	service := ytdlpRPC.Container(c.db, c.mq)
+	rpc.Register(service)
+
+	r := chi.NewRouter()
+
+	r.Use(middlewares.CORS)
+	r.Use(middleware.Logger)
+
+	sh := middlewares.NewSpaHandler("index.html", c.frontend)
+	sh.AddClientRoute("/settings")
+	sh.AddClientRoute("/archive")
+	sh.AddClientRoute("/login")
+
+	r.Get("/*", sh.Handler())
+
+	// Archive routes
+	r.Route("/archive", func(r chi.Router) {
+		r.Use(middlewares.Authenticated)
+		r.Post("/downloaded", rest.ListDownloaded)
+		r.Post("/delete", rest.DeleteFile)
+		r.Get("/d/{id}", rest.SendFile)
+	})
+
+	// Authentication routes
+	r.Route("/auth", func(r chi.Router) {
+		r.Post("/login", rest.Login)
+		r.Get("/logout", rest.Logout)
+	})
+
+	// RPC handlers
+	r.Route("/rpc", func(r chi.Router) {
+		r.Use(middlewares.Authenticated)
+		r.Get("/ws", ytdlpRPC.WebSocket)
+		r.Post("/http", ytdlpRPC.Post)
+	})
+
+	return &http.Server{
+		Addr:    fmt.Sprintf(":%d", c.port),
+		Handler: r,
+	}
+}
+
+func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 	ctx, stop := signal.NotifyContext(context.Background(),
 		os.Interrupt,
 		syscall.SIGTERM,
@@ -118,7 +105,7 @@ func gracefulShutdown(app *fiber.App, db *internal.MemoryDB) {
 		defer func() {
 			db.Persist()
 			stop()
-			app.ShutdownWithTimeout(time.Second * 5)
+			srv.Shutdown(context.TODO())
 		}()
 	}()
 }
