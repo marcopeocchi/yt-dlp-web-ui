@@ -2,7 +2,7 @@ package rest
 
 import (
 	"encoding/hex"
-	"errors"
+	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
@@ -69,18 +69,20 @@ type ListRequest struct {
 	OrderBy string `json:"orderBy"`
 }
 
-func ListDownloaded(ctx *fiber.Ctx) error {
+func ListDownloaded(w http.ResponseWriter, r *http.Request) {
 	root := config.Instance().GetConfig().DownloadPath
 	req := new(ListRequest)
 
-	err := ctx.BodyParser(req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	files, err := walkDir(filepath.Join(root, req.SubDir))
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	if req.OrderBy == "modtime" {
@@ -89,45 +91,55 @@ func ListDownloaded(ctx *fiber.Ctx) error {
 		})
 	}
 
-	ctx.Status(http.StatusOK)
-	return ctx.JSON(files)
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(files)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 type DeleteRequest = DirectoryEntry
 
-func DeleteFile(ctx *fiber.Ctx) error {
+func DeleteFile(w http.ResponseWriter, r *http.Request) {
 	req := new(DeleteRequest)
 
-	err := ctx.BodyParser(req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	sum := utils.ShaSumString(req.Path)
 	if sum != req.SHASum {
-		return errors.New("shasum mismatch")
+		http.Error(w, "shasum mismatch", http.StatusBadRequest)
+		return
 	}
 
 	err = os.Remove(req.Path)
 	if err != nil {
-		return err
+		http.Error(w, "shasum mismatch", http.StatusBadRequest)
+		return
 	}
 
-	ctx.Status(fiber.StatusOK)
-	return ctx.JSON("ok")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode("ok")
 }
 
-func SendFile(ctx *fiber.Ctx) error {
-	path := ctx.Params("id")
+func SendFile(w http.ResponseWriter, r *http.Request) {
+	path := chi.URLParam(r, "id")
 
 	if path == "" {
-		return errors.New("inexistent path")
+		http.Error(w, "inexistent path", http.StatusBadRequest)
+		return
 	}
 
 	decoded, err := hex.DecodeString(path)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
+
 	decodedStr := string(decoded)
 
 	root := config.Instance().GetConfig().DownloadPath
@@ -138,26 +150,28 @@ func SendFile(ctx *fiber.Ctx) error {
 		// 	"Content-Disposition",
 		// 	"inline; filename="+filepath.Base(decodedStr),
 		// )
-		ctx.SendStatus(fiber.StatusOK)
-		return ctx.SendFile(decodedStr)
+
+		http.ServeFile(w, r, decodedStr)
 	}
 
-	return ctx.SendStatus(fiber.StatusUnauthorized)
+	w.WriteHeader(http.StatusUnauthorized)
 }
 
 type LoginRequest struct {
 	Secret string `json:"secret"`
 }
 
-func Login(ctx *fiber.Ctx) error {
+func Login(w http.ResponseWriter, r *http.Request) {
 	req := new(LoginRequest)
-	err := ctx.BodyParser(req)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		return ctx.SendStatus(fiber.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	if config.Instance().GetConfig().RPCSecret != req.Secret {
-		return ctx.SendStatus(fiber.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	expiresAt := time.Now().Add(time.Hour * 24 * 30)
@@ -168,30 +182,31 @@ func Login(ctx *fiber.Ctx) error {
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		return ctx.SendStatus(fiber.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	ctx.Cookie(&fiber.Cookie{
+	cookie := &http.Cookie{
 		Name:     TOKEN_COOKIE_NAME,
-		HTTPOnly: true,
+		HttpOnly: true,
 		Secure:   false,
 		Expires:  expiresAt, // 30 days
 		Value:    tokenString,
 		Path:     "/",
-	})
+	}
 
-	return ctx.SendStatus(fiber.StatusOK)
+	http.SetCookie(w, cookie)
 }
 
-func Logout(ctx *fiber.Ctx) error {
-	ctx.Cookie(&fiber.Cookie{
+func Logout(w http.ResponseWriter, r *http.Request) {
+	cookie := &http.Cookie{
 		Name:     TOKEN_COOKIE_NAME,
-		HTTPOnly: true,
+		HttpOnly: true,
 		Secure:   false,
 		Expires:  time.Now(),
 		Value:    "",
 		Path:     "/",
-	})
+	}
 
-	return ctx.SendStatus(fiber.StatusOK)
+	http.SetCookie(w, cookie)
 }

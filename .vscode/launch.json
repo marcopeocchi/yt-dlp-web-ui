@@ -5,12 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch file",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${file}"
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:1234",
+            "url": "http://localhost:5173",
             "webRoot": "${workspaceFolder}",
-            "breakOnLoad": true,
             "sourceMapPathOverrides": {
                 "/__parcel_source_root/*": "${webRoot}/*"
             }
