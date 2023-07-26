@@ -282,3 +282,34 @@ languages:
     splashText: Немає активних завантажень
     archiveTitle: Архів
     clipboardAction: URL скопійовано в буфер обміну
+  polish:
+    urlInput: Adres URL YouTube lub innej obsługiwanej usługi
+    statusTitle: Status
+    startButton: Początek
+    statusReady: Gotowy
+    abortAllButton: Anuluj wszystko
+    updateBinButton: Zaktualizuj plik binarny yt-dlp
+    darkThemeButton: Ciemny motyw
+    lightThemeButton: Światło motyw
+    settingsAnchor: Ustawienia
+    serverAddressTitle: Adres serwera
+    serverPortTitle: Port
+    extractAudioCheckbox: Wyodrębnij dźwięk
+    noMTimeCheckbox: Nie ustawiaj czasu modyfikacji pliku
+    bgReminder: Po zamknięciu tej strony pobieranie będzie kontynuowane w tle. 
+    toastConnected: 'Połączony z '
+    toastUpdated: Zaktualizowano plik binarny yt-dlp!
+    formatSelectionEnabler: Aktywuj wybór formatów wideo/audio
+    themeSelect: 'Motyw'
+    languageSelect: 'Język'
+    overridesAnchor: Przedefiniuj
+    pathOverrideOption: Aktywuj zastąpienie ścieżki źródłowej
+    filenameOverrideOption: Aktywuj zastępowanie nazwy pliku źródłowego
+    customFilename: Wprowadź nazwę pliku (pozostaw puste, aby użyć nazwy domyślnej)
+    customPath: Ustaw ścieżkę
+    customArgs: Uwzględnij konfigurowalne argumenty yt-dlp (wielka moc = wielka odpowiedzialność)
+    customArgsInput: Niestandardowe argumenty yt-dlp
+    rpcConnErr: Wystąpił błąd podczas łączenia z serwerem RPC
+    splashText: Brak aktywnych pobrań
+    archiveTitle: Archiwum
+    clipboardAction: Adres URL zostanie skopiowany do schowka
