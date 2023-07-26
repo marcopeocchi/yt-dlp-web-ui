@@ -28,10 +28,9 @@ func RunBlocking(port int, frontend fs.FS) {
 	db.Restore()
 
 	mq := internal.NewMessageQueue()
-	go mq.SetupConsumer()
+	go mq.Subscriber()
 
 	service := ytdlpRPC.Container(&db, mq)
-
 	rpc.Register(service)
 
 	app := fiber.New()
