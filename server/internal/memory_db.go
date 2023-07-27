@@ -129,7 +129,6 @@ func (m *MemoryDB) Restore() {
 			Url:      proc.Info.URL,
 			Info:     proc.Info,
 			Progress: proc.Progress,
-			DB:       m,
 		})
 	}
 

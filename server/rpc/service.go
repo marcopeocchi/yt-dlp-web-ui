@@ -43,10 +43,7 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
-	log.Println("Sending new process to message queue", args.URL)
-
 	p := &internal.Process{
-		DB:     s.db,
 		Url:    args.URL,
 		Params: args.Params,
 		Output: internal.DownloadOutput{
@@ -55,8 +52,33 @@ func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
 		},
 	}
 
-	s.mq.Publish(p)
+	id := s.db.Set(p)
+	p.Id = id
+
 	*result = p.Id
+
+	s.mq.Publish(p)
+
+	return nil
+}
+
+// Exec spawns a Process.
+// The result of the execution is the newly spawned process Id.
+func (s *Service) ExecPlaylist(args DownloadSpecificArgs, result *string) error {
+	p := &internal.Process{
+		Url:    args.URL,
+		Params: args.Params,
+	}
+
+	id := s.db.Set(p)
+	p.Id = id
+
+	*result = p.Id
+
+	err := internal.PlaylistDetect(p, s.mq)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -71,7 +93,7 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 	return nil
 }
 
-// Progess retrieves the Progress of a specific Process given its Id
+// Progess retrieves available format for a given resource
 func (s *Service) Formats(args Args, progress *internal.DownloadFormats) error {
 	var err error
 	p := internal.Process{Url: args.URL}
@@ -101,6 +123,7 @@ func (s *Service) Kill(args string, killed *string) error {
 	}
 	if proc != nil {
 		err = proc.Kill()
+		s.db.Delete(proc.Id)
 	}
 
 	s.db.Delete(proc.Id)
@@ -120,6 +143,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 		}
 		if proc != nil {
 			proc.Kill()
+			s.db.Delete(proc.Id)
 		}
 	}
 	return err

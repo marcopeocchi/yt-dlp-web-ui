@@ -12,15 +12,16 @@ type DownloadProgress struct {
 
 // Used to deser the yt-dlp -J output
 type DownloadInfo struct {
-	URL        string    `json:"url"`
-	Title      string    `json:"title"`
-	Thumbnail  string    `json:"thumbnail"`
-	Resolution string    `json:"resolution"`
-	Size       int32     `json:"filesize_approx"`
-	VCodec     string    `json:"vcodec"`
-	ACodec     string    `json:"acodec"`
-	Extension  string    `json:"ext"`
-	CreatedAt  time.Time `json:"created_at"`
+	URL         string    `json:"url"`
+	Title       string    `json:"title"`
+	Thumbnail   string    `json:"thumbnail"`
+	Resolution  string    `json:"resolution"`
+	Size        int32     `json:"filesize_approx"`
+	VCodec      string    `json:"vcodec"`
+	ACodec      string    `json:"acodec"`
+	Extension   string    `json:"ext"`
+	OriginalURL string    `json:"original_url"`
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 // Used to deser the formats in the -J output

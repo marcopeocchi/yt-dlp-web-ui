@@ -34,6 +34,13 @@ func (m *MessageQueue) Publish(p *Process) {
 	m.producerCh <- p
 }
 
+// Publish a message to the queue and set the task to a peding state.
+// ENSURE P IS PART OF A PLAYLIST
+// Needs a further review
+func (m *MessageQueue) PublishPlaylistEntry(p *Process) {
+	m.producerCh <- p
+}
+
 // Setup the consumer listener which subscribes to the changes to the producer
 // channel and triggers the "download" action.
 func (m *MessageQueue) Subscriber() {
