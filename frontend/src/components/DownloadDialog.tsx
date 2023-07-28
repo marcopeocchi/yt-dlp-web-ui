@@ -3,8 +3,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import {
   Backdrop,
   Button,
+  Checkbox,
   Container,
   FormControl,
+  FormControlLabel,
   Grid,
   IconButton,
   InputAdornment,
@@ -12,15 +14,15 @@ import {
   MenuItem,
   Paper,
   Select,
-  styled,
-  TextField
+  TextField,
+  styled
 } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Dialog from '@mui/material/Dialog'
 import Slide from '@mui/material/Slide'
 import Toolbar from '@mui/material/Toolbar'
-import { TransitionProps } from '@mui/material/transitions'
 import Typography from '@mui/material/Typography'
+import { TransitionProps } from '@mui/material/transitions'
 import { Buffer } from 'buffer'
 import {
   forwardRef,
@@ -79,6 +81,8 @@ export default function DownloadDialog({
   const [url, setUrl] = useState('')
   const [workingUrl, setWorkingUrl] = useState('')
 
+  const [isPlaylist, setIsPlaylist] = useState(false)
+
   // memos
   const cliArgs = useMemo(() =>
     new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
@@ -120,7 +124,8 @@ export default function DownloadDialog({
       immediate || url || workingUrl,
       `${cliArgs.toString()} ${toFormatArgs(codes)} ${customArgs}`,
       availableDownloadPaths[downloadPath] ?? '',
-      fileNameOverride
+      fileNameOverride,
+      isPlaylist,
     )
 
     setUrl('')
@@ -323,7 +328,7 @@ export default function DownloadDialog({
                     </Grid>
                   }
                 </Grid>
-                <Grid container spacing={1} pt={2}>
+                <Grid container spacing={1} pt={2} justifyContent="space-between">
                   <Grid item>
                     <Button
                       variant="contained"
@@ -335,6 +340,13 @@ export default function DownloadDialog({
                     >
                       {settings.formatSelection ? i18n.t('selectFormatButton') : i18n.t('startButton')}
                     </Button>
+                  </Grid>
+                  <Grid item>
+                    <FormControlLabel
+                      control={<Checkbox onChange={() => setIsPlaylist(state => !state)} />}
+                      checked={isPlaylist}
+                      label={i18n.t('playlistCheckbox')}
+                    />
                   </Grid>
                 </Grid>
               </Paper>

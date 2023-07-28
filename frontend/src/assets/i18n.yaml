@@ -32,6 +32,7 @@ languages:
     splashText: No active downloads
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
+    playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -63,6 +64,7 @@ languages:
     splashText: Nessun download attivo
     archiveTitle: Archivio
     clipboardAction: URL copiato negli appunti
+    playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -95,6 +97,7 @@ languages:
     splashText: 没有正在进行的下载
     archiveTitle: 归档
     clipboardAction: 复制 URL 到剪贴板
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -126,6 +129,7 @@ languages:
     splashText: No active downloads
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
     statusTitle: Статус
@@ -157,6 +161,7 @@ languages:
     splashText: Нет активных загрузок
     archiveTitle: Архив
     clipboardAction: URL скопирован в буфер обмена
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -188,6 +193,7 @@ languages:
     splashText: No active downloads
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -220,6 +226,7 @@ languages:
     splashText: No active downloads
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -251,6 +258,7 @@ languages:
     splashText: No active downloads
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
     statusTitle: Статус
@@ -282,6 +290,7 @@ languages:
     splashText: Немає активних завантажень
     archiveTitle: Архів
     clipboardAction: URL скопійовано в буфер обміну
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
     statusTitle: Status
@@ -313,3 +322,4 @@ languages:
     splashText: Brak aktywnych pobrań
     archiveTitle: Archiwum
     clipboardAction: Adres URL zostanie skopiowany do schowka
+    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)

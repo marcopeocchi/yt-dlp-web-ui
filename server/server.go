@@ -14,6 +14,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
@@ -54,7 +55,7 @@ func newServer(c serverConfig) *http.Server {
 
 	r := chi.NewRouter()
 
-	r.Use(middlewares.CORS)
+	r.Use(cors.AllowAll().Handler)
 	r.Use(middleware.Logger)
 
 	sh := middlewares.NewSpaHandler("index.html", c.frontend)

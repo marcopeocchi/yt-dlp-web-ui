@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
+	"sync"
 	"syscall"
 
 	"github.com/goccy/go-json"
@@ -50,7 +51,6 @@ type Process struct {
 	Params   []string
 	Info     DownloadInfo
 	Progress DownloadProgress
-	DB       *MemoryDB
 	Output   DownloadOutput
 	proc     *os.Process
 }
@@ -128,7 +128,7 @@ func (p *Process) Start() {
 
 		for scan.Scan() {
 			stdout := ProgressTemplate{}
-			err := json.Unmarshal([]byte(scan.Text()), &stdout)
+			err := json.Unmarshal(scan.Bytes(), &stdout)
 			if err == nil {
 				p.Progress = DownloadProgress{
 					Status:     StatusDownloading,
@@ -175,26 +175,49 @@ func (p *Process) Kill() error {
 		return err
 	}
 
-	p.DB.Delete(p.Id)
 	return nil
 }
 
 // Returns the available format for this URL
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
-	stdout, err := cmd.Output()
+	stdout, err := cmd.StdoutPipe()
 
 	if err != nil {
 		return DownloadFormats{}, err
 	}
 
-	cmd.Wait()
-
 	info := DownloadFormats{URL: p.Url}
 	best := Format{}
 
-	json.Unmarshal(stdout, &info)
-	json.Unmarshal(stdout, &best)
+	var (
+		wg            sync.WaitGroup
+		decodingError error
+	)
+
+	wg.Add(2)
+
+	err = cmd.Start()
+	if err != nil {
+		return DownloadFormats{}, err
+	}
+
+	go func() {
+		decodingError = json.NewDecoder(stdout).Decode(&info)
+		wg.Done()
+	}()
+
+	go func() {
+		decodingError = json.NewDecoder(stdout).Decode(&best)
+		wg.Done()
+	}()
+
+	wg.Wait()
+	cmd.Wait()
+
+	if decodingError != nil {
+		return DownloadFormats{}, err
+	}
 
 	info.Best = best
 
@@ -202,14 +225,17 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 }
 
 func (p *Process) SetPending() {
-	p.Id = p.DB.Set(p)
+	p.Progress.Status = StatusPending
+}
 
+func (p *Process) SetMetadata() error {
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
-	stdout, err := cmd.Output()
+	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		log.Println("Cannot retrieve info for", p.Url)
+		return err
 	}
 
 	info := DownloadInfo{
@@ -217,8 +243,20 @@ func (p *Process) SetPending() {
 		CreatedAt: time.Now(),
 	}
 
-	json.Unmarshal(stdout, &info)
-	p.Info = info
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
 
+	err = json.NewDecoder(stdout).Decode(&info)
+	if err != nil {
+		return err
+	}
+
+	p.Info = info
 	p.Progress.Status = StatusPending
+
+	err = cmd.Wait()
+
+	return err
 }

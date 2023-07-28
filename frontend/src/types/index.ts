@@ -6,6 +6,7 @@ export type RPCMethods =
   | "Service.KillAll"
   | "Service.FreeSpace"
   | "Service.Formats"
+  | "Service.ExecPlaylist"
   | "Service.DirectoryTree"
   | "Service.UpdateExecutable"
 

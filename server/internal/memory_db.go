@@ -30,6 +30,7 @@ func (m *MemoryDB) Get(id string) (*Process, error) {
 func (m *MemoryDB) Set(process *Process) string {
 	id := uuid.Must(uuid.NewRandom()).String()
 	m.table.Store(id, process)
+	process.Id = id
 	return id
 }
 
@@ -129,7 +130,6 @@ func (m *MemoryDB) Restore() {
 			Url:      proc.Info.URL,
 			Info:     proc.Info,
 			Progress: proc.Progress,
-			DB:       m,
 		})
 	}
 

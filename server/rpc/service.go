@@ -24,14 +24,6 @@ type Args struct {
 	Params []string
 }
 
-type DownloadSpecificArgs struct {
-	Id     string
-	URL    string
-	Path   string
-	Rename string
-	Params []string
-}
-
 // Dependency injection container.
 func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 	return &Service{
@@ -42,11 +34,8 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
-func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
-	log.Println("Sending new process to message queue", args.URL)
-
+func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 	p := &internal.Process{
-		DB:     s.db,
 		Url:    args.URL,
 		Params: args.Params,
 		Output: internal.DownloadOutput{
@@ -55,8 +44,22 @@ func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
 		},
 	}
 
+	s.db.Set(p)
 	s.mq.Publish(p)
+
 	*result = p.Id
+	return nil
+}
+
+// Exec spawns a Process.
+// The result of the execution is the newly spawned process Id.
+func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) error {
+	err := internal.PlaylistDetect(args, s.mq, s.db)
+	if err != nil {
+		return err
+	}
+
+	*result = ""
 
 	return nil
 }
@@ -71,7 +74,7 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 	return nil
 }
 
-// Progess retrieves the Progress of a specific Process given its Id
+// Progess retrieves available format for a given resource
 func (s *Service) Formats(args Args, progress *internal.DownloadFormats) error {
 	var err error
 	p := internal.Process{Url: args.URL}
@@ -101,6 +104,7 @@ func (s *Service) Kill(args string, killed *string) error {
 	}
 	if proc != nil {
 		err = proc.Kill()
+		s.db.Delete(proc.Id)
 	}
 
 	s.db.Delete(proc.Id)
@@ -120,8 +124,10 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 		}
 		if proc != nil {
 			proc.Kill()
+			s.db.Delete(proc.Id)
 		}
 	}
+	s.mq.Empty()
 	return err
 }
 
@@ -142,7 +148,9 @@ func (s *Service) FreeSpace(args NoArgs, free *uint64) error {
 // Return a flattned tree of the download directory
 func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 	dfsTree, err := sys.DirectoryTree()
-	*tree = *dfsTree
+	if dfsTree != nil {
+		*tree = *dfsTree
+	}
 	return err
 }
 

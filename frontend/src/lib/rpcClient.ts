@@ -36,18 +36,35 @@ export class RPCClient {
     return data
   }
 
-  public download(url: string, args: string, pathOverride = '', renameTo = '') {
-    if (url) {
-      this.send({
-        method: 'Service.Exec',
+  public download(
+    url: string,
+    args: string,
+    pathOverride = '',
+    renameTo = '',
+    playlist?: boolean
+  ) {
+    if (!url) {
+      return
+    }
+    if (playlist) {
+      return this.send({
+        method: 'Service.ExecPlaylist',
         params: [{
-          URL: url.split("?list").at(0)!,
+          URL: url,
           Params: args.split(" ").map(a => a.trim()),
           Path: pathOverride,
-          Rename: renameTo,
         }]
       })
     }
+    this.send({
+      method: 'Service.Exec',
+      params: [{
+        URL: url.split("?list").at(0)!,
+        Params: args.split(" ").map(a => a.trim()),
+        Path: pathOverride,
+        Rename: renameTo,
+      }]
+    })
   }
 
   public formats(url: string) {

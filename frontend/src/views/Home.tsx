@@ -76,7 +76,13 @@ export default function Home() {
   }, [status.connected])
 
   useEffect(() => {
-    client.freeSpace().then(bytes => dispatch(setFreeSpace(bytes.result)))
+    client
+      .freeSpace()
+      .then(bytes => dispatch(setFreeSpace(bytes.result)))
+      .catch(() => {
+        setSocketHasError(true)
+        setShowBackdrop(false)
+      })
   }, [])
 
   useEffect(() => {
