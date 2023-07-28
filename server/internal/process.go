@@ -128,7 +128,7 @@ func (p *Process) Start() {
 
 		for scan.Scan() {
 			stdout := ProgressTemplate{}
-			err := json.Unmarshal([]byte(scan.Text()), &stdout)
+			err := json.Unmarshal(scan.Bytes(), &stdout)
 			if err == nil {
 				p.Progress = DownloadProgress{
 					Status:     StatusDownloading,
@@ -224,7 +224,11 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	return info, nil
 }
 
-func (p *Process) SetPending() error {
+func (p *Process) SetPending() {
+	p.Progress.Status = StatusPending
+}
+
+func (p *Process) SetMetadata() error {
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 

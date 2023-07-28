@@ -30,7 +30,8 @@ func NewMessageQueue() *MessageQueue {
 
 // Publish a message to the queue and set the task to a peding state.
 func (m *MessageQueue) Publish(p *Process) {
-	go p.SetPending()
+	p.SetPending()
+	go p.SetMetadata()
 	m.producerCh <- p
 }
 
@@ -50,5 +51,15 @@ func (m *MessageQueue) Subscriber() {
 			p.Start()
 			<-m.consumerCh
 		}(msg)
+	}
+}
+
+// Empties the message queue
+func (m *MessageQueue) Empty() {
+	for range m.producerCh {
+		<-m.producerCh
+	}
+	for range m.consumerCh {
+		<-m.consumerCh
 	}
 }

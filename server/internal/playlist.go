@@ -16,8 +16,8 @@ type metadata struct {
 	Type    string         `json:"_type"`
 }
 
-func PlaylistDetect(p *Process, mq *MessageQueue) error {
-	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
+func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
+	cmd := exec.Command(cfg.GetConfig().DownloaderPath, req.URL, "-J")
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -31,14 +31,14 @@ func PlaylistDetect(p *Process, mq *MessageQueue) error {
 		return err
 	}
 
-	log.Println(cli.BgRed, "Decoding metadata", cli.Reset, p.Url)
+	log.Println(cli.BgRed, "Decoding metadata", cli.Reset, req.URL)
 
 	err = json.NewDecoder(stdout).Decode(&m)
 	if err != nil {
 		return err
 	}
 
-	log.Println(cli.BgGreen, "Decoded metadata", cli.Reset, p.Url)
+	log.Println(cli.BgGreen, "Decoded metadata", cli.Reset, req.URL)
 
 	if m.Type == "" {
 		cmd.Wait()
@@ -51,20 +51,30 @@ func PlaylistDetect(p *Process, mq *MessageQueue) error {
 		)
 
 		for _, meta := range m.Entries {
-			p.Url = meta.OriginalURL
-			p.Info = meta
-			p.Info.URL = meta.OriginalURL
-			p.Info.CreatedAt = time.Now()
-			log.Println("Sending new process to message queue", p.Url)
-			mq.PublishPlaylistEntry(p)
+			proc := &Process{
+				Url:      meta.OriginalURL,
+				Progress: DownloadProgress{},
+				Output:   DownloadOutput{},
+				Info:     meta,
+				Params:   req.Params,
+			}
+
+			proc.Info.URL = meta.OriginalURL
+			proc.Info.CreatedAt = time.Now().Add(time.Second)
+
+			db.Set(proc)
+			proc.SetPending()
+			mq.PublishPlaylistEntry(proc)
 		}
 
 		err = cmd.Wait()
 		return err
 	}
 
-	mq.Publish(p)
-	log.Println("Sending new process to message queue", p.Url)
+	proc := &Process{Url: req.URL, Params: req.Params}
+
+	mq.Publish(proc)
+	log.Println("Sending new process to message queue", proc.Url)
 
 	err = cmd.Wait()
 	return err

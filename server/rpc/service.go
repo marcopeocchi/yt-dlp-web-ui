@@ -24,14 +24,6 @@ type Args struct {
 	Params []string
 }
 
-type DownloadSpecificArgs struct {
-	Id     string
-	URL    string
-	Path   string
-	Rename string
-	Params []string
-}
-
 // Dependency injection container.
 func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 	return &Service{
@@ -42,7 +34,7 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
-func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
+func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 	p := &internal.Process{
 		Url:    args.URL,
 		Params: args.Params,
@@ -52,33 +44,22 @@ func (s *Service) Exec(args DownloadSpecificArgs, result *string) error {
 		},
 	}
 
-	id := s.db.Set(p)
-	p.Id = id
-
-	*result = p.Id
-
+	s.db.Set(p)
 	s.mq.Publish(p)
 
+	*result = p.Id
 	return nil
 }
 
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
-func (s *Service) ExecPlaylist(args DownloadSpecificArgs, result *string) error {
-	p := &internal.Process{
-		Url:    args.URL,
-		Params: args.Params,
-	}
-
-	id := s.db.Set(p)
-	p.Id = id
-
-	*result = p.Id
-
-	err := internal.PlaylistDetect(p, s.mq)
+func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) error {
+	err := internal.PlaylistDetect(args, s.mq, s.db)
 	if err != nil {
 		return err
 	}
+
+	*result = ""
 
 	return nil
 }
@@ -146,6 +127,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 			s.db.Delete(proc.Id)
 		}
 	}
+	s.mq.Empty()
 	return err
 }
 
@@ -166,7 +148,9 @@ func (s *Service) FreeSpace(args NoArgs, free *uint64) error {
 // Return a flattned tree of the download directory
 func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 	dfsTree, err := sys.DirectoryTree()
-	*tree = *dfsTree
+	if dfsTree != nil {
+		*tree = *dfsTree
+	}
 	return err
 }
 
