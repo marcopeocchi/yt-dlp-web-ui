@@ -1,14 +1,11 @@
 import { ThemeProvider } from '@emotion/react'
-
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
 import Storage from '@mui/icons-material/Storage'
-
 import { Box, createTheme } from '@mui/material'
-
 import DownloadIcon from '@mui/icons-material/Download'
 import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
@@ -19,20 +16,16 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-
 import { grey } from '@mui/material/colors'
-
 import { useMemo, useState } from 'react'
 import { useSelector } from 'react-redux'
-
 import { Link, Outlet } from 'react-router-dom'
 import { RootState } from './stores/store'
-
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
-
 import Logout from './components/Logout'
 import ThemeToggler from './components/ThemeToggler'
+import Toaster from './providers/ToasterProvider'
 import I18nProvider from './providers/i18nProvider'
 import RPCClientProvider from './providers/rpcClientProvider'
 import { formatGiB } from './utils'
@@ -184,6 +177,7 @@ export default function Layout() {
               <Outlet />
             </Box>
           </Box>
+          <Toaster />
         </RPCClientProvider>
       </I18nProvider>
     </ThemeProvider>

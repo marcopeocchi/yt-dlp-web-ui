@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/marcopeocchi/fazzoletti/slices"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -136,8 +137,11 @@ func (p *Process) Start() {
 					Speed:      stdout.Speed,
 					ETA:        stdout.Eta,
 				}
-				shortId := strings.Split(p.Id, "-")[0]
-				log.Printf("[%s] %s %s\n", shortId, p.Url, p.Progress.Percentage)
+				log.Println(
+					cli.BgGreen, "DL", cli.Reset,
+					cli.BgBlue, p.getShortId(), cli.Reset,
+					p.Url, stdout.Percentage,
+				)
 			}
 		}
 	}()
@@ -156,6 +160,14 @@ func (p *Process) Complete() {
 		Speed:      0,
 		ETA:        0,
 	}
+
+	shortId := p.getShortId()
+
+	log.Println(
+		cli.BgMagenta, "FINISH", cli.Reset,
+		cli.BgBlue, shortId, cli.Reset,
+		p.Url,
+	)
 }
 
 // Kill a process and remove it from the memory
@@ -201,6 +213,12 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	if err != nil {
 		return DownloadFormats{}, err
 	}
+
+	log.Println(
+		cli.BgRed, "Metadata", cli.Reset,
+		cli.BgBlue, p.getShortId(), cli.Reset,
+		p.Url,
+	)
 
 	go func() {
 		decodingError = json.NewDecoder(stdout).Decode(&info)
@@ -248,6 +266,12 @@ func (p *Process) SetMetadata() error {
 		return err
 	}
 
+	log.Println(
+		cli.BgRed, "Metadata", cli.Reset,
+		cli.BgBlue, p.getShortId(), cli.Reset,
+		p.Url,
+	)
+
 	err = json.NewDecoder(stdout).Decode(&info)
 	if err != nil {
 		return err
@@ -259,4 +283,8 @@ func (p *Process) SetMetadata() error {
 	err = cmd.Wait()
 
 	return err
+}
+
+func (p *Process) getShortId() string {
+	return strings.Split(p.Id, "-")[0]
 }
