@@ -15,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
@@ -68,23 +69,22 @@ func newServer(c serverConfig) *http.Server {
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
 		r.Use(middlewares.Authenticated)
-		r.Post("/downloaded", rest.ListDownloaded)
-		r.Post("/delete", rest.DeleteFile)
-		r.Get("/d/{id}", rest.SendFile)
+		r.Post("/downloaded", handlers.ListDownloaded)
+		r.Post("/delete", handlers.DeleteFile)
+		r.Get("/d/{id}", handlers.SendFile)
 	})
 
 	// Authentication routes
 	r.Route("/auth", func(r chi.Router) {
-		r.Post("/login", rest.Login)
-		r.Get("/logout", rest.Logout)
+		r.Post("/login", handlers.Login)
+		r.Get("/logout", handlers.Logout)
 	})
 
 	// RPC handlers
-	r.Route("/rpc", func(r chi.Router) {
-		r.Use(middlewares.Authenticated)
-		r.Get("/ws", ytdlpRPC.WebSocket)
-		r.Post("/http", ytdlpRPC.Post)
-	})
+	r.Route("/rpc", ytdlpRPC.ApplyRouter())
+
+	// REST API handlers
+	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mq))
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%d", c.port),

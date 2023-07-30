@@ -1,212 +1,56 @@
 package rest
 
 import (
-	"encoding/hex"
 	"net/http"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
-	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/goccy/go-json"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
-const (
-	TOKEN_COOKIE_NAME = "jwt"
-)
-
-type DirectoryEntry struct {
-	Name        string    `json:"name"`
-	Path        string    `json:"path"`
-	Size        int64     `json:"size"`
-	SHASum      string    `json:"shaSum"`
-	ModTime     time.Time `json:"modTime"`
-	IsVideo     bool      `json:"isVideo"`
-	IsDirectory bool      `json:"isDirectory"`
+type Handler struct {
+	service *Service
 }
 
-func walkDir(root string) (*[]DirectoryEntry, error) {
-	files := []DirectoryEntry{}
+func (h *Handler) Exec() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
 
-	dirs, err := os.ReadDir(root)
-	if err != nil {
-		return nil, err
-	}
+		w.Header().Set("Content-Type", "application/json")
 
-	for _, d := range dirs {
-		if !utils.IsValidEntry(d) {
-			continue
+		req := internal.DownloadRequest{}
+
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
-		path := filepath.Join(root, d.Name())
-
-		info, err := d.Info()
+		id, err := h.service.Exec(req)
 		if err != nil {
-			return nil, err
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
-		files = append(files, DirectoryEntry{
-			Path:        path,
-			Name:        d.Name(),
-			Size:        info.Size(),
-			SHASum:      utils.ShaSumString(path),
-			IsVideo:     utils.IsVideo(d),
-			IsDirectory: d.IsDir(),
-			ModTime:     info.ModTime(),
-		})
-	}
-
-	return &files, err
-}
-
-type ListRequest struct {
-	SubDir  string `json:"subdir"`
-	OrderBy string `json:"orderBy"`
-}
-
-func ListDownloaded(w http.ResponseWriter, r *http.Request) {
-	root := config.Instance().GetConfig().DownloadPath
-	req := new(ListRequest)
-
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	files, err := walkDir(filepath.Join(root, req.SubDir))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if req.OrderBy == "modtime" {
-		sort.SliceStable(*files, func(i, j int) bool {
-			return (*files)[i].ModTime.After((*files)[j].ModTime)
-		})
-	}
-
-	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(files)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		err = json.NewEncoder(w).Encode(id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 
-type DeleteRequest = DirectoryEntry
+func (h *Handler) Running() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
 
-func DeleteFile(w http.ResponseWriter, r *http.Request) {
-	req := new(DeleteRequest)
+		w.Header().Set("Content-Type", "application/json")
 
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		res, err := h.service.Running(r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(res)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
-
-	sum := utils.ShaSumString(req.Path)
-	if sum != req.SHASum {
-		http.Error(w, "shasum mismatch", http.StatusBadRequest)
-		return
-	}
-
-	err = os.Remove(req.Path)
-	if err != nil {
-		http.Error(w, "shasum mismatch", http.StatusBadRequest)
-		return
-	}
-
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("ok")
-}
-
-func SendFile(w http.ResponseWriter, r *http.Request) {
-	path := chi.URLParam(r, "id")
-
-	if path == "" {
-		http.Error(w, "inexistent path", http.StatusBadRequest)
-		return
-	}
-
-	decoded, err := hex.DecodeString(path)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	decodedStr := string(decoded)
-
-	root := config.Instance().GetConfig().DownloadPath
-
-	// TODO: further path / file validations
-	if strings.Contains(filepath.Dir(decodedStr), root) {
-		// ctx.Response().Header.Set(
-		// 	"Content-Disposition",
-		// 	"inline; filename="+filepath.Base(decodedStr),
-		// )
-
-		http.ServeFile(w, r, decodedStr)
-	}
-
-	w.WriteHeader(http.StatusUnauthorized)
-}
-
-type LoginRequest struct {
-	Secret string `json:"secret"`
-}
-
-func Login(w http.ResponseWriter, r *http.Request) {
-	req := new(LoginRequest)
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if config.Instance().GetConfig().RPCSecret != req.Secret {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	expiresAt := time.Now().Add(time.Hour * 24 * 30)
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"expiresAt": expiresAt,
-	})
-
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	cookie := &http.Cookie{
-		Name:     TOKEN_COOKIE_NAME,
-		HttpOnly: true,
-		Secure:   false,
-		Expires:  expiresAt, // 30 days
-		Value:    tokenString,
-		Path:     "/",
-	}
-
-	http.SetCookie(w, cookie)
-}
-
-func Logout(w http.ResponseWriter, r *http.Request) {
-	cookie := &http.Cookie{
-		Name:     TOKEN_COOKIE_NAME,
-		HttpOnly: true,
-		Secure:   false,
-		Expires:  time.Now(),
-		Value:    "",
-		Path:     "/",
-	}
-
-	http.SetCookie(w, cookie)
 }
