@@ -1,6 +1,5 @@
-import { Button, Container, SvgIcon, Typography, styled } from '@mui/material'
-import { useI18n } from '../hooks/useI18n'
 import ErrorIcon from '@mui/icons-material/Error'
+import { Button, Container, SvgIcon, Typography, styled } from '@mui/material'
 import { Link } from 'react-router-dom'
 
 const FlexContainer = styled(Container)({
