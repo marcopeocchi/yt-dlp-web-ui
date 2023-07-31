@@ -26,15 +26,14 @@ import { TransitionProps } from '@mui/material/transitions'
 import { Buffer } from 'buffer'
 import {
   forwardRef,
-  useEffect,
   useMemo,
   useRef,
   useState,
   useTransition
 } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
-import { connectedState } from '../atoms/status'
+import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
@@ -64,7 +63,8 @@ export default function DownloadDialog({
 }: Props) {
   // recoil state
   const settings = useRecoilValue(settingsState)
-  const [isConnected] = useRecoilState(connectedState)
+  const isConnected = useRecoilValue(connectedState)
+  const availableDownloadPaths = useRecoilValue(availableDownloadPathsState)
 
   // ephemeral state
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
@@ -74,7 +74,6 @@ export default function DownloadDialog({
 
   const [customArgs, setCustomArgs] = useState('')
   const [downloadPath, setDownloadPath] = useState(0)
-  const [availableDownloadPaths, setAvailableDownloadPaths] = useState<string[]>([])
 
   const [fileNameOverride, setFilenameOverride] = useState('')
 
@@ -95,19 +94,6 @@ export default function DownloadDialog({
   // refs
   const urlInputRef = useRef<HTMLInputElement>(null)
   const customFilenameInputRef = useRef<HTMLInputElement>(null)
-
-  // effects
-  useEffect(() => {
-    client.directoryTree()
-      .then(data => {
-        setAvailableDownloadPaths(data.result)
-      })
-  }, [])
-
-  useEffect(() => {
-    setCustomArgs(localStorage.getItem('last-input-args') ?? '')
-    setFilenameOverride(localStorage.getItem('last-filename-override') ?? '')
-  }, [])
 
   // transitions
   const [isPending, startTransition] = useTransition()

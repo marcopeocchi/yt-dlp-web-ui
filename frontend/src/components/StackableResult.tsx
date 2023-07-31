@@ -12,7 +12,6 @@ import {
   Stack,
   Typography
 } from '@mui/material'
-import { useEffect, useState } from 'react'
 import { ellipsis, formatSpeedMiB, mapProcessStatus, roundMiB } from '../utils'
 
 type Props = {
@@ -40,15 +39,11 @@ export function StackableResult({
   onStop,
   onCopy,
 }: Props) {
-  const [isCompleted, setIsCompleted] = useState(false)
+  const isCompleted = () => percentage === '-1'
 
-  useEffect(() => {
-    if (percentage === '-1') {
-      setIsCompleted(true)
-    }
-  }, [percentage])
-
-  const percentageToNumber = () => isCompleted ? 100 : Number(percentage.replace('%', ''))
+  const percentageToNumber = () => isCompleted()
+    ? 100
+    : Number(percentage.replace('%', ''))
 
   const guessResolution = (xByY: string): any => {
     if (!xByY) return null
@@ -82,12 +77,12 @@ export function StackableResult({
           }
           <Stack direction="row" spacing={1} py={2}>
             <Chip
-              label={isCompleted ? 'Completed' : mapProcessStatus(status)}
+              label={isCompleted() ? 'Completed' : mapProcessStatus(status)}
               color="primary"
               size="small"
             />
-            <Typography>{!isCompleted ? percentage : ''}</Typography>
-            <Typography> {!isCompleted ? formatSpeedMiB(speed) : ''}</Typography>
+            <Typography>{!isCompleted() ? percentage : ''}</Typography>
+            <Typography> {!isCompleted() ? formatSpeedMiB(speed) : ''}</Typography>
             <Typography>{roundMiB(size ?? 0)}</Typography>
             {guessResolution(resolution)}
           </Stack>
@@ -95,7 +90,7 @@ export function StackableResult({
             <LinearProgress
               variant="determinate"
               value={percentageToNumber()}
-              color={isCompleted ? "secondary" : "primary"}
+              color={isCompleted() ? "secondary" : "primary"}
             /> :
             null
           }
@@ -108,7 +103,7 @@ export function StackableResult({
           color="primary"
           onClick={onStop}
         >
-          {isCompleted ? "Clear" : "Stop"}
+          {isCompleted() ? "Clear" : "Stop"}
         </Button>
       </CardActions>
     </Card>

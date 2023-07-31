@@ -11,15 +11,19 @@ import {
   TableRow,
   Typography
 } from "@mui/material"
+import { useRecoilValue } from 'recoil'
+import { activeDownloadsState } from '../atoms/downloads'
+import { useRPC } from '../hooks/useRPC'
 import { ellipsis, formatSpeedMiB, roundMiB } from "../utils"
-import type { RPCResult } from "../types"
 
-type Props = {
-  downloads: RPCResult[]
-  onStop: (id: string) => void
-}
 
-export const DownloadsListView: React.FC<Props> = ({ downloads, onStop }) => {
+const DownloadsListView: React.FC = () => {
+  const downloads = useRecoilValue(activeDownloadsState) ?? []
+
+  const { client } = useRPC()
+
+  const abort = (id: string) => client.kill(id)
+
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
       <Grid item xs={12}>
@@ -70,7 +74,7 @@ export const DownloadsListView: React.FC<Props> = ({ downloads, onStop }) => {
                       <Button
                         variant="contained"
                         size="small"
-                        onClick={() => onStop(download.id)}
+                        onClick={() => abort(download.id)}
                       >
                         {download.progress.percentage === '-1' ? 'Remove' : 'Stop'}
                       </Button>
@@ -85,3 +89,5 @@ export const DownloadsListView: React.FC<Props> = ({ downloads, onStop }) => {
     </Grid>
   )
 }
+
+export default DownloadsListView

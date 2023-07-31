@@ -5,7 +5,6 @@ import DownloadIcon from '@mui/icons-material/Download'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
-import Storage from '@mui/icons-material/Storage'
 import { Box, createTheme } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
@@ -21,20 +20,20 @@ import { useMemo, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from './atoms/settings'
-import { statusState } from './atoms/status'
+import { connectedState } from './atoms/status'
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
+import FreeSpaceIndicator from './components/FreeSpaceIndicator'
 import Logout from './components/Logout'
+import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
 import Toaster from './providers/ToasterProvider'
-import { formatGiB } from './utils'
-import SocketSubscriber from './components/SocketSubscriber'
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
 
   const settings = useRecoilValue(settingsState)
-  const status = useRecoilValue(statusState)
+  const isConnected = useRecoilValue(connectedState)
 
   const mode = settings.theme
   const theme = useMemo(() =>
@@ -48,9 +47,7 @@ export default function Layout() {
     }), [settings.theme]
   )
 
-  const toggleDrawer = () => {
-    setOpen(state => !state)
-  }
+  const toggleDrawer = () => setOpen(state => !state)
 
   return (
     <ThemeProvider theme={theme}>
@@ -80,20 +77,7 @@ export default function Layout() {
               >
                 yt-dlp WebUI
               </Typography>
-              {
-                status.freeSpace ?
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}>
-                    <Storage />
-                    <span>
-                      &nbsp;{formatGiB(status.freeSpace)}&nbsp;
-                    </span>
-                  </div>
-                  : null
-              }
+              <FreeSpaceIndicator />
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -101,7 +85,7 @@ export default function Layout() {
               }}>
                 <SettingsEthernet />
                 <span>
-                  &nbsp;{status.connected ? settings.serverAddr : 'not connected'}
+                  &nbsp;{isConnected ? settings.serverAddr : 'not connected'}
                 </span>
               </div>
             </Toolbar>

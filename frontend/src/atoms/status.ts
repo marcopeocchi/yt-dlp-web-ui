@@ -1,10 +1,10 @@
 import { atom, selector } from 'recoil'
+import { rpcClientState } from './rpc'
 
 type StatusState = {
   connected: boolean,
   updated: boolean,
   downloading: boolean,
-  freeSpace: number,
 }
 
 
@@ -23,17 +23,18 @@ export const isDownloadingState = atom({
   default: false
 })
 
-export const freeSpaceBytesState = atom({
-  key: 'freeSpaceBytesState',
-  default: 0
-})
+// export const freeSpaceBytesState = selector({
+//   key: 'freeSpaceBytesState',
+//   get: async ({ get }) => {
+//     const res = await get(rpcClientState).freeSpace()
+//     return res.result
+//   }
+// })
 
-export const statusState = selector<StatusState>({
-  key: 'statusState',
-  get: ({ get }) => ({
-    connected: get(connectedState),
-    updated: get(updatedBinaryState),
-    downloading: get(isDownloadingState),
-    freeSpace: get(freeSpaceBytesState),
-  })
+export const availableDownloadPathsState = selector({
+  key: 'availableDownloadPathsState',
+  get: async ({ get }) => {
+    const res = await get(rpcClientState).directoryTree()
+    return res.result
+  }
 })

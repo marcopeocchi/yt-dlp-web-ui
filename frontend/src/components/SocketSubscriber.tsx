@@ -1,42 +1,62 @@
-import { useEffect } from 'react'
+import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { connectedState } from '../atoms/status'
-import { useRPC } from '../hooks/useRPC'
-import { useToast } from '../hooks/toast'
+import { interval, share, take } from 'rxjs'
+import { activeDownloadsState } from '../atoms/downloads'
 import { serverAddressAndPortState } from '../atoms/settings'
+import { connectedState } from '../atoms/status'
+import { useSubscription } from '../hooks/observable'
+import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
+import { useRPC } from '../hooks/useRPC'
+import { datetimeCompareFunc, isRPCResponse } from '../utils'
 
 interface Props extends React.HTMLAttributes<HTMLBaseElement> { }
 
 const SocketSubscriber: React.FC<Props> = ({ children }) => {
-  const [isConnected, setIsConnected] = useRecoilState(connectedState)
+  const [, setIsConnected] = useRecoilState(connectedState)
+  const [, setActive] = useRecoilState(activeDownloadsState)
+
   const serverAddressAndPort = useRecoilValue(serverAddressAndPortState)
 
   const { i18n } = useI18n()
-  const { socket$ } = useRPC()
+  const { client } = useRPC()
   const { pushMessage } = useToast()
 
-  useEffect(() => {
-    if (isConnected) { return }
+  const sharedSocket$ = useMemo(() => client.socket$.pipe(share()), [])
+  const socketOnce$ = useMemo(() => sharedSocket$.pipe(take(1)), [])
 
-    const sub = socket$.subscribe({
-      next: () => {
-        setIsConnected(true)
-        pushMessage(
-          `Connected to (${serverAddressAndPort})`,
-          "success"
-        )
-      },
-      error: (e) => {
-        console.error(e)
-        pushMessage(
-          `${i18n.t('rpcConnErr')} (${serverAddressAndPort})`,
-          "error"
-        )
-      }
-    })
-    return () => sub.unsubscribe()
-  }, [isConnected])
+  useSubscription(socketOnce$, () => {
+    setIsConnected(true)
+    pushMessage(
+      `${i18n.t('toastConnected')} (${serverAddressAndPort})`,
+      "success"
+    )
+  })
+
+  useSubscription(sharedSocket$,
+    (event) => {
+      if (!isRPCResponse(event)) { return }
+      if (!Array.isArray(event.result)) { return }
+
+      setActive(
+        (event.result || [])
+          .filter(f => !!f.info.url)
+          .sort((a, b) => datetimeCompareFunc(
+            b.info.created_at,
+            a.info.created_at,
+          ))
+      )
+    },
+    (err) => {
+      console.error(err)
+      pushMessage(
+        `${i18n.t('rpcConnErr')} (${serverAddressAndPort})`,
+        "error"
+      )
+    }
+  )
+
+  useSubscription(interval(1000), () => client.running())
 
   return (
     <>{children}</>

@@ -1,18 +1,20 @@
 import { Grid } from "@mui/material"
 import { Fragment } from "react"
+import { useRecoilValue } from 'recoil'
+import { activeDownloadsState } from '../atoms/downloads'
 import { useToast } from "../hooks/toast"
 import { useI18n } from '../hooks/useI18n'
-import type { RPCResult } from "../types"
+import { useRPC } from '../hooks/useRPC'
 import { StackableResult } from "./StackableResult"
 
-type Props = {
-  downloads: RPCResult[]
-  onStop: (id: string) => void
-}
+const DownloadsCardView: React.FC = () => {
+  const downloads = useRecoilValue(activeDownloadsState) ?? []
 
-export function DownloadsCardView({ downloads, onStop }: Props) {
   const { i18n } = useI18n()
+  const { client } = useRPC()
   const { pushMessage } = useToast()
+
+  const abort = (id: string) => client.kill(id)
 
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
@@ -25,7 +27,7 @@ export function DownloadsCardView({ downloads, onStop }: Props) {
                 title={download.info.title}
                 thumbnail={download.info.thumbnail}
                 percentage={download.progress.percentage}
-                onStop={() => onStop(download.id)}
+                onStop={() => abort(download.id)}
                 onCopy={() => pushMessage(i18n.t('clipboardAction'))}
                 resolution={download.info.resolution ?? ''}
                 speed={download.progress.speed}
@@ -39,3 +41,5 @@ export function DownloadsCardView({ downloads, onStop }: Props) {
     </Grid>
   )
 }
+
+export default DownloadsCardView

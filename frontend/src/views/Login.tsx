@@ -13,7 +13,8 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getHttpEndpoint } from '../utils'
+import { useRecoilValue } from 'recoil'
+import { serverURL } from '../atoms/settings'
 
 const LoginContainer = styled(Container)({
   display: 'flex',
@@ -35,10 +36,12 @@ export default function Login() {
   const [secret, setSecret] = useState('')
   const [formHasError, setFormHasError] = useState(false)
 
+  const url = useRecoilValue(serverURL)
+
   const navigate = useNavigate()
 
   const login = async () => {
-    const res = await fetch(`${getHttpEndpoint()}/auth/login`, {
+    const res = await fetch(`${url}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

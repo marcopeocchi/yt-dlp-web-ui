@@ -1,11 +1,12 @@
-import type { DLMetadata, RPCRequest, RPCResponse } from '../types'
+import { Observable, share } from 'rxjs'
+import type { DLMetadata, RPCRequest, RPCResponse, RPCResult } from '../types'
 
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
 
 export class RPCClient {
   private seq: number
   private httpEndpoint: string
-  private _socket$: WebSocketSubject<any>
+  private readonly _socket$: WebSocketSubject<any>
 
   constructor(httpEndpoint: string, webSocketEndpoint: string) {
     this.seq = 0
@@ -13,8 +14,8 @@ export class RPCClient {
     this._socket$ = webSocket<any>(webSocketEndpoint)
   }
 
-  public get socket$() {
-    return this._socket$
+  public get socket$(): Observable<RPCResponse<RPCResult[]>> {
+    return this._socket$.asObservable()
   }
 
   private incrementSeq() {
@@ -52,7 +53,7 @@ export class RPCClient {
       return
     }
     if (playlist) {
-      return this.send({
+      return this.sendHTTP({
         method: 'Service.ExecPlaylist',
         params: [{
           URL: url,
@@ -61,7 +62,7 @@ export class RPCClient {
         }]
       })
     }
-    this.send({
+    this.sendHTTP({
       method: 'Service.Exec',
       params: [{
         URL: url.split("?list").at(0)!,
@@ -91,14 +92,14 @@ export class RPCClient {
   }
 
   public kill(id: string) {
-    this.send({
+    this.sendHTTP({
       method: 'Service.Kill',
       params: [id],
     })
   }
 
   public killAll() {
-    this.send({
+    this.sendHTTP({
       method: 'Service.KillAll',
       params: [],
     })

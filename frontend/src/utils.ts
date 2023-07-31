@@ -75,19 +75,6 @@ export function toFormatArgs(codes: string[]): string {
   return ''
 }
 
-export function getWebSocketEndpoint() {
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
-  return `${protocol}://${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/rpc/ws`
-}
-
-export function getHttpRPCEndpoint() {
-  return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}/rpc/http`
-}
-
-export function getHttpEndpoint() {
-  return `${window.location.protocol}//${localStorage.getItem('server-addr') || window.location.hostname}:${localStorage.getItem('server-port') || window.location.port}`
-}
-
 export function formatGiB(bytes: number) {
   return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
 }

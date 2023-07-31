@@ -5,7 +5,6 @@ export const useRPC = () => {
   const client = useRecoilValue(rpcClientState)
 
   return {
-    client,
-    socket$: client.socket$
+    client
   }
 }
