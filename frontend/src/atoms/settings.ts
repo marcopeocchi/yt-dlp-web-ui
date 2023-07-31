@@ -42,7 +42,7 @@ export interface SettingsState {
 
 export const languageState = atom<Language>({
   key: 'languageState',
-  default: localStorage.getItem('language') as Language ?? 'english',
+  default: localStorage.getItem('language') as Language || 'english',
   effects: [
     ({ onSet }) =>
       onSet(l => localStorage.setItem('language', l.toString()))
@@ -51,7 +51,7 @@ export const languageState = atom<Language>({
 
 export const themeState = atom<Theme>({
   key: 'themeStateState',
-  default: localStorage.getItem('theme') as Theme ?? 'system',
+  default: localStorage.getItem('theme') as Theme || 'light',
   effects: [
     ({ onSet }) =>
       onSet(l => localStorage.setItem('theme', l.toString()))
@@ -60,7 +60,7 @@ export const themeState = atom<Theme>({
 
 export const serverAddressState = atom<string>({
   key: 'serverAddressState',
-  default: localStorage.getItem('server-addr') ?? window.location.hostname,
+  default: localStorage.getItem('server-addr') || window.location.hostname,
   effects: [
     ({ onSet }) =>
       onSet(a => localStorage.setItem('server-addr', a.toString()))
@@ -69,7 +69,7 @@ export const serverAddressState = atom<string>({
 
 export const serverPortState = atom<number>({
   key: 'serverPortState',
-  default: Number(localStorage.getItem('server-port')) ??
+  default: Number(localStorage.getItem('server-port')) ||
     Number(window.location.port),
   effects: [
     ({ onSet }) =>
@@ -79,7 +79,7 @@ export const serverPortState = atom<number>({
 
 export const latestCliArgumentsState = atom<string>({
   key: 'latestCliArgumentsState',
-  default: localStorage.getItem('cli-args') ?? '',
+  default: localStorage.getItem('cli-args') || '',
   effects: [
     ({ onSet }) =>
       onSet(a => localStorage.setItem('cli-args', a.toString()))

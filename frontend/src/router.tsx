@@ -8,6 +8,8 @@ const Login = lazy(() => import('./views/Login'))
 const Archive = lazy(() => import('./views/Archive'))
 const Settings = lazy(() => import('./views/Settings'))
 
+const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -18,6 +20,11 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<CircularProgress />}>
             <Home />
+          </Suspense >
+        ),
+        errorElement: (
+          <Suspense fallback={<CircularProgress />}>
+            <ErrorBoundary />
           </Suspense >
         )
       },
@@ -34,6 +41,11 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<CircularProgress />}>
             <Archive />
+          </Suspense >
+        ),
+        errorElement: (
+          <Suspense fallback={<CircularProgress />}>
+            <ErrorBoundary />
           </Suspense >
         )
       },
