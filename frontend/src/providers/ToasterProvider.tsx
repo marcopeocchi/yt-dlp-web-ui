@@ -1,22 +1,34 @@
 import { Alert, Snackbar } from "@mui/material"
-import { useDispatch, useSelector } from "react-redux"
-import { setClose } from "../features/ui/toastSlice"
-import { RootState } from "../stores/store"
+import { useRecoilState } from 'recoil'
+import { toastListState } from '../atoms/toast'
+import { useEffect } from 'react'
 
 const Toaster: React.FC = () => {
-  const toast = useSelector((state: RootState) => state.toast)
-  const dispatch = useDispatch()
+  const [toasts, setToasts] = useRecoilState(toastListState)
+
+  useEffect(() => {
+    if (toasts.length > 0) {
+      const interval = setInterval(() => {
+        setToasts(t => t.filter((x) => (Date.now() - x.createdAt) < 1500))
+      }, 1500)
+
+      return () => clearInterval(interval)
+    }
+  }, [setToasts, toasts])
 
   return (
-    <Snackbar
-      open={toast.open}
-      autoHideDuration={toast.severity === 'error' ? 10000 : 1500}
-      onClose={() => dispatch(setClose())}
-    >
-      <Alert variant="filled" severity={toast.severity}>
-        {toast.message}
-      </Alert>
-    </Snackbar>
+    <>
+      {toasts.map((toast, index) => (
+        <Snackbar
+          key={index}
+          open={toast.open}
+        >
+          <Alert variant="filled" severity={toast.severity}>
+            {toast.message}
+          </Alert>
+        </Snackbar>
+      ))}
+    </>
   )
 }
 

@@ -1,15 +1,20 @@
 import type { DLMetadata, RPCRequest, RPCResponse } from '../types'
 
-import { webSocket } from 'rxjs/webSocket'
-import { getHttpRPCEndpoint, getWebSocketEndpoint } from '../utils'
-
-export const socket$ = webSocket<any>(getWebSocketEndpoint())
+import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
 
 export class RPCClient {
   private seq: number
+  private httpEndpoint: string
+  private _socket$: WebSocketSubject<any>
 
-  constructor() {
+  constructor(httpEndpoint: string, webSocketEndpoint: string) {
     this.seq = 0
+    this.httpEndpoint = httpEndpoint
+    this._socket$ = webSocket<any>(webSocketEndpoint)
+  }
+
+  public get socket$() {
+    return this._socket$
   }
 
   private incrementSeq() {
@@ -17,14 +22,14 @@ export class RPCClient {
   }
 
   private send(req: RPCRequest) {
-    socket$.next({
+    this._socket$.next({
       ...req,
       id: this.incrementSeq(),
     })
   }
 
   private async sendHTTP<T>(req: RPCRequest) {
-    const res = await fetch(getHttpRPCEndpoint(), {
+    const res = await fetch(this.httpEndpoint, {
       method: 'POST',
       body: JSON.stringify({
         ...req,

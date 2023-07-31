@@ -26,19 +26,19 @@ import { TransitionProps } from '@mui/material/transitions'
 import { Buffer } from 'buffer'
 import {
   forwardRef,
-  useContext,
   useEffect,
   useMemo,
   useRef,
   useState,
   useTransition
 } from 'react'
-import { useSelector } from 'react-redux'
+import { useRecoilState, useRecoilValue } from 'recoil'
+import { settingsState } from '../atoms/settings'
+import { connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
+import { useI18n } from '../hooks/useI18n'
+import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
-import { I18nContext } from '../providers/i18nProvider'
-import { RPCClientContext } from '../providers/rpcClientProvider'
-import { RootState } from '../stores/store'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
 
@@ -62,9 +62,9 @@ export default function DownloadDialog({
   onClose,
   onDownloadStart
 }: Props) {
-  // redux state
-  const settings = useSelector((state: RootState) => state.settings)
-  const status = useSelector((state: RootState) => state.status)
+  // recoil state
+  const settings = useRecoilValue(settingsState)
+  const [isConnected] = useRecoilState(connectedState)
 
   // ephemeral state
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
@@ -85,11 +85,12 @@ export default function DownloadDialog({
 
   // memos
   const cliArgs = useMemo(() =>
-    new CliArguments().fromString(settings.cliArgs), [settings.cliArgs])
+    new CliArguments().fromString(settings.cliArgs), [settings.cliArgs]
+  )
 
   // context
-  const { i18n } = useContext(I18nContext)
-  const { client } = useContext(RPCClientContext)
+  const { i18n } = useI18n()
+  const { client } = useRPC()
 
   // refs
   const urlInputRef = useRef<HTMLInputElement>(null)
@@ -254,7 +255,7 @@ export default function DownloadDialog({
                     variant="outlined"
                     onChange={handleUrlChange}
                     disabled={
-                      !status.connected
+                      !isConnected
                       || (settings.formatSelection && downloadFormats != null)
                     }
                     InputProps={{
@@ -290,7 +291,10 @@ export default function DownloadDialog({
                         variant="outlined"
                         onChange={handleCustomArgsChange}
                         value={customArgs}
-                        disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                        disabled={
+                          !isConnected ||
+                          (settings.formatSelection && downloadFormats != null)
+                        }
                       />
                     </Grid>
                   }
@@ -304,7 +308,10 @@ export default function DownloadDialog({
                         variant="outlined"
                         value={fileNameOverride}
                         onChange={handleFilenameOverrideChange}
-                        disabled={!status.connected || (settings.formatSelection && downloadFormats != null)}
+                        disabled={
+                          !isConnected ||
+                          (settings.formatSelection && downloadFormats != null)
+                        }
                       />
                     </Grid>
                   }
@@ -338,7 +345,11 @@ export default function DownloadDialog({
                         : sendUrl()
                       }
                     >
-                      {settings.formatSelection ? i18n.t('selectFormatButton') : i18n.t('startButton')}
+                      {
+                        settings.formatSelection
+                          ? i18n.t('selectFormatButton')
+                          : i18n.t('startButton')
+                      }
                     </Button>
                   </Grid>
                   <Grid item>

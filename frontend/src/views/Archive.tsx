@@ -27,27 +27,24 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 
 import { Buffer } from 'buffer'
-import { useContext, useEffect, useMemo, useState, useTransition } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useRecoilValue } from 'recoil'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
+import { serverURL } from '../atoms/settings'
 import { useObservable } from '../hooks/observable'
-import { RootState } from '../stores/store'
+import { useI18n } from '../hooks/useI18n'
+import { ffetch } from '../lib/httpClient'
 import { DeleteRequest, DirectoryEntry } from '../types'
 import { roundMiB } from '../utils'
-import { useNavigate } from 'react-router-dom'
-import { ffetch } from '../lib/httpClient'
-import { I18nContext } from '../providers/i18nProvider'
 
 export default function Downloaded() {
-  const settings = useSelector((state: RootState) => state.settings)
+  const serverAddr = useRecoilValue(serverURL)
   const navigate = useNavigate()
 
-  const { i18n } = useContext(I18nContext)
+  const { i18n } = useI18n()
 
   const [openDialog, setOpenDialog] = useState(false)
-
-  const serverAddr =
-    `${window.location.protocol}//${settings.serverAddr}:${settings.serverPort}`
 
   const files$ = useMemo(() => new Subject<DirectoryEntry[]>(), [])
   const selected$ = useMemo(() => new BehaviorSubject<string[]>([]), [])
@@ -138,8 +135,7 @@ export default function Downloaded() {
 
   useEffect(() => {
     fetcher()
-  }, [settings.serverAddr, settings.serverPort])
-
+  }, [serverAddr])
 
   const onFileClick = (path: string) => startTransition(() => {
     window.open(`${serverAddr}/archive/d/${Buffer.from(path).toString('hex')}`)

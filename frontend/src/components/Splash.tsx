@@ -1,7 +1,8 @@
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import { Container, SvgIcon, Typography, styled } from '@mui/material'
-import { useContext } from 'react'
-import { I18nContext } from '../providers/i18nProvider'
+import { useRecoilValue } from 'recoil'
+import { activeDownloadsState } from '../atoms/downloads'
+import { useI18n } from '../hooks/useI18n'
 
 const FlexContainer = styled(Container)({
   display: 'flex',
@@ -21,7 +22,12 @@ const Title = styled(Typography)({
 })
 
 export default function Splash() {
-  const { i18n } = useContext(I18nContext)
+  const { i18n } = useI18n()
+  const activeDownloads = useRecoilValue(activeDownloadsState)
+
+  if (!activeDownloads || activeDownloads.length !== 0) {
+    return null
+  }
 
   return (
     <FlexContainer>

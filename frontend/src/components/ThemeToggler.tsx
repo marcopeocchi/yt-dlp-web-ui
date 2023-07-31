@@ -1,22 +1,20 @@
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { useDispatch, useSelector } from 'react-redux'
-import { setTheme } from '../features/settings/settingsSlice'
-import { RootState } from '../stores/store'
 import { Brightness4, Brightness5 } from '@mui/icons-material'
+import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
+import { useRecoilState } from 'recoil'
+import { themeState } from '../atoms/settings'
 
 export default function ThemeToggler() {
-  const settings = useSelector((state: RootState) => state.settings)
-  const dispatch = useDispatch()
+  const [theme, setTheme] = useRecoilState(themeState)
 
   return (
     <ListItemButton onClick={() => {
-      settings.theme === 'light'
-        ? dispatch(setTheme('dark'))
-        : dispatch(setTheme('light'))
+      theme === 'light'
+        ? setTheme('dark')
+        : setTheme('light')
     }}>
       <ListItemIcon>
         {
-          settings.theme === 'light'
+          theme === 'light'
             ? <Brightness4 />
             : <Brightness5 />
         }

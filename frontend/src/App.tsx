@@ -1,12 +1,11 @@
-import { Provider } from 'react-redux'
 import { RouterProvider } from 'react-router-dom'
+import { RecoilRoot } from 'recoil'
 import { router } from './router'
-import { store } from './stores/store'
 
 export function App() {
   return (
-    <Provider store={store}>
+    <RecoilRoot>
       <RouterProvider router={router} />
-    </Provider>
+    </RecoilRoot>
   )
 }

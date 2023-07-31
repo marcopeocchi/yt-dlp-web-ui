@@ -14,10 +14,11 @@ import {
   Stack,
   Switch,
   TextField,
-  Typography
+  Typography,
+  capitalize
 } from '@mui/material'
-import { useContext, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useMemo, useState } from 'react'
+import { useRecoilState } from 'recoil'
 import {
   Subject,
   debounceTime,
@@ -26,38 +27,45 @@ import {
   takeWhile
 } from 'rxjs'
 import {
-  LanguageUnion,
-  ThemeUnion,
-  setCliArgs,
-  setEnableCustomArgs,
-  setFileRenaming,
-  setFormatSelection,
-  setLanguage,
-  setPathOverriding,
-  setServerAddr,
-  setServerPort,
-  setTheme
-} from '../features/settings/settingsSlice'
+  Language,
+  Theme,
+  enableCustomArgsState,
+  fileRenamingState,
+  formatSelectionState,
+  languageState,
+  languages,
+  latestCliArgumentsState,
+  pathOverridingState,
+  serverAddressState,
+  serverPortState,
+  themeState
+} from '../atoms/settings'
 import { useToast } from '../hooks/toast'
+import { useI18n } from '../hooks/useI18n'
+import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
-import { I18nContext } from '../providers/i18nProvider'
-import { RPCClientContext } from '../providers/rpcClientProvider'
-import { RootState } from '../stores/store'
 import { validateDomain, validateIP } from '../utils'
 
+// NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
-  const dispatch = useDispatch()
+  const [formatSelection, setFormatSelection] = useRecoilState(formatSelectionState)
+  const [pathOverriding, setPathOverriding] = useRecoilState(pathOverridingState)
+  const [fileRenaming, setFileRenaming] = useRecoilState(fileRenamingState)
+  const [enableArgs, setEnableArgs] = useRecoilState(enableCustomArgsState)
+  const [serverAddr, setServerAddr] = useRecoilState(serverAddressState)
+  const [serverPort, setServerPort] = useRecoilState(serverPortState)
+  const [language, setLanguage] = useRecoilState(languageState)
+  const [cliArgs, setCliArgs] = useRecoilState(latestCliArgumentsState)
+  const [theme, setTheme] = useRecoilState(themeState)
 
-  const settings = useSelector((state: RootState) => state.settings)
+  const [invalidIP, setInvalidIP] = useState(false)
 
-  const [invalidIP, setInvalidIP] = useState(false);
-
-  const { i18n } = useContext(I18nContext)
-  const { client } = useContext(RPCClientContext)
+  const { i18n } = useI18n()
+  const { client } = useRPC()
 
   const { pushMessage } = useToast()
 
-  const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [])
+  const argsBuilder = useMemo(() => new CliArguments().fromString(cliArgs), [])
 
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
   const serverPort$ = useMemo(() => new Subject<string>(), [])
@@ -71,10 +79,10 @@ export default function Settings() {
       .subscribe(addr => {
         if (validateIP(addr)) {
           setInvalidIP(false)
-          dispatch(setServerAddr(addr))
+          setServerAddr(addr)
         } else if (validateDomain(addr)) {
           setInvalidIP(false)
-          dispatch(setServerAddr(addr))
+          setServerAddr(addr)
         } else {
           setInvalidIP(true)
         }
@@ -90,7 +98,7 @@ export default function Settings() {
         takeWhile(val => isFinite(val) && val <= 65535),
       )
       .subscribe(port => {
-        dispatch(setServerPort(port.toString()))
+        setServerPort(port)
       })
     return () => sub.unsubscribe()
   }, [])
@@ -98,15 +106,15 @@ export default function Settings() {
   /**
    * Language toggler handler 
    */
-  const handleLanguageChange = (event: SelectChangeEvent<LanguageUnion>) => {
-    dispatch(setLanguage(event.target.value as LanguageUnion));
+  const handleLanguageChange = (event: SelectChangeEvent<Language>) => {
+    setLanguage(event.target.value as Language)
   }
 
   /**
    * Theme toggler handler 
    */
-  const handleThemeChange = (event: SelectChangeEvent<ThemeUnion>) => {
-    dispatch(setTheme(event.target.value as ThemeUnion));
+  const handleThemeChange = (event: SelectChangeEvent<Theme>) => {
+    setTheme(event.target.value as Theme)
   }
 
   /**
@@ -137,7 +145,7 @@ export default function Settings() {
                   <TextField
                     fullWidth
                     label={i18n.t('serverAddressTitle')}
-                    defaultValue={settings.serverAddr}
+                    defaultValue={serverAddr}
                     error={invalidIP}
                     onChange={(e) => serverAddr$.next(e.currentTarget.value)}
                     InputProps={{
@@ -150,9 +158,9 @@ export default function Settings() {
                   <TextField
                     fullWidth
                     label={i18n.t('serverPortTitle')}
-                    defaultValue={settings.serverPort}
+                    defaultValue={serverPort}
                     onChange={(e) => serverPort$.next(e.currentTarget.value)}
-                    error={isNaN(Number(settings.serverPort)) || Number(settings.serverPort) > 65535}
+                    error={isNaN(Number(serverPort)) || Number(serverPort) > 65535}
                     sx={{ mb: 2 }}
                   />
                 </Grid>
@@ -162,20 +170,15 @@ export default function Settings() {
                   <FormControl fullWidth>
                     <InputLabel>{i18n.t('languageSelect')}</InputLabel>
                     <Select
-                      defaultValue={settings.language}
+                      defaultValue={language}
                       label={i18n.t('languageSelect')}
                       onChange={handleLanguageChange}
                     >
-                      <MenuItem value="english">English</MenuItem>
-                      <MenuItem value="spanish">Spanish</MenuItem>
-                      <MenuItem value="italian">Italian</MenuItem>
-                      <MenuItem value="chinese">Chinese</MenuItem>
-                      <MenuItem value="russian">Russian</MenuItem>
-                      <MenuItem value="korean">Korean</MenuItem>
-                      <MenuItem value="japanese">Japanese</MenuItem>
-                      <MenuItem value="catalan">Catalan</MenuItem>
-                      <MenuItem value="ukrainian">Ukrainian</MenuItem>
-                      <MenuItem value="polish">Polish</MenuItem>
+                      {languages.map(l => (
+                        <MenuItem value={l} key={l}>
+                          {capitalize(l)}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </Grid>
@@ -183,7 +186,7 @@ export default function Settings() {
                   <FormControl fullWidth>
                     <InputLabel>{i18n.t('themeSelect')}</InputLabel>
                     <Select
-                      defaultValue={settings.theme}
+                      defaultValue={theme}
                       label={i18n.t('themeSelect')}
                       onChange={handleThemeChange}
                     >
@@ -196,8 +199,8 @@ export default function Settings() {
               <FormControlLabel
                 control={
                   <Switch
-                    defaultChecked={cliArgs.noMTime}
-                    onChange={() => dispatch(setCliArgs(cliArgs.toggleNoMTime().toString()))}
+                    defaultChecked={argsBuilder.noMTime}
+                    onChange={() => setCliArgs(argsBuilder.toggleNoMTime().toString())}
                   />
                 }
                 label={i18n.t('noMTimeCheckbox')}
@@ -206,9 +209,9 @@ export default function Settings() {
               <FormControlLabel
                 control={
                   <Switch
-                    defaultChecked={cliArgs.extractAudio}
-                    onChange={() => dispatch(setCliArgs(cliArgs.toggleExtractAudio().toString()))}
-                    disabled={settings.formatSelection}
+                    defaultChecked={argsBuilder.extractAudio}
+                    onChange={() => setCliArgs(argsBuilder.toggleExtractAudio().toString())}
+                    disabled={formatSelection}
                   />
                 }
                 label={i18n.t('extractAudioCheckbox')}
@@ -216,10 +219,10 @@ export default function Settings() {
               <FormControlLabel
                 control={
                   <Switch
-                    defaultChecked={settings.formatSelection}
+                    defaultChecked={formatSelection}
                     onChange={() => {
-                      dispatch(setCliArgs(cliArgs.disableExtractAudio().toString()))
-                      dispatch(setFormatSelection(!settings.formatSelection))
+                      setCliArgs(argsBuilder.disableExtractAudio().toString())
+                      setFormatSelection(!formatSelection)
                     }}
                   />
                 }
@@ -233,9 +236,9 @@ export default function Settings() {
                   <FormControlLabel
                     control={
                       <Switch
-                        defaultChecked={settings.pathOverriding}
+                        defaultChecked={!!pathOverriding}
                         onChange={() => {
-                          dispatch(setPathOverriding(!settings.pathOverriding))
+                          setPathOverriding(state => !state)
                         }}
                       />
                     }
@@ -244,9 +247,9 @@ export default function Settings() {
                   <FormControlLabel
                     control={
                       <Switch
-                        defaultChecked={settings.fileRenaming}
+                        defaultChecked={fileRenaming}
                         onChange={() => {
-                          dispatch(setFileRenaming(!settings.fileRenaming))
+                          setFileRenaming(state => !state)
                         }}
                       />
                     }
@@ -255,9 +258,9 @@ export default function Settings() {
                   <FormControlLabel
                     control={
                       <Switch
-                        defaultChecked={settings.enableCustomArgs}
+                        defaultChecked={enableArgs}
                         onChange={() => {
-                          dispatch(setEnableCustomArgs(!settings.enableCustomArgs))
+                          setEnableArgs(state => !state)
                         }}
                       />
                     }
@@ -281,5 +284,5 @@ export default function Settings() {
         </Grid>
       </Grid>
     </Container>
-  );
+  )
 }

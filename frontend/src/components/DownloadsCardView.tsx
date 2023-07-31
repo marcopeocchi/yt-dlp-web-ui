@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material"
-import { Fragment, useContext } from "react"
+import { Fragment } from "react"
 import { useToast } from "../hooks/toast"
-import { I18nContext } from "../providers/i18nProvider"
+import { useI18n } from '../hooks/useI18n'
 import type { RPCResult } from "../types"
 import { StackableResult } from "./StackableResult"
 
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export function DownloadsCardView({ downloads, onStop }: Props) {
-  const { i18n } = useContext(I18nContext)
+  const { i18n } = useI18n()
   const { pushMessage } = useToast()
 
   return (

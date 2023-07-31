@@ -1,16 +1,19 @@
-import { useDispatch } from "react-redux"
-import { setMessage } from "../features/ui/toastSlice"
-import { AlertColor } from "@mui/material"
+import { AlertColor } from '@mui/material'
+import { useRecoilState } from 'recoil'
+import { toastListState } from '../atoms/toast'
 
 export const useToast = () => {
-  const dispatch = useDispatch()
+  const [toasts, setToasts] = useRecoilState(toastListState)
 
   return {
     pushMessage: (message: string, severity?: AlertColor) => {
-      dispatch(setMessage({
+      setToasts([{
+        open: true,
         message: message,
-        severity: severity
-      }))
+        severity: severity,
+        autoClose: true,
+        createdAt: Date.now()
+      }, ...toasts])
     }
   }
 }
