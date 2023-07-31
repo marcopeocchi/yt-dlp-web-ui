@@ -11,7 +11,6 @@ import {
   Paper,
   Select,
   SelectChangeEvent,
-  Snackbar,
   Stack,
   Switch,
   TextField,
@@ -39,7 +38,7 @@ import {
   setServerPort,
   setTheme
 } from '../features/settings/settingsSlice'
-import { updated } from '../features/status/statusSlice'
+import { useToast } from '../hooks/toast'
 import { CliArguments } from '../lib/argsParser'
 import { I18nContext } from '../providers/i18nProvider'
 import { RPCClientContext } from '../providers/rpcClientProvider'
@@ -49,13 +48,14 @@ import { validateDomain, validateIP } from '../utils'
 export default function Settings() {
   const dispatch = useDispatch()
 
-  const status = useSelector((state: RootState) => state.status)
   const settings = useSelector((state: RootState) => state.settings)
 
   const [invalidIP, setInvalidIP] = useState(false);
 
   const { i18n } = useContext(I18nContext)
   const { client } = useContext(RPCClientContext)
+
+  const { pushMessage } = useToast()
 
   const cliArgs = useMemo(() => new CliArguments().fromString(settings.cliArgs), [])
 
@@ -110,10 +110,10 @@ export default function Settings() {
   }
 
   /**
-   * Send via WebSocket a message to update yt-dlp binary
+   * Updates yt-dlp binary via RPC
    */
   const updateBinary = () => {
-    client.updateExecutable().then(() => dispatch(updated()))
+    client.updateExecutable().then(() => pushMessage(i18n.t('toastUpdated')))
   }
 
   return (
@@ -270,7 +270,7 @@ export default function Settings() {
                   <Button
                     sx={{ mr: 1, mt: 3 }}
                     variant="contained"
-                    onClick={() => dispatch(updated())}
+                    onClick={() => updateBinary()}
                   >
                     {i18n.t('updateBinButton')}
                   </Button>
@@ -280,12 +280,6 @@ export default function Settings() {
           </Paper>
         </Grid>
       </Grid>
-      <Snackbar
-        open={status.updated}
-        autoHideDuration={1500}
-        message={i18n.t('toastUpdated')}
-        onClose={updateBinary}
-      />
     </Container>
   );
 }

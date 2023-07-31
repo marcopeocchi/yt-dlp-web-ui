@@ -19,13 +19,13 @@ type Props = {
   onStop: (id: string) => void
 }
 
-export function DownloadsListView({ downloads, onStop }: Props) {
+export const DownloadsListView: React.FC<Props> = ({ downloads, onStop }) => {
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
       <Grid item xs={12}>
-        <TableContainer component={Paper} sx={{ minHeight: '80vh' }} elevation={2}>
+        <TableContainer component={Paper} sx={{ minHeight: '100%' }} elevation={2}>
           <Table>
-            <TableHead>
+            <TableHead hidden={downloads.length === 0}>
               <TableRow>
                 <TableCell>
                   <Typography fontWeight={500} fontSize={15}>Title</Typography>
@@ -52,8 +52,9 @@ export function DownloadsListView({ downloads, onStop }: Props) {
                     <TableCell>
                       <LinearProgress
                         value={
-                          download.progress.percentage === '-1' ? 100 :
-                            Number(download.progress.percentage.replace('%', ''))
+                          download.progress.percentage === '-1'
+                            ? 100
+                            : Number(download.progress.percentage.replace('%', ''))
                         }
                         variant={
                           download.progress.process_status === 0

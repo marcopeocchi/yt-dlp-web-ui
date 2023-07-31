@@ -24,14 +24,6 @@ type Args struct {
 	Params []string
 }
 
-// Dependency injection container.
-func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
-	return &Service{
-		db: db,
-		mq: mq,
-	}
-}
-
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) Exec(args internal.DownloadRequest, result *string) error {

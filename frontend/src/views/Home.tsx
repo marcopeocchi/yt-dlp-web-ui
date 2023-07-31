@@ -2,11 +2,9 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
 import {
-  Alert,
   Backdrop,
   CircularProgress,
   Container,
-  Snackbar,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon
@@ -19,6 +17,7 @@ import { DownloadsListView } from '../components/DownloadsListView'
 import Splash from '../components/Splash'
 import { toggleListView } from '../features/settings/settingsSlice'
 import { connected, setFreeSpace } from '../features/status/statusSlice'
+import { useToast } from '../hooks/toast'
 import { socket$ } from '../lib/rpcClient'
 import { I18nContext } from '../providers/i18nProvider'
 import { RPCClientContext } from '../providers/rpcClientProvider'
@@ -27,23 +26,18 @@ import type { RPCResponse, RPCResult } from '../types'
 import { datetimeCompareFunc, isRPCResponse } from '../utils'
 
 export default function Home() {
-  // redux state
   const settings = useSelector((state: RootState) => state.settings)
   const status = useSelector((state: RootState) => state.status)
   const dispatch = useDispatch()
 
-  // ephemeral state
   const [activeDownloads, setActiveDownloads] = useState<RPCResult[]>()
-
   const [showBackdrop, setShowBackdrop] = useState(true)
-  const [showToast, setShowToast] = useState(true)
-
   const [openDialog, setOpenDialog] = useState(false)
-  const [socketHasError, setSocketHasError] = useState(false)
 
-  // context
   const { i18n } = useContext(I18nContext)
   const { client } = useContext(RPCClientContext)
+
+  const { pushMessage } = useToast()
 
   /* -------------------- Effects -------------------- */
 
@@ -56,13 +50,12 @@ export default function Home() {
         dispatch(connected())
       },
       error: () => {
-        setSocketHasError(true)
+        pushMessage(
+          `${i18n.t('rpcConnErr')} (${settings.serverAddr}:${settings.serverPort})`,
+          "error"
+        )
         setShowBackdrop(false)
-      },
-      complete: () => {
-        setSocketHasError(true)
-        setShowBackdrop(false)
-      },
+      }
     })
     return () => sub.unsubscribe()
   }, [socket$, status.connected])
@@ -80,7 +73,10 @@ export default function Home() {
       .freeSpace()
       .then(bytes => dispatch(setFreeSpace(bytes.result)))
       .catch(() => {
-        setSocketHasError(true)
+        pushMessage(
+          `${i18n.t('rpcConnErr')} (${settings.serverAddr}:${settings.serverPort})`,
+          "error"
+        )
         setShowBackdrop(false)
       })
   }, [])
@@ -98,6 +94,12 @@ export default function Home() {
           a.info.created_at,
         )))
     })
+
+    pushMessage(
+      `Connected to (${settings.serverAddr}:${settings.serverPort})`,
+      "success"
+    )
+
     return () => sub.unsubscribe()
   }, [socket$, status.connected])
 
@@ -107,11 +109,6 @@ export default function Home() {
     }
   }, [activeDownloads?.length])
 
-  /**
-   * Abort a specific download if id's provided, other wise abort all running ones.
-   * @param id The download id / pid
-   * @returns void
-   */
   const abort = (id?: string) => {
     if (id) {
       client.kill(id)
@@ -136,20 +133,6 @@ export default function Home() {
           <DownloadsListView downloads={activeDownloads ?? []} onStop={abort} /> :
           <DownloadsCardView downloads={activeDownloads ?? []} onStop={abort} />
       }
-      <Snackbar
-        open={showToast === status.connected}
-        autoHideDuration={1500}
-        onClose={() => setShowToast(false)}
-      >
-        <Alert variant="filled" severity="success">
-          {`Connected to (${settings.serverAddr}:${settings.serverPort})`}
-        </Alert>
-      </Snackbar>
-      <Snackbar open={socketHasError}>
-        <Alert variant="filled" severity="error">
-          {`${i18n.t('rpcConnErr')} (${settings.serverAddr}:${settings.serverPort})`}
-        </Alert>
-      </Snackbar>
       <SpeedDial
         ariaLabel="SpeedDial basic example"
         sx={{ position: 'absolute', bottom: 32, right: 32 }}

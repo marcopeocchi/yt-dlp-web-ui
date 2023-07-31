@@ -1,8 +1,9 @@
-import { Grid, Snackbar } from "@mui/material"
-import { Fragment, useContext, useEffect, useState } from "react"
+import { Grid } from "@mui/material"
+import { Fragment, useContext } from "react"
+import { useToast } from "../hooks/toast"
+import { I18nContext } from "../providers/i18nProvider"
 import type { RPCResult } from "../types"
 import { StackableResult } from "./StackableResult"
-import { I18nContext } from "../providers/i18nProvider"
 
 type Props = {
   downloads: RPCResult[]
@@ -10,9 +11,8 @@ type Props = {
 }
 
 export function DownloadsCardView({ downloads, onStop }: Props) {
-  const [openSB, setOpenSB] = useState(false)
-
   const { i18n } = useContext(I18nContext)
+  const { pushMessage } = useToast()
 
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
@@ -26,7 +26,7 @@ export function DownloadsCardView({ downloads, onStop }: Props) {
                 thumbnail={download.info.thumbnail}
                 percentage={download.progress.percentage}
                 onStop={() => onStop(download.id)}
-                onCopy={() => setOpenSB(true)}
+                onCopy={() => pushMessage(i18n.t('clipboardAction'))}
                 resolution={download.info.resolution ?? ''}
                 speed={download.progress.speed}
                 size={download.info.filesize_approx ?? 0}
@@ -36,12 +36,6 @@ export function DownloadsCardView({ downloads, onStop }: Props) {
           </Grid>
         ))
       }
-      <Snackbar
-        open={openSB}
-        autoHideDuration={1250}
-        onClose={() => setOpenSB(false)}
-        message={i18n.t('clipboardAction')}
-      />
     </Grid>
   )
 }

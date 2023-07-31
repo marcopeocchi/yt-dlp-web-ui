@@ -125,12 +125,18 @@ func (m *MemoryDB) Restore() {
 	}
 
 	for _, proc := range session.Processes {
-		m.table.Store(proc.Id, &Process{
+		restored := &Process{
 			Id:       proc.Id,
 			Url:      proc.Info.URL,
 			Info:     proc.Info,
 			Progress: proc.Progress,
-		})
+		}
+
+		m.table.Store(proc.Id, restored)
+
+		if restored.Progress.Percentage != "-1" {
+			go restored.Start()
+		}
 	}
 
 	log.Println(cli.BgGreen, "Successfully restored session", cli.Reset)
