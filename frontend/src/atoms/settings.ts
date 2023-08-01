@@ -1,4 +1,5 @@
 import { atom, selector } from 'recoil'
+import { prefersDarkMode } from '../utils'
 
 export type Language =
   | 'english'
@@ -25,13 +26,14 @@ export const languages = [
   'polish',
 ] as const
 
-export type Theme = 'light' | 'dark'
+export type Theme = 'light' | 'dark' | 'system'
+export type ThemeNarrowed = 'light' | 'dark'
 
 export interface SettingsState {
   serverAddr: string
   serverPort: number
   language: Language
-  theme: Theme
+  theme: ThemeNarrowed
   cliArgs: string
   formatSelection: boolean
   fileRenaming: boolean
@@ -51,7 +53,7 @@ export const languageState = atom<Language>({
 
 export const themeState = atom<Theme>({
   key: 'themeStateState',
-  default: localStorage.getItem('theme') as Theme || 'light',
+  default: localStorage.getItem('theme') as Theme || 'system',
   effects: [
     ({ onSet }) =>
       onSet(l => localStorage.setItem('theme', l.toString()))
@@ -158,13 +160,24 @@ export const rpcHTTPEndpoint = selector({
   }
 })
 
+export const themeSelector = selector<ThemeNarrowed>({
+  key: 'themeSelector',
+  get: ({ get }) => {
+    const theme = get(themeState)
+    if ((theme === 'system' && prefersDarkMode()) || theme === 'dark') {
+      return 'dark'
+    }
+    return 'light'
+  }
+})
+
 export const settingsState = selector<SettingsState>({
   key: 'settingsState',
   get: ({ get }) => ({
     serverAddr: get(serverAddressState),
     serverPort: get(serverPortState),
     language: get(languageState),
-    theme: get(themeState),
+    theme: get(themeSelector),
     cliArgs: get(latestCliArgumentsState),
     formatSelection: get(formatSelectionState),
     fileRenaming: get(fileRenamingState),

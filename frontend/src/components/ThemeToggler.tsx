@@ -1,25 +1,32 @@
-import { Brightness4, Brightness5 } from '@mui/icons-material'
+import Brightness4 from '@mui/icons-material/Brightness4'
+import Brightness5 from '@mui/icons-material/Brightness5'
+import BrightnessAuto from '@mui/icons-material/BrightnessAuto'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import { useRecoilState } from 'recoil'
-import { themeState } from '../atoms/settings'
+import { Theme, themeState } from '../atoms/settings'
 
-export default function ThemeToggler() {
+const ThemeToggler: React.FC = () => {
   const [theme, setTheme] = useRecoilState(themeState)
+
+  const actions: Record<Theme, React.ReactNode> = {
+    system: <BrightnessAuto />,
+    light: <Brightness4 />,
+    dark: <Brightness5 />,
+  }
+
+  const themes: Theme[] = ['system', 'light', 'dark']
+  const currentTheme = themes.indexOf(theme)
 
   return (
     <ListItemButton onClick={() => {
-      theme === 'light'
-        ? setTheme('dark')
-        : setTheme('light')
+      setTheme(themes[(currentTheme + 1) % themes.length])
     }}>
       <ListItemIcon>
-        {
-          theme === 'light'
-            ? <Brightness4 />
-            : <Brightness5 />
-        }
+        {actions[theme]}
       </ListItemIcon>
       <ListItemText primary="Toggle theme" />
     </ListItemButton>
   )
 }
+
+export default ThemeToggler

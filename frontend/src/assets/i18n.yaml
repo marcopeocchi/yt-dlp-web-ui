@@ -33,6 +33,7 @@ languages:
     archiveTitle: Archive
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
+    restartAppMessage: Needs a page reload to take effect
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
@@ -65,6 +66,7 @@ languages:
     archiveTitle: Archivio
     clipboardAction: URL copiato negli appunti
     playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
+    restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态

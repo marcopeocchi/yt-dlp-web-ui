@@ -28,7 +28,7 @@ const DownloadsCardView: React.FC = () => {
                 thumbnail={download.info.thumbnail}
                 percentage={download.progress.percentage}
                 onStop={() => abort(download.id)}
-                onCopy={() => pushMessage(i18n.t('clipboardAction'))}
+                onCopy={() => pushMessage(i18n.t('clipboardAction'), 'info')}
                 resolution={download.info.resolution ?? ''}
                 speed={download.progress.speed}
                 size={download.info.filesize_approx ?? 0}

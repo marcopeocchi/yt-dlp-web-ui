@@ -47,24 +47,6 @@ export function ellipsis(str: string, lim: number): string {
   return ''
 }
 
-/**
- * Parse the downlaod speed sent by server and converts it to KiB/s
- * @param str the downlaod speed, ex. format: 5 MiB/s => 5000 | 50 KiB/s => 50
- * @returns download speed in KiB/s
- */
-export function detectSpeed(str: string): number {
-  let effective = str.match(/[\d,]+(\.\d+)?/)![0]
-  const unit = str.replace(effective, '')
-  switch (unit) {
-    case 'MiB/s':
-      return Number(effective) * 1000
-    case 'KiB/s':
-      return Number(effective)
-    default:
-      return 0
-  }
-}
-
 export function toFormatArgs(codes: string[]): string {
   if (codes.length > 1) {
     return codes.reduce((v, a) => ` -f ${v}+${a}`)
@@ -75,14 +57,17 @@ export function toFormatArgs(codes: string[]): string {
   return ''
 }
 
-export function formatGiB(bytes: number) {
-  return `${(bytes / 1_000_000_000).toFixed(0)}GiB`
-}
+export const formatGiB = (bytes: number) =>
+  `${(bytes / 1_000_000_000).toFixed(0)}GiB`
 
-export const roundMiB = (bytes: number) => `${(bytes / 1_000_000).toFixed(2)} MiB`
-export const formatSpeedMiB = (val: number) => `${roundMiB(val)}/s`
+export const roundMiB = (bytes: number) =>
+  `${(bytes / 1_000_000).toFixed(2)} MiB`
 
-export const datetimeCompareFunc = (a: string, b: string) => new Date(a).getTime() - new Date(b).getTime()
+export const formatSpeedMiB = (val: number) =>
+  `${roundMiB(val)}/s`
+
+export const datetimeCompareFunc = (a: string, b: string) =>
+  new Date(a).getTime() - new Date(b).getTime()
 
 export function isRPCResponse(object: any): object is RPCResponse<any> {
   return 'result' in object && 'id' in object
@@ -102,3 +87,6 @@ export function mapProcessStatus(status: number) {
       return 'Pending'
   }
 }
+
+export const prefersDarkMode = () =>
+  window.matchMedia('(prefers-color-scheme: dark)').matches

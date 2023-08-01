@@ -80,9 +80,11 @@ export default function Settings() {
         if (validateIP(addr)) {
           setInvalidIP(false)
           setServerAddr(addr)
+          pushMessage(i18n.t('restartAppMessage'), 'info')
         } else if (validateDomain(addr)) {
           setInvalidIP(false)
           setServerAddr(addr)
+          pushMessage(i18n.t('restartAppMessage'), 'info')
         } else {
           setInvalidIP(true)
         }
@@ -99,6 +101,7 @@ export default function Settings() {
       )
       .subscribe(port => {
         setServerPort(port)
+        pushMessage(i18n.t('restartAppMessage'), 'info')
       })
     return () => sub.unsubscribe()
   }, [])
@@ -192,6 +195,7 @@ export default function Settings() {
                     >
                       <MenuItem value="light">Light</MenuItem>
                       <MenuItem value="dark">Dark</MenuItem>
+                      <MenuItem value="system">System</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

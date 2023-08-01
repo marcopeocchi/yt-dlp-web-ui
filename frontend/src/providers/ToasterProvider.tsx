@@ -8,13 +8,20 @@ const Toaster: React.FC = () => {
 
   useEffect(() => {
     if (toasts.length > 0) {
-      const interval = setInterval(() => {
-        setToasts(t => t.filter((x) => (Date.now() - x.createdAt) < 1500))
+      const closer = setInterval(() => {
+        setToasts(t => t.map(t => ({ ...t, open: false })))
       }, 1500)
 
-      return () => clearInterval(interval)
+      const cleaner = setInterval(() => {
+        setToasts(t => t.filter((x) => (Date.now() - x.createdAt) < 1500))
+      }, 1750)
+
+      return () => {
+        clearInterval(closer)
+        clearInterval(cleaner)
+      }
     }
-  }, [setToasts, toasts])
+  }, [setToasts, toasts.length])
 
   return (
     <>
@@ -22,6 +29,7 @@ const Toaster: React.FC = () => {
         <Snackbar
           key={index}
           open={toast.open}
+          sx={index > 0 ? { marginBottom: index * 6.5 } : {}}
         >
           <Alert variant="filled" severity={toast.severity}>
             {toast.message}
