@@ -193,7 +193,7 @@ func (p *Process) Kill() error {
 // Returns the available format for this URL
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd := exec.Command(cfg.GetConfig().DownloaderPath, p.Url, "-J")
-	stdout, err := cmd.StdoutPipe()
+	stdout, err := cmd.Output()
 
 	if err != nil {
 		return DownloadFormats{}, err
@@ -209,29 +209,27 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 
 	wg.Add(2)
 
-	err = cmd.Start()
 	if err != nil {
 		return DownloadFormats{}, err
 	}
 
 	log.Println(
 		cli.BgRed, "Metadata", cli.Reset,
-		cli.BgBlue, p.getShortId(), cli.Reset,
+		cli.BgBlue, "Formats", cli.Reset,
 		p.Url,
 	)
 
 	go func() {
-		decodingError = json.NewDecoder(stdout).Decode(&info)
+		decodingError = json.Unmarshal(stdout, &info)
 		wg.Done()
 	}()
 
 	go func() {
-		decodingError = json.NewDecoder(stdout).Decode(&best)
+		decodingError = json.Unmarshal(stdout, &best)
 		wg.Done()
 	}()
 
 	wg.Wait()
-	cmd.Wait()
 
 	if decodingError != nil {
 		return DownloadFormats{}, err
