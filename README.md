@@ -21,8 +21,8 @@ docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 
-![](https://i.ibb.co/RCpfg7q/image.png)
-![](https://i.ibb.co/N2749CD/image.png)
+![image](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/a32fbdaa-b033-4aed-b914-a66701ace0ce)
+![image](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/782c559a-f552-40be-a6fd-10e22f38e85d)
 
 ### Integrated File browser
 Stream or download your content, easily.
