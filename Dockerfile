@@ -32,9 +32,4 @@ COPY --from=build /usr/src/yt-dlp-webui/yt-dlp-webui /app
 ENV JWT_SECRET=secret
 
 EXPOSE 3033
-
-ENTRYPOINT [ 
-    "./yt-dlp-webui" , 
-    "--out", "/downloads", 
-    "--conf", "/config/config.yml" 
-]
+ENTRYPOINT [ "./yt-dlp-webui" , "--out", "/downloads", "--conf", "/config/config.yml" ]
