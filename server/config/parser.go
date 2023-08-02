@@ -22,13 +22,15 @@ type config struct {
 	cfg serverConfig
 }
 
-func (c *config) LoadFromFile(filename string) (serverConfig, error) {
-	bytes, err := os.ReadFile(filename)
+func (c *config) TryLoadFromFile(filename string) (serverConfig, error) {
+	fd, err := os.Open(filename)
 	if err != nil {
 		return serverConfig{}, err
 	}
 
-	yaml.Unmarshal(bytes, &c.cfg)
+	if err := yaml.NewDecoder(fd).Decode(&c.cfg); err != nil {
+		return serverConfig{}, err
+	}
 
 	return c.cfg, nil
 }
