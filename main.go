@@ -8,6 +8,7 @@ import (
 	"runtime"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -29,7 +30,7 @@ func init() {
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
 	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
-	flag.StringVar(&configFile, "conf", "", "Config file path")
+	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 
@@ -56,8 +57,9 @@ func main() {
 	c.RequireAuth(requireAuth)
 	c.RPCSecret(rpcSecret)
 
-	if configFile != "" {
-		c.LoadFromFile(configFile)
+	// if config file is found it will be merged with the current config struct
+	if _, err := c.TryLoadFromFile(configFile); err != nil {
+		log.Println(cli.BgRed, "config", cli.Reset, "no config file found")
 	}
 
 	server.RunBlocking(port, frontend)
