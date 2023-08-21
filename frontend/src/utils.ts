@@ -19,9 +19,13 @@ export function validateIP(ipAddr: string): boolean {
  * @param domainName 
  * @returns domain validity test
  */
-export function validateDomain(domainName: string): boolean {
-  let domainRegex = /(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
-  return domainRegex.test(domainName) || domainName === 'localhost'
+export function validateDomain(url: string): boolean {
+  const urlRegex = /(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
+  const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+  const slug = url.split('/').at(1) ?? '/'
+
+  return urlRegex.test(url) || url === 'localhost' && slugRegex.test(slug)
 }
 
 /**
