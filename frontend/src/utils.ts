@@ -12,20 +12,6 @@ export function validateIP(ipAddr: string): boolean {
 
 /**
  * Validate a domain via regex.  
- * The validation pass if the domain respects the following formats:  
- * - localhost
- * - domain.tld
- * - dir.domain.tld
- * @param domainName 
- * @returns domain validity test
- */
-export function validateDomain(domainName: string): boolean {
-  let domainRegex = /[^@ \t\r\n]+.[^@ \t\r\n]+\.[^@ \t\r\n]+/
-  return domainRegex.test(domainName) || domainName === 'localhost'
-}
-
-/**
- * Validate a domain via regex.  
  * Exapmples
  * - http://example.com
  * - https://example.com
