@@ -46,7 +46,7 @@ import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
-import { validateIP } from '../utils'
+import { validateDomain, validateIP } from '../utils'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
@@ -81,6 +81,10 @@ export default function Settings() {
       )
       .subscribe(addr => {
         if (validateIP(addr)) {
+          setInvalidIP(false)
+          setServerAddr(addr)
+          pushMessage(i18n.t('restartAppMessage'), 'info')
+        } else if (validateDomain(addr)) {
           setInvalidIP(false)
           setServerAddr(addr)
           pushMessage(i18n.t('restartAppMessage'), 'info')
