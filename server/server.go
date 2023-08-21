@@ -43,7 +43,6 @@ func RunBlocking(port int, frontend fs.FS) {
 		mq:       mq,
 	})
 
-	// http-post
 	go gracefulShutdown(srv, &db)
 	go autoPersist(time.Minute*5, &db)
 
@@ -59,12 +58,9 @@ func newServer(c serverConfig) *http.Server {
 	r.Use(cors.AllowAll().Handler)
 	r.Use(middleware.Logger)
 
-	sh := middlewares.NewSpaHandler("index.html", c.frontend)
-	sh.AddClientRoute("/settings")
-	sh.AddClientRoute("/archive")
-	sh.AddClientRoute("/login")
+	app := http.FileServer(http.FS(c.frontend))
 
-	r.Get("/*", sh.Handler())
+	r.Mount("/", app)
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {

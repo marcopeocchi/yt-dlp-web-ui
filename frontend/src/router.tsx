@@ -1,6 +1,6 @@
 import { CircularProgress } from '@mui/material'
 import { Suspense, lazy } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createHashRouter } from 'react-router-dom'
 import Layout from './Layout'
 
 const Home = lazy(() => import('./views/Home'))
@@ -10,7 +10,7 @@ const Settings = lazy(() => import('./views/Settings'))
 
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: '/',
     Component: () => <Layout />,

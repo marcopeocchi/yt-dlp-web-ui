@@ -1,18 +1,6 @@
 import { atom, selector } from 'recoil'
 import { prefersDarkMode } from '../utils'
 
-export type Language =
-  | 'english'
-  | 'chinese'
-  | 'russian'
-  | 'italian'
-  | 'spanish'
-  | 'korean'
-  | 'japanese'
-  | 'catalan'
-  | 'ukrainian'
-  | 'polish'
-
 export const languages = [
   'english',
   'chinese',
@@ -25,6 +13,8 @@ export const languages = [
   'ukrainian',
   'polish',
 ] as const
+
+export type Language = (typeof languages)[number]
 
 export type Theme = 'light' | 'dark' | 'system'
 export type ThemeNarrowed = 'light' | 'dark'
@@ -40,6 +30,7 @@ export interface SettingsState {
   pathOverriding: boolean
   enableCustomArgs: boolean
   listView: boolean
+  servedFromReverseProxy: boolean
 }
 
 export const languageState = atom<Language>({
@@ -133,9 +124,20 @@ export const listViewState = atom({
   ]
 })
 
+export const servedFromReverseProxyState = atom({
+  key: 'servedFromReverseProxyState',
+  default: localStorage.getItem('reverseProxy') === "true",
+  effects: [
+    ({ onSet }) =>
+      onSet(a => localStorage.setItem('reverseProxy', a.toString()))
+  ]
+})
+
 export const serverAddressAndPortState = selector({
   key: 'serverAddressAndPortState',
-  get: ({ get }) => `${get(serverAddressState)}:${get(serverPortState)}`
+  get: ({ get }) => get(servedFromReverseProxyState)
+    ? `${get(serverAddressState)}`
+    : `${get(serverAddressState)}:${get(serverPortState)}`
 })
 
 export const serverURL = selector({
@@ -184,5 +186,6 @@ export const settingsState = selector<SettingsState>({
     pathOverriding: get(pathOverridingState),
     enableCustomArgs: get(enableCustomArgsState),
     listView: get(listViewState),
+    servedFromReverseProxy: get(servedFromReverseProxyState),
   })
 })

@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Container,
   FormControl,
   FormControlLabel,
@@ -36,6 +37,7 @@ import {
   languages,
   latestCliArgumentsState,
   pathOverridingState,
+  servedFromReverseProxyState,
   serverAddressState,
   serverPortState,
   themeState
@@ -48,6 +50,7 @@ import { validateDomain, validateIP } from '../utils'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
+  const [reverseProxy, setReverseProxy] = useRecoilState(servedFromReverseProxyState)
   const [formatSelection, setFormatSelection] = useRecoilState(formatSelectionState)
   const [pathOverriding, setPathOverriding] = useRecoilState(pathOverridingState)
   const [fileRenaming, setFileRenaming] = useRecoilState(fileRenamingState)
@@ -154,16 +157,27 @@ export default function Settings() {
                     InputProps={{
                       startAdornment: <InputAdornment position="start">ws://</InputAdornment>,
                     }}
-                    sx={{ mb: 2 }}
                   />
                 </Grid>
                 <Grid item xs={12} md={1}>
                   <TextField
+                    disabled={reverseProxy}
                     fullWidth
                     label={i18n.t('serverPortTitle')}
                     defaultValue={serverPort}
                     onChange={(e) => serverPort$.next(e.currentTarget.value)}
                     error={isNaN(Number(serverPort)) || Number(serverPort) > 65535}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        defaultChecked={reverseProxy}
+                        onChange={() => setReverseProxy(state => !state)}
+                      />
+                    }
+                    label={i18n.t('servedFromReverseProxyCheckbox')}
                     sx={{ mb: 2 }}
                   />
                 </Grid>
