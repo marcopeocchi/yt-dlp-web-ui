@@ -22,7 +22,8 @@ var (
 	requireAuth bool
 	rpcSecret   string
 
-	//go:embed frontend/dist
+	//go:embed frontend/dist/index.html
+	//go:embed frontend/dist/assets/*
 	frontend embed.FS
 )
 

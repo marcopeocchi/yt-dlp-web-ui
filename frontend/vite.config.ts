@@ -8,6 +8,7 @@ export default defineConfig(() => {
       react(),
       ViteYaml(),
     ],
+    base: '',
     build: {
       emptyOutDir: true,
     }
