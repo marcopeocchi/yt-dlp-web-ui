@@ -23,9 +23,9 @@ export function validateDomain(url: string): boolean {
   const urlRegex = /(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
   const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 
-  const slug = url.split('/').at(1) ?? '/'
+  const [name, slug] = url.split('/')
 
-  return urlRegex.test(url) || url === 'localhost' && slugRegex.test(slug)
+  return urlRegex.test(url) || name === 'localhost' && slugRegex.test(slug)
 }
 
 /**
