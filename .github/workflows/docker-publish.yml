@@ -55,7 +55,7 @@ jobs:
         with:
           images: |
            ghcr.io/${{ github.repository }}
-           docker.io/${{ github.repository }}
+           docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui
 
       - name: Build and push Docker image
         id: build-and-push
@@ -75,4 +75,4 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: |
           cosign sign ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
-          cosign sign docker.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+          cosign sign docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui@${{ steps.build-and-push.outputs.digest }}
