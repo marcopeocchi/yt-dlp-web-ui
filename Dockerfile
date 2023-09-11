@@ -1,11 +1,9 @@
 FROM golang:1.20-alpine AS build
 
-WORKDIR /usr/src/yt-dlp-webui
-
 RUN apk update && \
     apk add nodejs npm go
 
-COPY . .
+COPY . /usr/src/yt-dlp-webui
 
 WORKDIR /usr/src/yt-dlp-webui/frontend
 RUN npm install
@@ -16,16 +14,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 
 FROM alpine:edge
 
-WORKDIR /downloads
-VOLUME /downloads
-
-WORKDIR /config
-VOLUME /config
+VOLUME /downloads /config
 
 WORKDIR /app
 
 RUN apk update && \
-    apk add psmisc ffmpeg yt-dlp
+    apk add psmisc ffmpeg yt-dlp --no-cache
 
 COPY --from=build /usr/src/yt-dlp-webui/yt-dlp-webui /app
 
