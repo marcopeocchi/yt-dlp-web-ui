@@ -107,6 +107,12 @@ Or with docker but building the container manually.
 ```sh
 docker build -t yt-dlp-webui .
 docker run -d -p 3033:3033 -v <your dir>:/downloads yt-dlp-webui
+
+docker run -d -p 3033:3033 \
+  -v <your dir>:/downloads \  
+  -v <your dir>:/config \ # optional
+  yt-dlp-webui
+
 ```
 
 If you opt to add RPC authentication...
@@ -115,6 +121,7 @@ docker run -d \
     -p 3033:3033 \
     -e JWT_SECRET randomsecret
     -v /path/to/downloads:/downloads \
+    -v /path/for/config:/config \ # optional
     marcobaobao/yt-dlp-webui \
     --auth \
     --user your_username \
