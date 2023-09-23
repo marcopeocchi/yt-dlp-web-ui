@@ -81,7 +81,7 @@ export default function Layout() {
                 noWrap
                 sx={{ flexGrow: 1 }}
               >
-                yt-dlp WebUI
+                {settings.appTitle}
               </Typography>
               <FreeSpaceIndicator />
               <div style={{
