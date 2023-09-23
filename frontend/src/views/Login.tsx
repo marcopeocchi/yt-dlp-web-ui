@@ -33,12 +33,19 @@ const Title = styled(Typography)({
 })
 
 export default function Login() {
-  const [secret, setSecret] = useState('')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
   const [formHasError, setFormHasError] = useState(false)
 
   const url = useRecoilValue(serverURL)
 
   const navigate = useNavigate()
+
+  const navigateAndReload = () => {
+    navigate('/')
+    window.location.reload()
+  }
 
   const login = async () => {
     const res = await fetch(`${url}/auth/login`, {
@@ -46,9 +53,12 @@ export default function Login() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ secret })
+      body: JSON.stringify({
+        username,
+        password,
+      })
     })
-    res.ok ? navigate('/') : setFormHasError(true)
+    res.ok ? navigateAndReload() : setFormHasError(true)
   }
 
   return (
@@ -62,17 +72,23 @@ export default function Login() {
             Authentication token will expire after 30 days.
           </Title>
           <Title fontWeight={'500'} fontSize={16} color={'gray'}>
-            In order to enable RPC authentication append the --auth
+            In order to enable RPC authentication append the --auth,
             <br />
-            and --secret [secret] flags.
+            --user [username] and --pass [password] flags.
           </Title>
           <TextField
-            id="outlined-password-input"
-            label="RPC secret"
-            type="password"
-            autoComplete="current-password"
+            label="Username"
+            type="text"
+            autoComplete="yt-dlp-webui-username"
             error={formHasError}
-            onChange={e => setSecret(e.currentTarget.value)}
+            onChange={e => setUsername(e.currentTarget.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            autoComplete="yt-dlp-webui-password"
+            error={formHasError}
+            onChange={e => setPassword(e.currentTarget.value)}
           />
           <Button variant="contained" size="large" onClick={() => login()}>
             Submit

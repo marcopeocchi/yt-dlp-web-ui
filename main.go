@@ -5,6 +5,7 @@ import (
 	"flag"
 	"io/fs"
 	"log"
+	"os"
 	"runtime"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server"
@@ -20,7 +21,11 @@ var (
 	downloaderPath string
 
 	requireAuth bool
-	rpcSecret   string
+	username    string
+	password    string
+
+	userFromEnv = os.Getenv("USERNAME")
+	passFromEnv = os.Getenv("PASSWORD")
 
 	//go:embed frontend/dist/index.html
 	//go:embed frontend/dist/assets/*
@@ -28,6 +33,7 @@ var (
 )
 
 func init() {
+
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
 	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
@@ -36,7 +42,8 @@ func init() {
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 
 	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
-	flag.StringVar(&rpcSecret, "secret", "", "Secret required for auth")
+	flag.StringVar(&username, "user", userFromEnv, "Username required for auth")
+	flag.StringVar(&password, "pass", passFromEnv, "Password required for auth")
 
 	flag.Parse()
 }
@@ -56,10 +63,11 @@ func main() {
 	c.DownloaderPath(downloaderPath)
 
 	c.RequireAuth(requireAuth)
-	c.RPCSecret(rpcSecret)
+	c.Username(username)
+	c.Password(password)
 
 	// if config file is found it will be merged with the current config struct
-	if _, err := c.TryLoadFromFile(configFile); err != nil {
+	if _, err := c.LoadFromFile(configFile); err != nil {
 		log.Println(cli.BgRed, "config", cli.Reset, "no config file found")
 	}
 

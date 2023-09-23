@@ -107,6 +107,12 @@ Or with docker but building the container manually.
 ```sh
 docker build -t yt-dlp-webui .
 docker run -d -p 3033:3033 -v <your dir>:/downloads yt-dlp-webui
+
+docker run -d -p 3033:3033 \
+  -v <your dir>:/downloads \  
+  -v <your dir>:/config \ # optional
+  yt-dlp-webui
+
 ```
 
 If you opt to add RPC authentication...
@@ -115,9 +121,11 @@ docker run -d \
     -p 3033:3033 \
     -e JWT_SECRET randomsecret
     -v /path/to/downloads:/downloads \
+    -v /path/for/config:/config \ # optional
     marcobaobao/yt-dlp-webui \
     --auth \
-    --secret your_rpc_secret
+    --user your_username \
+    --pass your_pass
 ```
 
 If you wish for limiting the download queue size...
@@ -163,8 +171,10 @@ Usage yt-dlp-webui:
         Port where server will listen at (default 3033)
   -qs int
         Download queue size (default 8)
-  -secret string
-        Secret required for auth
+  -user string
+        Username required for auth
+  -pass string
+        Password required for auth
 ```
 
 ### Config file
@@ -181,7 +191,9 @@ downloaderPath: /usr/local/bin/yt-dlp
 
 # Optional settings
 require_auth: true
-rpc_secret: my_random_secret
+username: my_username
+password: my_random_secret
+
 queue_size: 4
 ```
 
