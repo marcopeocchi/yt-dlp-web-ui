@@ -30,6 +30,7 @@ import {
 import {
   Language,
   Theme,
+  appTitleState,
   enableCustomArgsState,
   fileRenamingState,
   formatSelectionState,
@@ -58,6 +59,7 @@ export default function Settings() {
   const [serverAddr, setServerAddr] = useRecoilState(serverAddressState)
   const [serverPort, setServerPort] = useRecoilState(serverPortState)
   const [language, setLanguage] = useRecoilState(languageState)
+  const [appTitle, setApptitle] = useRecoilState(appTitleState)
   const [cliArgs, setCliArgs] = useRecoilState(latestCliArgumentsState)
   const [theme, setTheme] = useRecoilState(themeState)
 
@@ -167,6 +169,16 @@ export default function Settings() {
                     defaultValue={serverPort}
                     onChange={(e) => serverPort$.next(e.currentTarget.value)}
                     error={isNaN(Number(serverPort)) || Number(serverPort) > 65535}
+                  />
+                </Grid>
+                <Grid item xs={12} md={12}>
+                  <TextField
+                    disabled={reverseProxy}
+                    fullWidth
+                    label={i18n.t('appTitle')}
+                    defaultValue={appTitle}
+                    onChange={(e) => setApptitle(e.currentTarget.value)}
+                    error={appTitle === ''}
                   />
                 </Grid>
                 <Grid item xs={12}>

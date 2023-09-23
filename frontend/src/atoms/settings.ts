@@ -31,6 +31,7 @@ export interface SettingsState {
   enableCustomArgs: boolean
   listView: boolean
   servedFromReverseProxy: boolean
+  appTitle: string
 }
 
 export const languageState = atom<Language>({
@@ -133,6 +134,15 @@ export const servedFromReverseProxyState = atom({
   ]
 })
 
+export const appTitleState = atom({
+  key: 'appTitleState',
+  default: localStorage.getItem('appTitle') ?? 'yt-dlp Web UI',
+  effects: [
+    ({ onSet }) =>
+      onSet(a => localStorage.setItem('appTitle', a.toString()))
+  ]
+})
+
 export const serverAddressAndPortState = selector({
   key: 'serverAddressAndPortState',
   get: ({ get }) => get(servedFromReverseProxyState)
@@ -187,5 +197,6 @@ export const settingsState = selector<SettingsState>({
     enableCustomArgs: get(enableCustomArgsState),
     listView: get(listViewState),
     servedFromReverseProxy: get(servedFromReverseProxyState),
+    appTitle: get(appTitleState)
   })
 })
