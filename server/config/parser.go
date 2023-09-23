@@ -14,7 +14,8 @@ type serverConfig struct {
 	DownloadPath   string `yaml:"downloadPath"`
 	DownloaderPath string `yaml:"downloaderPath"`
 	RequireAuth    bool   `yaml:"require_auth"`
-	RPCSecret      string `yaml:"rpc_secret"`
+	Username       string `yaml:"username"`
+	Password       string `yaml:"password"`
 	QueueSize      int    `yaml:"queue_size"`
 }
 
@@ -22,7 +23,7 @@ type config struct {
 	cfg serverConfig
 }
 
-func (c *config) TryLoadFromFile(filename string) (serverConfig, error) {
+func (c *config) LoadFromFile(filename string) (serverConfig, error) {
 	fd, err := os.Open(filename)
 	if err != nil {
 		return serverConfig{}, err
@@ -55,8 +56,12 @@ func (c *config) RequireAuth(value bool) {
 	c.cfg.RequireAuth = value
 }
 
-func (c *config) RPCSecret(secret string) {
-	c.cfg.RPCSecret = secret
+func (c *config) Username(username string) {
+	c.cfg.Username = username
+}
+
+func (c *config) Password(password string) {
+	c.cfg.Password = password
 }
 
 func (c *config) QueueSize(size int) {

@@ -11,18 +11,21 @@ import (
 )
 
 type LoginRequest struct {
-	Secret string `json:"secret"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	req := new(LoginRequest)
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if config.Instance().GetConfig().RPCSecret != req.Secret {
+	cfg := config.Instance().GetConfig()
+
+	if cfg.Username != req.Username || cfg.Password != req.Password {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -31,6 +34,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"expiresAt": expiresAt,
+		"username":  req.Username,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
