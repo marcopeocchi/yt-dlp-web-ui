@@ -8,6 +8,7 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
 type LoginRequest struct {
@@ -44,7 +45,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cookie := &http.Cookie{
-		Name:     TOKEN_COOKIE_NAME,
+		Name:     utils.TOKEN_COOKIE_NAME,
 		HttpOnly: true,
 		Secure:   false,
 		Expires:  expiresAt, // 30 days
@@ -57,7 +58,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
-		Name:     TOKEN_COOKIE_NAME,
+		Name:     utils.TOKEN_COOKIE_NAME,
 		HttpOnly: true,
 		Secure:   false,
 		Expires:  time.Now(),

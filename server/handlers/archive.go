@@ -15,10 +15,6 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
-const (
-	TOKEN_COOKIE_NAME = "jwt"
-)
-
 type DirectoryEntry struct {
 	Name        string    `json:"name"`
 	Path        string    `json:"path"`
