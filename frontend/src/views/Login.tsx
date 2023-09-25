@@ -19,7 +19,7 @@ import { serverURL } from '../atoms/settings'
 const LoginContainer = styled(Container)({
   display: 'flex',
   minWidth: '100%',
-  minHeight: '100vh',
+  minHeight: '85vh',
   alignItems: 'center',
   justifyContent: 'center',
 })
