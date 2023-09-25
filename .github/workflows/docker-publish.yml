@@ -68,6 +68,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui:latest
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Sign the published Docker image
         env:
@@ -75,5 +76,5 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: |
-          cosign sign ghcr.io/${{ github.repository }}@latest
-          cosign sign docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui@latest
+          cosign sign ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+          cosign sign docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui@${{ steps.build-and-push.outputs.digest }}
