@@ -10,13 +10,14 @@ import (
 var lock sync.Mutex
 
 type serverConfig struct {
-	Port           int    `yaml:"port"`
-	DownloadPath   string `yaml:"downloadPath"`
-	DownloaderPath string `yaml:"downloaderPath"`
-	RequireAuth    bool   `yaml:"require_auth"`
-	Username       string `yaml:"username"`
-	Password       string `yaml:"password"`
-	QueueSize      int    `yaml:"queue_size"`
+	Port            int    `yaml:"port"`
+	DownloadPath    string `yaml:"downloadPath"`
+	DownloaderPath  string `yaml:"downloaderPath"`
+	RequireAuth     bool   `yaml:"require_auth"`
+	Username        string `yaml:"username"`
+	Password        string `yaml:"password"`
+	QueueSize       int    `yaml:"queue_size"`
+	SessionFilePath string `yaml:"session_file_path"`
 }
 
 type config struct {
@@ -66,6 +67,10 @@ func (c *config) Password(password string) {
 
 func (c *config) QueueSize(size int) {
 	c.cfg.QueueSize = size
+}
+
+func (c *config) SessionFilePath(path string) {
+	c.cfg.SessionFilePath = path
 }
 
 var instance *config

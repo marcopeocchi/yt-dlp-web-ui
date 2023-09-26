@@ -14,11 +14,12 @@ import (
 )
 
 var (
-	port           int
-	queueSize      int
-	configFile     string
-	downloadPath   string
-	downloaderPath string
+	port            int
+	queueSize       int
+	configFile      string
+	downloadPath    string
+	downloaderPath  string
+	sessionFilePath string
 
 	requireAuth bool
 	username    string
@@ -40,6 +41,7 @@ func init() {
 	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
+	flag.StringVar(&sessionFilePath, "session", ".", "session file path")
 
 	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
 	flag.StringVar(&username, "user", userFromEnv, "Username required for auth")

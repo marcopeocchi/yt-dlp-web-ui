@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/google/uuid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
 // In-Memory Thread-Safe Key-Value Storage with optional persistence
@@ -93,7 +95,12 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 func (m *MemoryDB) Persist() {
 	running := m.All()
 
-	fd, err := os.Create("session.dat")
+	sessionFile := filepath.Join(
+		config.Instance().GetConfig().SessionFilePath,
+		"session.dat",
+	)
+
+	fd, err := os.Create(sessionFile)
 	if err != nil {
 		log.Println(cli.Red, "Failed to persist session", cli.Reset)
 	}
