@@ -8,6 +8,7 @@ import (
 
 	"github.com/goccy/go-json"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
 type metadata struct {
@@ -17,7 +18,7 @@ type metadata struct {
 }
 
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
-	cmd := exec.Command(cfg.GetConfig().DownloaderPath, req.URL, "-J")
+	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, req.URL, "-J")
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
