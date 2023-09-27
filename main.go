@@ -63,6 +63,7 @@ func main() {
 	c.QueueSize(queueSize)
 	c.DownloadPath(downloadPath)
 	c.DownloaderPath(downloaderPath)
+	c.SessionFilePath(sessionFilePath)
 
 	c.RequireAuth(requireAuth)
 	c.Username(username)
