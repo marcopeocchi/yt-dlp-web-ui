@@ -139,9 +139,10 @@ languages:
     splashText: 没有正在进行的下载
     archiveTitle: 归档
     clipboardAction: 复制 URL 到剪贴板
-    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
-    servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
-    appTitle: App title
+    playlistCheckbox: 下载播放列表（可能需要一段时间，提交后可以关闭页面等待）
+    restartAppMessage: 需要刷新页面才能生效
+    servedFromReverseProxyCheckbox: 处于反向代理的子目录后
+    appTitle: App 标题
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
