@@ -42,8 +42,8 @@ languages:
     statusReady: Prêt
     selectFormatButton: Sélectionner le format
     startButton: Démarrer
-    abortAllButton: Abort All
-    updateBinButton: Mettre à jour le binaire yt-dlp
+    abortAllButton: Tout arrêter
+    updateBinButton: Mettre à jour l'exécutable yt-dlp
     darkThemeButton: Thème sombre
     lightThemeButton: Thème clair
     settingsAnchor: Paramètres
@@ -51,15 +51,15 @@ languages:
     serverPortTitle: Port
     extractAudioCheckbox: Extraire l'audio
     noMTimeCheckbox: Ne pas définir le temps de modification du fichier
-    bgReminder: Une fois que vous aurez fermé cette page, le téléchargement se poursuivra en arrière-plan.
+    bgReminder: Une fois que vous aurez fermé cette page, le téléchargement continuera en arrière-plan.
     toastConnected: 'Connecté à '
-    toastUpdated: Mise à jour du binaire yt-dlp !
-    formatSelectionEnabler: Active la sélection des formats vidéo/audio
-    themeSelect: 'Theme'
+    toastUpdated: L'exécutable yt-dlp a été mis à jour !
+    formatSelectionEnabler: Activer la sélection des formats vidéo/audio
+    themeSelect: 'Thème'
     languageSelect: 'Langue'
-    overridesAnchor: Surcharges
-    pathOverrideOption: Activation de la surcharge du chemin de sortie
-    filenameOverrideOption: Active la surcharge du nom du fichier de sortie
+    overridesAnchor: Remplacer
+    pathOverrideOption: Activer le remplacement du chemin de sortie
+    filenameOverrideOption: Activer le remplacement du nom du fichier de sortie
     customFilename: Nom de fichier personnalisé (laisser vide pour utiliser le nom par défaut)
     customPath: Chemin personnalisé
     customArgs: Activer les args personnalisés yt-dlp (grand pouvoir = grandes responsabilités)
@@ -71,7 +71,7 @@ languages:
     playlistCheckbox: Télécharger la liste de lecture (cela prendra du temps, vous pouvez fermer cette fenêtre après l'avoir validée)
     restartAppMessage: Nécessite un rechargement de la page pour prendre effet
     servedFromReverseProxyCheckbox: Est derrière un sous-dossier de proxy inverse
-    appTitle: App title
+    appTitle: Nom de l'application
   italian:
     urlInput: URL di YouTube o di qualsiasi altro servizio supportato
     statusTitle: Stato
