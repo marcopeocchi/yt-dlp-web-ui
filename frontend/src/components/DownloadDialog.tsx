@@ -72,7 +72,7 @@ export default function DownloadDialog({
   const [pickedAudioFormat, setPickedAudioFormat] = useState('')
   const [pickedBestFormat, setPickedBestFormat] = useState('')
 
-  const [customArgs, setCustomArgs] = useState('')
+  const [customArgs, setCustomArgs] = useState(localStorage.getItem("last-input-args")||'')
   const [downloadPath, setDownloadPath] = useState(0)
 
   const [fileNameOverride, setFilenameOverride] = useState('')
