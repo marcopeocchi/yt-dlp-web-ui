@@ -26,7 +26,6 @@ import FolderIcon from '@mui/icons-material/Folder'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 
-import { Buffer } from 'buffer'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -138,7 +137,11 @@ export default function Downloaded() {
   }, [serverAddr])
 
   const onFileClick = (path: string) => startTransition(() => {
-    window.open(`${serverAddr}/archive/d/${Buffer.from(path).toString('hex')}`)
+    const encoded = btoa(
+      String.fromCodePoint(...new TextEncoder().encode(path))
+    )
+
+    window.open(`${serverAddr}/archive/d/${encoded}`)
   })
 
   const onFolderClick = (path: string) => startTransition(() => {

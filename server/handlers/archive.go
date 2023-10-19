@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"encoding/hex"
+	"encoding/base64"
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -129,22 +130,23 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decoded, err := hex.DecodeString(path)
+	decoded, err := base64.StdEncoding.DecodeString(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	decodedStr := string(decoded)
+	fmt.Println(decodedStr)
 
 	root := config.Instance().GetConfig().DownloadPath
 
 	// TODO: further path / file validations
 	if strings.Contains(filepath.Dir(decodedStr), root) {
-		// ctx.Response().Header.Set(
-		// 	"Content-Disposition",
-		// 	"inline; filename="+filepath.Base(decodedStr),
-		// )
+		w.Header().Add(
+			"Content-Disposition",
+			"inline; filename="+filepath.Base(decodedStr),
+		)
 
 		http.ServeFile(w, r, decodedStr)
 	}

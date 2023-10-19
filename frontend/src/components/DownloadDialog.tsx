@@ -14,8 +14,7 @@ import {
   MenuItem,
   Paper,
   Select,
-  TextField,
-  styled
+  TextField
 } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
 import Dialog from '@mui/material/Dialog'
@@ -23,7 +22,6 @@ import Slide from '@mui/material/Slide'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { TransitionProps } from '@mui/material/transitions'
-import { Buffer } from 'buffer'
 import {
   forwardRef,
   useMemo,
@@ -32,6 +30,7 @@ import {
   useTransition
 } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import { downloadTemplateState } from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
@@ -40,7 +39,6 @@ import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
-import { downloadTemplateState } from '../atoms/downloadTemplate'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -169,19 +167,18 @@ export default function DownloadDialog({
     localStorage.setItem("last-input-args", e.target.value)
   }
 
-  const parseUrlListFile = (event: any) => {
-    const urlList = event.target.files
-    const reader = new FileReader()
-    reader.addEventListener('load', $event => {
-      const base64 = $event.target?.result!.toString().split(',')[1]
-      Buffer.from(base64!, 'base64')
-        .toString()
-        .trimEnd()
-        .split('\n')
-        .filter(_url => isValidURL(_url))
-        .forEach(_url => sendUrl(_url))
-    })
-    reader.readAsDataURL(urlList[0])
+  const parseUrlListFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.currentTarget.files
+    if (!files || files.length < 1) {
+      return
+    }
+
+    const file = await files[0].text()
+
+    file
+      .split('\n')
+      .filter(u => isValidURL(u))
+      .forEach(u => sendUrl(u))
   }
 
   const resetInput = () => {
@@ -190,12 +187,6 @@ export default function DownloadDialog({
       customFilenameInputRef.current!.value = ''
     }
   }
-
-  /* -------------------- styled components -------------------- */
-
-  const Input = styled('input')({
-    display: 'none',
-  })
 
   return (
     <div>
@@ -249,11 +240,12 @@ export default function DownloadDialog({
                       endAdornment: (
                         <InputAdornment position="end">
                           <label htmlFor="icon-button-file">
-                            <Input
+                            <input
+                              hidden
                               id="icon-button-file"
                               type="file"
                               accept=".txt"
-                              onChange={parseUrlListFile}
+                              onChange={e => parseUrlListFile(e)}
                             />
                             <IconButton
                               color="primary"
