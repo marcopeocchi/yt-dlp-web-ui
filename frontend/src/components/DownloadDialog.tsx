@@ -31,7 +31,7 @@ import {
   useState,
   useTransition
 } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
@@ -40,6 +40,7 @@ import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
+import { downloadTemplateState } from '../atoms/downloadTemplate'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -72,7 +73,7 @@ export default function DownloadDialog({
   const [pickedAudioFormat, setPickedAudioFormat] = useState('')
   const [pickedBestFormat, setPickedBestFormat] = useState('')
 
-  const [customArgs, setCustomArgs] = useState(localStorage.getItem("last-input-args")||'')
+  const [customArgs, setCustomArgs] = useRecoilState(downloadTemplateState)
   const [downloadPath, setDownloadPath] = useState(0)
 
   const [fileNameOverride, setFilenameOverride] = useState('')

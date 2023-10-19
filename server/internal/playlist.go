@@ -18,7 +18,10 @@ type metadata struct {
 }
 
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
-	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, req.URL, "-J")
+	var (
+		downloader = config.Instance().GetConfig().DownloaderPath
+		cmd        = exec.Command(downloader, req.URL, "-J")
+	)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -51,7 +54,9 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 			cli.BgGreen, "Playlist detected", cli.Reset, m.Count, "entries",
 		)
 
-		for _, meta := range m.Entries {
+		for i, meta := range m.Entries {
+			delta := time.Second.Microseconds() * int64(i+1)
+
 			proc := &Process{
 				Url:      meta.OriginalURL,
 				Progress: DownloadProgress{},
@@ -61,7 +66,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 			}
 
 			proc.Info.URL = meta.OriginalURL
-			proc.Info.CreatedAt = time.Now().Add(time.Second)
+			proc.Info.CreatedAt = time.Now().Add(time.Duration(delta))
 
 			db.Set(proc)
 			proc.SetPending()

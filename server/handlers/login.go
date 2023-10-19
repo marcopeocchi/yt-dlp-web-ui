@@ -24,9 +24,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cfg := config.Instance().GetConfig()
+	var (
+		username = config.Instance().GetConfig().Username
+		password = config.Instance().GetConfig().Password
+	)
 
-	if cfg.Username != req.Username || cfg.Password != req.Password {
+	if username != req.Username || password != req.Password {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
