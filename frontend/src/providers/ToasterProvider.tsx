@@ -10,11 +10,11 @@ const Toaster: React.FC = () => {
     if (toasts.length > 0) {
       const closer = setInterval(() => {
         setToasts(t => t.map(t => ({ ...t, open: false })))
-      }, 1500)
+      }, 2000)
 
       const cleaner = setInterval(() => {
-        setToasts(t => t.filter((x) => (Date.now() - x.createdAt) < 1500))
-      }, 1750)
+        setToasts(t => t.filter((x) => (Date.now() - x.createdAt) < 2000))
+      }, 2250)
 
       return () => {
         clearInterval(closer)

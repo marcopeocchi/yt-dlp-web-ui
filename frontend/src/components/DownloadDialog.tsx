@@ -52,7 +52,7 @@ const Transition = forwardRef(function Transition(
 type Props = {
   open: boolean
   onClose: () => void
-  onDownloadStart: () => void
+  onDownloadStart: (url: string) => void
 }
 
 export default function DownloadDialog({
@@ -120,7 +120,7 @@ export default function DownloadDialog({
     setTimeout(() => {
       resetInput()
       setDownloadFormats(undefined)
-      onDownloadStart()
+      onDownloadStart(url)
     }, 250)
   }
 

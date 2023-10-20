@@ -3,10 +3,13 @@ import { useRecoilState } from 'recoil'
 import { loadingAtom } from '../atoms/ui'
 import DownloadDialog from './DownloadDialog'
 import HomeSpeedDial from './HomeSpeedDial'
+import { useToast } from '../hooks/toast'
 
 const HomeActions: React.FC = () => {
   const [, setIsLoading] = useRecoilState(loadingAtom)
   const [openDialog, setOpenDialog] = useState(false)
+
+  const { pushMessage } = useToast()
 
   return (
     <>
@@ -19,7 +22,8 @@ const HomeActions: React.FC = () => {
           setOpenDialog(false)
           setIsLoading(true)
         }}
-        onDownloadStart={() => {
+        onDownloadStart={(url) => {
+          pushMessage(`Requested ${url}`, 'info',)
           setOpenDialog(false)
           setIsLoading(true)
         }}
