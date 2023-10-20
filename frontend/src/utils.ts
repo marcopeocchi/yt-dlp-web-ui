@@ -1,3 +1,4 @@
+import { pipe } from 'fp-ts/lib/function'
 import type { RPCResponse } from "./types"
 
 /**
@@ -10,15 +11,6 @@ export function validateIP(ipAddr: string): boolean {
   return ipRegex.test(ipAddr)
 }
 
-/**
- * Validate a domain via regex.  
- * The validation pass if the domain respects the following formats:  
- * - localhost
- * - domain.tld
- * - dir.domain.tld
- * @param domainName 
- * @returns domain validity test
- */
 export function validateDomain(url: string): boolean {
   const urlRegex = /(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
   const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
@@ -28,17 +20,6 @@ export function validateDomain(url: string): boolean {
   return urlRegex.test(url) || name === 'localhost' && slugRegex.test(slug)
 }
 
-/**
- * Validate a domain via regex.  
- * Exapmples
- * - http://example.com
- * - https://example.com
- * - http://www.example.com
- * - https://www.example.com
- * - http://10.0.0.1/[something]/[something-else]
- * @param url 
- * @returns url validity test
- */
 export function isValidURL(url: string): boolean {
   let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
   return urlRegex.test(url)
@@ -94,3 +75,10 @@ export function mapProcessStatus(status: number) {
 
 export const prefersDarkMode = () =>
   window.matchMedia('(prefers-color-scheme: dark)').matches
+
+export const base64URLEncode = (s: string) => pipe(
+  s,
+  s => String.fromCodePoint(...new TextEncoder().encode(s)),
+  btoa,
+  encodeURIComponent
+)

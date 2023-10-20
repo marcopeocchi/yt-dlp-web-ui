@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"sort"
@@ -130,6 +131,12 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	path, err := url.QueryUnescape(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	decoded, err := base64.StdEncoding.DecodeString(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -137,7 +144,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decodedStr := string(decoded)
-	fmt.Println(decodedStr)
+	fmt.Println("decoded", decodedStr)
 
 	root := config.Instance().GetConfig().DownloadPath
 

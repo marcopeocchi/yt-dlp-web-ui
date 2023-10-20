@@ -26,22 +26,26 @@ import FolderIcon from '@mui/icons-material/Folder'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 
+import { matchW } from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { serverURL } from '../atoms/settings'
 import { useObservable } from '../hooks/observable'
+import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { DeleteRequest, DirectoryEntry } from '../types'
-import { roundMiB } from '../utils'
+import { base64URLEncode, roundMiB } from '../utils'
 
 export default function Downloaded() {
   const serverAddr = useRecoilValue(serverURL)
   const navigate = useNavigate()
 
   const { i18n } = useI18n()
+  const { pushMessage } = useToast()
 
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -50,20 +54,24 @@ export default function Downloaded() {
 
   const [isPending, startTransition] = useTransition()
 
-  const fetcher = () => ffetch<DirectoryEntry[]>(
-    `${serverAddr}/archive/downloaded`,
-    (d) => files$.next(d),
-    () => navigate('/login'),
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+  const fetcher = () => pipe(
+    ffetch<DirectoryEntry[]>(
+      `${serverAddr}/archive/downloaded`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          subdir: '',
+        })
+      }
+    ),
+    matchW(
+      (e) => {
+        pushMessage(e)
+        navigate('/login')
       },
-      body: JSON.stringify({
-        subdir: '',
-      })
-    }
-  )
+      (d) => files$.next(d),
+    )
+  )()
 
   const fetcherSubfolder = (sub: string) => {
     const folders = sub.startsWith('/')
@@ -137,9 +145,7 @@ export default function Downloaded() {
   }, [serverAddr])
 
   const onFileClick = (path: string) => startTransition(() => {
-    const encoded = btoa(
-      String.fromCodePoint(...new TextEncoder().encode(path))
-    )
+    const encoded = base64URLEncode(path)
 
     window.open(`${serverAddr}/archive/d/${encoded}`)
   })
