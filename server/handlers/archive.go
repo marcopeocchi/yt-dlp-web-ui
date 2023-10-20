@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/base64"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -144,7 +143,6 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decodedStr := string(decoded)
-	fmt.Println("decoded", decodedStr)
 
 	root := config.Instance().GetConfig().DownloadPath
 
