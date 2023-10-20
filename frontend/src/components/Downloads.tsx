@@ -14,7 +14,7 @@ const Downloads: React.FC = () => {
 
   useEffect(() => {
     if (active) {
-      setIsLoading(true)
+      setIsLoading(false)
     }
   }, [active?.length])
 

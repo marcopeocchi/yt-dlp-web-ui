@@ -23,7 +23,7 @@ const HomeActions: React.FC = () => {
           setIsLoading(true)
         }}
         onDownloadStart={(url) => {
-          pushMessage(`Requested ${url}`, 'info',)
+          pushMessage(`Requested ${url}`, 'info')
           setOpenDialog(false)
           setIsLoading(true)
         }}
