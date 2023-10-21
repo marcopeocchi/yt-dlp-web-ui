@@ -4,12 +4,13 @@ import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
 import { pipe } from 'fp-ts/lib/function'
 import { useMemo } from 'react'
+import { useRecoilState, useRecoilValue } from 'recoil'
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
+import { downloadTemplateState } from '../atoms/downloadTemplate'
+import { cookiesState, serverURL } from '../atoms/settings'
 import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
-import { useRecoilValue } from 'recoil'
-import { serverURL } from '../atoms/settings'
 
 const validateCookie = (cookie: string) => pipe(
   cookie,
@@ -69,7 +70,11 @@ const validateCookie = (cookie: string) => pipe(
 
 const CookiesTextField: React.FC = () => {
   const serverAddr = useRecoilValue(serverURL)
+  const [customArgs, setCustomArgs] = useRecoilState(downloadTemplateState)
+  const [savedCookies, setSavedCookies] = useRecoilState(cookiesState)
+
   const { pushMessage } = useToast()
+  const flag = '--cookies=cookies.txt'
 
   const cookies$ = useMemo(() => new Subject<string>(), [])
 
@@ -112,18 +117,30 @@ const CookiesTextField: React.FC = () => {
     ),
     (cookies) => pipe(
       cookies,
+      cookies => {
+        setSavedCookies(cookies)
+        return cookies
+      },
       validateNetscapeCookies,
       O.fromPredicate(f => f === true),
       O.match(
-        () => { },
-        () => submitCookies(cookies)
-          .then(e => pipe(
-            e,
+        () => {
+          if (customArgs.includes(flag)) {
+            setCustomArgs(a => a.replace(flag, ''))
+          }
+        },
+        async () => {
+          pipe(
+            await submitCookies(cookies),
             E.match(
               (l) => pushMessage(`${l}`, 'error'),
               () => pushMessage(`Saved Netscape cookies`, 'success')
             )
-          ))
+          )
+          if (!customArgs.includes(flag)) {
+            setCustomArgs(a => `${a} ${flag}`)
+          }
+        }
       )
     )
   )
@@ -133,8 +150,9 @@ const CookiesTextField: React.FC = () => {
       label="Netscape Cookies"
       multiline
       maxRows={20}
-      minRows={8}
+      minRows={4}
       fullWidth
+      defaultValue={savedCookies}
       onChange={(e) => cookies$.next(e.currentTarget.value)}
     />
   )
