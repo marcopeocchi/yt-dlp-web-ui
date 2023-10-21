@@ -43,6 +43,7 @@ import {
   serverPortState,
   themeState
 } from '../atoms/settings'
+import CookiesTextField from '../components/CookiesTextField'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
@@ -297,6 +298,12 @@ export default function Settings() {
                     label={i18n.t('customArgs')}
                   />
                 </Stack>
+              </Grid>
+              <Grid sx={{ mr: 1, mt: 3 }}>
+                <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
+                  Cookies
+                </Typography>
+                <CookiesTextField />
               </Grid>
               <Grid>
                 <Stack direction="row">

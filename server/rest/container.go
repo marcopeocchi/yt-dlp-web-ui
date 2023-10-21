@@ -21,5 +21,6 @@ func ApplyRouter(db *internal.MemoryDB, mq *internal.MessageQueue) func(chi.Rout
 		r.Use(middlewares.Authenticated)
 		r.Post("/exec", h.Exec())
 		r.Get("/running", h.Running())
+		r.Post("/cookies", h.SetCookies())
 	}
 }
