@@ -3,6 +3,7 @@ package rest
 import (
 	"context"
 	"errors"
+	"os"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
@@ -35,4 +36,16 @@ func (s *Service) Running(ctx context.Context) (*[]internal.ProcessResponse, err
 	default:
 		return s.db.All(), nil
 	}
+}
+
+func (s *Service) SetCookies(ctx context.Context, cookies string) error {
+	fd, err := os.Create("cookies.txt")
+	if err != nil {
+		return err
+	}
+
+	defer fd.Close()
+	fd.WriteString(cookies)
+
+	return nil
 }

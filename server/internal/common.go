@@ -71,3 +71,8 @@ type DownloadRequest struct {
 	Rename string   `json:"rename"`
 	Params []string `json:"params"`
 }
+
+// struct representing request of creating a netscape cookies file
+type SetCookiesRequest struct {
+	Cookies string `json:"cookies"`
+}

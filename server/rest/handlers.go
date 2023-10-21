@@ -19,7 +19,7 @@ func (h *Handler) Exec() http.HandlerFunc {
 
 		req := internal.DownloadRequest{}
 
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		if err := json.NewDecoder(r.Body).DecodeContext(r.Context(), &req); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -29,7 +29,7 @@ func (h *Handler) Exec() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(id)
+		err = json.NewEncoder(w).EncodeContext(r.Context(), id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -48,7 +48,34 @@ func (h *Handler) Running() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(res)
+		err = json.NewEncoder(w).EncodeContext(r.Context(), res)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+}
+
+func (h *Handler) SetCookies() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		w.Header().Set("Content-Type", "application/json")
+
+		req := new(internal.SetCookiesRequest)
+
+		err := json.NewDecoder(r.Body).DecodeContext(r.Context(), req)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = h.service.SetCookies(r.Context(), req.Cookies)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).EncodeContext(r.Context(), "ok")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}

@@ -10,13 +10,13 @@ const Downloads: React.FC = () => {
   const listView = useRecoilValue(listViewState)
   const active = useRecoilValue(activeDownloadsState)
 
-  const [, setIsLoading] = useRecoilState(loadingAtom)
+  const [isLoading, setIsLoading] = useRecoilState(loadingAtom)
 
   useEffect(() => {
     if (active) {
       setIsLoading(false)
     }
-  }, [active?.length])
+  }, [active?.length, isLoading])
 
   if (listView) {
     return (
