@@ -2,12 +2,11 @@ package internal
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sync"
 	"syscall"
-
-	"github.com/goccy/go-json"
 
 	"log"
 	"os"
@@ -38,7 +37,7 @@ type ProgressTemplate struct {
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
 	Size       string  `json:"size"`
-	Eta        int     `json:"eta"`
+	Eta        float32 `json:"eta"`
 }
 
 // Process descriptor
@@ -70,6 +69,10 @@ func (p *Process) Start() {
 		return !match
 	})
 
+	p.Params = slices.Filter(p.Params, func(e string) bool {
+		return e != ""
+	})
+
 	out := DownloadOutput{
 		Path:     config.Instance().GetConfig().DownloadPath,
 		Filename: "%(title)s.%(ext)s",
@@ -87,7 +90,8 @@ func (p *Process) Start() {
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
-		"--progress-template", strings.ReplaceAll(template, "\n", ""),
+		"--progress-template",
+		strings.NewReplacer("\n", "", "\t", "", " ", "").Replace(template),
 		"-o",
 		fmt.Sprintf("%s/%s", out.Path, out.Filename),
 	}, p.Params...)

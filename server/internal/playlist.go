@@ -1,12 +1,12 @@
 package internal
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"os/exec"
 	"time"
 
-	"github.com/goccy/go-json"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
@@ -60,9 +60,11 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 			proc := &Process{
 				Url:      meta.OriginalURL,
 				Progress: DownloadProgress{},
-				Output:   DownloadOutput{},
-				Info:     meta,
-				Params:   req.Params,
+				Output: DownloadOutput{
+					Filename: req.Rename,
+				},
+				Info:   meta,
+				Params: req.Params,
 			}
 
 			proc.Info.URL = meta.OriginalURL

@@ -7,7 +7,7 @@ type DownloadProgress struct {
 	Status     int     `json:"process_status"`
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
-	ETA        int     `json:"eta"`
+	ETA        float32 `json:"eta"`
 }
 
 // Used to deser the yt-dlp -J output
@@ -50,6 +50,8 @@ type ProcessResponse struct {
 	Id       string           `json:"id"`
 	Progress DownloadProgress `json:"progress"`
 	Info     DownloadInfo     `json:"info"`
+	Output   DownloadOutput   `json:"output"`
+	Params   []string         `json:"params"`
 }
 
 // struct representing the current status of the memoryDB
