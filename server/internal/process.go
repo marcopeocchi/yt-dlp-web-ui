@@ -70,6 +70,10 @@ func (p *Process) Start() {
 		return !match
 	})
 
+	p.Params = slices.Filter(p.Params, func(e string) bool {
+		return e != ""
+	})
+
 	out := DownloadOutput{
 		Path:     config.Instance().GetConfig().DownloadPath,
 		Filename: "%(title)s.%(ext)s",
@@ -87,7 +91,8 @@ func (p *Process) Start() {
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
-		"--progress-template", strings.ReplaceAll(template, "\n", ""),
+		"--progress-template",
+		strings.NewReplacer("\n", "", "\t", "").Replace(template),
 		"-o",
 		fmt.Sprintf("%s/%s", out.Path, out.Filename),
 	}, p.Params...)

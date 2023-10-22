@@ -1,4 +1,4 @@
-import { Observable, share } from 'rxjs'
+import { Observable } from 'rxjs'
 import type { DLMetadata, RPCRequest, RPCResponse, RPCResult } from '../types'
 
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
@@ -57,16 +57,17 @@ export class RPCClient {
         method: 'Service.ExecPlaylist',
         params: [{
           URL: url,
-          Params: args.split(" ").map(a => a.trim()),
+          Params: args.split(' ').map(a => a.trim()),
           Path: pathOverride,
+          Rename: renameTo,
         }]
       })
     }
     this.sendHTTP({
       method: 'Service.Exec',
       params: [{
-        URL: url.split("?list").at(0)!,
-        Params: args.split(" ").map(a => a.trim()),
+        URL: url.split('?list').at(0)!,
+        Params: args.split(' ').map(a => a.trim()),
         Path: pathOverride,
         Rename: renameTo,
       }]
@@ -78,7 +79,7 @@ export class RPCClient {
       return this.sendHTTP<DLMetadata>({
         method: 'Service.Formats',
         params: [{
-          URL: url.split("?list").at(0)!,
+          URL: url.split('?list').at(0)!,
         }]
       })
     }
