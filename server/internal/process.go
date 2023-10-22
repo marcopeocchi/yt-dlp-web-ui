@@ -2,12 +2,11 @@ package internal
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sync"
 	"syscall"
-
-	"github.com/goccy/go-json"
 
 	"log"
 	"os"
@@ -38,7 +37,7 @@ type ProgressTemplate struct {
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
 	Size       string  `json:"size"`
-	Eta        int     `json:"eta"`
+	Eta        float32 `json:"eta"`
 }
 
 // Process descriptor
@@ -92,7 +91,7 @@ func (p *Process) Start() {
 		"--no-colors",
 		"--no-playlist",
 		"--progress-template",
-		strings.NewReplacer("\n", "", "\t", "").Replace(template),
+		strings.NewReplacer("\n", "", "\t", "", " ", "").Replace(template),
 		"-o",
 		fmt.Sprintf("%s/%s", out.Path, out.Filename),
 	}, p.Params...)

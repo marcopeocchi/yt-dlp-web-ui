@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"

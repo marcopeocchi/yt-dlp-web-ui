@@ -7,3 +7,11 @@ export const downloadTemplateState = atom({
     ({ onSet }) => onSet(e => localStorage.setItem('lastDownloadTemplate', e))
   ]
 })
+
+export const filenameTemplateState = atom({
+  key: 'filenameTemplateState',
+  default: localStorage.getItem('lastFilenameTemplate') ?? '',
+  effects: [
+    ({ onSet }) => onSet(e => localStorage.setItem('lastFilenameTemplate', e))
+  ]
+})

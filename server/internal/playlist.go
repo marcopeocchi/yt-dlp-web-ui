@@ -1,12 +1,12 @@
 package internal
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"os/exec"
 	"time"
 
-	"github.com/goccy/go-json"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )

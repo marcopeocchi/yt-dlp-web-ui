@@ -30,7 +30,7 @@ import {
   useTransition
 } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { downloadTemplateState } from '../atoms/downloadTemplate'
+import { downloadTemplateState, filenameTemplateState } from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
@@ -74,7 +74,9 @@ export default function DownloadDialog({
   const [customArgs, setCustomArgs] = useRecoilState(downloadTemplateState)
   const [downloadPath, setDownloadPath] = useState(0)
 
-  const [fileNameOverride, setFilenameOverride] = useState('')
+  const [filenameTemplate, setFilenameTemplate] = useRecoilState(
+    filenameTemplateState
+  )
 
   const [url, setUrl] = useState('')
   const [workingUrl, setWorkingUrl] = useState('')
@@ -110,7 +112,7 @@ export default function DownloadDialog({
       immediate || url || workingUrl,
       `${cliArgs.toString()} ${toFormatArgs(codes)} ${customArgs}`,
       availableDownloadPaths[downloadPath] ?? '',
-      fileNameOverride,
+      filenameTemplate,
       isPlaylist,
     )
 
@@ -141,27 +143,15 @@ export default function DownloadDialog({
       })
   }
 
-  /**
-   * Update the url state whenever the input value changes
-   * @param e Input change event
-   */
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(e.target.value)
   }
 
-  /**
-   * Update the filename override state whenever the input value changes
-   * @param e Input change event
-   */
-  const handleFilenameOverrideChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilenameOverride(e.target.value)
+  const handleFilenameTemplateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilenameTemplate(e.target.value)
     localStorage.setItem('last-filename-override', e.target.value)
   }
 
-  /**
-   * Update the custom args state whenever the input value changes
-   * @param e Input change event
-   */
   const handleCustomArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomArgs(e.target.value)
     localStorage.setItem("last-input-args", e.target.value)
@@ -285,8 +275,8 @@ export default function DownloadDialog({
                         fullWidth
                         label={i18n.t('customFilename')}
                         variant="outlined"
-                        value={fileNameOverride}
-                        onChange={handleFilenameOverrideChange}
+                        value={filenameTemplate}
+                        onChange={handleFilenameTemplateChange}
                         disabled={
                           !isConnected ||
                           (settings.formatSelection && downloadFormats != null)

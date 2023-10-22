@@ -85,6 +85,8 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 			Id:       key.(string),
 			Info:     value.(*Process).Info,
 			Progress: value.(*Process).Progress,
+			Output:   value.(*Process).Output,
+			Params:   value.(*Process).Params,
 		})
 		return true
 	})
@@ -137,6 +139,8 @@ func (m *MemoryDB) Restore() {
 			Url:      proc.Info.URL,
 			Info:     proc.Info,
 			Progress: proc.Progress,
+			Output:   proc.Output,
+			Params:   proc.Params,
 		}
 
 		m.table.Store(proc.Id, restored)

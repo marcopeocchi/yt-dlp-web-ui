@@ -29,6 +29,12 @@ export class RPCClient {
     })
   }
 
+  private argsSanitizer(args: string) {
+    return args
+      .split(' ')
+      .map(a => a.trim().replaceAll("'", '').replaceAll('"', ''))
+  }
+
   private async sendHTTP<T>(req: RPCRequest) {
     const res = await fetch(this.httpEndpoint, {
       method: 'POST',
@@ -57,7 +63,7 @@ export class RPCClient {
         method: 'Service.ExecPlaylist',
         params: [{
           URL: url,
-          Params: args.split(' ').map(a => a.trim()),
+          Params: this.argsSanitizer(args),
           Path: pathOverride,
           Rename: renameTo,
         }]
@@ -67,7 +73,7 @@ export class RPCClient {
       method: 'Service.Exec',
       params: [{
         URL: url.split('?list').at(0)!,
-        Params: args.split(' ').map(a => a.trim()),
+        Params: this.argsSanitizer(args),
         Path: pathOverride,
         Rename: renameTo,
       }]

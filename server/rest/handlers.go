@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/goccy/go-json"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
@@ -19,7 +19,7 @@ func (h *Handler) Exec() http.HandlerFunc {
 
 		req := internal.DownloadRequest{}
 
-		if err := json.NewDecoder(r.Body).DecodeContext(r.Context(), &req); err != nil {
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 
@@ -29,7 +29,7 @@ func (h *Handler) Exec() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).EncodeContext(r.Context(), id)
+		err = json.NewEncoder(w).Encode(id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -48,7 +48,7 @@ func (h *Handler) Running() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).EncodeContext(r.Context(), res)
+		err = json.NewEncoder(w).Encode(res)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
@@ -63,7 +63,7 @@ func (h *Handler) SetCookies() http.HandlerFunc {
 
 		req := new(internal.SetCookiesRequest)
 
-		err := json.NewDecoder(r.Body).DecodeContext(r.Context(), req)
+		err := json.NewDecoder(r.Body).Decode(req)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -75,7 +75,7 @@ func (h *Handler) SetCookies() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).EncodeContext(r.Context(), "ok")
+		err = json.NewEncoder(w).Encode("ok")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
