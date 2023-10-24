@@ -15,6 +15,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
+import { useToast } from '../hooks/toast'
+import { ffetch } from '../lib/httpClient'
+import { matchW } from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function'
 
 const LoginContainer = styled(Container)({
   display: 'flex',
@@ -42,13 +46,15 @@ export default function Login() {
 
   const navigate = useNavigate()
 
+  const { pushMessage } = useToast()
+
   const navigateAndReload = () => {
     navigate('/')
     window.location.reload()
   }
 
   const login = async () => {
-    const res = await fetch(`${url}/auth/login`, {
+    const task = ffetch(`${url}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -56,9 +62,20 @@ export default function Login() {
       body: JSON.stringify({
         username,
         password,
-      })
+      }),
+      redirect: 'follow'
     })
-    res.ok ? navigateAndReload() : setFormHasError(true)
+
+    pipe(
+      task,
+      matchW(
+        (l) => {
+          setFormHasError(true)
+          pushMessage(l, 'error')
+        },
+        () => navigateAndReload()
+      )
+    )()
   }
 
   return (

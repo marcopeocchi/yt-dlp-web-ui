@@ -171,7 +171,9 @@ export default function DownloadDialog({
 
   const resetInput = () => {
     urlInputRef.current!.value = ''
-    customFilenameInputRef.current!.value = ''
+    if (customFilenameInputRef.current) {
+      customFilenameInputRef.current!.value = ''
+    }
   }
 
   return (

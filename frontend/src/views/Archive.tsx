@@ -66,7 +66,7 @@ export default function Downloaded() {
     ),
     matchW(
       (e) => {
-        pushMessage(e)
+        pushMessage(e, 'error')
         navigate('/login')
       },
       (d) => files$.next(d),
@@ -87,24 +87,32 @@ export default function Downloaded() {
       ? ['.', ..._upperLevel].join('/')
       : _upperLevel.join('/')
 
-    fetch(`${serverAddr}/archive/downloaded`, {
+    const task = ffetch<DirectoryEntry[]>(`${serverAddr}/archive/downloaded`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ subdir: relpath })
     })
-      .then(res => res.json())
-      .then(data => {
-        files$.next(sub
+
+    pipe(
+      task,
+      matchW(
+        (l) => pushMessage(l, 'error'),
+        (r) => files$.next(sub
           ? [{
-            name: '..',
             isDirectory: true,
+            isVideo: false,
+            modTime: '',
+            name: '..',
             path: upperLevel,
-          }, ...data]
-          : data
+            shaSum: '',
+            size: 0,
+          }, ...r]
+          : r
         )
-      })
+      )
+    )()
   }
 
   const selectable$ = useMemo(() => files$.pipe(
