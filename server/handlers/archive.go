@@ -66,7 +66,7 @@ type ListRequest struct {
 }
 
 func ListDownloaded(w http.ResponseWriter, r *http.Request) {
-	root := config.Instance().GetConfig().DownloadPath
+	root := config.Instance().DownloadPath
 	req := new(ListRequest)
 
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -144,7 +144,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 
 	decodedStr := string(decoded)
 
-	root := config.Instance().GetConfig().DownloadPath
+	root := config.Instance().DownloadPath
 
 	// TODO: further path / file validations
 	if strings.Contains(filepath.Dir(decodedStr), root) {

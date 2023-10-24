@@ -59,18 +59,18 @@ func main() {
 
 	c := config.Instance()
 
-	c.SetPort(port)
-	c.QueueSize(queueSize)
-	c.DownloadPath(downloadPath)
-	c.DownloaderPath(downloaderPath)
-	c.SessionFilePath(sessionFilePath)
+	c.Port = port
+	c.QueueSize = queueSize
+	c.DownloadPath = downloadPath
+	c.DownloaderPath = downloaderPath
+	c.SessionFilePath = sessionFilePath
 
-	c.RequireAuth(requireAuth)
-	c.Username(username)
-	c.Password(password)
+	c.RequireAuth = requireAuth
+	c.Username = username
+	c.Password = password
 
 	// if config file is found it will be merged with the current config struct
-	if _, err := c.LoadFromFile(configFile); err != nil {
+	if err := c.LoadFile(configFile); err != nil {
 		log.Println(cli.BgRed, "config", cli.Reset, "no config file found")
 	}
 

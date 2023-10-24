@@ -25,8 +25,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var (
-		username = config.Instance().GetConfig().Username
-		password = config.Instance().GetConfig().Password
+		username = config.Instance().Username
+		password = config.Instance().Password
 	)
 
 	if username != req.Username || password != req.Password {

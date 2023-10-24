@@ -9,7 +9,7 @@ import (
 
 var lock sync.Mutex
 
-type serverConfig struct {
+type Config struct {
 	Port            int    `yaml:"port"`
 	DownloadPath    string `yaml:"downloadPath"`
 	DownloaderPath  string `yaml:"downloaderPath"`
@@ -20,67 +20,27 @@ type serverConfig struct {
 	SessionFilePath string `yaml:"session_file_path"`
 }
 
-type config struct {
-	cfg serverConfig
-}
-
-func (c *config) LoadFromFile(filename string) (serverConfig, error) {
+func (c *Config) LoadFile(filename string) error {
 	fd, err := os.Open(filename)
 	if err != nil {
-		return serverConfig{}, err
+		return err
 	}
 
-	if err := yaml.NewDecoder(fd).Decode(&c.cfg); err != nil {
-		return serverConfig{}, err
+	if err := yaml.NewDecoder(fd).Decode(c); err != nil {
+		return err
 	}
 
-	return c.cfg, nil
+	return nil
 }
 
-func (c *config) GetConfig() serverConfig {
-	return c.cfg
-}
+var instance *Config
 
-func (c *config) SetPort(port int) {
-	c.cfg.Port = port
-}
-
-func (c *config) DownloadPath(path string) {
-	c.cfg.DownloadPath = path
-}
-
-func (c *config) DownloaderPath(path string) {
-	c.cfg.DownloaderPath = path
-}
-
-func (c *config) RequireAuth(value bool) {
-	c.cfg.RequireAuth = value
-}
-
-func (c *config) Username(username string) {
-	c.cfg.Username = username
-}
-
-func (c *config) Password(password string) {
-	c.cfg.Password = password
-}
-
-func (c *config) QueueSize(size int) {
-	c.cfg.QueueSize = size
-}
-
-func (c *config) SessionFilePath(path string) {
-	c.cfg.SessionFilePath = path
-}
-
-var instance *config
-
-func Instance() *config {
+func Instance() *Config {
 	if instance == nil {
 		lock.Lock()
 		defer lock.Unlock()
 		if instance == nil {
-			instance = &config{serverConfig{}}
+			instance = &Config{}
 		}
 	}
 	return instance

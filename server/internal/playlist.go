@@ -19,7 +19,7 @@ type metadata struct {
 
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	var (
-		downloader = config.Instance().GetConfig().DownloaderPath
+		downloader = config.Instance().DownloaderPath
 		cmd        = exec.Command(downloader, req.URL, "-J")
 	)
 

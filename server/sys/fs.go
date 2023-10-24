@@ -14,7 +14,7 @@ import (
 // FreeSpace gets the available Bytes writable to download directory
 func FreeSpace() (uint64, error) {
 	var stat unix.Statfs_t
-	unix.Statfs(config.Instance().GetConfig().DownloadPath, &stat)
+	unix.Statfs(config.Instance().DownloadPath, &stat)
 	return (stat.Bavail * uint64(stat.Bsize)), nil
 }
 
@@ -26,7 +26,7 @@ func DirectoryTree() (*[]string, error) {
 		children []Node
 	}
 
-	rootPath := config.Instance().GetConfig().DownloadPath
+	rootPath := config.Instance().DownloadPath
 
 	stack := internal.NewStack[Node]()
 	flattened := make([]string, 0)

@@ -13,7 +13,7 @@ import (
 
 func Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !config.Instance().GetConfig().RequireAuth {
+		if !config.Instance().RequireAuth {
 			next.ServeHTTP(w, r)
 			return
 		}

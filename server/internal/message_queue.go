@@ -16,7 +16,7 @@ type MessageQueue struct {
 // CPU cores.
 // The queue size can be set via the qs flag.
 func NewMessageQueue() *MessageQueue {
-	size := config.Instance().GetConfig().QueueSize
+	size := config.Instance().QueueSize
 
 	if size <= 0 {
 		log.Fatalln("invalid queue size")

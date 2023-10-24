@@ -98,7 +98,7 @@ func (m *MemoryDB) Persist() {
 	running := m.All()
 
 	sessionFile := filepath.Join(
-		config.Instance().GetConfig().SessionFilePath,
+		config.Instance().SessionFilePath,
 		"session.dat",
 	)
 

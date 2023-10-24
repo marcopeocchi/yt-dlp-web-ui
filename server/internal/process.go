@@ -74,7 +74,7 @@ func (p *Process) Start() {
 	})
 
 	out := DownloadOutput{
-		Path:     config.Instance().GetConfig().DownloadPath,
+		Path:     config.Instance().DownloadPath,
 		Filename: "%(title)s.%(ext)s",
 	}
 
@@ -97,7 +97,7 @@ func (p *Process) Start() {
 	}, p.Params...)
 
 	// ----------------- main block ----------------- //
-	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, params...)
+	cmd := exec.Command(config.Instance().DownloaderPath, params...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	r, err := cmd.StdoutPipe()
@@ -192,7 +192,7 @@ func (p *Process) Kill() error {
 
 // Returns the available format for this URL
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
-	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, p.Url, "-J")
+	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
 	stdout, err := cmd.Output()
 
 	if err != nil {
@@ -245,7 +245,7 @@ func (p *Process) SetPending() {
 }
 
 func (p *Process) SetMetadata() error {
-	cmd := exec.Command(config.Instance().GetConfig().DownloaderPath, p.Url, "-J")
+	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()
