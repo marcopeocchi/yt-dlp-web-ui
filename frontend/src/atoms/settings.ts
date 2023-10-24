@@ -153,7 +153,7 @@ export const serverAddressAndPortState = selector({
 export const serverURL = selector({
   key: 'serverURL',
   get: ({ get }) =>
-    `${window.location.protocol}//${get(serverAddressState)}:${get(serverPortState)}`
+    `${window.location.protocol}//${get(serverAddressAndPortState)}`
 })
 
 export const rpcWebSocketEndpoint = selector({

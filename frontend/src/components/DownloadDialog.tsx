@@ -149,12 +149,10 @@ export default function DownloadDialog({
 
   const handleFilenameTemplateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilenameTemplate(e.target.value)
-    localStorage.setItem('last-filename-override', e.target.value)
   }
 
   const handleCustomArgsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomArgs(e.target.value)
-    localStorage.setItem("last-input-args", e.target.value)
   }
 
   const parseUrlListFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,9 +171,7 @@ export default function DownloadDialog({
 
   const resetInput = () => {
     urlInputRef.current!.value = ''
-    if (customFilenameInputRef.current) {
-      customFilenameInputRef.current!.value = ''
-    }
+    customFilenameInputRef.current!.value = ''
   }
 
   return (

@@ -1,7 +1,7 @@
 import { AlertColor } from '@mui/material'
 import { atom } from 'recoil'
 
-type Toast = {
+export type Toast = {
   open: boolean,
   message: string
   autoClose: boolean
