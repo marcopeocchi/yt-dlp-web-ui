@@ -1,13 +1,13 @@
-FROM golang:1.20-alpine AS build
+FROM golang:alpine AS build
 
 RUN apk update && \
-    apk add nodejs npm go
+    apk add nodejs yarn
 
 COPY . /usr/src/yt-dlp-webui
 
 WORKDIR /usr/src/yt-dlp-webui/frontend
-RUN npm install
-RUN npm run build
+RUN yarn install
+RUN yarn build
 
 WORKDIR /usr/src/yt-dlp-webui
 RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
