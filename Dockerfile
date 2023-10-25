@@ -1,7 +1,7 @@
 FROM golang:alpine AS build
 
 RUN apk update && \
-    apk add nodejs yarn
+    apk add nodejs-current yarn
 
 COPY . /usr/src/yt-dlp-webui
 
