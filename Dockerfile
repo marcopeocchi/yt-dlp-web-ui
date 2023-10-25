@@ -1,13 +1,13 @@
 FROM golang:alpine AS build
 
 RUN apk update && \
-    apk add nodejs-current pnpm
+    apk add nodejs-current npm
 
 COPY . /usr/src/yt-dlp-webui
 
 WORKDIR /usr/src/yt-dlp-webui/frontend
-RUN pnpm install
-RUN pnpm build
+RUN npm install
+RUN npm run build
 
 WORKDIR /usr/src/yt-dlp-webui
 RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
