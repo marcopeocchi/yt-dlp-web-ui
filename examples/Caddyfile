@@ -1,0 +1,5 @@
+resource.yourdomain.tld {
+  handle_path /yt-dlp-webui/* {
+    reverse_proxy  127.0.0.1:3033
+  }
+}
