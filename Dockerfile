@@ -1,11 +1,12 @@
 FROM golang:alpine AS build
 
 RUN apk update && \
-    apk add nodejs-current npm
+    apk add nodejs npm
 
 COPY . /usr/src/yt-dlp-webui
 
 WORKDIR /usr/src/yt-dlp-webui/frontend
+
 RUN npm install
 RUN npm run build
 

@@ -16,11 +16,11 @@ export type RPCRequest = {
   id?: string
 }
 
-export type RPCResponse<T> = {
+export type RPCResponse<T> = Readonly<{
   result: T
   error: number | null
   id?: string
-}
+}>
 
 type DownloadInfo = {
   url: string
@@ -41,18 +41,18 @@ type DownloadProgress = {
   process_status: number
 }
 
-export type RPCResult = {
+export type RPCResult = Readonly<{
   id: string
   progress: DownloadProgress
   info: DownloadInfo
-}
+}>
 
 export type RPCParams = {
   URL: string
   Params?: string
 }
 
-export interface DLMetadata {
+export type DLMetadata = {
   formats: Array<DLFormat>
   best: DLFormat
   thumbnail: string
