@@ -141,7 +141,7 @@ func (p *Process) Start() {
 	go func() {
 		rx.Sample(time.Millisecond*500, sourceChan, doneChan, func(event []byte) {
 			stdout := ProgressTemplate{}
-			err := json.Unmarshal(scan.Bytes(), &stdout)
+			err := json.Unmarshal(event, &stdout)
 			if err == nil {
 				p.Progress = DownloadProgress{
 					Status:     StatusDownloading,
