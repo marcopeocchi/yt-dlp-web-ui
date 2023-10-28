@@ -17,6 +17,7 @@ import (
 	"github.com/marcopeocchi/fazzoletti/slices"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/rx"
 )
 
 const template = `download:
@@ -81,6 +82,7 @@ func (p *Process) Start() {
 	if p.Output.Path != "" {
 		out.Path = p.Output.Path
 	}
+
 	if p.Output.Filename != "" {
 		out.Filename = p.Output.Filename + ".%(ext)s"
 	}
@@ -113,11 +115,11 @@ func (p *Process) Start() {
 
 	p.proc = cmd.Process
 
-	// ----------------- info block ----------------- //
-	// spawn a goroutine that retrieves the info for the download
-
 	// --------------- progress block --------------- //
-	// unbuffered channel connected to stdout
+	var (
+		sourceChan = make(chan []byte)
+		doneChan   = make(chan struct{})
+	)
 
 	// spawn a goroutine that does the dirty job of parsing the stdout
 	// filling the channel with as many stdout line as yt-dlp produces (producer)
@@ -125,9 +127,19 @@ func (p *Process) Start() {
 		defer func() {
 			r.Close()
 			p.Complete()
+			doneChan <- struct{}{}
+			close(sourceChan)
+			close(doneChan)
 		}()
 
 		for scan.Scan() {
+			sourceChan <- scan.Bytes()
+		}
+	}()
+
+	// Slows down the unmarshal operation to every 500ms
+	go func() {
+		rx.Sample(time.Millisecond*500, sourceChan, doneChan, func(event []byte) {
 			stdout := ProgressTemplate{}
 			err := json.Unmarshal(scan.Bytes(), &stdout)
 			if err == nil {
@@ -143,7 +155,7 @@ func (p *Process) Start() {
 					p.Url, stdout.Percentage,
 				)
 			}
-		}
+		})
 	}()
 
 	// ------------- end progress block ------------- //

@@ -1,7 +1,8 @@
+import * as O from 'fp-ts/Option'
 import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { interval, share, take } from 'rxjs'
-import { activeDownloadsState } from '../atoms/downloads'
+import { downloadsState } from '../atoms/downloads'
 import { serverAddressAndPortState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
 import { useSubscription } from '../hooks/observable'
@@ -14,7 +15,7 @@ interface Props extends React.HTMLAttributes<HTMLBaseElement> { }
 
 const SocketSubscriber: React.FC<Props> = ({ children }) => {
   const [, setIsConnected] = useRecoilState(connectedState)
-  const [, setActive] = useRecoilState(activeDownloadsState)
+  const [, setDownloads] = useRecoilState(downloadsState)
 
   const serverAddressAndPort = useRecoilValue(serverAddressAndPortState)
 
@@ -38,14 +39,18 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
       if (!isRPCResponse(event)) { return }
       if (!Array.isArray(event.result)) { return }
 
-      setActive(
-        (event.result || [])
-          .filter(f => !!f.info.url)
-          .sort((a, b) => datetimeCompareFunc(
-            b.info.created_at,
-            a.info.created_at,
-          ))
-      )
+      if (event.result) {
+        return setDownloads(
+          O.of(event.result
+            .filter(f => !!f.info.url).sort((a, b) => datetimeCompareFunc(
+              b.info.created_at,
+              a.info.created_at,
+            ))
+          )
+        )
+      }
+
+      setDownloads(O.none)
     },
     (err) => {
       console.error(err)

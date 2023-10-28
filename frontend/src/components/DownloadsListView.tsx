@@ -18,7 +18,7 @@ import { ellipsis, formatSpeedMiB, roundMiB } from "../utils"
 
 
 const DownloadsListView: React.FC = () => {
-  const downloads = useRecoilValue(activeDownloadsState) ?? []
+  const downloads = useRecoilValue(activeDownloadsState)
 
   const { client } = useRPC()
 

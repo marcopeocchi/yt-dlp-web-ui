@@ -7,7 +7,7 @@ import { useRPC } from '../hooks/useRPC'
 import DownloadCard from './DownloadCard'
 
 const DownloadsCardView: React.FC = () => {
-  const downloads = useRecoilValue(activeDownloadsState) ?? []
+  const downloads = useRecoilValue(activeDownloadsState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()
