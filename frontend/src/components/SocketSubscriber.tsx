@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/Option'
 import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { interval, share, take } from 'rxjs'
+import { share, take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
 import { serverAddressAndPortState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
@@ -34,8 +34,9 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
     )
   })
 
-  useSubscription(sharedSocket$,
-    (event) => {
+  useSubscription(
+    sharedSocket$,
+    event => {
       if (!isRPCResponse(event)) { return }
       if (!Array.isArray(event.result)) { return }
 
@@ -52,7 +53,7 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
 
       setDownloads(O.none)
     },
-    (err) => {
+    err => {
       console.error(err)
       pushMessage(
         `${i18n.t('rpcConnErr')} (${serverAddressAndPort})`,
@@ -61,7 +62,7 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
     }
   )
 
-  useSubscription(interval(1000), () => client.running())
+  useSubscription(timer(0, 1000), () => client.running())
 
   return (
     <>{children}</>

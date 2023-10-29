@@ -30,7 +30,7 @@ func (m *MemoryDB) Get(id string) (*Process, error) {
 
 // Store a pointer of a process and return its id
 func (m *MemoryDB) Set(process *Process) string {
-	id := uuid.Must(uuid.NewRandom()).String()
+	id := uuid.NewString()
 	m.table.Store(id, process)
 	process.Id = id
 	return id
@@ -97,12 +97,9 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 func (m *MemoryDB) Persist() {
 	running := m.All()
 
-	sessionFile := filepath.Join(
-		config.Instance().SessionFilePath,
-		"session.dat",
-	)
+	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
 
-	fd, err := os.Create(sessionFile)
+	fd, err := os.Create(sf)
 	if err != nil {
 		log.Println(cli.Red, "Failed to persist session", cli.Reset)
 	}
