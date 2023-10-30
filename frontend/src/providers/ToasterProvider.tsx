@@ -10,14 +10,13 @@ const Toaster: React.FC = () => {
 
   useEffect(() => {
     if (toasts.length > 0) {
-
       const closer = setInterval(() => {
         setToasts(t => t.map(t => ({ ...t, open: deletePredicate(t) })))
-      }, 2000)
+      }, 900)
 
       const cleaner = setInterval(() => {
         setToasts(t => t.filter(deletePredicate))
-      }, 1000)
+      }, 2005)
 
       return () => {
         clearInterval(closer)

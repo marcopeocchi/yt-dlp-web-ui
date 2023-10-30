@@ -15,9 +15,9 @@ The bottleneck remains yt-dlp startup time.
 docker pull marcobaobao/yt-dlp-webui
 ```
 ```sh
-# latest stable
+# latest dev
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
-# latest dev version
+# latest stable version
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 

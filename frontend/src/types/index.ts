@@ -83,3 +83,8 @@ export type DeleteRequest = Pick<DirectoryEntry, 'path' | 'shaSum'>
 
 export type PlayRequest = Pick<DirectoryEntry, 'path'>
 
+export type CustomTemplate = {
+  id: string
+  name: string
+  content: string
+}

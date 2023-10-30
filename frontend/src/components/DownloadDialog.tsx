@@ -1,7 +1,9 @@
 import { FileUpload } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import {
+  Autocomplete,
   Backdrop,
+  Box,
   Button,
   Checkbox,
   Container,
@@ -10,10 +12,7 @@ import {
   Grid,
   IconButton,
   InputAdornment,
-  InputLabel,
-  MenuItem,
   Paper,
-  Select,
   TextField
 } from '@mui/material'
 import AppBar from '@mui/material/AppBar'
@@ -30,7 +29,7 @@ import {
   useTransition
 } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { downloadTemplateState, filenameTemplateState } from '../atoms/downloadTemplate'
+import { customArgsState, downloadTemplateState, filenameTemplateState } from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
@@ -39,6 +38,7 @@ import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
 import type { DLMetadata } from '../types'
 import { isValidURL, toFormatArgs } from '../utils'
+import ExtraDownloadOptions from './ExtraDownloadOptions'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -60,19 +60,18 @@ export default function DownloadDialog({
   onClose,
   onDownloadStart
 }: Props) {
-  // recoil state
   const settings = useRecoilValue(settingsState)
   const isConnected = useRecoilValue(connectedState)
   const availableDownloadPaths = useRecoilValue(availableDownloadPathsState)
+  const downloadTemplate = useRecoilValue(downloadTemplateState)
 
-  // ephemeral state
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
   const [pickedVideoFormat, setPickedVideoFormat] = useState('')
   const [pickedAudioFormat, setPickedAudioFormat] = useState('')
   const [pickedBestFormat, setPickedBestFormat] = useState('')
 
-  const [customArgs, setCustomArgs] = useRecoilState(downloadTemplateState)
-  const [downloadPath, setDownloadPath] = useState(0)
+  const [customArgs, setCustomArgs] = useRecoilState(customArgsState)
+  const [downloadPath, setDownloadPath] = useState('')
 
   const [filenameTemplate, setFilenameTemplate] = useRecoilState(
     filenameTemplateState
@@ -83,20 +82,16 @@ export default function DownloadDialog({
 
   const [isPlaylist, setIsPlaylist] = useState(false)
 
-  // memos
   const cliArgs = useMemo(() =>
     new CliArguments().fromString(settings.cliArgs), [settings.cliArgs]
   )
 
-  // context
   const { i18n } = useI18n()
   const { client } = useRPC()
 
-  // refs
   const urlInputRef = useRef<HTMLInputElement>(null)
   const customFilenameInputRef = useRef<HTMLInputElement>(null)
 
-  // transitions
   const [isPending, startTransition] = useTransition()
 
   /**
@@ -108,13 +103,13 @@ export default function DownloadDialog({
     if (pickedAudioFormat !== '') codes.push(pickedAudioFormat)
     if (pickedBestFormat !== '') codes.push(pickedBestFormat)
 
-    client.download(
-      immediate || url || workingUrl,
-      `${cliArgs.toString()} ${toFormatArgs(codes)} ${customArgs}`,
-      availableDownloadPaths[downloadPath] ?? '',
-      filenameTemplate,
-      isPlaylist,
-    )
+    client.download({
+      url: immediate || url || workingUrl,
+      args: `${cliArgs.toString()} ${toFormatArgs(codes)} ${downloadTemplate}`,
+      pathOverride: downloadPath ?? '',
+      renameTo: settings.fileRenaming ? filenameTemplate : '',
+      playlist: isPlaylist,
+    })
 
     setUrl('')
     setWorkingUrl('')
@@ -177,36 +172,40 @@ export default function DownloadDialog({
   }
 
   return (
-    <div>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={onClose}
-        TransitionComponent={Transition}
-      >
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={isPending}
-        />
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={onClose}
-              aria-label="close"
-            >
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Download
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Container sx={{ my: 4 }}>
+    <Dialog
+      fullScreen
+      open={open}
+      onClose={onClose}
+      TransitionComponent={Transition}
+    >
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isPending}
+      />
+      <AppBar sx={{ position: 'relative' }}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            color="inherit"
+            onClick={onClose}
+            aria-label="close"
+          >
+            <CloseIcon />
+          </IconButton>
+          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+            Download
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{
+        backgroundColor: (theme) => theme.palette.background.default,
+        minHeight: (theme) => `calc(99vh - ${theme.mixins.toolbar.minHeight}px)`
+      }}>
+        <Container sx={{ my: 4 }} >
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Paper
+                elevation={4}
                 sx={{
                   p: 2,
                   display: 'flex',
@@ -267,8 +266,9 @@ export default function DownloadDialog({
                   }
                   {
                     settings.fileRenaming &&
-                    <Grid item xs={8}>
+                    <Grid item xs={settings.pathOverriding ? 8 : 12}>
                       <TextField
+                        sx={{ mt: 1 }}
                         ref={customFilenameInputRef}
                         fullWidth
                         label={i18n.t('customFilename')}
@@ -286,22 +286,30 @@ export default function DownloadDialog({
                     settings.pathOverriding &&
                     <Grid item xs={4}>
                       <FormControl fullWidth>
-                        <InputLabel>{i18n.t('customPath')}</InputLabel>
-                        <Select
-                          label={i18n.t('customPath')}
-                          defaultValue={0}
-                          variant={'outlined'}
-                          value={downloadPath}
-                          onChange={(e) => setDownloadPath(Number(e.target.value))}
-                        >
-                          {availableDownloadPaths.map((val: string, idx: number) => (
-                            <MenuItem key={idx} value={idx}>{val}</MenuItem>
-                          ))}
-                        </Select>
+                        <Autocomplete
+                          disablePortal
+                          options={availableDownloadPaths.map((dir) => ({ label: dir, dir }))}
+                          autoHighlight
+                          getOptionLabel={(option) => option.label}
+                          onChange={(_, value) => {
+                            setDownloadPath(value?.dir!)
+                          }}
+                          renderOption={(props, option) => (
+                            <Box
+                              component="li"
+                              sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                              {...props}>
+                              {option.label}
+                            </Box>
+                          )}
+                          sx={{ width: '100%', mt: 1 }}
+                          renderInput={(params) => <TextField {...params} label={i18n.t('customPath')} />}
+                        />
                       </FormControl>
                     </Grid>
                   }
                 </Grid>
+                <ExtraDownloadOptions />
                 <Grid container spacing={1} pt={2} justifyContent="space-between">
                   <Grid item>
                     <Button
@@ -357,7 +365,7 @@ export default function DownloadDialog({
             pickedAudioFormat={pickedAudioFormat}
           />}
         </Container>
-      </Dialog>
-    </div>
+      </Box>
+    </Dialog>
   )
 }

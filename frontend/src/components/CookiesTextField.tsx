@@ -6,7 +6,7 @@ import { pipe } from 'fp-ts/lib/function'
 import { useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
-import { downloadTemplateState } from '../atoms/downloadTemplate'
+import { cookiesTemplateState } from '../atoms/downloadTemplate'
 import { cookiesState, serverURL } from '../atoms/settings'
 import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
@@ -70,7 +70,7 @@ const validateCookie = (cookie: string) => pipe(
 
 const CookiesTextField: React.FC = () => {
   const serverAddr = useRecoilValue(serverURL)
-  const [customArgs, setCustomArgs] = useRecoilState(downloadTemplateState)
+  const [, setCookies] = useRecoilState(cookiesTemplateState)
   const [savedCookies, setSavedCookies] = useRecoilState(cookiesState)
 
   const { pushMessage } = useToast()
@@ -124,22 +124,18 @@ const CookiesTextField: React.FC = () => {
       validateNetscapeCookies,
       O.fromPredicate(f => f === true),
       O.match(
-        () => {
-          if (customArgs.includes(flag)) {
-            setCustomArgs(a => a.replace(flag, ''))
-          }
-        },
+        () => setCookies(''),
         async () => {
           pipe(
             await submitCookies(cookies),
             E.match(
               (l) => pushMessage(`${l}`, 'error'),
-              () => pushMessage(`Saved Netscape cookies`, 'success')
+              () => {
+                pushMessage(`Saved Netscape cookies`, 'success')
+                setCookies(flag)
+              }
             )
           )
-          if (!customArgs.includes(flag)) {
-            setCustomArgs(a => `${a} ${flag}`)
-          }
         }
       )
     )

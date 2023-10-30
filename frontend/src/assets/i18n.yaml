@@ -1,7 +1,7 @@
 ---
 languages:
   english:
-    urlInput: YouTube or other supported service video URL
+    urlInput: Video URL
     statusTitle: Status
     statusReady: Ready
     selectFormatButton: Select format
@@ -36,6 +36,10 @@ languages:
     restartAppMessage: Needs a page reload to take effect
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   french:
     urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
     statusTitle: Statut
@@ -72,8 +76,12 @@ languages:
     restartAppMessage: Nécessite un rechargement de la page pour prendre effet
     servedFromReverseProxyCheckbox: Est derrière un sous-dossier de proxy inverse
     appTitle: Nom de l'application
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   italian:
-    urlInput: URL di YouTube o di qualsiasi altro servizio supportato
+    urlInput: URL Video
     statusTitle: Stato
     startButton: Inizia
     statusReady: Pronto
@@ -107,6 +115,10 @@ languages:
     restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: Titolo applicazione
+    savedTemplates: Template salvati
+    templatesEditor: Editor template
+    templatesEditorNameLabel: Nome template
+    templatesEditorContentLabel: Contentunto template
   chinese:
     urlInput: YouTube 或其他受支持服务的视频网址
     statusTitle: 状态
@@ -143,6 +155,10 @@ languages:
     restartAppMessage: 需要刷新页面才能生效
     servedFromReverseProxyCheckbox: 处于反向代理的子目录后
     appTitle: App 标题
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -177,6 +193,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
     statusTitle: Статус
@@ -211,6 +231,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -245,6 +269,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -280,6 +308,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -314,6 +346,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
     statusTitle: Статус
@@ -348,6 +384,10 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
     statusTitle: Status
@@ -382,3 +422,7 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
     appTitle: App title
+    savedTemplates: Saved templates
+    templatesEditor: Templates editor
+    templatesEditorNameLabel: Template name
+    templatesEditorContentLabel: Template content

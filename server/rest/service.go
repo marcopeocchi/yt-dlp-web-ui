@@ -2,15 +2,18 @@ package rest
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
 type Service struct {
-	db *internal.MemoryDB
-	mq *internal.MessageQueue
+	mdb *internal.MemoryDB
+	db  *sql.DB
+	mq  *internal.MessageQueue
 }
 
 func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
@@ -23,7 +26,7 @@ func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
 		},
 	}
 
-	id := s.db.Set(p)
+	id := s.mdb.Set(p)
 	s.mq.Publish(p)
 
 	return id, nil
@@ -34,7 +37,7 @@ func (s *Service) Running(ctx context.Context) (*[]internal.ProcessResponse, err
 	case <-ctx.Done():
 		return nil, errors.New("context cancelled")
 	default:
-		return s.db.All(), nil
+		return s.mdb.All(), nil
 	}
 }
 
@@ -48,4 +51,65 @@ func (s *Service) SetCookies(ctx context.Context, cookies string) error {
 	fd.WriteString(cookies)
 
 	return nil
+}
+
+func (s *Service) SaveTemplate(ctx context.Context, template *internal.CustomTemplate) error {
+	conn, err := s.db.Conn(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer conn.Close()
+
+	_, err = conn.ExecContext(
+		ctx,
+		"INSERT INTO templates (id, name, content) VALUES (?, ?, ?)",
+		uuid.NewString(),
+		template.Name,
+		template.Content,
+	)
+
+	return err
+}
+
+func (s *Service) GetTemplates(ctx context.Context) (*[]internal.CustomTemplate, error) {
+	conn, err := s.db.Conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer conn.Close()
+
+	rows, err := conn.QueryContext(ctx, "SELECT * FROM templates")
+	if err != nil {
+		return nil, err
+	}
+
+	templates := make([]internal.CustomTemplate, 0)
+
+	for rows.Next() {
+		t := internal.CustomTemplate{}
+
+		err := rows.Scan(&t.Id, &t.Name, &t.Content)
+		if err != nil {
+			return nil, err
+		}
+
+		templates = append(templates, t)
+	}
+
+	return &templates, nil
+}
+
+func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
+	conn, err := s.db.Conn(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer conn.Close()
+
+	_, err = conn.ExecContext(ctx, "DELETE FROM templates WHERE id = ?", id)
+
+	return err
 }

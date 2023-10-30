@@ -78,3 +78,9 @@ type DownloadRequest struct {
 type SetCookiesRequest struct {
 	Cookies string `json:"cookies"`
 }
+
+type CustomTemplate struct {
+	Id      string `json:"id"`
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}

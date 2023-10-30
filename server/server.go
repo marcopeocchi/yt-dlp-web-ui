@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io/fs"
 	"log"
@@ -15,23 +16,37 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
+
+	_ "modernc.org/sqlite"
 )
 
 type serverConfig struct {
 	frontend fs.FS
 	port     int
-	db       *internal.MemoryDB
+	mdb      *internal.MemoryDB
+	db       *sql.DB
 	mq       *internal.MessageQueue
 }
 
-func RunBlocking(port int, frontend fs.FS) {
-	var db internal.MemoryDB
-	db.Restore()
+func RunBlocking(port int, frontend fs.FS, dbPath string) {
+	var mdb internal.MemoryDB
+	mdb.Restore()
+
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = dbutils.AutoMigrate(context.Background(), db)
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	mq := internal.NewMessageQueue()
 	go mq.Subscriber()
@@ -39,18 +54,19 @@ func RunBlocking(port int, frontend fs.FS) {
 	srv := newServer(serverConfig{
 		frontend: frontend,
 		port:     port,
-		db:       &db,
+		mdb:      &mdb,
 		mq:       mq,
+		db:       db,
 	})
 
-	go gracefulShutdown(srv, &db)
-	go autoPersist(time.Minute*5, &db)
+	go gracefulShutdown(srv, &mdb)
+	go autoPersist(time.Minute*5, &mdb)
 
 	log.Fatal(srv.ListenAndServe())
 }
 
 func newServer(c serverConfig) *http.Server {
-	service := ytdlpRPC.Container(c.db, c.mq)
+	service := ytdlpRPC.Container(c.mdb, c.mq)
 	rpc.Register(service)
 
 	r := chi.NewRouter()
@@ -80,7 +96,7 @@ func newServer(c serverConfig) *http.Server {
 	r.Route("/rpc", ytdlpRPC.ApplyRouter())
 
 	// REST API handlers
-	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mq))
+	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mdb, c.mq))
 
 	return &http.Server{
 		Addr:    fmt.Sprintf(":%d", c.port),

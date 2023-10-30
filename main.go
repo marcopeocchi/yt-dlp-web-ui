@@ -14,12 +14,13 @@ import (
 )
 
 var (
-	port            int
-	queueSize       int
-	configFile      string
-	downloadPath    string
-	downloaderPath  string
-	sessionFilePath string
+	port              int
+	queueSize         int
+	configFile        string
+	downloadPath      string
+	downloaderPath    string
+	sessionFilePath   string
+	localDatabasePath string
 
 	requireAuth bool
 	username    string
@@ -42,6 +43,7 @@ func init() {
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 	flag.StringVar(&sessionFilePath, "session", ".", "session file path")
+	flag.StringVar(&localDatabasePath, "db", "local.db", "local database path")
 
 	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
 	flag.StringVar(&username, "user", userFromEnv, "Username required for auth")
@@ -74,5 +76,5 @@ func main() {
 		log.Println(cli.BgRed, "config", cli.Reset, "no config file found")
 	}
 
-	server.RunBlocking(port, frontend)
+	server.RunBlocking(port, frontend, localDatabasePath)
 }

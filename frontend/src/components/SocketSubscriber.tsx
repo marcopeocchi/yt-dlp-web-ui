@@ -1,5 +1,5 @@
 import * as O from 'fp-ts/Option'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { share, take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
@@ -14,7 +14,7 @@ import { datetimeCompareFunc, isRPCResponse } from '../utils'
 interface Props extends React.HTMLAttributes<HTMLBaseElement> { }
 
 const SocketSubscriber: React.FC<Props> = ({ children }) => {
-  const [, setIsConnected] = useRecoilState(connectedState)
+  const [connected, setIsConnected] = useRecoilState(connectedState)
   const [, setDownloads] = useRecoilState(downloadsState)
 
   const serverAddressAndPort = useRecoilValue(serverAddressAndPortState)
@@ -62,7 +62,11 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
     }
   )
 
-  useSubscription(timer(0, 1000), () => client.running())
+  useEffect(() => {
+    if (connected) {
+      timer(0, 1000).subscribe(() => client.running())
+    }
+  }, [connected])
 
   return (
     <>{children}</>

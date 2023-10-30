@@ -1,4 +1,5 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle'
+import BuildCircleIcon from '@mui/icons-material/BuildCircle'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
 import {
@@ -12,10 +13,11 @@ import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 
 type Props = {
-  onOpen: () => void
+  onDownloadOpen: () => void
+  onEditorOpen: () => void
 }
 
-const HomeSpeedDial: React.FC<Props> = ({ onOpen }) => {
+const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
   const [, setListView] = useRecoilState(listViewState)
 
   const { i18n } = useI18n()
@@ -40,9 +42,14 @@ const HomeSpeedDial: React.FC<Props> = ({ onOpen }) => {
         onClick={abort}
       />
       <SpeedDialAction
+        icon={<BuildCircleIcon />}
+        tooltipTitle={i18n.t('templatesEditor')}
+        onClick={onEditorOpen}
+      />
+      <SpeedDialAction
         icon={<AddCircleIcon />}
-        tooltipTitle={`New download`}
-        onClick={onOpen}
+        tooltipTitle={i18n.t('newDownload')}
+        onClick={onDownloadOpen}
       />
     </SpeedDial>
   )

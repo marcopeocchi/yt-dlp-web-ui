@@ -3,6 +3,14 @@ import type { DLMetadata, RPCRequest, RPCResponse, RPCResult } from '../types'
 
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
 
+type DownloadRequestArgs = {
+  url: string,
+  args: string,
+  pathOverride?: string,
+  renameTo?: string,
+  playlist?: boolean
+}
+
 export class RPCClient {
   private seq: number
   private httpEndpoint: string
@@ -33,6 +41,7 @@ export class RPCClient {
     return args
       .split(' ')
       .map(a => a.trim().replaceAll("'", '').replaceAll('"', ''))
+      .filter(Boolean)
   }
 
   private async sendHTTP<T>(req: RPCRequest) {
@@ -48,34 +57,45 @@ export class RPCClient {
     return data
   }
 
-  public download(
-    url: string,
-    args: string,
-    pathOverride = '',
-    renameTo = '',
-    playlist?: boolean
-  ) {
-    if (!url) {
+  public download(req: DownloadRequestArgs) {
+    if (!req.url) {
       return
     }
-    if (playlist) {
+
+    const rename = req.args.includes('-o')
+      ? req.args
+        .substring(req.args.indexOf('-o'))
+        .replaceAll("'", '')
+        .replaceAll('"', '')
+        .split('-o')
+        .map(s => s.trim())
+        .join('')
+        .split(' ')
+        .at(0) ?? ''
+      : ''
+
+    const sanitizedArgs = this.argsSanitizer(
+      req.args.replace('-o', '').replace(rename, '')
+    )
+
+    if (req.playlist) {
       return this.sendHTTP({
         method: 'Service.ExecPlaylist',
         params: [{
-          URL: url,
-          Params: this.argsSanitizer(args),
-          Path: pathOverride,
-          Rename: renameTo,
+          URL: req.url,
+          Params: sanitizedArgs,
+          Path: req.pathOverride,
+          Rename: req.renameTo || rename,
         }]
       })
     }
     this.sendHTTP({
       method: 'Service.Exec',
       params: [{
-        URL: url.split('?list').at(0)!,
-        Params: this.argsSanitizer(args),
-        Path: pathOverride,
-        Rename: renameTo,
+        URL: req.url.split('?list').at(0)!,
+        Params: sanitizedArgs,
+        Path: req.pathOverride,
+        Rename: req.renameTo || rename,
       }]
     })
   }

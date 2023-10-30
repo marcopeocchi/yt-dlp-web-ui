@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"database/sql"
 	"sync"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -14,11 +15,12 @@ var (
 	handlerOnce sync.Once
 )
 
-func ProvideService(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
+func ProvideService(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 	serviceOnce.Do(func() {
 		service = &Service{
-			db: db,
-			mq: mq,
+			mdb: mdb,
+			db:  db,
+			mq:  mq,
 		}
 	})
 	return service

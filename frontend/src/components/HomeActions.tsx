@@ -4,29 +4,37 @@ import { loadingAtom } from '../atoms/ui'
 import DownloadDialog from './DownloadDialog'
 import HomeSpeedDial from './HomeSpeedDial'
 import { useToast } from '../hooks/toast'
+import TemplatesEditor from './TemplatesEditor'
 
 const HomeActions: React.FC = () => {
   const [, setIsLoading] = useRecoilState(loadingAtom)
-  const [openDialog, setOpenDialog] = useState(false)
+
+  const [openDownload, setOpenDownload] = useState(false)
+  const [openEditor, setOpenEditor] = useState(false)
 
   const { pushMessage } = useToast()
 
   return (
     <>
       <HomeSpeedDial
-        onOpen={() => setOpenDialog(true)}
+        onDownloadOpen={() => setOpenDownload(true)}
+        onEditorOpen={() => setOpenEditor(true)}
       />
       <DownloadDialog
-        open={openDialog}
+        open={openDownload}
         onClose={() => {
-          setOpenDialog(false)
+          setOpenDownload(false)
           setIsLoading(true)
         }}
         onDownloadStart={(url) => {
           pushMessage(`Requested ${url}`, 'info')
-          setOpenDialog(false)
+          setOpenDownload(false)
           setIsLoading(true)
         }}
+      />
+      <TemplatesEditor
+        open={openEditor}
+        onClose={() => setOpenEditor(false)}
       />
     </>
   )
