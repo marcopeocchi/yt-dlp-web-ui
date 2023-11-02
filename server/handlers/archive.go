@@ -40,7 +40,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 		}
 	}
 
-	files := make([]DirectoryEntry, validEntries)
+	files := make([]DirectoryEntry, validEntries+1)
 
 	for i, d := range dirs {
 		if !utils.IsValidEntry(d) {
