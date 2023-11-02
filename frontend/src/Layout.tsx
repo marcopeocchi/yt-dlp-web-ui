@@ -55,126 +55,125 @@ export default function Layout() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SocketSubscriber>
-        <Helmet>
-          <title>
-            {settings.appTitle}
-          </title>
-        </Helmet>
-        <Box sx={{ display: 'flex' }}>
-          <CssBaseline />
-          <AppBar position="absolute" open={open}>
-            <Toolbar sx={{ pr: '24px' }}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={toggleDrawer}
-                sx={{
-                  marginRight: '36px',
-                  ...(open && { display: 'none' }),
-                }}
-              >
-                <Menu />
-              </IconButton>
-              <Typography
-                component="h1"
-                variant="h6"
-                color="inherit"
-                noWrap
-                sx={{ flexGrow: 1 }}
-              >
-                {settings.appTitle}
-              </Typography>
-              <Suspense fallback={i18n.t('loadingLabel')}>
-                <FreeSpaceIndicator />
-              </Suspense>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                marginLeft: '4px',
-                gap: 3,
-              }}>
-                <SettingsEthernet />
-                <span>
-                  {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
-                </span>
-              </div>
-            </Toolbar>
-          </AppBar>
-          <Drawer variant="permanent" open={open}>
-            <Toolbar
+      <SocketSubscriber />
+      <Helmet>
+        <title>
+          {settings.appTitle}
+        </title>
+      </Helmet>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="absolute" open={open}>
+          <Toolbar sx={{ pr: '24px' }}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={toggleDrawer}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                px: [1],
+                marginRight: '36px',
+                ...(open && { display: 'none' }),
               }}
             >
-              <IconButton onClick={toggleDrawer}>
-                <ChevronLeft />
-              </IconButton>
-            </Toolbar>
-            <Divider />
-            <List component="nav">
-              <Link to={'/'} style={
-                {
-                  textDecoration: 'none',
-                  color: mode === 'dark' ? '#ffffff' : '#000000DE'
-                }
-              }>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <Dashboard />
-                  </ListItemIcon>
-                  <ListItemText primary={i18n.t('homeButtonLabel')} />
-                </ListItemButton>
-              </Link>
-              <Link to={'/archive'} style={
-                {
-                  textDecoration: 'none',
-                  color: mode === 'dark' ? '#ffffff' : '#000000DE'
-                }
-              }>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <DownloadIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={i18n.t('archiveButtonLabel')} />
-                </ListItemButton>
-              </Link>
-              <Link to={'/settings'} style={
-                {
-                  textDecoration: 'none',
-                  color: mode === 'dark' ? '#ffffff' : '#000000DE'
-                }
-              }>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <SettingsIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={i18n.t('settingsButtonLabel')} />
-                </ListItemButton>
-              </Link>
-              <ThemeToggler />
-              <Logout />
-            </List>
-          </Drawer>
-          <Box
-            component="main"
+              <Menu />
+            </IconButton>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
+              {settings.appTitle}
+            </Typography>
+            <Suspense fallback={i18n.t('loadingLabel')}>
+              <FreeSpaceIndicator />
+            </Suspense>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              marginLeft: '4px',
+              gap: 3,
+            }}>
+              <SettingsEthernet />
+              <span>
+                {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
+              </span>
+            </div>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <Toolbar
             sx={{
-              flexGrow: 1,
-              height: '100vh',
-              overflow: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              px: [1],
             }}
           >
-            <Toolbar />
-            <Outlet />
-          </Box>
+            <IconButton onClick={toggleDrawer}>
+              <ChevronLeft />
+            </IconButton>
+          </Toolbar>
+          <Divider />
+          <List component="nav">
+            <Link to={'/'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <Dashboard />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('homeButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <Link to={'/archive'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <DownloadIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <Link to={'/settings'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('settingsButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <ThemeToggler />
+            <Logout />
+          </List>
+        </Drawer>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            height: '100vh',
+            overflow: 'auto',
+          }}
+        >
+          <Toolbar />
+          <Outlet />
         </Box>
-        <Toaster />
-      </SocketSubscriber>
+      </Box>
+      <Toaster />
     </ThemeProvider>
   )
 }

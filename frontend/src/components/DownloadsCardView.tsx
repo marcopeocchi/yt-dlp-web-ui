@@ -20,13 +20,11 @@ const DownloadsCardView: React.FC = () => {
       {
         downloads.map(download => (
           <Grid item xs={4} sm={8} md={6} key={download.id}>
-            <>
-              <DownloadCard
-                download={download}
-                onStop={() => abort(download.id)}
-                onCopy={() => pushMessage(i18n.t('clipboardAction'), 'info')}
-              />
-            </>
+            <DownloadCard
+              download={download}
+              onStop={() => abort(download.id)}
+              onCopy={() => pushMessage(i18n.t('clipboardAction'), 'info')}
+            />
           </Grid>
         ))
       }

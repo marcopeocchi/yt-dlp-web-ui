@@ -25,7 +25,7 @@ export default function Splash() {
   const { i18n } = useI18n()
   const activeDownloads = useRecoilValue(activeDownloadsState)
 
-  if (!activeDownloads || activeDownloads.length !== 0) {
+  if (activeDownloads.length !== 0) {
     return null
   }
 

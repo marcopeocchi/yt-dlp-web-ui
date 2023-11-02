@@ -15,6 +15,7 @@ import {
   Stack,
   Typography
 } from '@mui/material'
+import { useCallback } from 'react'
 import { RPCResult } from '../types'
 import { ellipsis, formatSpeedMiB, mapProcessStatus, roundMiB } from '../utils'
 
@@ -34,11 +35,17 @@ const Resolution: React.FC<{ resolution?: string }> = ({ resolution }) => {
 }
 
 const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
-  const isCompleted = () => download.progress.percentage === '-1'
+  const isCompleted = useCallback(
+    () => download.progress.percentage === '-1',
+    [download.progress.percentage]
+  )
 
-  const percentageToNumber = () => isCompleted()
-    ? 100
-    : Number(download.progress.percentage.replace('%', ''))
+  const percentageToNumber = useCallback(
+    () => isCompleted()
+      ? 100
+      : Number(download.progress.percentage.replace('%', '')),
+    [download.progress.percentage, isCompleted]
+  )
 
   return (
     <Card>
