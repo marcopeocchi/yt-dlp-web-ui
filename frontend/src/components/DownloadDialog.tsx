@@ -22,6 +22,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { TransitionProps } from '@mui/material/transitions'
 import {
+  FC,
   forwardRef,
   useMemo,
   useRef,
@@ -55,11 +56,7 @@ type Props = {
   onDownloadStart: (url: string) => void
 }
 
-export default function DownloadDialog({
-  open,
-  onClose,
-  onDownloadStart
-}: Props) {
+const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const settings = useRecoilValue(settingsState)
   const isConnected = useRecoilValue(connectedState)
   const availableDownloadPaths = useRecoilValue(availableDownloadPathsState)
@@ -369,3 +366,5 @@ export default function DownloadDialog({
     </Dialog>
   )
 }
+
+export default DownloadDialog

@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { grey } from '@mui/material/colors'
-import { useMemo, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Link, Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
@@ -86,11 +86,14 @@ export default function Layout() {
               >
                 {settings.appTitle}
               </Typography>
-              <FreeSpaceIndicator />
+              <Suspense fallback={i18n.t('loadingLabel')}>
+                <FreeSpaceIndicator />
+              </Suspense>
               <div style={{
                 display: 'flex',
                 alignItems: 'center',
                 flexWrap: 'wrap',
+                marginLeft: '4px',
                 gap: 3,
               }}>
                 <SettingsEthernet />

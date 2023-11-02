@@ -1,26 +1,21 @@
 import StorageIcon from '@mui/icons-material/Storage'
-import { useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
+import { freeSpaceBytesState } from '../atoms/status'
 import { formatGiB } from '../utils'
-import { useRPC } from '../hooks/useRPC'
 
 const FreeSpaceIndicator = () => {
-  const [freeSpace, setFreeSpace] = useState(0)
-
-  const { client } = useRPC()
-
-  useEffect(() => {
-    client.freeSpace().then(r => setFreeSpace(r.result))
-  }, [client])
+  const freeSpace = useRecoilValue(freeSpaceBytesState)
 
   return (
     <div style={{
       display: 'flex',
       alignItems: 'center',
       flexWrap: 'wrap',
+      gap: 3
     }}>
       <StorageIcon />
       <span>
-        &nbsp;{formatGiB(freeSpace)}&nbsp;
+        {formatGiB(freeSpace)}
       </span>
     </div>
   )

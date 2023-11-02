@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { loadingAtom } from '../atoms/ui'
+import { useToast } from '../hooks/toast'
 import DownloadDialog from './DownloadDialog'
 import HomeSpeedDial from './HomeSpeedDial'
-import { useToast } from '../hooks/toast'
 import TemplatesEditor from './TemplatesEditor'
 
 const HomeActions: React.FC = () => {
@@ -20,18 +20,20 @@ const HomeActions: React.FC = () => {
         onDownloadOpen={() => setOpenDownload(true)}
         onEditorOpen={() => setOpenEditor(true)}
       />
-      <DownloadDialog
-        open={openDownload}
-        onClose={() => {
-          setOpenDownload(false)
-          setIsLoading(true)
-        }}
-        onDownloadStart={(url) => {
-          pushMessage(`Requested ${url}`, 'info')
-          setOpenDownload(false)
-          setIsLoading(true)
-        }}
-      />
+      <Suspense>
+        <DownloadDialog
+          open={openDownload}
+          onClose={() => {
+            setOpenDownload(false)
+            setIsLoading(true)
+          }}
+          onDownloadStart={(url) => {
+            pushMessage(`Requested ${url}`, 'info')
+            setOpenDownload(false)
+            setIsLoading(true)
+          }}
+        />
+      </Suspense>
       <TemplatesEditor
         open={openEditor}
         onClose={() => setOpenEditor(false)}

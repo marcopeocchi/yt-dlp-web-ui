@@ -23,13 +23,13 @@ export const isDownloadingState = atom({
   default: false
 })
 
-// export const freeSpaceBytesState = selector({
-//   key: 'freeSpaceBytesState',
-//   get: async ({ get }) => {
-//     const res = await get(rpcClientState).freeSpace()
-//     return res.result
-//   }
-// })
+export const freeSpaceBytesState = selector({
+  key: 'freeSpaceBytesState',
+  get: async ({ get }) => {
+    const res = await get(rpcClientState).freeSpace()
+    return res.result
+  }
+})
 
 export const availableDownloadPathsState = selector({
   key: 'availableDownloadPathsState',

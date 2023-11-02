@@ -41,6 +41,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -89,6 +90,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: Nom de l'application
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -134,6 +136,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: Titolo applicazione
     savedTemplates: Template salvati
     templatesEditor: Editor template
@@ -180,6 +183,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App 标题
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -224,6 +228,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -268,6 +273,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -312,6 +318,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -357,6 +364,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -401,6 +409,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -445,6 +454,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -489,6 +499,7 @@ languages:
     settingsButtonLabel: Settings
     rpcAuthenticationLabel: RPC authentication
     themeTogglerLabel: Theme toggler
+    loadingLabel: Loading...
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
