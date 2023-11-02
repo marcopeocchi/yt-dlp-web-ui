@@ -28,6 +28,7 @@ import FreeSpaceIndicator from './components/FreeSpaceIndicator'
 import Logout from './components/Logout'
 import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
+import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
 
 export default function Layout() {
@@ -49,6 +50,8 @@ export default function Layout() {
   )
 
   const toggleDrawer = () => setOpen(state => !state)
+
+  const { i18n } = useI18n()
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,10 +91,11 @@ export default function Layout() {
                 display: 'flex',
                 alignItems: 'center',
                 flexWrap: 'wrap',
+                gap: 3,
               }}>
                 <SettingsEthernet />
                 <span>
-                  &nbsp;{isConnected ? settings.serverAddr : 'not connected'}
+                  {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
                 </span>
               </div>
             </Toolbar>
@@ -121,7 +125,7 @@ export default function Layout() {
                   <ListItemIcon>
                     <Dashboard />
                   </ListItemIcon>
-                  <ListItemText primary="Home" />
+                  <ListItemText primary={i18n.t('homeButtonLabel')} />
                 </ListItemButton>
               </Link>
               <Link to={'/archive'} style={
@@ -134,7 +138,7 @@ export default function Layout() {
                   <ListItemIcon>
                     <DownloadIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Archive" />
+                  <ListItemText primary={i18n.t('archiveButtonLabel')} />
                 </ListItemButton>
               </Link>
               <Link to={'/settings'} style={
@@ -147,7 +151,7 @@ export default function Layout() {
                   <ListItemIcon>
                     <SettingsIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Settings" />
+                  <ListItemText primary={i18n.t('settingsButtonLabel')} />
                 </ListItemButton>
               </Link>
               <ThemeToggler />

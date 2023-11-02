@@ -4,6 +4,7 @@ import BrightnessAuto from '@mui/icons-material/BrightnessAuto'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import { useRecoilState } from 'recoil'
 import { Theme, themeState } from '../atoms/settings'
+import { useI18n } from '../hooks/useI18n'
 
 const ThemeToggler: React.FC = () => {
   const [theme, setTheme] = useRecoilState(themeState)
@@ -17,6 +18,8 @@ const ThemeToggler: React.FC = () => {
   const themes: Theme[] = ['system', 'light', 'dark']
   const currentTheme = themes.indexOf(theme)
 
+  const { i18n } = useI18n()
+
   return (
     <ListItemButton onClick={() => {
       setTheme(themes[(currentTheme + 1) % themes.length])
@@ -24,7 +27,7 @@ const ThemeToggler: React.FC = () => {
       <ListItemIcon>
         {actions[theme]}
       </ListItemIcon>
-      <ListItemText primary="Toggle theme" />
+      <ListItemText primary={i18n.t('themeTogglerLabel')} />
     </ListItemButton>
   )
 }

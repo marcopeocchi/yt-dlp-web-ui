@@ -35,6 +35,12 @@ languages:
     playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
     restartAppMessage: Needs a page reload to take effect
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -75,6 +81,14 @@ languages:
     playlistCheckbox: Télécharger la liste de lecture (cela prendra du temps, vous pouvez fermer cette fenêtre après l'avoir validée)
     restartAppMessage: Nécessite un rechargement de la page pour prendre effet
     servedFromReverseProxyCheckbox: Est derrière un sous-dossier de proxy inverse
+    notConnectedText: not connected
+    settingsLabel: Settings
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: Nom de l'application
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -114,6 +128,12 @@ languages:
     playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
     restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: Nuovo download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: Titolo applicazione
     savedTemplates: Template salvati
     templatesEditor: Editor template
@@ -154,6 +174,12 @@ languages:
     playlistCheckbox: 下载播放列表（可能需要一段时间，提交后可以关闭页面等待）
     restartAppMessage: 需要刷新页面才能生效
     servedFromReverseProxyCheckbox: 处于反向代理的子目录后
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App 标题
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -192,6 +218,12 @@ languages:
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -230,6 +262,12 @@ languages:
     clipboardAction: URL скопирован в буфер обмена
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -268,6 +306,12 @@ languages:
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -307,6 +351,12 @@ languages:
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -345,6 +395,12 @@ languages:
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -383,6 +439,12 @@ languages:
     clipboardAction: URL скопійовано в буфер обміну
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor
@@ -421,6 +483,12 @@ languages:
     clipboardAction: Adres URL zostanie skopiowany do schowka
     playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
     servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    newDownloadButton: New download
+    homeButtonLabel: Home
+    archiveButtonLabel: Archive
+    settingsButtonLabel: Settings
+    rpcAuthenticationLabel: RPC authentication
+    themeTogglerLabel: Theme toggler
     appTitle: App title
     savedTemplates: Saved templates
     templatesEditor: Templates editor

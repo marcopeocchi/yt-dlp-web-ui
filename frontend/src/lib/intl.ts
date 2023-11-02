@@ -4,9 +4,10 @@ import i18n from "../assets/i18n.yaml"
 export default class I18nBuilder {
   private language: string
   private textMap = i18n.languages
+  private current: string[]
 
   constructor(language: string) {
-    this.language = language
+    this.setLanguage(language)
   }
 
   getLanguage(): string {
@@ -15,13 +16,12 @@ export default class I18nBuilder {
 
   setLanguage(language: string): void {
     this.language = language
+    this.current = this.textMap[this.language]
   }
 
   t(key: string): string {
-    const map = this.textMap[this.language]
-    if (map) {
-      const translation = map[key]
-      return translation ?? 'caption not defined'
+    if (this.current) {
+      return this.current[key] ?? 'caption not defined'
     }
     return 'caption not defined'
   }

@@ -48,7 +48,7 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
       />
       <SpeedDialAction
         icon={<AddCircleIcon />}
-        tooltipTitle={i18n.t('newDownload')}
+        tooltipTitle={i18n.t('newDownloadButton')}
         onClick={onDownloadOpen}
       />
     </SpeedDial>

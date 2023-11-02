@@ -27,14 +27,22 @@ type DirectoryEntry struct {
 }
 
 func walkDir(root string) (*[]DirectoryEntry, error) {
-	files := []DirectoryEntry{}
-
 	dirs, err := os.ReadDir(root)
 	if err != nil {
 		return nil, err
 	}
 
+	var validEntries int
+
 	for _, d := range dirs {
+		if utils.IsValidEntry(d) {
+			validEntries++
+		}
+	}
+
+	files := make([]DirectoryEntry, validEntries)
+
+	for i, d := range dirs {
 		if !utils.IsValidEntry(d) {
 			continue
 		}
@@ -46,7 +54,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 			return nil, err
 		}
 
-		files = append(files, DirectoryEntry{
+		files[i] = DirectoryEntry{
 			Path:        path,
 			Name:        d.Name(),
 			Size:        info.Size(),
@@ -54,7 +62,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 			IsVideo:     utils.IsVideo(d),
 			IsDirectory: d.IsDir(),
 			ModTime:     info.ModTime(),
-		})
+		}
 	}
 
 	return &files, err
@@ -142,18 +150,18 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	decodedStr := string(decoded)
+	filename := string(decoded)
 
 	root := config.Instance().DownloadPath
 
 	// TODO: further path / file validations
-	if strings.Contains(filepath.Dir(decodedStr), root) {
+	if strings.Contains(filepath.Dir(filename), root) {
 		w.Header().Add(
 			"Content-Disposition",
-			"inline; filename="+filepath.Base(decodedStr),
+			"inline; filename="+filepath.Base(filename),
 		)
 
-		http.ServeFile(w, r, decodedStr)
+		http.ServeFile(w, r, filename)
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
