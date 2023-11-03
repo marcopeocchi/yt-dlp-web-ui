@@ -27,6 +27,7 @@ export const freeSpaceBytesState = selector({
   key: 'freeSpaceBytesState',
   get: async ({ get }) => {
     const res = await get(rpcClientState).freeSpace()
+      .catch(() => ({ result: 0 }))
     return res.result
   }
 })
