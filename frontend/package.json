@@ -8,6 +8,7 @@
   },
   "author": "marcopeocchi",
   "license": "MPL-2.0",
+  "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

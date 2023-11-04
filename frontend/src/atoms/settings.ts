@@ -127,7 +127,7 @@ export const listViewState = atom({
 
 export const servedFromReverseProxyState = atom({
   key: 'servedFromReverseProxyState',
-  default: localStorage.getItem('reverseProxy') === "true",
+  default: localStorage.getItem('reverseProxy') === "true" || window.location.port == "",
   effects: [
     ({ onSet }) =>
       onSet(a => localStorage.setItem('reverseProxy', a.toString()))
