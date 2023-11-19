@@ -47,6 +47,5 @@ export const savedTemplatesState = selector<CustomTemplate[]>({
       either,
       getOrElse(() => new Array<CustomTemplate>())
     )
-  },
-  dangerouslyAllowMutability: true
+  }
 })

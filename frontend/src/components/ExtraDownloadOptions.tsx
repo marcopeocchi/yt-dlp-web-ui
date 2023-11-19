@@ -1,4 +1,4 @@
-import { Autocomplete, Box, TextField, Typography } from '@mui/material'
+import { Autocomplete, Box, TextField } from '@mui/material'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { customArgsState, savedTemplatesState } from '../atoms/downloadTemplate'
 import { useI18n } from '../hooks/useI18n'

@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -29,6 +30,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		mtype, reader, err := c.NextReader()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
 			break
 		}
 
@@ -37,6 +39,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		writer, err := c.NextWriter(mtype)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
 			break
 		}
 

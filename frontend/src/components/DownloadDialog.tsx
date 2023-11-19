@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography'
 import { TransitionProps } from '@mui/material/transitions'
 import {
   FC,
+  Suspense,
   forwardRef,
   useMemo,
   useRef,
@@ -114,7 +115,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
     setTimeout(() => {
       resetInput()
       setDownloadFormats(undefined)
-      onDownloadStart(url)
+      onDownloadStart(immediate || url || workingUrl)
     }, 250)
   }
 
@@ -306,7 +307,9 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                     </Grid>
                   }
                 </Grid>
-                <ExtraDownloadOptions />
+                <Suspense>
+                  <ExtraDownloadOptions />
+                </Suspense>
                 <Grid container spacing={1} pt={2} justifyContent="space-between">
                   <Grid item>
                     <Button
