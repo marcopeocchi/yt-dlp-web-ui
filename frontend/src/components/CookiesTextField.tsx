@@ -18,49 +18,49 @@ const validateCookie = (cookie: string) => pipe(
   cookie => cookie.replaceAll('\t', ' '),
   cookie => cookie.split(' '),
   E.of,
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f.length === 7,
       () => `missing parts`
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[0].length > 0,
       () => 'missing domain'
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[1] === 'TRUE' || f[1] === 'FALSE',
       () => `invalid include subdomains`
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[2].length > 0,
       () => 'invalid path'
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[3] === 'TRUE' || f[3] === 'FALSE',
       () => 'invalid secure flag'
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => isFinite(Number(f[4])),
       () => 'invalid expiration'
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[5].length > 0,
       () => 'invalid name'
     )
   ),
-  E.chain(
+  E.flatMap(
     E.fromPredicate(
       f => f[6].length > 0,
       () => 'invalid value'
