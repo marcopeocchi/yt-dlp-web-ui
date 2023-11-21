@@ -36,6 +36,7 @@ export const availableDownloadPathsState = selector({
   key: 'availableDownloadPathsState',
   get: async ({ get }) => {
     const res = await get(rpcClientState).directoryTree()
+      .catch(() => ({ result: [] }))
     return res.result
   }
 })

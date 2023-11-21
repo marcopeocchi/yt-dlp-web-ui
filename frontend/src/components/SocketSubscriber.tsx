@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/Option'
 import { useEffect, useMemo } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { share, take, timer } from 'rxjs'
+import { take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
 import { serverAddressAndPortState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
@@ -13,7 +13,7 @@ import { datetimeCompareFunc, isRPCResponse } from '../utils'
 
 interface Props extends React.HTMLAttributes<HTMLBaseElement> { }
 
-const SocketSubscriber: React.FC<Props> = ({ children }) => {
+const SocketSubscriber: React.FC<Props> = () => {
   const [connected, setIsConnected] = useRecoilState(connectedState)
   const [, setDownloads] = useRecoilState(downloadsState)
 
@@ -23,19 +23,22 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
   const { client } = useRPC()
   const { pushMessage } = useToast()
 
-  const sharedSocket$ = useMemo(() => client.socket$.pipe(share()), [])
-  const socketOnce$ = useMemo(() => sharedSocket$.pipe(take(1)), [])
+  const socketOnce$ = useMemo(() => client.socket$.pipe(take(1)), [])
 
-  useSubscription(socketOnce$, () => {
-    setIsConnected(true)
-    pushMessage(
-      `${i18n.t('toastConnected')} (${serverAddressAndPort})`,
-      "success"
-    )
-  })
+  useEffect(() => {
+    if (!connected) {
+      socketOnce$.subscribe(() => {
+        setIsConnected(true)
+        pushMessage(
+          `${i18n.t('toastConnected')} (${serverAddressAndPort})`,
+          "success"
+        )
+      })
+    }
+  }, [connected])
 
   useSubscription(
-    sharedSocket$,
+    client.socket$,
     event => {
       if (!isRPCResponse(event)) { return }
       if (!Array.isArray(event.result)) { return }
@@ -50,7 +53,6 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
           )
         )
       }
-
       setDownloads(O.none)
     },
     err => {
@@ -64,13 +66,13 @@ const SocketSubscriber: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     if (connected) {
-      timer(0, 1000).subscribe(() => client.running())
-    }
-  }, [connected])
+      const sub = timer(0, 1000).subscribe(() => client.running())
 
-  return (
-    <>{children}</>
-  )
+      return () => sub.unsubscribe()
+    }
+  }, [connected, client])
+
+  return null
 }
 
 export default SocketSubscriber

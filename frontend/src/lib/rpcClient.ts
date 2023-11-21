@@ -19,11 +19,13 @@ export class RPCClient {
   constructor(httpEndpoint: string, webSocketEndpoint: string) {
     this.seq = 0
     this.httpEndpoint = httpEndpoint
-    this._socket$ = webSocket<any>(webSocketEndpoint)
+    this._socket$ = webSocket<any>({
+      url: webSocketEndpoint
+    })
   }
 
   public get socket$(): Observable<RPCResponse<RPCResult[]>> {
-    return this._socket$.asObservable()
+    return this._socket$
   }
 
   private incrementSeq() {

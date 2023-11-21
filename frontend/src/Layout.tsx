@@ -17,7 +17,6 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { grey } from '@mui/material/colors'
 import { Suspense, useMemo, useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { Link, Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from './atoms/settings'
@@ -56,11 +55,6 @@ export default function Layout() {
   return (
     <ThemeProvider theme={theme}>
       <SocketSubscriber />
-      <Helmet>
-        <title>
-          {settings.appTitle}
-        </title>
-      </Helmet>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>

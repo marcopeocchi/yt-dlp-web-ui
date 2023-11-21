@@ -6,7 +6,5 @@ export const rpcClientState = selector({
   key: 'rpcClientState',
   get: ({ get }) =>
     new RPCClient(get(rpcHTTPEndpoint), get(rpcWebSocketEndpoint)),
-  set: ({ get }) =>
-    new RPCClient(get(rpcHTTPEndpoint), get(rpcWebSocketEndpoint)),
   dangerouslyAllowMutability: true,
 })
