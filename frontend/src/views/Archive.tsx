@@ -108,8 +108,8 @@ export default function Downloaded() {
             path: upperLevel,
             shaSum: '',
             size: 0,
-          }, ...r]
-          : r
+          }, ...r.filter(f => f.name !== '')]
+          : r.filter(f => f.name !== '')
         )
       )
     )()
