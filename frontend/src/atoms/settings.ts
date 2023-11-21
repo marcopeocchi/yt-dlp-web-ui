@@ -73,7 +73,7 @@ export const serverPortState = atom<number>({
 
 export const latestCliArgumentsState = atom<string>({
   key: 'latestCliArgumentsState',
-  default: localStorage.getItem('cli-args') || '',
+  default: localStorage.getItem('cli-args') || '--no-mtime',
   effects: [
     ({ onSet }) =>
       onSet(a => localStorage.setItem('cli-args', a.toString()))

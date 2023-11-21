@@ -1,12 +1,10 @@
 export class CliArguments {
   private _extractAudio: boolean
   private _noMTime: boolean
-  private _proxy: string
 
   constructor(extractAudio = false, noMTime = true) {
     this._extractAudio = extractAudio
     this._noMTime = noMTime
-    this._proxy = ""
   }
 
   public get extractAudio(): boolean {
@@ -46,7 +44,14 @@ export class CliArguments {
     return args.trim()
   }
 
+  private reset() {
+    this._extractAudio = false
+    this._noMTime = false
+  }
+
   public fromString(str: string): CliArguments {
+    this.reset()
+
     if (str) {
       if (str.includes('-x')) {
         this._extractAudio = true
