@@ -25,6 +25,7 @@ import {
   FC,
   Suspense,
   forwardRef,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -91,6 +92,10 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const customFilenameInputRef = useRef<HTMLInputElement>(null)
 
   const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    setCustomArgs('')
+  }, [open])
 
   /**
     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket

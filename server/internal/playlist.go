@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
@@ -12,9 +13,10 @@ import (
 )
 
 type metadata struct {
-	Entries []DownloadInfo `json:"entries"`
-	Count   int            `json:"playlist_count"`
-	Type    string         `json:"_type"`
+	Entries       []DownloadInfo `json:"entries"`
+	Count         int            `json:"playlist_count"`
+	PlaylistTitle string         `json:"title"`
+	Type          string         `json:"_type"`
 }
 
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
@@ -56,6 +58,15 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 
 		for i, meta := range m.Entries {
 			delta := time.Second.Microseconds() * int64(i+1)
+
+			// detect playlist title from metadata since each playlist entry will be
+			// treated as an individual download
+			req.Rename = strings.Replace(
+				req.Rename,
+				"%(playlist_title)s",
+				m.PlaylistTitle,
+				1,
+			)
 
 			proc := &Process{
 				Url:      meta.OriginalURL,
