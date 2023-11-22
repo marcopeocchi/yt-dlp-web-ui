@@ -84,8 +84,10 @@ func (p *Process) Start() {
 	}
 
 	if p.Output.Filename != "" {
-		out.Filename = p.Output.Filename + ".%(ext)s"
+		out.Filename = p.Output.Filename
 	}
+
+	buildFilename(&p.Output)
 
 	params := append([]string{
 		strings.Split(p.Url, "?list")[0], //no playlist
@@ -297,4 +299,17 @@ func (p *Process) SetMetadata() error {
 
 func (p *Process) getShortId() string {
 	return strings.Split(p.Id, "-")[0]
+}
+
+func buildFilename(o *DownloadOutput) {
+	if o.Filename != "" && strings.Contains(o.Filename, ".%(ext)s") {
+		o.Filename += ".%(ext)s"
+	}
+
+	o.Filename = strings.Replace(
+		o.Filename,
+		".%(ext)s.%(ext)s",
+		".%(ext)s",
+		1,
+	)
 }
