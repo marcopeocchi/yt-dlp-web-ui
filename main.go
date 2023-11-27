@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	host              string
 	port              int
 	queueSize         int
 	configFile        string
@@ -36,6 +37,7 @@ var (
 
 func init() {
 
+	flag.StringVar(&host, "host", "0.0.0.0", "Host where server will listen at")
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
 	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
@@ -61,6 +63,7 @@ func main() {
 
 	c := config.Instance()
 
+	c.Host = host
 	c.Port = port
 	c.QueueSize = queueSize
 	c.DownloadPath = downloadPath
@@ -76,5 +79,5 @@ func main() {
 		log.Println(cli.BgRed, "config", cli.Reset, "no config file found")
 	}
 
-	server.RunBlocking(port, frontend, localDatabasePath)
+	server.RunBlocking(host, port, frontend, localDatabasePath)
 }

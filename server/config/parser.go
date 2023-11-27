@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	Host            string `yaml:"host"`
 	Port            int    `yaml:"port"`
 	DownloadPath    string `yaml:"downloadPath"`
 	DownloaderPath  string `yaml:"downloaderPath"`

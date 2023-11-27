@@ -28,13 +28,14 @@ import (
 
 type serverConfig struct {
 	frontend fs.FS
+	host     string
 	port     int
 	mdb      *internal.MemoryDB
 	db       *sql.DB
 	mq       *internal.MessageQueue
 }
 
-func RunBlocking(port int, frontend fs.FS, dbPath string) {
+func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	var mdb internal.MemoryDB
 	mdb.Restore()
 
@@ -53,6 +54,7 @@ func RunBlocking(port int, frontend fs.FS, dbPath string) {
 
 	srv := newServer(serverConfig{
 		frontend: frontend,
+		host:     host,
 		port:     port,
 		mdb:      &mdb,
 		mq:       mq,
@@ -99,7 +101,7 @@ func newServer(c serverConfig) *http.Server {
 	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mdb, c.mq))
 
 	return &http.Server{
-		Addr:    fmt.Sprintf(":%d", c.port),
+		Addr:    fmt.Sprintf("%s:%d", c.host, c.port),
 		Handler: r,
 	}
 }

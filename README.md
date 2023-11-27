@@ -167,6 +167,8 @@ Usage yt-dlp-webui:
         yt-dlp executable path (default "yt-dlp")
   -out string
         Where files will be saved (default ".")
+  -host string
+        Host where server will listen at (default "0.0.0.0")
   -port int
         Port where server will listen at (default 3033)
   -qs int
