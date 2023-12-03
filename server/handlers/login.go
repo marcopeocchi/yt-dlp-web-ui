@@ -57,6 +57,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
+
+	if err := json.NewEncoder(w).Encode("ok"); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
