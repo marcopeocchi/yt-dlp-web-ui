@@ -1,5 +1,6 @@
 import * as O from 'fp-ts/Option'
 import { useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
@@ -22,6 +23,8 @@ const SocketSubscriber: React.FC<Props> = () => {
   const { i18n } = useI18n()
   const { client } = useRPC()
   const { pushMessage } = useToast()
+
+  const navigate = useNavigate()
 
   const socketOnce$ = useMemo(() => client.socket$.pipe(take(1)), [])
 
@@ -60,7 +63,8 @@ const SocketSubscriber: React.FC<Props> = () => {
       pushMessage(
         `${i18n.t('rpcConnErr')} (${serverAddressAndPort})`,
         "error"
-      )
+      ),
+        navigate(`/error`)
     }
   )
 

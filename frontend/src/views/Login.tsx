@@ -63,7 +63,6 @@ export default function Login() {
         username,
         password,
       }),
-      redirect: 'follow'
     })
 
     pipe(

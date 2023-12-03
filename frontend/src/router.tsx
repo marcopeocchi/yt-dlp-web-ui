@@ -57,6 +57,14 @@ export const router = createHashRouter([
           </Suspense >
         )
       },
+      {
+        path: '/error',
+        element: (
+          <Suspense fallback={<CircularProgress />}>
+            <ErrorBoundary />
+          </Suspense >
+        )
+      },
     ]
   },
 ])
