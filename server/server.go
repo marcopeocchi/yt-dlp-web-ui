@@ -73,7 +73,21 @@ func newServer(c serverConfig) *http.Server {
 
 	r := chi.NewRouter()
 
-	r.Use(cors.AllowAll().Handler)
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{
+			http.MethodHead,
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+		},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
+
+	r.Use(corsMiddleware.Handler)
 	r.Use(middleware.Logger)
 
 	app := http.FileServer(http.FS(c.frontend))

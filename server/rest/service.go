@@ -85,6 +85,8 @@ func (s *Service) GetTemplates(ctx context.Context) (*[]internal.CustomTemplate,
 		return nil, err
 	}
 
+	defer rows.Close()
+
 	templates := make([]internal.CustomTemplate, 0)
 
 	for rows.Next() {
