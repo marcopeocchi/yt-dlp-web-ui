@@ -20,7 +20,6 @@ type DirectoryEntry struct {
 	Name        string    `json:"name"`
 	Path        string    `json:"path"`
 	Size        int64     `json:"size"`
-	SHASum      string    `json:"shaSum"`
 	ModTime     time.Time `json:"modTime"`
 	IsVideo     bool      `json:"isVideo"`
 	IsDirectory bool      `json:"isDirectory"`
@@ -32,17 +31,9 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 		return nil, err
 	}
 
-	var validEntries int
+	var files []DirectoryEntry
 
 	for _, d := range dirs {
-		if utils.IsValidEntry(d) {
-			validEntries++
-		}
-	}
-
-	files := make([]DirectoryEntry, validEntries+1)
-
-	for i, d := range dirs {
 		if !utils.IsValidEntry(d) {
 			continue
 		}
@@ -54,15 +45,14 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 			return nil, err
 		}
 
-		files[i] = DirectoryEntry{
+		files = append(files, DirectoryEntry{
 			Path:        path,
 			Name:        d.Name(),
 			Size:        info.Size(),
-			SHASum:      utils.ShaSumString(path),
 			IsVideo:     utils.IsVideo(d),
 			IsDirectory: d.IsDir(),
 			ModTime:     info.ModTime(),
-		}
+		})
 	}
 
 	return &files, err
@@ -77,8 +67,7 @@ func ListDownloaded(w http.ResponseWriter, r *http.Request) {
 	root := config.Instance().DownloadPath
 	req := new(ListRequest)
 
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -96,9 +85,8 @@ func ListDownloaded(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(files)
 
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(files); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -108,21 +96,13 @@ type DeleteRequest = DirectoryEntry
 func DeleteFile(w http.ResponseWriter, r *http.Request) {
 	req := new(DeleteRequest)
 
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	sum := utils.ShaSumString(req.Path)
-	if sum != req.SHASum {
-		http.Error(w, "shasum mismatch", http.StatusBadRequest)
-		return
-	}
-
-	err = os.Remove(req.Path)
-	if err != nil {
-		http.Error(w, "shasum mismatch", http.StatusBadRequest)
+	if err := os.Remove(req.Path); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -162,6 +142,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 		)
 
 		http.ServeFile(w, r, filename)
+		return
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
