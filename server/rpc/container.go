@@ -18,18 +18,10 @@ func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
 // RPC service must be registered before applying this router!
 func ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
-		r.Route("/ws", func(r chi.Router) {
-			if config.Instance().RequireAuth {
-				r.Use(middlewares.WebSocketAuthentication)
-			}
-			r.Get("/", WebSocket)
-		})
-
-		r.Route("/http", func(r chi.Router) {
-			if config.Instance().RequireAuth {
-				r.Use(middlewares.Authenticated)
-			}
-			r.Post("/", Post)
-		})
+		if config.Instance().RequireAuth {
+			r.Use(middlewares.Authenticated)
+		}
+		r.Get("/ws", WebSocket)
+		r.Post("/http", Post)
 	}
 }

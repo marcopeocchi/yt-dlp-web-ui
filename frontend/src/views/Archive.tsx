@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -39,6 +40,8 @@ import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { DeleteRequest, DirectoryEntry } from '../types'
 import { base64URLEncode, roundMiB } from '../utils'
+import DownloadIcon from '@mui/icons-material/Download'
+
 
 export default function Downloaded() {
   const serverAddr = useRecoilValue(serverURL)
@@ -119,7 +122,7 @@ export default function Downloaded() {
     combineLatestWith(selected$),
     map(([data, selected]) => data.map(x => ({
       ...x,
-      selected: selected.includes(x.name)
+      selected: selected.includes(x.path)
     }))),
     share()
   ), [])
@@ -155,7 +158,13 @@ export default function Downloaded() {
   const onFileClick = (path: string) => startTransition(() => {
     const encoded = base64URLEncode(path)
 
-    window.open(`${serverAddr}/archive/d/${encoded}`)
+    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
+  })
+
+  const downloadFile = (path: string) => startTransition(() => {
+    const encoded = base64URLEncode(path)
+
+    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
   })
 
   const onFolderClick = (path: string) => startTransition(() => {
@@ -192,11 +201,20 @@ export default function Downloaded() {
                     {roundMiB(file.size)}
                   </Typography>
                   }
-                  {!file.isDirectory && <Checkbox
-                    edge="end"
-                    checked={file.selected}
-                    onChange={() => addSelected(file.name)}
-                  />}
+                  {!file.isDirectory && <>
+                    <IconButton
+                      size='small'
+                      onClick={() => downloadFile(file.path)}
+                      sx={{ marginLeft: 1.5 }}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                    <Checkbox
+                      edge="end"
+                      checked={file.selected}
+                      onChange={() => addSelected(file.path)}
+                    />
+                  </>}
                 </div>
               }
               disablePadding
