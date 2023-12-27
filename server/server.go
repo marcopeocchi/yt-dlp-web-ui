@@ -102,7 +102,8 @@ func newServer(c serverConfig) *http.Server {
 		}
 		r.Post("/downloaded", handlers.ListDownloaded)
 		r.Post("/delete", handlers.DeleteFile)
-		r.Get("/d/{id}", handlers.SendFile)
+		r.Get("/d/{id}", handlers.DownloadFile)
+		r.Get("/v/{id}", handlers.SendFile)
 	})
 
 	// Authentication routes

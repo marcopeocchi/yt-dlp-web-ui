@@ -42,19 +42,9 @@ func validateToken(tokenValue string) error {
 func Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("X-Authentication")
-
-		if err := validateToken(token); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+		if token == "" {
+			token = r.URL.Query().Get("token")
 		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
-func WebSocketAuthentication(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		token := r.URL.Query().Get("token")
 
 		if err := validateToken(token); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
