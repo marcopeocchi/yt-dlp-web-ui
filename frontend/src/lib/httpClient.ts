@@ -15,11 +15,13 @@ const fetcher = async <T>(url: string, opt?: RequestInit) => {
     }
   }
 
-  if (opt?.headers) {
-    opt.headers = { ...opt.headers, 'X-Authentication': jwt ?? '' }
-  }
-
-  const res = await fetch(url, opt)
+  const res = await fetch(url, {
+    ...opt,
+    headers: {
+      ...opt?.headers,
+      'X-Authentication': jwt ?? ''
+    }
+  })
 
   if (!res.ok) {
     throw await res.text()

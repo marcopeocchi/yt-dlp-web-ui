@@ -122,7 +122,7 @@ export default function Downloaded() {
     combineLatestWith(selected$),
     map(([data, selected]) => data.map(x => ({
       ...x,
-      selected: selected.includes(x.path)
+      selected: selected.includes(x.name)
     }))),
     share()
   ), [])
@@ -212,7 +212,7 @@ export default function Downloaded() {
                     <Checkbox
                       edge="end"
                       checked={file.selected}
-                      onChange={() => addSelected(file.path)}
+                      onChange={() => addSelected(file.name)}
                     />
                   </>}
                 </div>
