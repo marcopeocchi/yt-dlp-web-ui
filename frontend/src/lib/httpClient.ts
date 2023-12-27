@@ -7,13 +7,19 @@ export const ffetch = <T>(url: string, opt?: RequestInit) => tryCatch(
 
 
 const fetcher = async <T>(url: string, opt?: RequestInit) => {
-  const res = await fetch(url, opt)
+  const jwt = localStorage.getItem('token')
 
   if (opt && !opt.headers) {
     opt.headers = {
       'Content-Type': 'application/json',
     }
   }
+
+  if (opt?.headers) {
+    opt.headers = { ...opt.headers, 'X-Authentication': jwt ?? '' }
+  }
+
+  const res = await fetch(url, opt)
 
   if (!res.ok) {
     throw await res.text()

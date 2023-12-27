@@ -16,6 +16,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -96,7 +97,9 @@ func newServer(c serverConfig) *http.Server {
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
-		r.Use(middlewares.Authenticated)
+		if config.Instance().RequireAuth {
+			r.Use(middlewares.Authenticated)
+		}
 		r.Post("/downloaded", handlers.ListDownloaded)
 		r.Post("/delete", handlers.DeleteFile)
 		r.Get("/d/{id}", handlers.SendFile)

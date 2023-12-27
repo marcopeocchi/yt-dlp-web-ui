@@ -69,7 +69,7 @@ export default function Downloaded() {
         pushMessage(e, 'error')
         navigate('/login')
       },
-      (d) => files$.next(d),
+      (d) => files$.next(d ?? []),
     )
   )()
 
