@@ -13,3 +13,4 @@ yt-dlp-webui
 session.dat
 config.yml
 cookies.txt
+__debug*

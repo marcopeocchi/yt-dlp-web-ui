@@ -10,10 +10,8 @@ export default function Logout() {
   const url = useRecoilValue(serverURL)
 
   const logout = async () => {
-    const res = await fetch(`${url}/auth/logout`)
-    if (res.ok) {
-      navigate('/login')
-    }
+    localStorage.removeItem('token')
+    navigate('/login')
   }
 
   const { i18n } = useI18n()

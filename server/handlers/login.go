@@ -30,7 +30,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if username != req.Username || password != req.Password {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "invalid username or password", http.StatusBadRequest)
 		return
 	}
 
@@ -47,18 +47,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := &http.Cookie{
-		Name:     utils.TOKEN_COOKIE_NAME,
-		HttpOnly: true,
-		Secure:   false,
-		Expires:  expiresAt, // 30 days
-		Value:    tokenString,
-		Path:     "/",
-	}
-
-	http.SetCookie(w, cookie)
-
-	if err := json.NewEncoder(w).Encode("ok"); err != nil {
+	if err := json.NewEncoder(w).Encode(tokenString); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

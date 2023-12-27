@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 )
@@ -20,7 +21,9 @@ func ApplyRouter(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) 
 	h := Container(db, mdb, mq)
 
 	return func(r chi.Router) {
-		r.Use(middlewares.Authenticated)
+		if config.Instance().RequireAuth {
+			r.Use(middlewares.Authenticated)
+		}
 		r.Post("/exec", h.Exec())
 		r.Get("/running", h.Running())
 		r.Post("/cookies", h.SetCookies())

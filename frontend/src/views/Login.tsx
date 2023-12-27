@@ -54,7 +54,7 @@ export default function Login() {
   }
 
   const login = async () => {
-    const task = ffetch(`${url}/auth/login`, {
+    const task = ffetch<string>(`${url}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -68,11 +68,15 @@ export default function Login() {
     pipe(
       task,
       matchW(
-        (l) => {
+        (error) => {
           setFormHasError(true)
-          pushMessage(l, 'error')
+          pushMessage(error, 'error')
         },
-        () => navigateAndReload()
+        (token) => {
+          console.log(token)
+          localStorage.setItem('token', token)
+          navigateAndReload()
+        }
       )
     )()
   }
