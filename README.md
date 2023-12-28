@@ -17,8 +17,6 @@ docker pull marcobaobao/yt-dlp-webui
 ```sh
 # latest dev
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
-# latest stable version
-docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:master
 ```
 ![output](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/82bcecaf-4ced-441f-9384-105653abfae4)
 
