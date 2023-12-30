@@ -176,7 +176,7 @@ languages:
     clipboardAction: URL copiato negli appunti
     playlistCheckbox: Download playlist (richiederà tempo, puoi chiudere la finestra dopo l'inoltro)
     restartAppMessage: La finestra deve essere ricaricata perché abbia effetto
-    servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    servedFromReverseProxyCheckbox: Is behind a reverse proxy
     newDownloadButton: Nuovo download
     homeButtonLabel: Home
     archiveButtonLabel: Archive

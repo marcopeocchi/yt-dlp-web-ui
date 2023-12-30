@@ -12,6 +12,7 @@ export const languages = [
   'catalan',
   'ukrainian',
   'polish',
+  'german'
 ] as const
 
 export type Language = (typeof languages)[number]

@@ -27,9 +27,14 @@ const DownloadsListView: React.FC = () => {
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
       <Grid item xs={12}>
-        <TableContainer component={Paper} sx={{ minHeight: '100%' }} elevation={2}>
+        <TableContainer
+          component={Paper}
+          sx={{ minHeight: '100%' }}
+          elevation={2}
+          hidden={downloads.length === 0}
+        >
           <Table>
-            <TableHead hidden={downloads.length === 0}>
+            <TableHead>
               <TableRow>
                 <TableCell>
                   <Typography fontWeight={500} fontSize={15}>Title</Typography>
