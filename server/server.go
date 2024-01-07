@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/rpc"
 	"os"
@@ -20,6 +22,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/logging"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
@@ -39,6 +42,16 @@ type serverConfig struct {
 func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	var mdb internal.MemoryDB
 	mdb.Restore()
+
+	var (
+		logHandler = slog.NewTextHandler(
+			io.MultiWriter(os.Stdout, logging.NewObservableLogger()),
+			nil,
+		)
+		logger = slog.New(logHandler)
+	)
+
+	logger.Info("hello")
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
@@ -117,6 +130,16 @@ func newServer(c serverConfig) *http.Server {
 
 	// REST API handlers
 	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mdb, c.mq))
+
+	// Logging
+	r.Route("/log", logging.ApplyRouter())
+
+	go func() {
+		for {
+			slog.Info("hello!")
+			time.Sleep(200 * time.Millisecond)
+		}
+	}()
 
 	return &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", c.host, c.port),
