@@ -2,6 +2,7 @@ import { CircularProgress } from '@mui/material'
 import { Suspense, lazy } from 'react'
 import { createHashRouter } from 'react-router-dom'
 import Layout from './Layout'
+import Terminal from './views/Terminal'
 
 const Home = lazy(() => import('./views/Home'))
 const Login = lazy(() => import('./views/Login'))
@@ -33,6 +34,14 @@ export const router = createHashRouter([
         element: (
           <Suspense fallback={<CircularProgress />}>
             <Settings />
+          </Suspense >
+        )
+      },
+      {
+        path: '/log',
+        element: (
+          <Suspense fallback={<CircularProgress />}>
+            <Terminal />
           </Suspense >
         )
       },

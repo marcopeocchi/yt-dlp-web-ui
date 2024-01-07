@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"log"
+	"log/slog"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
@@ -9,8 +10,9 @@ import (
 )
 
 type Service struct {
-	db *internal.MemoryDB
-	mq *internal.MessageQueue
+	db     *internal.MemoryDB
+	mq     *internal.MessageQueue
+	logger *slog.Logger
 }
 
 type Running []internal.ProcessResponse
@@ -34,6 +36,7 @@ func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 			Path:     args.Path,
 			Filename: args.Rename,
 		},
+		Logger: s.logger,
 	}
 
 	s.db.Set(p)

@@ -27,7 +27,7 @@ func webSocket(w http.ResponseWriter, r *http.Request) {
 	c.WriteJSON("Wating for logs...")
 
 	for msg := range logsObservable.Observe() {
-		c.WriteJSON(msg.V.(string))
+		c.WriteJSON(msg.V)
 	}
 }
 

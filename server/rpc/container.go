@@ -1,6 +1,8 @@
 package rpc
 
 import (
+	"log/slog"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -8,10 +10,15 @@ import (
 )
 
 // Dependency injection container.
-func Container(db *internal.MemoryDB, mq *internal.MessageQueue) *Service {
+func Container(
+	db *internal.MemoryDB,
+	mq *internal.MessageQueue,
+	logger *slog.Logger,
+) *Service {
 	return &Service{
-		db: db,
-		mq: mq,
+		db:     db,
+		mq:     mq,
+		logger: logger,
 	}
 }
 

@@ -32,6 +32,7 @@ import (
 
 type serverConfig struct {
 	frontend fs.FS
+	logger   *slog.Logger
 	host     string
 	port     int
 	mdb      *internal.MemoryDB
@@ -43,15 +44,12 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	var mdb internal.MemoryDB
 	mdb.Restore()
 
-	var (
-		logHandler = slog.NewTextHandler(
+	logger := slog.New(
+		slog.NewTextHandler(
 			io.MultiWriter(os.Stdout, logging.NewObservableLogger()),
 			nil,
-		)
-		logger = slog.New(logHandler)
+		),
 	)
-
-	logger.Info("hello")
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
@@ -68,6 +66,7 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 
 	srv := newServer(serverConfig{
 		frontend: frontend,
+		logger:   logger,
 		host:     host,
 		port:     port,
 		mdb:      &mdb,
@@ -82,7 +81,7 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 }
 
 func newServer(c serverConfig) *http.Server {
-	service := ytdlpRPC.Container(c.mdb, c.mq)
+	service := ytdlpRPC.Container(c.mdb, c.mq, c.logger)
 	rpc.Register(service)
 
 	r := chi.NewRouter()
@@ -133,13 +132,6 @@ func newServer(c serverConfig) *http.Server {
 
 	// Logging
 	r.Route("/log", logging.ApplyRouter())
-
-	go func() {
-		for {
-			slog.Info("hello!")
-			time.Sleep(200 * time.Millisecond)
-		}
-	}()
 
 	return &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", c.host, c.port),

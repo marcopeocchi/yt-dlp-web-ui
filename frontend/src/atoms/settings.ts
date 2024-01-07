@@ -157,6 +157,14 @@ export const serverURL = selector({
     `${window.location.protocol}//${get(serverAddressAndPortState)}`
 })
 
+export const serverURLWS = selector({
+  key: 'serverURLWS',
+  get: ({ get }) => {
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    return `${proto}//${get(serverAddressAndPortState)}`
+  }
+})
+
 export const rpcWebSocketEndpoint = selector({
   key: 'rpcWebSocketEndpoint',
   get: ({ get }) => {

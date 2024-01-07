@@ -29,6 +29,7 @@ import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
 import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
+import TerminalIcon from '@mui/icons-material/Terminal'
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
@@ -134,6 +135,19 @@ export default function Layout() {
               <ListItemButton>
                 <ListItemIcon>
                   <DownloadIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <Link to={'/log'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <TerminalIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('archiveButtonLabel')} />
               </ListItemButton>
