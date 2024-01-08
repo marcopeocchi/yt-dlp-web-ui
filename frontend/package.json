@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.6",
+    "@fontsource/roboto-mono": "^5.0.16",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.5",
     "fp-ts": "^2.16.1",

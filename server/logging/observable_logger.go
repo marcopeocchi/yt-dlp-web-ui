@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	logsChan       = make(chan rxgo.Item)
+	logsChan       = make(chan rxgo.Item, 100)
 	logsObservable = rxgo.
-			FromEventSource(logsChan).
+			FromEventSource(logsChan, rxgo.WithBackPressureStrategy(rxgo.Drop)).
 			BufferWithTime(rxgo.WithDuration(time.Millisecond * 500))
 )
 

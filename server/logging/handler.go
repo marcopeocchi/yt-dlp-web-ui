@@ -1,7 +1,11 @@
 package logging
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
@@ -24,10 +28,44 @@ func webSocket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c.WriteJSON("Wating for logs...")
-
 	for msg := range logsObservable.Observe() {
 		c.WriteJSON(msg.V)
+	}
+}
+
+func sse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/event-stream")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("Connection", "keep-alive")
+
+	flusher, ok := w.(http.Flusher)
+	if !ok {
+		http.Error(w, "SSE not supported", http.StatusInternalServerError)
+		return
+	}
+
+	for msg := range logsObservable.Observe() {
+		if msg.E != nil {
+			http.Error(w, msg.E.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		var (
+			b  bytes.Buffer
+			sb strings.Builder
+		)
+
+		if err := json.NewEncoder(&b).Encode(msg.V); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		sb.WriteString("event: log\n")
+		sb.WriteString("data: " + b.String() + "\n\n")
+
+		fmt.Fprint(w, sb.String())
+
+		flusher.Flush()
 	}
 }
 
@@ -37,5 +75,6 @@ func ApplyRouter() func(chi.Router) {
 			r.Use(middlewares.Authenticated)
 		}
 		r.Get("/ws", webSocket)
+		r.Get("/sse", sse)
 	}
 }

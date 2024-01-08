@@ -32,7 +32,7 @@ import {
   useTransition
 } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { customArgsState, downloadTemplateState, filenameTemplateState } from '../atoms/downloadTemplate'
+import { customArgsState, downloadTemplateState, filenameTemplateState, savedTemplatesState } from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
@@ -63,6 +63,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const isConnected = useRecoilValue(connectedState)
   const availableDownloadPaths = useRecoilValue(availableDownloadPathsState)
   const downloadTemplate = useRecoilValue(downloadTemplateState)
+  const savedTemplates = useRecoilValue(savedTemplatesState)
 
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
   const [pickedVideoFormat, setPickedVideoFormat] = useState('')
@@ -313,7 +314,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                   }
                 </Grid>
                 <Suspense>
-                  <ExtraDownloadOptions />
+                  {savedTemplates.length > 0 && <ExtraDownloadOptions />}
                 </Suspense>
                 <Grid container spacing={1} pt={2} justifyContent="space-between">
                   <Grid item>
