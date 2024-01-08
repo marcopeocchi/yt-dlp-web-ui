@@ -149,7 +149,7 @@ export default function Layout() {
                 <ListItemIcon>
                   <TerminalIcon />
                 </ListItemIcon>
-                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+                <ListItemText primary={i18n.t('logsTitle')} />
               </ListItemButton>
             </Link>
             <Link to={'/settings'} style={
