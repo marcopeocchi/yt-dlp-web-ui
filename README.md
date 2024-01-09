@@ -74,19 +74,9 @@ The currently avaible settings are:
 
 ## Format selection
 
-![fs1](https://i.ibb.co/8dgS6ym/image.png)
-
 This feature is disabled by default as this intended to be used to retrieve the best quality automatically.
 
 To enable it just go to the settings page and enable the **Enable video/audio formats selection** flag!
-
-Future releases will have:
--   ~~Multi download~~ *done*
--   ~~Exctract audio~~ *done*
--   ~~Format selection~~ *done*
--   ~~Download archive~~ *done*
--   ~~ARM Build~~ *done available through ghcr.io*
--   Playlist support
 
 ## Troubleshooting
 -   **It says that it isn't connected/ip in the header is not defined.**
@@ -96,7 +86,6 @@ Future releases will have:
 
 ## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) installation
 ```sh
-# recomended for ARM and x86 devices 
 docker pull marcobaobao/yt-dlp-webui
 docker run -d -p 3033:3033 -v <your dir>:/downloads marcobaobao/yt-dlp-webui
 ```
