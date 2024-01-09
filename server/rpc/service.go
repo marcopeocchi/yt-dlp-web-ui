@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	"log"
+	"log/slog"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
@@ -9,8 +9,9 @@ import (
 )
 
 type Service struct {
-	db *internal.MemoryDB
-	mq *internal.MessageQueue
+	db     *internal.MemoryDB
+	mq     *internal.MessageQueue
+	logger *slog.Logger
 }
 
 type Running []internal.ProcessResponse
@@ -34,6 +35,7 @@ func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 			Path:     args.Path,
 			Filename: args.Rename,
 		},
+		Logger: s.logger,
 	}
 
 	s.db.Set(p)
@@ -46,7 +48,7 @@ func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) error {
-	err := internal.PlaylistDetect(args, s.mq, s.db)
+	err := internal.PlaylistDetect(args, s.mq, s.db, s.logger)
 	if err != nil {
 		return err
 	}
@@ -88,7 +90,7 @@ func (s *Service) Running(args NoArgs, running *Running) error {
 
 // Kill kills a process given its id and remove it from the memoryDB
 func (s *Service) Kill(args string, killed *string) error {
-	log.Println("Trying killing process with id", args)
+	s.logger.Info("Trying killing process with id", slog.String("id", args))
 	proc, err := s.db.Get(args)
 
 	if err != nil {
@@ -106,7 +108,7 @@ func (s *Service) Kill(args string, killed *string) error {
 // KillAll kills all process unconditionally and removes them from
 // the memory db
 func (s *Service) KillAll(args NoArgs, killed *string) error {
-	log.Println("Killing all spawned processes", args)
+	s.logger.Info("Killing all spawned processes")
 	keys := s.db.Keys()
 	var err error
 	for _, key := range *keys {
@@ -125,7 +127,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 
 // Remove a process from the db rendering it unusable if active
 func (s *Service) Clear(args string, killed *string) error {
-	log.Println("Clearing process with id", args)
+	s.logger.Info("Clearing process with id", slog.String("id", args))
 	s.db.Delete(args)
 	return nil
 }
@@ -148,7 +150,7 @@ func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 
 // Updates the yt-dlp binary using its builtin function
 func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
-	log.Println("Updating yt-dlp executable to the latest release")
+	s.logger.Info("Updating yt-dlp executable to the latest release")
 	err := updater.UpdateExecutable()
 	if err != nil {
 		*updated = true

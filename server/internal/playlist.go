@@ -3,12 +3,11 @@ package internal
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	"log/slog"
 	"os/exec"
 	"strings"
 	"time"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -19,7 +18,7 @@ type metadata struct {
 	Type          string         `json:"_type"`
 }
 
-func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
+func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger *slog.Logger) error {
 	var (
 		downloader = config.Instance().DownloaderPath
 		cmd        = exec.Command(downloader, req.URL, "-J")
@@ -37,14 +36,14 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 		return err
 	}
 
-	log.Println(cli.BgRed, "Decoding metadata", cli.Reset, req.URL)
+	logger.Info("decoding metadata", slog.String("url", req.URL))
 
 	err = json.NewDecoder(stdout).Decode(&m)
 	if err != nil {
 		return err
 	}
 
-	log.Println(cli.BgGreen, "Decoded metadata", cli.Reset, req.URL)
+	logger.Info("decoded metadata", slog.String("url", req.URL))
 
 	if m.Type == "" {
 		cmd.Wait()
@@ -52,8 +51,10 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	}
 
 	if m.Type == "playlist" {
-		log.Println(
-			cli.BgGreen, "Playlist detected", cli.Reset, m.Count, "entries",
+		logger.Info(
+			"playlist detected",
+			slog.String("url", req.URL),
+			slog.Int("count", m.Count),
 		)
 
 		for i, meta := range m.Entries {
@@ -93,8 +94,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	proc := &Process{Url: req.URL, Params: req.Params}
 
 	mq.Publish(proc)
-	log.Println("Sending new process to message queue", proc.Url)
+	logger.Info("sending new process to message queue", slog.String("url", proc.Url))
 
-	err = cmd.Wait()
-	return err
+	return cmd.Wait()
 }

@@ -9,12 +9,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
+  MenuList,
   Paper,
   SpeedDial,
   SpeedDialAction,
@@ -27,6 +28,7 @@ import FolderIcon from '@mui/icons-material/Folder'
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
 import VideoFileIcon from '@mui/icons-material/VideoFile'
 
+import DownloadIcon from '@mui/icons-material/Download'
 import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { useEffect, useMemo, useState, useTransition } from 'react'
@@ -38,12 +40,14 @@ import { useObservable } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
-import { DeleteRequest, DirectoryEntry } from '../types'
+import { DirectoryEntry } from '../types'
 import { base64URLEncode, roundMiB } from '../utils'
-import DownloadIcon from '@mui/icons-material/Download'
-
 
 export default function Downloaded() {
+  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
+  const [showMenu, setShowMenu] = useState(false)
+  const [currentFile, setCurrentFile] = useState<DirectoryEntry>()
+
   const serverAddr = useRecoilValue(serverURL)
   const navigate = useNavigate()
 
@@ -135,19 +139,24 @@ export default function Downloaded() {
       : selected$.next([...selected$.value, name])
   }
 
+  const deleteFile = (entry: DirectoryEntry) => pipe(
+    ffetch(`${serverAddr}/archive/delete`, {
+      method: 'POST',
+      body: JSON.stringify({
+        path: entry.path,
+        shaSum: entry.shaSum,
+      })
+    }),
+    matchW(
+      (l) => pushMessage(l, 'error'),
+      (_) => fetcher()
+    )
+  )()
+
   const deleteSelected = () => {
     Promise.all(selectable
       .filter(entry => entry.selected)
-      .map(entry => fetch(`${serverAddr}/archive/delete`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: entry.path,
-          shaSum: entry.shaSum,
-        } as DeleteRequest)
-      }))
+      .map(deleteFile)
     ).then(fetcher)
   }
 
@@ -172,18 +181,42 @@ export default function Downloaded() {
   })
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+    <Container
+      maxWidth="lg"
+      sx={{ mt: 4, mb: 4, height: '100%' }}
+      onClick={() => setShowMenu(false)}
+    >
+      <IconMenu
+        posX={menuPos.x}
+        posY={menuPos.y}
+        hide={!showMenu}
+        onDownload={() => {
+          if (currentFile) {
+            downloadFile(currentFile?.path)
+            setCurrentFile(undefined)
+          }
+        }}
+        onDelete={() => {
+          if (currentFile) {
+            deleteFile(currentFile)
+            setCurrentFile(undefined)
+          }
+        }}
+      />
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={!(files$.observed) || isPending}
       >
         <CircularProgress color="primary" />
       </Backdrop>
-      <Paper sx={{
-        p: 2,
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <Paper
+        sx={{
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+        onClick={() => setShowMenu(false)}
+      >
         <Typography py={1} variant="h5" color="primary">
           {i18n.t('archiveTitle')}
         </Typography>
@@ -191,6 +224,12 @@ export default function Downloaded() {
           {selectable.length === 0 && 'No files found'}
           {selectable.map((file, idx) => (
             <ListItem
+              onContextMenu={(e) => {
+                e.preventDefault()
+                setCurrentFile(file)
+                setMenuPos({ x: e.clientX, y: e.clientY })
+                setShowMenu(true)
+              }}
               key={idx}
               secondaryAction={
                 <div>
@@ -202,13 +241,6 @@ export default function Downloaded() {
                   </Typography>
                   }
                   {!file.isDirectory && <>
-                    <IconButton
-                      size='small'
-                      onClick={() => downloadFile(file.path)}
-                      sx={{ marginLeft: 1.5 }}
-                    >
-                      <DownloadIcon />
-                    </IconButton>
                     <Checkbox
                       edge="end"
                       checked={file.selected}
@@ -275,16 +307,59 @@ export default function Downloaded() {
           </ul>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={() => {
-            deleteSelected()
-            setOpenDialog(false)
-          }} autoFocus
+          <Button onClick={() => setOpenDialog(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              deleteSelected()
+              setOpenDialog(false)
+            }}
+            autoFocus
           >
             Ok
           </Button>
         </DialogActions>
       </Dialog>
     </Container>
+  )
+}
+
+const IconMenu: React.FC<{
+  posX: number
+  posY: number
+  hide: boolean
+  onDownload: () => void
+  onDelete: () => void
+}> = ({ posX, posY, hide, onDelete, onDownload }) => {
+  return (
+    <Paper sx={{
+      width: 320,
+      maxWidth: '100%',
+      position: 'absolute',
+      top: posY,
+      left: posX,
+      display: hide ? 'none' : 'block',
+      zIndex: (theme) => theme.zIndex.drawer + 1,
+    }}>
+      <MenuList>
+        <MenuItem onClick={onDownload}>
+          <ListItemIcon>
+            <DownloadIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Download
+          </ListItemText>
+        </MenuItem>
+        <MenuItem onClick={onDelete}>
+          <ListItemIcon>
+            <DeleteForeverIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>
+            Delete
+          </ListItemText>
+        </MenuItem>
+      </MenuList>
+    </Paper>
   )
 }

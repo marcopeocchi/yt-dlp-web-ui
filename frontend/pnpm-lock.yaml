@@ -14,6 +14,9 @@ dependencies:
   '@fontsource/roboto':
     specifier: ^5.0.6
     version: 5.0.6
+  '@fontsource/roboto-mono':
+    specifier: ^5.0.16
+    version: 5.0.16
   '@mui/icons-material':
     specifier: ^5.11.16
     version: 5.11.16(@mui/material@5.13.5)(@types/react@18.2.29)(react@18.2.0)
@@ -432,6 +435,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@fontsource/roboto-mono@5.0.16:
+    resolution: {integrity: sha512-unZYfjXts55DQyODz0I9DzbSrS5DRKPNq9crJpNJe/Vy818bLnijprcJv3fvqwdDqTT0dRm2Fhk09QEIdtAc+Q==}
+    dev: false
 
   /@fontsource/roboto@5.0.6:
     resolution: {integrity: sha512-SksyUGbdqY7a71l/ywdX5fm37fepCakgHZEZ3H4uP5A9wDJewrcSACtIzw6yi9QjJIYoj1xArhDSOz4XJxyWow==}

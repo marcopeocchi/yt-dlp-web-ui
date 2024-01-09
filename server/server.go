@@ -4,8 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 	"io/fs"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/rpc"
 	"os"
@@ -20,6 +21,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/logging"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
@@ -29,6 +31,7 @@ import (
 
 type serverConfig struct {
 	frontend fs.FS
+	logger   *slog.Logger
 	host     string
 	port     int
 	mdb      *internal.MemoryDB
@@ -40,14 +43,21 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	var mdb internal.MemoryDB
 	mdb.Restore()
 
+	logger := slog.New(
+		slog.NewTextHandler(
+			io.MultiWriter(os.Stdout, logging.NewObservableLogger()),
+			nil,
+		),
+	)
+
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error("failed to open database", slog.String("err", err.Error()))
 	}
 
 	err = dbutils.AutoMigrate(context.Background(), db)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error("failed to init database", slog.String("err", err.Error()))
 	}
 
 	mq := internal.NewMessageQueue()
@@ -55,6 +65,7 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 
 	srv := newServer(serverConfig{
 		frontend: frontend,
+		logger:   logger,
 		host:     host,
 		port:     port,
 		mdb:      &mdb,
@@ -63,13 +74,15 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	})
 
 	go gracefulShutdown(srv, &mdb)
-	go autoPersist(time.Minute*5, &mdb)
+	go autoPersist(time.Minute*5, &mdb, logger)
 
-	log.Fatal(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		logger.Warn("http server stopped", slog.String("err", err.Error()))
+	}
 }
 
 func newServer(c serverConfig) *http.Server {
-	service := ytdlpRPC.Container(c.mdb, c.mq)
+	service := ytdlpRPC.Container(c.mdb, c.mq, c.logger)
 	rpc.Register(service)
 
 	r := chi.NewRouter()
@@ -91,9 +104,7 @@ func newServer(c serverConfig) *http.Server {
 	r.Use(corsMiddleware.Handler)
 	r.Use(middleware.Logger)
 
-	app := http.FileServer(http.FS(c.frontend))
-
-	r.Mount("/", app)
+	r.Mount("/", http.FileServer(http.FS(c.frontend)))
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
@@ -118,6 +129,9 @@ func newServer(c serverConfig) *http.Server {
 	// REST API handlers
 	r.Route("/api/v1", rest.ApplyRouter(c.db, c.mdb, c.mq))
 
+	// Logging
+	r.Route("/log", logging.ApplyRouter())
+
 	return &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", c.host, c.port),
 		Handler: r,
@@ -133,7 +147,7 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 
 	go func() {
 		<-ctx.Done()
-		log.Println("shutdown signal received")
+		slog.Info("shutdown signal received")
 
 		defer func() {
 			db.Persist()
@@ -143,9 +157,15 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 	}()
 }
 
-func autoPersist(d time.Duration, db *internal.MemoryDB) {
+func autoPersist(d time.Duration, db *internal.MemoryDB, logger *slog.Logger) {
 	for {
-		db.Persist()
+		if err := db.Persist(); err != nil {
+			logger.Info(
+				"failed to persisted session",
+				slog.String("err", err.Error()),
+			)
+		}
+		logger.Info("sucessfully persisted session")
 		time.Sleep(d)
 	}
 }

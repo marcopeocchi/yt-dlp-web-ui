@@ -1,4 +1,4 @@
-import { Autocomplete, Box, TextField } from '@mui/material'
+import { Autocomplete, Box, TextField, Typography } from '@mui/material'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { customArgsState, savedTemplatesState } from '../atoms/downloadTemplate'
 import { useI18n } from '../hooks/useI18n'
@@ -22,9 +22,23 @@ const ExtraDownloadOptions: React.FC = () => {
         renderOption={(props, option) => (
           <Box
             component="li"
-            sx={{ mr: 2, flexShrink: 0 }}
-            {...props}>
-            {option.label}
+            {...props}
+          >
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignContent: 'flex-start',
+              justifyContent: 'flex-start',
+              alignItems: 'flex-start',
+              width: '100%'
+            }}>
+              <Typography>
+                {option.label}
+              </Typography>
+              <Typography variant="subtitle2" color="primary">
+                {option.content}
+              </Typography>
+            </Box>
           </Box>
         )}
         sx={{ width: '100%', mt: 2 }}

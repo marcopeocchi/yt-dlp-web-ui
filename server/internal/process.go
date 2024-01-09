@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"regexp"
 	"sync"
 	"syscall"
@@ -50,6 +51,7 @@ type Process struct {
 	Progress DownloadProgress
 	Output   DownloadOutput
 	proc     *os.Process
+	Logger   *slog.Logger
 }
 
 type DownloadOutput struct {
@@ -106,13 +108,21 @@ func (p *Process) Start() {
 
 	r, err := cmd.StdoutPipe()
 	if err != nil {
-		log.Panicln(err)
+		p.Logger.Error(
+			"failed to connect to stdout",
+			slog.String("err", err.Error()),
+		)
+		panic(err)
 	}
 	scan := bufio.NewScanner(r)
 
 	err = cmd.Start()
 	if err != nil {
-		log.Panicln(err)
+		p.Logger.Error(
+			"failed to start yt-dlp process",
+			slog.String("err", err.Error()),
+		)
+		panic(err)
 	}
 
 	p.proc = cmd.Process
@@ -151,10 +161,10 @@ func (p *Process) Start() {
 					Speed:      stdout.Speed,
 					ETA:        stdout.Eta,
 				}
-				log.Println(
-					cli.BgGreen, "DL", cli.Reset,
-					cli.BgBlue, p.getShortId(), cli.Reset,
-					p.Url, stdout.Percentage,
+				p.Logger.Info("progress",
+					slog.String("id", p.getShortId()),
+					slog.String("url", p.Url),
+					slog.String("percentege", stdout.Percentage),
 				)
 			}
 		})
@@ -175,12 +185,9 @@ func (p *Process) Complete() {
 		ETA:        0,
 	}
 
-	shortId := p.getShortId()
-
-	log.Println(
-		cli.BgMagenta, "FINISH", cli.Reset,
-		cli.BgBlue, shortId, cli.Reset,
-		p.Url,
+	p.Logger.Info("finished",
+		slog.String("id", p.getShortId()),
+		slog.String("url", p.Url),
 	)
 }
 
@@ -197,7 +204,7 @@ func (p *Process) Kill() error {
 		}
 		err = syscall.Kill(-pgid, syscall.SIGTERM)
 
-		log.Println("Killed process", p.Id)
+		p.Logger.Info("killed process", slog.String("id", p.Id))
 		return err
 	}
 
@@ -233,6 +240,12 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 		p.Url,
 	)
 
+	p.Logger.Info(
+		"retrieving metadata",
+		slog.String("caller", "getFormats"),
+		slog.String("url", p.Url),
+	)
+
 	go func() {
 		decodingError = json.Unmarshal(stdout, &info)
 		wg.Done()
@@ -264,7 +277,11 @@ func (p *Process) SetMetadata() error {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		log.Println("Cannot retrieve info for", p.Url)
+		p.Logger.Error("failed retrieving info",
+			slog.String("id", p.getShortId()),
+			slog.String("url", p.Url),
+			slog.String("err", err.Error()),
+		)
 		return err
 	}
 
@@ -278,10 +295,9 @@ func (p *Process) SetMetadata() error {
 		return err
 	}
 
-	log.Println(
-		cli.BgRed, "Metadata", cli.Reset,
-		cli.BgBlue, p.getShortId(), cli.Reset,
-		p.Url,
+	p.Logger.Info("retrieving metadata",
+		slog.String("id", p.getShortId()),
+		slog.String("url", p.Url),
 	)
 
 	err = json.NewDecoder(stdout).Decode(&info)
