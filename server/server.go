@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"log/slog"
 	"net/http"
 	"net/rpc"
@@ -53,12 +52,12 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error("failed to open database", slog.String("err", err.Error()))
 	}
 
 	err = dbutils.AutoMigrate(context.Background(), db)
 	if err != nil {
-		log.Fatalln(err)
+		logger.Error("failed to init database", slog.String("err", err.Error()))
 	}
 
 	mq := internal.NewMessageQueue()
@@ -75,9 +74,11 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	})
 
 	go gracefulShutdown(srv, &mdb)
-	go autoPersist(time.Minute*5, &mdb)
+	go autoPersist(time.Minute*5, &mdb, logger)
 
-	log.Fatal(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		logger.Warn("http server stopped", slog.String("err", err.Error()))
+	}
 }
 
 func newServer(c serverConfig) *http.Server {
@@ -103,9 +104,7 @@ func newServer(c serverConfig) *http.Server {
 	r.Use(corsMiddleware.Handler)
 	r.Use(middleware.Logger)
 
-	app := http.FileServer(http.FS(c.frontend))
-
-	r.Mount("/", app)
+	r.Mount("/", http.FileServer(http.FS(c.frontend)))
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
@@ -148,7 +147,7 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 
 	go func() {
 		<-ctx.Done()
-		log.Println("shutdown signal received")
+		slog.Info("shutdown signal received")
 
 		defer func() {
 			db.Persist()
@@ -158,9 +157,15 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 	}()
 }
 
-func autoPersist(d time.Duration, db *internal.MemoryDB) {
+func autoPersist(d time.Duration, db *internal.MemoryDB, logger *slog.Logger) {
 	for {
-		db.Persist()
+		if err := db.Persist(); err != nil {
+			logger.Info(
+				"failed to persisted session",
+				slog.String("err", err.Error()),
+			)
+		}
+		logger.Info("sucessfully persisted session")
 		time.Sleep(d)
 	}
 }

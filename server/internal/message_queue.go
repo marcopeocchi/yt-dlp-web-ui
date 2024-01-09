@@ -1,8 +1,6 @@
 package internal
 
 import (
-	"log"
-
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -19,7 +17,7 @@ func NewMessageQueue() *MessageQueue {
 	size := config.Instance().QueueSize
 
 	if size <= 0 {
-		log.Fatalln("invalid queue size")
+		panic("invalid queue size")
 	}
 
 	return &MessageQueue{

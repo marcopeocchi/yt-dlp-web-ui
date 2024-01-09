@@ -4,13 +4,11 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/google/uuid"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -94,14 +92,14 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 }
 
 // WIP: Persist the database in a single file named "session.dat"
-func (m *MemoryDB) Persist() {
+func (m *MemoryDB) Persist() error {
 	running := m.All()
 
 	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
 
 	fd, err := os.Create(sf)
 	if err != nil {
-		log.Println(cli.Red, "Failed to persist session", cli.Reset)
+		return errors.Join(errors.New("failed to persist session"), err)
 	}
 
 	session := Session{
@@ -110,10 +108,10 @@ func (m *MemoryDB) Persist() {
 
 	err = gob.NewEncoder(fd).Encode(session)
 	if err != nil {
-		log.Println(cli.Red, "Failed to persist session", cli.Reset)
+		return errors.Join(errors.New("failed to persist session"), err)
 	}
 
-	log.Println(cli.BgBlue, "Successfully serialized session", cli.Reset)
+	return nil
 }
 
 // WIP: Restore a persisted state
@@ -146,6 +144,4 @@ func (m *MemoryDB) Restore() {
 			go restored.Start()
 		}
 	}
-
-	log.Println(cli.BgGreen, "Successfully restored session", cli.Reset)
 }
