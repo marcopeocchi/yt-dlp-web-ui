@@ -41,7 +41,6 @@ type serverConfig struct {
 
 func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	var mdb internal.MemoryDB
-	mdb.Restore()
 
 	logger := slog.New(
 		slog.NewTextHandler(
@@ -49,6 +48,8 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 			nil,
 		),
 	)
+
+	mdb.Restore(logger)
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {

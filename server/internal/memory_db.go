@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
@@ -115,7 +116,7 @@ func (m *MemoryDB) Persist() error {
 }
 
 // WIP: Restore a persisted state
-func (m *MemoryDB) Restore() {
+func (m *MemoryDB) Restore(logger *slog.Logger) {
 	fd, err := os.Open("session.dat")
 	if err != nil {
 		return
@@ -136,6 +137,7 @@ func (m *MemoryDB) Restore() {
 			Progress: proc.Progress,
 			Output:   proc.Output,
 			Params:   proc.Params,
+			Logger:   logger,
 		}
 
 		m.table.Store(proc.Id, restored)

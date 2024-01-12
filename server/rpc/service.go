@@ -71,7 +71,7 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 // Progess retrieves available format for a given resource
 func (s *Service) Formats(args Args, meta *internal.DownloadFormats) error {
 	var err error
-	p := internal.Process{Url: args.URL}
+	p := internal.Process{Url: args.URL, Logger: s.logger}
 	*meta, err = p.GetFormatsSync()
 	return err
 }

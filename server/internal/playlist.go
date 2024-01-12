@@ -91,7 +91,11 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		return err
 	}
 
-	proc := &Process{Url: req.URL, Params: req.Params}
+	proc := &Process{
+		Url:    req.URL,
+		Params: req.Params,
+		Logger: logger,
+	}
 
 	mq.Publish(proc)
 	logger.Info("sending new process to message queue", slog.String("url", proc.Url))
