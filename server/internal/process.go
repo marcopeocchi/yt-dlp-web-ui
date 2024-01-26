@@ -91,16 +91,22 @@ func (p *Process) Start() {
 
 	buildFilename(&p.Output)
 
-	params := append([]string{
+	params := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
 		"--progress-template",
 		strings.NewReplacer("\n", "", "\t", "", " ", "").Replace(template),
-		"-o",
-		fmt.Sprintf("%s/%s", out.Path, out.Filename),
-	}, p.Params...)
+	}
+
+	// if user asked to manually override the output path...
+	if !slices.Includes(params, "-P") {
+		params = append(params, "-o")
+		params = append(params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
+	}
+
+	params = append(params, p.Params...)
 
 	// ----------------- main block ----------------- //
 	cmd := exec.Command(config.Instance().DownloaderPath, params...)

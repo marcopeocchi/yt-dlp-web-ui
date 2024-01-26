@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
@@ -77,6 +76,8 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	go gracefulShutdown(srv, &mdb)
 	go autoPersist(time.Minute*5, &mdb, logger)
 
+	logger.Info("yt-dlp-webui started", slog.Int("port", port))
+
 	if err := srv.ListenAndServe(); err != nil {
 		logger.Warn("http server stopped", slog.String("err", err.Error()))
 	}
@@ -103,7 +104,8 @@ func newServer(c serverConfig) *http.Server {
 	})
 
 	r.Use(corsMiddleware.Handler)
-	r.Use(middleware.Logger)
+	// use in dev
+	// r.Use(middleware.Logger)
 
 	r.Mount("/", http.FileServer(http.FS(c.frontend)))
 
