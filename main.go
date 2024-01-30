@@ -76,7 +76,7 @@ func main() {
 
 	// if config file is found it will be merged with the current config struct
 	if err := c.LoadFile(configFile); err != nil {
-        log.Println(cli.BgRed, "config", cli.Reset, err)
+		log.Println(cli.BgRed, "config", cli.Reset, err)
 	}
 
 	server.RunBlocking(c.Host, c.Port, frontend, localDatabasePath)
