@@ -198,7 +198,7 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
   chinese:
-    urlInput: YouTube 或其他受支持服务的视频网址
+    urlInput: 视频 URL
     statusTitle: 状态
     statusReady: 就绪
     selectFormatButton: 选择格式
@@ -232,20 +232,20 @@ languages:
     playlistCheckbox: 下载播放列表（可能需要一段时间，提交后可以关闭页面等待）
     restartAppMessage: 需要刷新页面才能生效
     servedFromReverseProxyCheckbox: 处于反向代理的子目录后
-    newDownloadButton: New download
-    homeButtonLabel: Home
-    archiveButtonLabel: Archive
-    settingsButtonLabel: Settings
-    rpcAuthenticationLabel: RPC authentication
-    themeTogglerLabel: Theme toggler
-    loadingLabel: Loading...
+    newDownloadButton: 新下载
+    homeButtonLabel: 主页
+    archiveButtonLabel: 归档
+    settingsButtonLabel: 设置
+    rpcAuthenticationLabel: RPC 身份验证
+    themeTogglerLabel: 主题切换
+    loadingLabel: 正在加载…
     appTitle: App 标题
-    savedTemplates: Saved templates
-    templatesEditor: Templates editor
-    templatesEditorNameLabel: Template name
-    templatesEditorContentLabel: Template content
-    logsTitle: 'Logs'
-    awaitingLogs: 'Awaiting logs...'
+    savedTemplates: 保存模板
+    templatesEditor: 模板编辑器
+    templatesEditorNameLabel: 模板名称
+    templatesEditorContentLabel: 模板内容
+    logsTitle: '日志'
+    awaitingLogs: '正在等待日志…'
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
