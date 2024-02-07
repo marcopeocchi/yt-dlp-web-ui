@@ -1,6 +1,7 @@
 import { derived, readable, writable } from 'svelte/store'
 import { RPCClient } from './RPCClient'
 import type { RPCResponse, RPCResult } from './types'
+import * as O from 'fp-ts/lib/Option'
 
 export const rpcHost = writable<string>(localStorage.getItem('rpcHost') ?? 'localhost')
 export const rpcPort = writable<number>(Number(localStorage.getItem('rpcPort')) || 3033)
@@ -31,8 +32,4 @@ export const rpcClient = derived(
   ([$http, $ws, $token]) => new RPCClient($http, $ws, $token)
 )
 
-export const downloads = readable<RPCResponse<RPCResult[]>>({
-  id: '',
-  error: null,
-  result: [],
-})
+export const downloads = writable<O.Option<RPCResult[]>>(O.none)
