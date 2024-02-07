@@ -1,13 +1,7 @@
 <script lang="ts">
   import * as O from 'fp-ts/Option';
   import { pipe } from 'fp-ts/lib/function';
-  import {
-    downloads,
-    httpPostRpcEndpoint,
-    rpcClient,
-    serverApiEndpoint,
-    websocketRpcEndpoint,
-  } from './lib/store';
+  import { downloads, rpcClient } from './lib/store';
   import { datetimeCompareFunc, isRPCResponse } from './lib/utils';
 
   rpcClient.subscribe(($client) => {
@@ -43,10 +37,13 @@
 <main>
   <div class="flex flex-col gap-2 p-8">
     {#each pipe( $downloads, O.getOrElseW(() => []), ) as download}
-      <div class="bg-neutral-100 p-4 rounded-lg shadow-lg">
-        <div>{download.id}</div>
-        <div>{JSON.stringify(download.info)}</div>
-        <div>{JSON.stringify(download.progress)}</div>
+      <div class="flex gap-4 bg-neutral-100 p-4 rounded-lg shadow-lg">
+        <img src={download.info.thumbnail} class="h-48 rounded" alt="" />
+        <div>
+          <div>{download.id}</div>
+          <div>{JSON.stringify(download.info)}</div>
+          <div>{JSON.stringify(download.progress)}</div>
+        </div>
       </div>
     {/each}
   </div>
