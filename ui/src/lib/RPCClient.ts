@@ -23,6 +23,9 @@ export class RPCClient {
     )
   }
 
+  /**
+   * Websocket connection
+   */
   public get socket() {
     return this._socket$
   }
@@ -61,6 +64,11 @@ export class RPCClient {
     return data
   }
 
+  /**
+   * Request a new download. Handles arguments sanitization.
+   * @param req payload
+   * @returns 
+   */
   public download(req: DownloadRequestArgs) {
     if (!req.url) {
       return
@@ -105,6 +113,11 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Requests the available formats for a given url (-f arg)
+   * @param url requested url
+   * @returns 
+   */
   public formats(url: string) {
     if (url) {
       return this.sendHTTP<DLMetadata>({
@@ -116,6 +129,9 @@ export class RPCClient {
     }
   }
 
+  /**
+   * Requests all downloads
+   */
   public running() {
     this.send({
       method: 'Service.Running',
@@ -123,6 +139,10 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Stops and removes a download asynchronously
+   * @param id download id
+   */
   public kill(id: string) {
     this.sendHTTP({
       method: 'Service.Kill',
@@ -130,6 +150,9 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Stops and removes all downloads
+   */
   public killAll() {
     this.sendHTTP({
       method: 'Service.KillAll',
@@ -137,6 +160,10 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Get asynchronously the avaliable space on downloads directory
+   * @returns free space in bytes
+   */
   public freeSpace() {
     return this.sendHTTP<number>({
       method: 'Service.FreeSpace',
@@ -144,6 +171,10 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Get asynchronously the tree view of the download directory
+   * @returns free space in bytes
+   */
   public directoryTree() {
     return this.sendHTTP<string[]>({
       method: 'Service.DirectoryTree',
@@ -151,6 +182,10 @@ export class RPCClient {
     })
   }
 
+  /**
+   * Updates synchronously yt-dlp executable
+   * @returns free space in bytes
+   */
   public updateExecutable() {
     return this.sendHTTP({
       method: 'Service.UpdateExecutable',
