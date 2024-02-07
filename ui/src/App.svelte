@@ -3,8 +3,10 @@
   import { pipe } from 'fp-ts/lib/function';
   import { downloads, rpcClient } from './lib/store';
   import { datetimeCompareFunc, isRPCResponse } from './lib/utils';
+  import { onDestroy } from 'svelte';
+  import Navbar from './lib/Navbar.svelte';
 
-  rpcClient.subscribe(($client) => {
+  const unsubscribe = rpcClient.subscribe(($client) => {
     setInterval(() => $client.running(), 750);
 
     $client.socket.onmessage = (ev: any) => {
@@ -32,14 +34,17 @@
       downloads.set(O.none);
     };
   });
+
+  onDestroy(unsubscribe);
 </script>
 
 <main>
+  <Navbar />
   <div class="flex flex-col gap-2 p-8">
     {#each pipe( $downloads, O.getOrElseW(() => []), ) as download}
-      <div class="flex gap-4 bg-neutral-100 p-4 rounded-lg shadow-lg">
+      <div class="flex gap-4 bg-neutral-100 p-4 rounded-lg shadow-lg border">
         <img src={download.info.thumbnail} class="h-48 rounded" alt="" />
-        <div>
+        <div class="break-all">
           <div>{download.id}</div>
           <div>{JSON.stringify(download.info)}</div>
           <div>{JSON.stringify(download.progress)}</div>

@@ -1,7 +1,7 @@
-import { derived, readable, writable } from 'svelte/store'
-import { RPCClient } from './RPCClient'
-import type { RPCResponse, RPCResult } from './types'
 import * as O from 'fp-ts/lib/Option'
+import { derived, writable } from 'svelte/store'
+import { RPCClient } from './RPCClient'
+import type { RPCResult } from './types'
 
 export const rpcHost = writable<string>(localStorage.getItem('rpcHost') ?? 'localhost')
 export const rpcPort = writable<number>(Number(localStorage.getItem('rpcPort')) || 3033)
