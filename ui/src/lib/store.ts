@@ -1,9 +1,9 @@
 import { derived, readable, writable } from 'svelte/store'
-import { RPCClient } from './RpcClient'
+import { RPCClient } from './RPCClient'
 import type { RPCResponse, RPCResult } from './types'
 
 export const rpcHost = writable<string>(localStorage.getItem('rpcHost') ?? 'localhost')
-export const rpcPort = writable<number>(Number(localStorage.getItem('rpcPort')) ?? 3033)
+export const rpcPort = writable<number>(Number(localStorage.getItem('rpcPort')) || 3033)
 
 export const rpcWebToken = writable<string>(localStorage.getItem('rpcWebToken') ?? '')
 
