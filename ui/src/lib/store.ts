@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/lib/Option'
-import { derived, writable } from 'svelte/store'
+import { derived, readable, writable } from 'svelte/store'
 import { RPCClient } from './RPCClient'
-import type { RPCResult } from './types'
+import { type CustomTemplate, type RPCResult } from './types'
 
 export const rpcHost = writable<string>(localStorage.getItem('rpcHost') ?? 'localhost')
 export const rpcPort = writable<number>(Number(localStorage.getItem('rpcPort')) || 3033)
@@ -45,3 +45,13 @@ export const rpcClient = derived(
 export const downloads = writable<O.Option<RPCResult[]>>(O.none)
 
 export const cookiesTemplate = writable<string>('')
+
+/**
+ * fetches download templates, needs manual update
+ */
+export const downloadTemplates = readable<CustomTemplate[]>([], (set) => {
+  serverApiEndpoint
+    .subscribe(ep => fetch(`${ep}/api/v1/template/all`)
+      .then(res => res.json())
+      .then(data => set(data)))
+})

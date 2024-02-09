@@ -4,7 +4,6 @@
   import { pipe } from 'fp-ts/lib/function';
   import { onDestroy } from 'svelte';
   import DownloadCard from './lib/DownloadCard.svelte';
-  import FloatingAction from './lib/FloatingAction.svelte';
   import Footer from './lib/Footer.svelte';
   import Navbar from './lib/Navbar.svelte';
   import Spinner from './lib/Spinner.svelte';
@@ -58,7 +57,7 @@
       {/each}
     </div>
   {/if}
-  <FloatingAction />
+  <!-- <FloatingAction /> -->
   <Footer />
   <SvelteToast />
 </main>

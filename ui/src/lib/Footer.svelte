@@ -11,7 +11,7 @@
   });
 
   const minHeight = 52;
-  const maxHeight = 600;
+  const maxHeight = window.innerHeight - 60;
 
   let open = false;
   $: open = $height > minHeight;
