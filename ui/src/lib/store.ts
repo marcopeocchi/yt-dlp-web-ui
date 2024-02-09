@@ -43,3 +43,5 @@ export const rpcClient = derived(
  * Stores all the downloads returned by the rpc
  */
 export const downloads = writable<O.Option<RPCResult[]>>(O.none)
+
+export const cookiesTemplate = writable<string>('')

@@ -12,6 +12,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@tsconfig/svelte": "^5.0.2",
+    "@zerodevx/svelte-toast": "^0.9.5",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.34",
     "svelte": "^4.2.8",
@@ -22,6 +23,8 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
-    "fp-ts": "^2.16.2"
+    "@fontsource/roboto": "^5.0.8",
+    "fp-ts": "^2.16.2",
+    "lucide-svelte": "^0.323.0"
   }
 }

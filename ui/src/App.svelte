@@ -1,10 +1,15 @@
 <script lang="ts">
+  import { SvelteToast } from '@zerodevx/svelte-toast';
   import * as O from 'fp-ts/Option';
   import { pipe } from 'fp-ts/lib/function';
+  import { onDestroy } from 'svelte';
+  import DownloadCard from './lib/DownloadCard.svelte';
+  import FloatingAction from './lib/FloatingAction.svelte';
+  import Footer from './lib/Footer.svelte';
+  import Navbar from './lib/Navbar.svelte';
+  import Spinner from './lib/Spinner.svelte';
   import { downloads, rpcClient } from './lib/store';
   import { datetimeCompareFunc, isRPCResponse } from './lib/utils';
-  import { onDestroy } from 'svelte';
-  import Navbar from './lib/Navbar.svelte';
 
   const unsubscribe = rpcClient.subscribe(($client) => {
     setInterval(() => $client.running(), 750);
@@ -38,18 +43,22 @@
   onDestroy(unsubscribe);
 </script>
 
-<main>
+<main
+  class="bg-neutral-50 dark:bg-neutral-900 h-screen text-neutral-950 dark:text-neutral-50"
+>
   <Navbar />
-  <div class="flex flex-col gap-2 p-8">
-    {#each pipe( $downloads, O.getOrElseW(() => []), ) as download}
-      <div class="flex gap-4 bg-neutral-100 p-4 rounded-lg shadow-lg border">
-        <img src={download.info.thumbnail} class="h-48 rounded" alt="" />
-        <div class="break-all">
-          <div>{download.id}</div>
-          <div>{JSON.stringify(download.info)}</div>
-          <div>{JSON.stringify(download.progress)}</div>
-        </div>
-      </div>
-    {/each}
-  </div>
+  {#if O.isNone($downloads)}
+    <div class="h-[90vh] w-full flex justify-center items-center">
+      <Spinner />
+    </div>
+  {:else}
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-2 p-8">
+      {#each pipe( $downloads, O.getOrElseW(() => []), ) as download}
+        <DownloadCard {download} />
+      {/each}
+    </div>
+  {/if}
+  <FloatingAction />
+  <Footer />
+  <SvelteToast />
 </main>
