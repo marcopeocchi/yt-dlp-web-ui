@@ -44,7 +44,7 @@
   {#if $height > 100}
     <div class="mt-2">
       <NewDownload />
-      <Settings />
+      <!-- <Settings /> -->
     </div>
   {/if}
 </footer>
