@@ -26,7 +26,7 @@
   border-t dark:border-t-neutral-700
   shadow-lg
   rounded-t-xl"
-  style="height: {$height}px;"
+  style="min-height: {$height}px;"
 >
   <button
     class="p-1 bg-neutral-200 dark:bg-neutral-700 rounded-lg border dark:border-neutral-700"
@@ -44,7 +44,7 @@
   {#if $height > 100}
     <div class="mt-2">
       <NewDownload />
-      <!-- <Settings /> -->
+      <Settings />
     </div>
   {/if}
 </footer>

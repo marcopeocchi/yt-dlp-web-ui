@@ -25,7 +25,7 @@
 
 <div class="w-full px-8">
   <div class="my-4 font-semibold text-xl">New download</div>
-  <div class="grid grid-cols-2 gap-2 w-full mb-2">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full mb-2">
     <TextField placeholder="https://..." label="URL" bind:value={url} />
     <TextField
       placeholder="arguments separated by space"

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowDownUp, HardDrive, Network } from 'lucide-svelte';
+  import { ArrowDownUp, Github, HardDrive, Network } from 'lucide-svelte';
   import { downloads, rpcClient, serverApiEndpoint } from './store';
   import { formatGiB, formatSpeedMiB } from './utils';
   import * as O from 'fp-ts/Option';
@@ -70,6 +70,13 @@
           {$serverApiEndpoint.split('//')[1]}
         </div>
       </div>
+
+      <a
+        href="https://github.com/marcopeocchi/yt-dlp-web-ui"
+        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-orange-200 rounded-lg"
+      >
+        <Github size={18} />
+      </a>
     </div>
   </div>
 </nav>

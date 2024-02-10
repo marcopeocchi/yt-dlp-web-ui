@@ -12,7 +12,7 @@
   <label for=""> {label} </label>
   <input
     type="text"
-    class={`p-2 bg-neutral-50 border rounded-lg ${clazz}`}
+    class={`p-2 bg-neutral-50 border rounded-lg focus:outline-orange-300 ${clazz}`}
     on:keyup
     bind:value
     {placeholder}
