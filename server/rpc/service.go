@@ -140,7 +140,7 @@ func (s *Service) FreeSpace(args NoArgs, free *uint64) error {
 }
 
 // Return a flattned tree of the download directory
-func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
+func (s *Service) DirectoryTree(args NoArgs, tree *internal.Stack[sys.FSNode]) error {
 	dfsTree, err := sys.DirectoryTree()
 	if dfsTree != nil {
 		*tree = *dfsTree

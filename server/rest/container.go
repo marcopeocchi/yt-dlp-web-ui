@@ -30,5 +30,6 @@ func ApplyRouter(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) 
 		r.Post("/template", h.AddTemplate())
 		r.Get("/template/all", h.GetTemplates())
 		r.Delete("/template/{id}", h.DeleteTemplate())
+		r.Get("/tree", h.DirectoryTree())
 	}
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
 )
 
 type Service struct {
@@ -117,4 +118,8 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 	_, err = conn.ExecContext(ctx, "DELETE FROM templates WHERE id = ?", id)
 
 	return err
+}
+
+func (s *Service) DirectoryTree(ctx context.Context) (*internal.Stack[sys.FSNode], error) {
+	return sys.DirectoryTree()
 }

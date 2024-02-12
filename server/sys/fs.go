@@ -18,39 +18,35 @@ func FreeSpace() (uint64, error) {
 	return (stat.Bavail * uint64(stat.Bsize)), nil
 }
 
+type FSNode struct {
+	path     string
+	children []FSNode
+}
+
 // Build a directory tree started from the specified path using DFS.
 // Then return the flattened tree represented as a list.
-func DirectoryTree() (*[]string, error) {
-	type Node struct {
-		path     string
-		children []Node
-	}
-
+func DirectoryTree() (*internal.Stack[FSNode], error) {
 	rootPath := config.Instance().DownloadPath
 
-	stack := internal.NewStack[Node]()
-	flattened := make([]string, 0)
+	stack := internal.NewStack[FSNode]()
 
-	stack.Push(Node{path: rootPath})
-
-	flattened = append(flattened, rootPath)
+	stack.Push(FSNode{path: rootPath})
 
 	for stack.IsNotEmpty() {
-		current := stack.Pop().Value
+		current := stack.Pop()
 		children, err := os.ReadDir(current.path)
 		if err != nil {
 			return nil, err
 		}
 		for _, entry := range children {
 			childPath := filepath.Join(current.path, entry.Name())
-			childNode := Node{path: childPath}
+			childNode := FSNode{path: childPath}
 
 			if entry.IsDir() {
 				current.children = append(current.children, childNode)
 				stack.Push(childNode)
-				flattened = append(flattened, childNode.path)
 			}
 		}
 	}
-	return &flattened, nil
+	return stack, nil
 }

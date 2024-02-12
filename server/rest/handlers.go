@@ -154,3 +154,22 @@ func (h *Handler) DeleteTemplate() http.HandlerFunc {
 		}
 	}
 }
+
+func (h *Handler) DirectoryTree() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		w.Header().Set("Content-Type", "application/json")
+
+		tree, err := h.service.DirectoryTree(r.Context())
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = json.NewEncoder(w).Encode(tree)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+}
