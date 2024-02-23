@@ -24,16 +24,16 @@
             for="formats"
             class="
             [&_p]:text-gray-900 [&_span]:text-gray-500
-            peer-checked:[&_p]:text-white peer-checked:[&_span]:text-orange-100
+            peer-checked:[&_p]:text-white peer-checked:[&_span]:text-blue-100
             peer-focus:ring-2 peer-focus:ring-white
-            peer-focus:ring-opacity-60 peer-focus:ring-offset-2 peer-focus:ring-offset-orange-300
+            peer-focus:ring-opacity-60 peer-focus:ring-offset-2 peer-focus:ring-offset-blue-300
             bg-white
             relative flex
             cursor-pointer
             rounded-lg px-5 py-4
             shadow-md
             focus:outline-none
-            peer-checked:bg-orange-700/75
+            peer-checked:bg-blue-700/75
             peer-checked:text-white"
           >
             <div class="flex w-full items-center justify-between">

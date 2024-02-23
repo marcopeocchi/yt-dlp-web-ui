@@ -13,7 +13,7 @@
   border rounded-lg
   appearance-none
   text-sm font-semibold
-  focus:outline-orange-300
+  focus:outline-blue-300
   "
   bind:value
   {disabled}

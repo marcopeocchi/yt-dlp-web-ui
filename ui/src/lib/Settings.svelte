@@ -10,7 +10,7 @@
   const update = () => (loading = get(rpcClient).updateExecutable());
 </script>
 
-<div class="w-full px-8 mt-8">
+<div class="w-full">
   <div class="font-semibold text-lg mb-4">Settings</div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-2">

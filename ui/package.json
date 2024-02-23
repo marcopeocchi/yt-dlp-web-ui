@@ -25,6 +25,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.0.8",
     "fp-ts": "^2.16.2",
-    "lucide-svelte": "^0.323.0"
+    "lucide-svelte": "^0.323.0",
+    "svelte-spa-router": "^4.0.1"
   }
 }

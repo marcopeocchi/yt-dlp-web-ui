@@ -3,7 +3,7 @@
 </script>
 
 <div
-  class="flex items-center gap-1.5 p-1 bg-orange-200 rounded-lg text-neutral-900"
+  class="flex items-center gap-1.5 p-1 bg-blue-200 rounded-lg text-neutral-900"
 >
   <slot />
   {text}

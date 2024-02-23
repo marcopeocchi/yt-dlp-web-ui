@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { ChevronUp, ChevronDown } from 'lucide-svelte';
+  import { ChevronDown, ChevronUp } from 'lucide-svelte';
   import { cubicOut } from 'svelte/easing';
   import { tweened } from 'svelte/motion';
-  import Settings from './Settings.svelte';
   import NewDownload from './NewDownload.svelte';
 
   const height = tweened(52, {
@@ -11,7 +10,7 @@
   });
 
   const minHeight = 52;
-  const maxHeight = window.innerHeight - 60;
+  const maxHeight = window.innerHeight / 1.5;
 
   let open = false;
   $: open = $height > minHeight;
@@ -19,7 +18,7 @@
 
 <footer
   class="
-  absolute bottom-0
+  fixed bottom-0 z-10
   w-full
   p-2
   bg-neutral-100 dark:bg-neutral-800
@@ -44,7 +43,6 @@
   {#if $height > 100}
     <div class="mt-2">
       <NewDownload />
-      <Settings />
     </div>
   {/if}
 </footer>

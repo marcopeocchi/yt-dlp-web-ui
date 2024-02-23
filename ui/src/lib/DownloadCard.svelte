@@ -1,10 +1,10 @@
 <script lang="ts">
   import { get } from 'svelte/store';
-  import Chip from './Chip.svelte';
-  import type { RPCResult } from './types';
-  import { formatSpeedMiB, mapProcessStatus, roundMiB } from './utils';
-  import { rpcClient } from './store';
   import Button from './Button.svelte';
+  import Chip from './Chip.svelte';
+  import { rpcClient, serverApiEndpoint } from './store';
+  import type { RPCResult } from './types';
+  import { formatSpeedMiB, roundMiB } from './utils';
 
   export let download: RPCResult;
 
@@ -14,12 +14,12 @@
 <div
   class="flex gap-4
   bg-neutral-100 dark:bg-neutral-800
-  pt-2 md:p-4
+  p-2 md:p-4
   rounded-lg shadow-lg
   border dark:border-neutral-700"
 >
   <div
-    class="h-full w-96 bg-cover bg-center rounded"
+    class="h-full hidden sm:block w-96 bg-cover bg-center rounded"
     style="background-image: url({download.info.thumbnail})"
   />
 
@@ -34,7 +34,7 @@
     </div>
 
     <div class="flex flex-col justify-end gap-2 select-none flex-wrap">
-      <div class="flex items-center gap-2 text-sm">
+      <div class="hidden sm:flex items-center gap-2 text-sm">
         {#if download.info.vcodec}
           <Chip text={download.info.vcodec} />
         {/if}
@@ -50,9 +50,9 @@
         {#if download.info.filesize_approx}
           <Chip text={roundMiB(download.info.filesize_approx)} />
         {/if}
-        {#if download.progress.process_status}
+        <!-- {#if download.progress.process_status}
           <Chip text={mapProcessStatus(download.progress.process_status)} />
-        {/if}
+        {/if} -->
         {#if download.progress.speed}
           <Chip text={formatSpeedMiB(download.progress.speed)} />
         {/if}
@@ -62,6 +62,7 @@
         <Button class="w-14" on:click={() => remove(download.id)}>Stop</Button>
         {#if download.progress.process_status === 2}
           <Button class="w-18">Download</Button>
+          <!-- <a href={`${$serverApiEndpoint}/api/v1/d/${download.id}`}>d</a> -->
         {/if}
       </div>
 
@@ -72,7 +73,7 @@
           class={`h-2 rounded-full ${
             download.progress.process_status === 2
               ? 'bg-green-600'
-              : 'bg-orange-500'
+              : 'bg-blue-500'
           }`}
           style="width: {download.progress.percentage}"
         />

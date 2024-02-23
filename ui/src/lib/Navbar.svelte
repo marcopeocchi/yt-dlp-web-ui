@@ -1,10 +1,17 @@
 <script lang="ts">
-  import { ArrowDownUp, Github, HardDrive, Network } from 'lucide-svelte';
+  import {
+    ArrowDownUp,
+    Github,
+    HardDrive,
+    Network,
+    Settings,
+  } from 'lucide-svelte';
   import { downloads, rpcClient, serverApiEndpoint } from './store';
   import { formatGiB, formatSpeedMiB } from './utils';
   import * as O from 'fp-ts/Option';
   import { pipe } from 'fp-ts/lib/function';
   import { onDestroy } from 'svelte';
+  import { link } from 'svelte-spa-router';
 
   let downloadSpeed = 0;
 
@@ -34,13 +41,13 @@
   shadow-lg
   select-none"
 >
-  <div class="font-semibold text-lg">yt-dlp WebUI</div>
+  <a use:link={'/'} href="/" class="font-semibold text-lg">yt-dlp WebUI</a>
 
   <div />
 
   <div class="flex items-center gap-2 text-sm">
     <div
-      class="flex items-center gap-1.5 p-1 text-neutral-900 bg-orange-200 rounded-lg"
+      class="hidden sm:flex items-center gap-1.5 p-1 text-neutral-900 bg-blue-200 rounded-lg"
     >
       <ArrowDownUp size={18} />
       <div>
@@ -50,7 +57,7 @@
 
     <div class="flex items-center gap-2 text-sm">
       <div
-        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-orange-200 rounded-lg"
+        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-blue-200 rounded-lg"
       >
         <HardDrive size={18} />
         <div>
@@ -63,7 +70,7 @@
       </div>
 
       <div
-        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-orange-200 rounded-lg"
+        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-blue-200 rounded-lg"
       >
         <Network size={18} />
         <div>
@@ -73,9 +80,17 @@
 
       <a
         href="https://github.com/marcopeocchi/yt-dlp-web-ui"
-        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-orange-200 rounded-lg"
+        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-blue-200 rounded-lg"
       >
         <Github size={18} />
+      </a>
+
+      <a
+        use:link={'/settings'}
+        href="/settings"
+        class="flex items-center gap-1.5 p-1 text-neutral-900 bg-blue-200 rounded-lg"
+      >
+        <Settings size={18} />
       </a>
     </div>
   </div>

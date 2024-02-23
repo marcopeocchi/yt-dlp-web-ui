@@ -2,10 +2,10 @@
   import * as O from 'fp-ts/Option';
   import { pipe } from 'fp-ts/lib/function';
   import { onDestroy } from 'svelte';
-  import DownloadCard from './DownloadCard.svelte';
-  import Spinner from './Spinner.svelte';
-  import { downloads, rpcClient } from './store';
-  import { datetimeCompareFunc, isRPCResponse } from './utils';
+  import DownloadCard from '../lib/DownloadCard.svelte';
+  import Spinner from '../lib/Spinner.svelte';
+  import { downloads, rpcClient } from '../lib/store';
+  import { datetimeCompareFunc, isRPCResponse } from '../lib/utils';
 
   const unsubscribe = rpcClient.subscribe(($client) => {
     setInterval(() => $client.running(), 750);

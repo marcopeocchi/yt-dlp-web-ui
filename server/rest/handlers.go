@@ -2,7 +2,10 @@ package rest
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -171,5 +174,38 @@ func (h *Handler) DirectoryTree() http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+	}
+}
+
+func (h *Handler) DownloadFile() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		w.Header().Set("Content-Type", "application/json")
+
+		id := chi.URLParam(r, "id")
+
+		path, err := h.service.DownloadFile(r.Context(), id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Add(
+			"Content-Disposition",
+			"inline; filename="+filepath.Base(*path),
+		)
+		w.Header().Set(
+			"Content-Type",
+			"application/octet-stream",
+		)
+
+		fd, err := os.Open(*path)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		io.Copy(w, fd)
 	}
 }

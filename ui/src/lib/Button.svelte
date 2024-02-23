@@ -5,7 +5,7 @@
 </script>
 
 <button
-  class={`px-2.5 py-2 rounded-lg bg-orange-300 hover:bg-orange-400 hover:duration-150 text-sm font-semibold ${
+  class={`px-2.5 py-2 rounded-lg bg-blue-300 hover:bg-blue-400 hover:duration-150 text-sm font-semibold ${
     disabled && 'bg-neutral-300 hover:bg-neutral-300'
   } ${clazz}`}
   {disabled}

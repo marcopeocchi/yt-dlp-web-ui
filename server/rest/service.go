@@ -123,3 +123,12 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 func (s *Service) DirectoryTree(ctx context.Context) (*internal.Stack[sys.FSNode], error) {
 	return sys.DirectoryTree()
 }
+
+func (s *Service) DownloadFile(ctx context.Context, id string) (*string, error) {
+	p, err := s.mdb.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &p.Output.Path, nil
+}
