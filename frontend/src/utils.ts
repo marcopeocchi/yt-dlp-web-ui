@@ -42,14 +42,21 @@ export function toFormatArgs(codes: string[]): string {
   return ''
 }
 
-export const formatGiB = (bytes: number) =>
-  `${(bytes / 1_000_000_000).toFixed(0)}GiB`
+export function formatSize(bytes: number): string {
+  const threshold = 1024
+  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
 
-export const roundMiB = (bytes: number) =>
-  `${(bytes / 1_000_000).toFixed(2)} MiB`
+  let i = 0
+  while (bytes >= threshold) {
+    bytes /= threshold
+    i = i + 1
+  }
+
+  return `${bytes.toFixed(i == 0 ? 0 : 2)} ${units.at(i)}`
+}
 
 export const formatSpeedMiB = (val: number) =>
-  `${roundMiB(val)}/s`
+  `${(val / 1_048_576).toFixed(2)} MiB/s`
 
 export const datetimeCompareFunc = (a: string, b: string) =>
   new Date(a).getTime() - new Date(b).getTime()

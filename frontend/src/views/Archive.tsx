@@ -41,7 +41,7 @@ import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { DirectoryEntry } from '../types'
-import { base64URLEncode, roundMiB } from '../utils'
+import { base64URLEncode, formatSize } from '../utils'
 
 export default function Downloaded() {
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
@@ -237,7 +237,7 @@ export default function Downloaded() {
                     variant="caption"
                     component="span"
                   >
-                    {roundMiB(file.size)}
+                    {formatSize(file.size)}
                   </Typography>
                   }
                   {!file.isDirectory && <>
