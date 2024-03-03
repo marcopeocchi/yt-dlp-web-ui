@@ -180,16 +180,31 @@ The config file **will overwrite what have been passed as cli argument**.
 # Simple configuration file for yt-dlp webui
 
 ---
-port: 8989
-downloadPath: /home/ren/archive
-downloaderPath: /usr/local/bin/yt-dlp
+# Host where server will listen at (default: "0.0.0.0")
+#host: 0.0.0.0
 
-# Optional settings
+# Port where server will listen at (default: 3033)
+port: 8989
+
+# Directory where downloaded files will be stored (default: ".")
+downloadPath: /home/ren/archive
+
+# [optional] Enable RPC authentication (requires username and password)
 require_auth: true
 username: my_username
 password: my_random_secret
 
+# [optional] The download queue size (default: 8)
 queue_size: 4
+
+# [optional] Full path to the yt-dlp (default: "yt-dlp")
+downloaderPath: /usr/local/bin/yt-dlp
+
+# [optional] Directory where the log file will be stored (default: ".")
+#log_path: .
+
+# [optional] Directory where the session database file will be stored (default: ".")
+#session_file_path: .
 ```
 
 ### Systemd integration
