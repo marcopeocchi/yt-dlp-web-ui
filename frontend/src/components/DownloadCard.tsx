@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { useCallback } from 'react'
 import { RPCResult } from '../types'
-import { ellipsis, formatSpeedMiB, mapProcessStatus, roundMiB } from '../utils'
+import { ellipsis, formatSpeedMiB, mapProcessStatus, formatSize } from '../utils'
 
 type Props = {
   download: RPCResult
@@ -86,7 +86,7 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
               {!isCompleted() ? formatSpeedMiB(download.progress.speed) : ''}
             </Typography>
             <Typography>
-              {roundMiB(download.info.filesize_approx ?? 0)}
+              {formatSize(download.info.filesize_approx ?? 0)}
             </Typography>
             <Resolution resolution={download.info.resolution} />
           </Stack>

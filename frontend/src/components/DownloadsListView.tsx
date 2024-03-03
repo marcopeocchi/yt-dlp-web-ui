@@ -14,7 +14,7 @@ import {
 import { useRecoilValue } from 'recoil'
 import { activeDownloadsState } from '../atoms/downloads'
 import { useRPC } from '../hooks/useRPC'
-import { ellipsis, formatSpeedMiB, roundMiB } from "../utils"
+import { ellipsis, formatSpeedMiB, formatSize } from "../utils"
 
 
 const DownloadsListView: React.FC = () => {
@@ -74,7 +74,7 @@ const DownloadsListView: React.FC = () => {
                       />
                     </TableCell>
                     <TableCell>{formatSpeedMiB(download.progress.speed)}</TableCell>
-                    <TableCell>{roundMiB(download.info.filesize_approx ?? 0)}</TableCell>
+                    <TableCell>{formatSize(download.info.filesize_approx ?? 0)}</TableCell>
                     <TableCell>
                       <Button
                         variant="contained"

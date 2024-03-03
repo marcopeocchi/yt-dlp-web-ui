@@ -1,7 +1,7 @@
 import StorageIcon from '@mui/icons-material/Storage'
 import { useRecoilValue } from 'recoil'
 import { freeSpaceBytesState } from '../atoms/status'
-import { formatGiB } from '../utils'
+import { formatSize } from '../utils'
 
 const FreeSpaceIndicator = () => {
   const freeSpace = useRecoilValue(freeSpaceBytesState)
@@ -15,7 +15,7 @@ const FreeSpaceIndicator = () => {
     }}>
       <StorageIcon />
       <span>
-        {formatGiB(freeSpace)}
+        {formatSize(freeSpace)}
       </span>
     </div>
   )
