@@ -1,18 +1,30 @@
-FROM golang:alpine AS build
-
-RUN apk update && \
-    apk add nodejs npm
-
+# Node (pnpm) ------------------------------------------------------------------
+FROM node:20-slim AS ui
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 COPY . /usr/src/yt-dlp-webui
 
 WORKDIR /usr/src/yt-dlp-webui/frontend
 
-RUN npm install
-RUN npm run build
+RUN rm -rf node_modules
+
+RUN pnpm install
+RUN pnpm run build
+# -----------------------------------------------------------------------------
+
+# Go --------------------------------------------------------------------------
+FROM golang AS build
 
 WORKDIR /usr/src/yt-dlp-webui
-RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 
+COPY . .
+COPY --from=ui /usr/src/yt-dlp-webui/frontend /usr/src/yt-dlp-webui/frontend
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
+# -----------------------------------------------------------------------------
+
+# dependencies ----------------------------------------------------------------
 FROM alpine:edge
 
 VOLUME /downloads /config

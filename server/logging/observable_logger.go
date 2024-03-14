@@ -20,7 +20,9 @@ func NewObservableLogger() *ObservableLogger {
 }
 
 func (o *ObservableLogger) Write(p []byte) (n int, err error) {
-	logsChan <- rxgo.Of(string(p))
+	go func() {
+		logsChan <- rxgo.Of(string(p))
+	}()
 
 	n = len(p)
 	err = nil

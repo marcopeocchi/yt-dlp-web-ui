@@ -17,7 +17,6 @@
     "@mui/icons-material": "^5.15.4",
     "@mui/material": "^5.15.4",
     "fp-ts": "^2.16.2",
-    "million": "^2.6.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.2",
@@ -25,7 +24,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@modyfi/vite-plugin-yaml": "^1.0.4",
+    "@modyfi/vite-plugin-yaml": "^1.1.0",
     "@types/node": "^20.11.4",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
@@ -33,6 +32,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "typescript": "^5.3.3",
-    "vite": "^5.0.11"
+    "vite": "^5.1.6",
+    "million": "^3.0.6"
   }
 }

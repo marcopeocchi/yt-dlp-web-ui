@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Container, Paper, Typography } from '@mui/material'
+import { Box, Container, Paper, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
@@ -33,13 +33,16 @@ const LogTerminal: React.FC = () => {
   }, [eventSource])
 
   const logEntryStyle = (data: string) => {
+    const sx = {}
+
     if (data.includes("level=ERROR")) {
-      return { color: 'red' }
+      return { ...sx, color: 'red' }
     }
     if (data.includes("level=WARN")) {
-      return { color: 'orange' }
+      return { ...sx, color: 'orange' }
     }
-    return {}
+
+    return sx
   }
 
   return (
@@ -54,19 +57,6 @@ const LogTerminal: React.FC = () => {
         <Typography py={1} variant="h5" color="primary">
           {i18n.t('logsTitle')}
         </Typography>
-        {(logBuffer.length === 0) && <Box sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyItems: 'center',
-          alignItems: 'center',
-          gap: 1
-        }}>
-          <CircularProgress color="primary" size={32} />
-          <Typography py={1} variant="subtitle2" >
-            {i18n.t('awaitingLogs')}
-          </Typography>
-        </Box>
-        }
         <Box
           ref={boxRef}
           sx={{
@@ -74,9 +64,15 @@ const LogTerminal: React.FC = () => {
             height: '75.5vh',
             overflowY: 'auto',
             overflowX: 'auto',
-            fontSize: '15px'
+            fontSize: '13.5px',
+            fontWeight: '600',
+            backgroundColor: 'black',
+            color: 'white',
+            padding: '0.5rem',
+            borderRadius: '0.25rem'
           }}
         >
+          {logBuffer.length === 0 && <Box >{i18n.t('awaitingLogs')}</Box>}
           {logBuffer.map((log, idx) => (
             <Box key={idx} sx={logEntryStyle(log)}>
               {log}
