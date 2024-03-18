@@ -1,13 +1,6 @@
 import { atom, selector } from 'recoil'
 import { rpcClientState } from './rpc'
 
-type StatusState = {
-  connected: boolean,
-  updated: boolean,
-  downloading: boolean,
-}
-
-
 export const connectedState = atom({
   key: 'connectedState',
   default: false
