@@ -17,6 +17,11 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
+/*
+	File based operation handlers (should be moved to rest/handlers.go) or in
+	a entirely self-contained package
+*/
+
 type DirectoryEntry struct {
 	Name        string    `json:"name"`
 	Path        string    `json:"path"`

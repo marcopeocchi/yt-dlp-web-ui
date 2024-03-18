@@ -6,13 +6,16 @@ import (
 	"net/rpc/jsonrpc"
 )
 
-// Wrapper for HTTP RPC request that implements io.Reader interface
+// Wrapper for jsonrpc.ServeConn that simplifies its usage
 type rpcRequest struct {
 	r    io.Reader
 	rw   io.ReadWriter
 	done chan bool
 }
 
+// Takes a reader that can be an *http.Request or anthing that implements
+// io.ReadWriter interface.
+// Call() will perform the jsonRPC call and write or read from the ReadWriter
 func newRequest(r io.Reader) *rpcRequest {
 	var buf bytes.Buffer
 	done := make(chan bool)

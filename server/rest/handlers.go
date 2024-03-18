@@ -12,6 +12,10 @@ type Handler struct {
 	service *Service
 }
 
+/*
+	REST version of the JSON-RPC interface
+*/
+
 func (h *Handler) Exec() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()

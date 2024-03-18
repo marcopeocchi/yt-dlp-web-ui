@@ -236,10 +236,6 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 
 	wg.Add(2)
 
-	if err != nil {
-		return DownloadFormats{}, err
-	}
-
 	log.Println(
 		cli.BgRed, "Metadata", cli.Reset,
 		cli.BgBlue, "Formats", cli.Reset,

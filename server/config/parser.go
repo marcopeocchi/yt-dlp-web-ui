@@ -35,6 +35,7 @@ func Instance() *Config {
 	return instance
 }
 
+// Initialises the Config struct given its config file
 func (c *Config) LoadFile(filename string) error {
 	fd, err := os.Open(filename)
 	if err != nil {

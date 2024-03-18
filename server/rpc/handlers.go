@@ -14,6 +14,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+// WebSockets JSON-RPC handler
 func WebSocket(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -47,6 +48,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// HTTP-POST JSON-RPC handler
 func Post(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 

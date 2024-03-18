@@ -5,6 +5,7 @@ import (
 	"database/sql"
 )
 
+// Run the table migration
 func AutoMigrate(ctx context.Context, db *sql.DB) error {
 	conn, err := db.Conn(ctx)
 	if err != nil {

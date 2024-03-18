@@ -39,6 +39,9 @@ func validateToken(tokenValue string) error {
 	return nil
 }
 
+// Authentication does NOT use http-Only cookies since there's not risk for XSS
+// By exposing the server through https it's completely safe to use httpheaders
+
 func Authenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Header.Get("X-Authentication")
