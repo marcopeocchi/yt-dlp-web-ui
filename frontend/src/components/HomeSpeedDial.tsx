@@ -2,6 +2,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle'
 import BuildCircleIcon from '@mui/icons-material/BuildCircle'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import FormatListBulleted from '@mui/icons-material/FormatListBulleted'
+import ViewAgendaIcon from '@mui/icons-material/ViewAgenda'
 import {
   SpeedDial,
   SpeedDialAction,
@@ -18,7 +19,7 @@ type Props = {
 }
 
 const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
-  const [, setListView] = useRecoilState(listViewState)
+  const [listView, setListView] = useRecoilState(listViewState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()
@@ -28,12 +29,12 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
   return (
     <SpeedDial
       ariaLabel="Home speed dial"
-      sx={{ position: 'absolute', bottom: 32, right: 32 }}
+      sx={{ position: 'absolute', bottom: 64, right: 24 }}
       icon={<SpeedDialIcon />}
     >
       <SpeedDialAction
-        icon={<FormatListBulleted />}
-        tooltipTitle={`Table view`}
+        icon={listView ? <ViewAgendaIcon /> : <FormatListBulleted />}
+        tooltipTitle={listView ? 'Card view' : 'Table view'}
         onClick={() => setListView(state => !state)}
       />
       <SpeedDialAction

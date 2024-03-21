@@ -4,7 +4,7 @@ import Dashboard from '@mui/icons-material/Dashboard'
 import DownloadIcon from '@mui/icons-material/Download'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
-import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
+import TerminalIcon from '@mui/icons-material/Terminal'
 import { Box, createTheme } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import Divider from '@mui/material/Divider'
@@ -16,26 +16,23 @@ import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { grey } from '@mui/material/colors'
-import { Suspense, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from './atoms/settings'
-import { connectedState } from './atoms/status'
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
-import FreeSpaceIndicator from './components/FreeSpaceIndicator'
+import Footer from './components/Footer'
 import Logout from './components/Logout'
 import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
 import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
-import TerminalIcon from '@mui/icons-material/Terminal'
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
 
   const settings = useRecoilValue(settingsState)
-  const isConnected = useRecoilValue(connectedState)
 
   const mode = settings.theme
   const theme = useMemo(() =>
@@ -81,21 +78,6 @@ export default function Layout() {
             >
               {settings.appTitle}
             </Typography>
-            <Suspense fallback={i18n.t('loadingLabel')}>
-              <FreeSpaceIndicator />
-            </Suspense>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              marginLeft: '4px',
-              gap: 3,
-            }}>
-              <SettingsEthernet />
-              <span>
-                {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
-              </span>
-            </div>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -181,6 +163,7 @@ export default function Layout() {
           <Outlet />
         </Box>
       </Box>
+      <Footer></Footer>
       <Toaster />
     </ThemeProvider>
   )

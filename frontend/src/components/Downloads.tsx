@@ -4,7 +4,7 @@ import { loadingDownloadsState } from '../atoms/downloads'
 import { listViewState } from '../atoms/settings'
 import { loadingAtom } from '../atoms/ui'
 import DownloadsCardView from './DownloadsCardView'
-import DownloadsListView from './DownloadsListView'
+import DownloadsListView from './DownloadsTableView'
 
 const Downloads: React.FC = () => {
   const listView = useRecoilValue(listViewState)

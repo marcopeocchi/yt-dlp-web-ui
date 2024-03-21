@@ -61,7 +61,7 @@ const LogTerminal: React.FC = () => {
           ref={boxRef}
           sx={{
             fontFamily: 'Roboto Mono',
-            height: '75.5vh',
+            height: '70.5vh',
             overflowY: 'auto',
             overflowX: 'auto',
             fontSize: '13.5px',

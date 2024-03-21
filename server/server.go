@@ -44,7 +44,7 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	logger := slog.New(
 		slog.NewTextHandler(
 			io.MultiWriter(os.Stdout, logging.NewObservableLogger()),
-			nil,
+			&slog.HandlerOptions{},
 		),
 	)
 
