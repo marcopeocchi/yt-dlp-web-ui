@@ -11,7 +11,11 @@ const VersionIndicator: React.FC = () => {
   const { pushMessage } = useToast()
 
   const fetchVersion = async () => {
-    const res = await fetch(`${serverAddr}/api/v1/version`)
+    const res = await fetch(`${serverAddr}/api/v1/version`, {
+      headers: {
+        'X-Authentication': localStorage.getItem('token') ?? ''
+      }
+    })
 
     if (!res.ok) {
       return pushMessage(await res.text(), 'error')
