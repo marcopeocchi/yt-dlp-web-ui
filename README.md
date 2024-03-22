@@ -28,7 +28,9 @@ docker pull marcobaobao/yt-dlp-webui
 # latest dev
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
-![output](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/82bcecaf-4ced-441f-9384-105653abfae4)
+
+[app.webm](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/91545bc4-233d-4dde-8504-27422cb26964)
+
 
 ![image](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/a32fbdaa-b033-4aed-b914-a66701ace0ce)
 ![image](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/782c559a-f552-40be-a6fd-10e22f38e85d)
