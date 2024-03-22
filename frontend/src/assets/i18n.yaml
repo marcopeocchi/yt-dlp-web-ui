@@ -1,7 +1,7 @@
 ---
 languages:
   english:
-    urlInput: Video URL
+    urlInput: Video URL (one per line)
     statusTitle: Status
     statusReady: Ready
     selectFormatButton: Select format
@@ -150,7 +150,7 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
   italian:
-    urlInput: URL Video
+    urlInput: URL Video (uno per linea)
     statusTitle: Stato
     startButton: Inizia
     statusReady: Pronto

@@ -26,6 +26,7 @@ func ApplyRouter(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) 
 		}
 		r.Post("/exec", h.Exec())
 		r.Get("/running", h.Running())
+		r.Get("/version", h.GetVersion())
 		r.Post("/cookies", h.SetCookies())
 		r.Post("/template", h.AddTemplate())
 		r.Get("/template/all", h.GetTemplates())

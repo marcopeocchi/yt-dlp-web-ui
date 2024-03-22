@@ -80,7 +80,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   )
 
   const [url, setUrl] = useState('')
-  const [workingUrl, setWorkingUrl] = useState('')
 
   const [isPlaylist, setIsPlaylist] = useState(false)
 
@@ -103,35 +102,36 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   /**
     * Retrive url from input, cli-arguments from checkboxes and emits via WebSocket
   */
-  const sendUrl = (immediate?: string) => {
-    const codes = new Array<string>()
-    if (pickedVideoFormat !== '') codes.push(pickedVideoFormat)
-    if (pickedAudioFormat !== '') codes.push(pickedAudioFormat)
-    if (pickedBestFormat !== '') codes.push(pickedBestFormat)
+  const sendUrl = async (immediate?: string) => {
+    for (const line of url.split('\n')) {
+      const codes = new Array<string>()
+      if (pickedVideoFormat !== '') codes.push(pickedVideoFormat)
+      if (pickedAudioFormat !== '') codes.push(pickedAudioFormat)
+      if (pickedBestFormat !== '') codes.push(pickedBestFormat)
 
-    client.download({
-      url: immediate || url || workingUrl,
-      args: `${argsBuilder.toString()} ${toFormatArgs(codes)} ${downloadTemplate}`,
-      pathOverride: downloadPath ?? '',
-      renameTo: settings.fileRenaming ? filenameTemplate : '',
-      playlist: isPlaylist,
-    })
+      await new Promise(r => setTimeout(r, 200))
+      await client.download({
+        url: immediate || line,
+        args: `${argsBuilder.toString()} ${toFormatArgs(codes)} ${downloadTemplate}`,
+        pathOverride: downloadPath ?? '',
+        renameTo: settings.fileRenaming ? filenameTemplate : '',
+        playlist: isPlaylist,
+      })
+
+      setTimeout(() => {
+        resetInput()
+        setDownloadFormats(undefined)
+        onDownloadStart(immediate || line)
+      }, 250)
+    }
 
     setUrl('')
-    setWorkingUrl('')
-
-    setTimeout(() => {
-      resetInput()
-      setDownloadFormats(undefined)
-      onDownloadStart(immediate || url || workingUrl)
-    }, 250)
   }
 
   /**
    * Retrive url from input and display the formats selection view
    */
   const sendUrlFormatSelection = () => {
-    setWorkingUrl(url)
     setUrl('')
     setPickedAudioFormat('')
     setPickedVideoFormat('')
@@ -220,6 +220,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
               >
                 <Grid container>
                   <TextField
+                    multiline
                     fullWidth
                     ref={urlInputRef}
                     label={i18n.t('urlInput')}

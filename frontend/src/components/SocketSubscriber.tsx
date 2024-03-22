@@ -52,7 +52,7 @@ const SocketSubscriber: React.FC<Props> = () => {
             .filter(f => !!f.info.url).sort((a, b) => datetimeCompareFunc(
               b.info.created_at,
               a.info.created_at,
-            ))
+            )),
           )
         )
       }

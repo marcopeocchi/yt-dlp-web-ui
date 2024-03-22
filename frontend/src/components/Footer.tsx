@@ -6,7 +6,7 @@ import { settingsState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
 import { useI18n } from '../hooks/useI18n'
 import FreeSpaceIndicator from './FreeSpaceIndicator'
-import GitHubIcon from '@mui/icons-material/GitHub'
+import VersionIndicator from './VersionIndicator'
 
 const Footer: React.FC = () => {
   const settings = useRecoilValue(settingsState)
@@ -30,8 +30,12 @@ const Footer: React.FC = () => {
         fontSize: 14,
         display: 'flex', gap: 1, justifyContent: 'space-between'
       }}>
-        <div>v3.0.6</div>
-        <div style={{ display: 'flex', gap: 1 }}>
+        <div style={{ display: 'flex', gap: 2 }}>
+          <div>RPC v3.0.6</div>
+          <div></div>
+          <VersionIndicator />
+        </div>
+        <div style={{ display: 'flex', gap: 1, 'alignItems': 'center' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',

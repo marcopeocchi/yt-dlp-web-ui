@@ -6,8 +6,11 @@ import (
 	"errors"
 	"log/slog"
 	"os"
+	"os/exec"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
@@ -117,4 +120,24 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 	_, err = conn.ExecContext(ctx, "DELETE FROM templates WHERE id = ?", id)
 
 	return err
+}
+
+func (s *Service) GetVersion(ctx context.Context) (string, error) {
+	ch := make(chan string, 1)
+
+	c, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	cmd := exec.CommandContext(c, config.Instance().DownloaderPath, "--version")
+	go func() {
+		stdout, _ := cmd.Output()
+		ch <- string(stdout)
+	}()
+
+	select {
+	case <-c.Done():
+		return "", errors.New("requesting yt-dlp version took too long")
+	case res := <-ch:
+		return res, nil
+	}
 }
