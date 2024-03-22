@@ -1,7 +1,7 @@
+import { Chip, CircularProgress } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
-import { CircularProgress } from '@mui/material'
 import { useToast } from '../hooks/toast'
 
 const VersionIndicator: React.FC = () => {
@@ -26,7 +26,7 @@ const VersionIndicator: React.FC = () => {
 
   return (
     version
-      ? <div>yt-dlp v{version}</div>
+      ? <Chip label={`yt-dlp v${version}`} variant="outlined" size="small" />
       : <CircularProgress size={15} />
   )
 }

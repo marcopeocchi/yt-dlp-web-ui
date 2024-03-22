@@ -1,6 +1,9 @@
+import DeleteIcon from '@mui/icons-material/Delete'
+import DownloadIcon from '@mui/icons-material/Download'
+import DownloadDoneIcon from '@mui/icons-material/DownloadDone'
+import StopCircleIcon from '@mui/icons-material/StopCircle'
 import {
   Box,
-  Button,
   Grid,
   IconButton,
   LinearProgress,
@@ -17,11 +20,7 @@ import {
 import { useRecoilValue } from 'recoil'
 import { activeDownloadsState } from '../atoms/downloads'
 import { useRPC } from '../hooks/useRPC'
-import { ellipsis, formatSpeedMiB, formatSize } from "../utils"
-import DownloadIcon from '@mui/icons-material/Download'
-import DownloadDoneIcon from '@mui/icons-material/DownloadDone'
-import StopCircleIcon from '@mui/icons-material/StopCircle'
-import DeleteIcon from '@mui/icons-material/Delete'
+import { formatSize, formatSpeedMiB } from "../utils"
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
@@ -38,7 +37,7 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
   )
 }
 
-const DownloadsListView: React.FC = () => {
+const DownloadsTableView: React.FC = () => {
   const downloads = useRecoilValue(activeDownloadsState)
 
   const { client } = useRPC()
@@ -90,7 +89,7 @@ const DownloadsListView: React.FC = () => {
                         : <DownloadIcon color="primary" />
                       }
                     </TableCell>
-                    <TableCell>{ellipsis(download.info.title, 75)}</TableCell>
+                    <TableCell>{download.info.title}</TableCell>
                     <TableCell align="right">{formatSpeedMiB(download.progress.speed)}</TableCell>
                     <TableCell align="right">
                       <LinearProgressWithLabel
@@ -132,4 +131,4 @@ const DownloadsListView: React.FC = () => {
   )
 }
 
-export default DownloadsListView
+export default DownloadsTableView

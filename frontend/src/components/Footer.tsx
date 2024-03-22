@@ -1,5 +1,5 @@
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
-import { AppBar, Toolbar } from '@mui/material'
+import { AppBar, Chip, Divider, Toolbar } from '@mui/material'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
@@ -30,17 +30,17 @@ const Footer: React.FC = () => {
         fontSize: 14,
         display: 'flex', gap: 1, justifyContent: 'space-between'
       }}>
-        <div style={{ display: 'flex', gap: 2 }}>
-          <div>RPC v3.0.6</div>
-          <div></div>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          <Chip label="RPC v3.0.6" variant="outlined" size="small" />
+          <Divider orientation="vertical" flexItem />
           <VersionIndicator />
         </div>
-        <div style={{ display: 'flex', gap: 1, 'alignItems': 'center' }}>
+        <div style={{ display: 'flex', gap: 4, 'alignItems': 'center' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
             flexWrap: 'wrap',
-            marginRight: '8px',
+            marginRight: 'px',
             gap: 3,
           }}>
             <SettingsEthernet />
@@ -48,6 +48,7 @@ const Footer: React.FC = () => {
               {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}
             </span>
           </div>
+          <Divider orientation="vertical" flexItem />
           <Suspense fallback={i18n.t('loadingLabel')}>
             <FreeSpaceIndicator />
           </Suspense>
