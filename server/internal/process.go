@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"regexp"
+	"slices"
 	"sync"
 	"syscall"
 
@@ -15,7 +16,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcopeocchi/fazzoletti/slices"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rx"
@@ -67,13 +67,13 @@ type DownloadOutput struct {
 func (p *Process) Start() {
 	// escape bash variable escaping and command piping, you'll never know
 	// what they might come with...
-	p.Params = slices.Filter(p.Params, func(e string) bool {
+	p.Params = slices.DeleteFunc(p.Params, func(e string) bool {
 		match, _ := regexp.MatchString(`(\$\{)|(\&\&)`, e)
-		return !match
+		return match
 	})
 
-	p.Params = slices.Filter(p.Params, func(e string) bool {
-		return e != ""
+	p.Params = slices.DeleteFunc(p.Params, func(e string) bool {
+		return e == ""
 	})
 
 	out := DownloadOutput{
@@ -101,7 +101,7 @@ func (p *Process) Start() {
 	}
 
 	// if user asked to manually override the output path...
-	if !(slices.Includes(params, "-P") || slices.Includes(params, "--paths")) {
+	if !(slices.Contains(params, "-P") || slices.Contains(params, "--paths")) {
 		params = append(params, "-o")
 		params = append(params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
 	}
