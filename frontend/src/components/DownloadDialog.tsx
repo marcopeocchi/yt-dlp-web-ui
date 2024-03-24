@@ -109,7 +109,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
       if (pickedAudioFormat !== '') codes.push(pickedAudioFormat)
       if (pickedBestFormat !== '') codes.push(pickedBestFormat)
 
-      await new Promise(r => setTimeout(r, 200))
+      await new Promise(r => setTimeout(r, 10))
       await client.download({
         url: immediate || line,
         args: `${argsBuilder.toString()} ${toFormatArgs(codes)} ${downloadTemplate}`,
