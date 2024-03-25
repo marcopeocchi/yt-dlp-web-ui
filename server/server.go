@@ -30,6 +30,15 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+type RunConfig struct {
+	Host        string
+	Port        int
+	App         fs.FS
+	DBPath      string
+	LogFile     string
+	FileLogging bool
+}
+
 type serverConfig struct {
 	frontend fs.FS
 	logger   *slog.Logger
@@ -40,19 +49,37 @@ type serverConfig struct {
 	mq       *internal.MessageQueue
 }
 
-func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
+func RunBlocking(cfg *RunConfig) {
 	var mdb internal.MemoryDB
 
+	logWriters := []io.Writer{
+		os.Stdout,
+		logging.NewObservableLogger(),
+	}
+
+	if cfg.FileLogging {
+		logger, err := logging.NewRotableLogger(cfg.LogFile)
+		if err != nil {
+			panic(err)
+		}
+
+		go func() {
+			for {
+				time.Sleep(time.Hour * 24)
+				logger.Rotate()
+			}
+		}()
+
+		logWriters = append(logWriters, logger)
+	}
+
 	logger := slog.New(
-		slog.NewTextHandler(
-			io.MultiWriter(os.Stdout, logging.NewObservableLogger()),
-			&slog.HandlerOptions{},
-		),
+		slog.NewTextHandler(io.MultiWriter(logWriters...), &slog.HandlerOptions{}),
 	)
 
 	mdb.Restore(logger)
 
-	db, err := sql.Open("sqlite", dbPath)
+	db, err := sql.Open("sqlite", cfg.DBPath)
 	if err != nil {
 		logger.Error("failed to open database", slog.String("err", err.Error()))
 	}
@@ -66,10 +93,10 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	go mq.Subscriber()
 
 	srv := newServer(serverConfig{
-		frontend: frontend,
+		frontend: cfg.App,
 		logger:   logger,
-		host:     host,
-		port:     port,
+		host:     cfg.Host,
+		port:     cfg.Port,
 		mdb:      &mdb,
 		mq:       mq,
 		db:       db,
@@ -79,11 +106,13 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	go autoPersist(time.Minute*5, &mdb, logger)
 
 	network := "tcp"
-	address := fmt.Sprintf("%s:%d", host, port)
-	if strings.HasPrefix(host, "/") {
+	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+
+	if strings.HasPrefix(cfg.Host, "/") {
 		network = "unix"
-		address = host
+		address = cfg.Host
 	}
+
 	listener, err := net.Listen(network, address)
 	if err != nil {
 		logger.Error("failed to listen", slog.String("err", err.Error()))

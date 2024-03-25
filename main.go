@@ -30,6 +30,9 @@ var (
 	userFromEnv = os.Getenv("USERNAME")
 	passFromEnv = os.Getenv("PASSWORD")
 
+	logFile           string
+	enableFileLogging bool
+
 	//go:embed frontend/dist/index.html
 	//go:embed frontend/dist/assets/*
 	frontend embed.FS
@@ -46,6 +49,9 @@ func init() {
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 	flag.StringVar(&sessionFilePath, "session", ".", "session file path")
 	flag.StringVar(&localDatabasePath, "db", "local.db", "local database path")
+
+	flag.BoolVar(&enableFileLogging, "fl", false, "enable outputting logs to a file")
+	flag.StringVar(&logFile, "lf", "yt-dlp-webui.log", "set log file location")
 
 	flag.BoolVar(&requireAuth, "auth", false, "Enable RPC authentication")
 	flag.StringVar(&username, "user", userFromEnv, "Username required for auth")
@@ -79,5 +85,12 @@ func main() {
 		log.Println(cli.BgRed, "config", cli.Reset, err)
 	}
 
-	server.RunBlocking(c.Host, c.Port, frontend, localDatabasePath)
+	server.RunBlocking(&server.RunConfig{
+		Host:        c.Host,
+		Port:        c.Port,
+		App:         frontend,
+		DBPath:      localDatabasePath,
+		FileLogging: enableFileLogging,
+		LogFile:     logFile,
+	})
 }
