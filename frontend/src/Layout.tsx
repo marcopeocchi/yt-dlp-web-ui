@@ -163,7 +163,7 @@ export default function Layout() {
           <Outlet />
         </Box>
       </Box>
-      <Footer></Footer>
+      <Footer />
       <Toaster />
     </ThemeProvider>
   )

@@ -274,7 +274,7 @@ export default function Downloaded() {
         </List>
       </Paper>
       <SpeedDial
-        ariaLabel="SpeedDial basic example"
+        ariaLabel='archive actions'
         sx={{ position: 'absolute', bottom: 64, right: 24 }}
         icon={<SpeedDialIcon />}
       >

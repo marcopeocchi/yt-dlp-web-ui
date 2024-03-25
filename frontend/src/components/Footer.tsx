@@ -32,7 +32,6 @@ const Footer: React.FC = () => {
       }}>
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <Chip label="RPC v3.0.6" variant="outlined" size="small" />
-          <Divider orientation="vertical" flexItem />
           <VersionIndicator />
         </div>
         <div style={{ display: 'flex', gap: 4, 'alignItems': 'center' }}>
