@@ -15,3 +15,4 @@ config.yml
 cookies.txt
 __debug*
 ui/
+.idea

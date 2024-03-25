@@ -7,10 +7,12 @@ import (
 	"io"
 	"io/fs"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/rpc"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -76,9 +78,20 @@ func RunBlocking(host string, port int, frontend fs.FS, dbPath string) {
 	go gracefulShutdown(srv, &mdb)
 	go autoPersist(time.Minute*5, &mdb, logger)
 
-	logger.Info("yt-dlp-webui started", slog.Int("port", port))
+	network := "tcp"
+	address := fmt.Sprintf("%s:%d", host, port)
+	if strings.HasPrefix(host, "/") {
+		network = "unix"
+		address = host
+	}
+	listener, err := net.Listen(network, address)
+	if err != nil {
+		logger.Error("failed to listen", slog.String("err", err.Error()))
+		return
+	}
 
-	if err := srv.ListenAndServe(); err != nil {
+	logger.Info("yt-dlp-webui started", slog.String("address", address))
+	if err := srv.Serve(listener); err != nil {
 		logger.Warn("http server stopped", slog.String("err", err.Error()))
 	}
 }
@@ -135,10 +148,7 @@ func newServer(c serverConfig) *http.Server {
 	// Logging
 	r.Route("/log", logging.ApplyRouter())
 
-	return &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", c.host, c.port),
-		Handler: r,
-	}
+	return &http.Server{Handler: r}
 }
 
 func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
