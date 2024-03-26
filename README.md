@@ -1,9 +1,4 @@
 > [!IMPORTANT]
-> I'm looking for a co-mantainer.  
-> Lately I'm not feeling well both physically and mentally.
----
-
-> [!IMPORTANT]
 > Major frontend refactoring in progress.  
 > I won't add features or fix minor issues until completition.
 ---
