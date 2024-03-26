@@ -61,14 +61,22 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
           /> :
           <Skeleton variant="rectangular" height={180} />
         }
+        {download.progress.percentage ?
+          <LinearProgress
+            variant="determinate"
+            value={percentageToNumber()}
+            color={isCompleted() ? "success" : "primary"}
+          /> :
+          null
+        }
         <CardContent>
           {download.info.title !== '' ?
             <Typography gutterBottom variant="h6" component="div">
-              {ellipsis(download.info.title, 54)}
+              {ellipsis(download.info.title, 100)}
             </Typography> :
             <Skeleton />
           }
-          <Stack direction="row" spacing={1} py={2}>
+          <Stack direction="row" spacing={0.5} py={1}>
             <Chip
               label={
                 isCompleted()
@@ -90,14 +98,6 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
             </Typography>
             <Resolution resolution={download.info.resolution} />
           </Stack>
-          {download.progress.percentage ?
-            <LinearProgress
-              variant="determinate"
-              value={percentageToNumber()}
-              color={isCompleted() ? "secondary" : "primary"}
-            /> :
-            null
-          }
         </CardContent>
       </CardActionArea>
       <CardActions>

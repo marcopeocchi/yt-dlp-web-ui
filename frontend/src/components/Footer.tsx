@@ -7,10 +7,14 @@ import { connectedState } from '../atoms/status'
 import { useI18n } from '../hooks/useI18n'
 import FreeSpaceIndicator from './FreeSpaceIndicator'
 import VersionIndicator from './VersionIndicator'
+import DownloadIcon from '@mui/icons-material/Download'
+import { totalDownloadSpeedState } from '../atoms/ui'
+import { formatSpeedMiB } from '../utils'
 
 const Footer: React.FC = () => {
   const settings = useRecoilValue(settingsState)
   const isConnected = useRecoilValue(connectedState)
+  const totalDownloadSpeed = useRecoilValue(totalDownloadSpeedState)
 
   const mode = settings.theme
   const { i18n } = useI18n()
@@ -42,6 +46,11 @@ const Footer: React.FC = () => {
             marginRight: 'px',
             gap: 3,
           }}>
+            <DownloadIcon />
+            <span>
+              {formatSpeedMiB(totalDownloadSpeed)}
+            </span>
+            <Divider orientation="vertical" flexItem />
             <SettingsEthernet />
             <span>
               {isConnected ? settings.serverAddr : i18n.t('notConnectedText')}

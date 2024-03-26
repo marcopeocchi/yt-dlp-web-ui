@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { loadingDownloadsState } from '../atoms/downloads'
+import { activeDownloadsState, loadingDownloadsState } from '../atoms/downloads'
 import { listViewState } from '../atoms/settings'
-import { loadingAtom } from '../atoms/ui'
+import { loadingAtom, totalDownloadSpeedState } from '../atoms/ui'
 import DownloadsCardView from './DownloadsCardView'
 import DownloadsTableView from './DownloadsTableView'
 
@@ -12,10 +12,18 @@ const Downloads: React.FC = () => {
 
   const [isLoading, setIsLoading] = useRecoilState(loadingAtom)
 
+  const downloads = useRecoilValue(activeDownloadsState)
+  const [, setTotalDownloadSpeed] = useRecoilState(totalDownloadSpeedState)
+
+  useEffect(() => {
+    setTotalDownloadSpeed(
+      downloads.map(d => d.progress.speed).reduce((curr, next) => curr + next)
+    )
+  }, [downloads])
+
   useEffect(() => {
     if (loadingDownloads) {
-      setIsLoading(true)
-      return
+      return setIsLoading(true)
     }
     setIsLoading(false)
   }, [loadingDownloads, isLoading])

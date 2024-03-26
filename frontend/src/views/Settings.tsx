@@ -130,7 +130,7 @@ export default function Settings() {
    * Updates yt-dlp binary via RPC
    */
   const updateBinary = () => {
-    client.updateExecutable().then(() => pushMessage(i18n.t('toastUpdated')))
+    client.updateExecutable().then(() => pushMessage(i18n.t('toastUpdated'), 'success'))
   }
 
   return (
@@ -204,7 +204,7 @@ export default function Settings() {
                       label={i18n.t('languageSelect')}
                       onChange={handleLanguageChange}
                     >
-                      {languages.map(l => (
+                      {languages.toSorted((a, b) => a.localeCompare(b)).map(l => (
                         <MenuItem value={l} key={l}>
                           {capitalize(l)}
                         </MenuItem>

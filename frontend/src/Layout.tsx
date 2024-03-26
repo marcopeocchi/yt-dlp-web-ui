@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react'
+import ArchiveIcon from '@mui/icons-material/Archive'
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
-import DownloadIcon from '@mui/icons-material/Download'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import TerminalIcon from '@mui/icons-material/Terminal'
@@ -116,7 +116,7 @@ export default function Layout() {
             }>
               <ListItemButton>
                 <ListItemIcon>
-                  <DownloadIcon />
+                  <ArchiveIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('archiveButtonLabel')} />
               </ListItemButton>
