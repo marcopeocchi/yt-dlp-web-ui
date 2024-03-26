@@ -17,7 +17,7 @@ const Downloads: React.FC = () => {
 
   useEffect(() => {
     setTotalDownloadSpeed(
-      downloads.map(d => d.progress.speed).reduce((curr, next) => curr + next)
+      downloads.map(d => d.progress.speed).reduce((curr, next) => curr + next, 0)
     )
   }, [downloads])
 
