@@ -8,7 +8,7 @@ import Splash from '../components/Splash'
 
 export default function Home() {
   return (
-    <Container maxWidth="lg" sx={{ mt: 2, mb: 8 }}>
+    <Container maxWidth="xl" sx={{ mt: 2, mb: 8 }}>
       <LoadingBackdrop />
       <Splash />
       <Downloads />

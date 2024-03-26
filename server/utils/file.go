@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"io/fs"
 	"regexp"
 	"strings"
@@ -20,10 +18,4 @@ func IsValidEntry(d fs.DirEntry) bool {
 	return !strings.HasPrefix(d.Name(), ".") &&
 		!strings.HasSuffix(d.Name(), ".part") &&
 		!strings.HasSuffix(d.Name(), ".ytdl")
-}
-
-func ShaSumString(path string) string {
-	h := sha256.New()
-	h.Write([]byte(path))
-	return hex.EncodeToString(h.Sum(nil))
 }

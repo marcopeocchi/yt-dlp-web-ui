@@ -207,7 +207,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
         backgroundColor: (theme) => theme.palette.background.default,
         minHeight: (theme) => `calc(99vh - ${theme.mixins.toolbar.minHeight}px)`
       }}>
-        <Container sx={{ my: 4 }} >
+        <Container sx={{ my: 4 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Paper

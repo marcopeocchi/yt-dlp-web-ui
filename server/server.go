@@ -105,8 +105,10 @@ func RunBlocking(cfg *RunConfig) {
 	go gracefulShutdown(srv, &mdb)
 	go autoPersist(time.Minute*5, &mdb, logger)
 
-	network := "tcp"
-	address := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	var (
+		network = "tcp"
+		address = fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+	)
 
 	if strings.HasPrefix(cfg.Host, "/") {
 		network = "unix"
@@ -120,6 +122,7 @@ func RunBlocking(cfg *RunConfig) {
 	}
 
 	logger.Info("yt-dlp-webui started", slog.String("address", address))
+
 	if err := srv.Serve(listener); err != nil {
 		logger.Warn("http server stopped", slog.String("err", err.Error()))
 	}

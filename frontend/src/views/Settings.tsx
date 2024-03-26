@@ -134,12 +134,12 @@ export default function Settings() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={12} lg={12}>
           <Paper
             sx={{
-              p: 2,
+              p: 2.5,
               display: 'flex',
               flexDirection: 'column',
               minHeight: 240,

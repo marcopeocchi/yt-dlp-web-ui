@@ -4,10 +4,10 @@ import { loadingDownloadsState } from '../atoms/downloads'
 import { listViewState } from '../atoms/settings'
 import { loadingAtom } from '../atoms/ui'
 import DownloadsCardView from './DownloadsCardView'
-import DownloadsListView from './DownloadsTableView'
+import DownloadsTableView from './DownloadsTableView'
 
 const Downloads: React.FC = () => {
-  const listView = useRecoilValue(listViewState)
+  const tableView = useRecoilValue(listViewState)
   const loadingDownloads = useRecoilValue(loadingDownloadsState)
 
   const [isLoading, setIsLoading] = useRecoilState(loadingAtom)
@@ -20,15 +20,9 @@ const Downloads: React.FC = () => {
     setIsLoading(false)
   }, [loadingDownloads, isLoading])
 
-  if (listView) {
-    return (
-      <DownloadsListView />
-    )
-  }
+  if (tableView) return <DownloadsTableView />
 
-  return (
-    <DownloadsCardView />
-  )
+  return <DownloadsCardView />
 }
 
 export default Downloads

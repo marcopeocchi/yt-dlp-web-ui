@@ -182,7 +182,7 @@ export default function Downloaded() {
 
   return (
     <Container
-      maxWidth="lg"
+      maxWidth="xl"
       sx={{ mt: 4, mb: 4, height: '100%' }}
       onClick={() => setShowMenu(false)}
     >

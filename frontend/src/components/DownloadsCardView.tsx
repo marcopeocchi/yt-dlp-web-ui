@@ -16,10 +16,10 @@ const DownloadsCardView: React.FC = () => {
   const abort = (id: string) => client.kill(id)
 
   return (
-    <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }} pt={2}>
+    <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12, xl: 12 }} pt={2}>
       {
         downloads.map(download => (
-          <Grid item xs={4} sm={8} md={6} key={download.id}>
+          <Grid item xs={4} sm={8} md={6} xl={4} key={download.id}>
             <DownloadCard
               download={download}
               onStop={() => abort(download.id)}
