@@ -1,5 +1,6 @@
-import { atom } from 'recoil'
+import { atom, selector } from 'recoil'
 import { RPCResult } from '../types'
+import { activeDownloadsState } from './downloads'
 
 export const loadingAtom = atom({
   key: 'loadingAtom',
@@ -11,7 +12,9 @@ export const optimisticDownloadsState = atom<RPCResult[]>({
   default: []
 })
 
-export const totalDownloadSpeedState = atom<number>({
+export const totalDownloadSpeedState = selector<number>({
   key: 'totalDownloadSpeedState',
-  default: 0
+  get: ({ get }) => get(activeDownloadsState)
+    .map(d => d.progress.speed)
+    .reduce((curr, next) => curr + next, 0)
 })
