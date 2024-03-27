@@ -92,6 +92,7 @@ To enable it just go to the settings page and enable the **Enable video/audio fo
     - As before server address is not specified or simply yt-dlp process takes a lot of time to fire up. (Forking yt-dlp isn't fast especially if you have a lower-end/low-power NAS/server/desktop where the server is running)
 
 ## [Docker](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui) installation
+## Docker run
 ```sh
 docker pull marcobaobao/yt-dlp-webui
 docker run -d -p 3033:3033 -v <your dir>:/downloads marcobaobao/yt-dlp-webui
@@ -133,6 +134,17 @@ docker run -d \
     -v /path/to/downloads:/downloads \
     marcobaobao/yt-dlp-webui \
     --qs 2
+```
+
+### Docker Compose
+```yaml
+services:
+  yt-dlp-webui:
+    ports:
+      - 3033:3033
+    volumes:
+      - <your dir>:/downloads # replace <your dir> with a directory on your host system
+    image: marcobaobao/yt-dlp-webui
 ```
 
 ## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
