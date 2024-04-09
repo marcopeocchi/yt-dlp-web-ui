@@ -270,6 +270,12 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 }
 
 func (p *Process) SetPending() {
+	// Since video's title isn't available yet, fill in with the URL.
+	p.Info = DownloadInfo{
+		URL:       p.Url,
+		Title:     p.Url,
+		CreatedAt: time.Now(),
+	}
 	p.Progress.Status = StatusPending
 }
 
