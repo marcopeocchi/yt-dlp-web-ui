@@ -17,9 +17,9 @@ type LoginRequest struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	req := new(LoginRequest)
-	err := json.NewDecoder(r.Body).Decode(req)
-	if err != nil {
+	var req LoginRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

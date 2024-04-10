@@ -29,17 +29,15 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		return err
 	}
 
-	m := metadata{}
+	var m metadata
 
-	err = cmd.Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		return err
 	}
 
 	logger.Info("decoding metadata", slog.String("url", req.URL))
 
-	err = json.NewDecoder(stdout).Decode(&m)
-	if err != nil {
+	if err := json.NewDecoder(stdout).Decode(&m); err != nil {
 		return err
 	}
 

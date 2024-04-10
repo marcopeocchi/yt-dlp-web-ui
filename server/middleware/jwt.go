@@ -11,20 +11,18 @@ import (
 )
 
 func validateToken(tokenValue string) error {
-	if tokenValue == "" {
-		return errors.New("invalid token")
-	}
-
-	token, _ := jwt.Parse(tokenValue, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenValue, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
+	if err != nil {
+		return err
+	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		expiresAt, err := time.Parse(time.RFC3339, claims["expiresAt"].(string))
-
 		if err != nil {
 			return err
 		}

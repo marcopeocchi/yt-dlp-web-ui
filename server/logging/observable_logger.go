@@ -9,7 +9,7 @@ import (
 var (
 	logsChan       = make(chan rxgo.Item, 100)
 	logsObservable = rxgo.
-			FromChannel(logsChan, rxgo.WithBackPressureStrategy(rxgo.Drop)).
+			FromEventSource(logsChan, rxgo.WithBackPressureStrategy(rxgo.Drop)).
 			BufferWithTime(rxgo.WithDuration(time.Millisecond * 500))
 )
 
@@ -20,9 +20,7 @@ func NewObservableLogger() *ObservableLogger {
 }
 
 func (o *ObservableLogger) Write(p []byte) (n int, err error) {
-	go func() {
-		logsChan <- rxgo.Of(string(p))
-	}()
+	logsChan <- rxgo.Of(string(p))
 
 	n = len(p)
 	err = nil
