@@ -154,6 +154,7 @@ func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
 	err := updater.UpdateExecutable()
 	if err != nil {
 		*updated = true
+		s.logger.Info("Succesfully updated yt-dlp")
 		return err
 	}
 	*updated = false
