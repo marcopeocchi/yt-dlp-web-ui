@@ -70,11 +70,10 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 			proc := &Process{
 				Url:      meta.OriginalURL,
 				Progress: DownloadProgress{},
-				Output: DownloadOutput{
-					Filename: req.Rename,
-				},
-				Info:   meta,
-				Params: req.Params,
+				Output:   DownloadOutput{Filename: req.Rename},
+				Info:     meta,
+				Params:   req.Params,
+				Logger:   logger,
 			}
 
 			proc.Info.URL = meta.OriginalURL
