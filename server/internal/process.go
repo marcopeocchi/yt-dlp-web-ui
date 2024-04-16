@@ -55,8 +55,9 @@ type Process struct {
 }
 
 type DownloadOutput struct {
-	Path     string
-	Filename string
+	Path          string
+	Filename      string
+	SavedFilePath string `json:"savedFilePath"`
 }
 
 // Starts spawns/forks a new yt-dlp process and parse its stdout.
@@ -90,6 +91,8 @@ func (p *Process) Start() {
 	}
 
 	buildFilename(&p.Output)
+
+	go p.GetFileName(&out)
 
 	params := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
@@ -267,6 +270,24 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	info.Best = best
 
 	return info, nil
+}
+
+func (p *Process) GetFileName(o *DownloadOutput) error {
+	cmd := exec.Command(
+		config.Instance().DownloaderPath,
+		"--print", "filename",
+		"-o", fmt.Sprintf("%s/%s", o.Path, o.Filename),
+		p.Url,
+	)
+	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+
+	out, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+
+	p.Output.SavedFilePath = strings.Trim(string(out), "\n")
+	return nil
 }
 
 func (p *Process) SetPending() {

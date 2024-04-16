@@ -16,8 +16,10 @@ import {
   Typography
 } from '@mui/material'
 import { useCallback } from 'react'
+import { useRecoilValue } from 'recoil'
+import { serverURL } from '../atoms/settings'
 import { RPCResult } from '../types'
-import { ellipsis, formatSpeedMiB, mapProcessStatus, formatSize } from '../utils'
+import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
 
 type Props = {
   download: RPCResult
@@ -35,6 +37,8 @@ const Resolution: React.FC<{ resolution?: string }> = ({ resolution }) => {
 }
 
 const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
+  const serverAddr = useRecoilValue(serverURL)
+
   const isCompleted = useCallback(
     () => download.progress.percentage === '-1',
     [download.progress.percentage]
@@ -46,6 +50,16 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
       : Number(download.progress.percentage.replace('%', '')),
     [download.progress.percentage, isCompleted]
   )
+
+  const viewFile = (path: string) => {
+    const encoded = base64URLEncode(path)
+    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
+  }
+
+  const downloadFile = (path: string) => {
+    const encoded = base64URLEncode(path)
+    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
+  }
 
   return (
     <Card>
@@ -109,6 +123,26 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
         >
           {isCompleted() ? "Clear" : "Stop"}
         </Button>
+        {isCompleted() &&
+          <>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={() => downloadFile(download.output.savedFilePath)}
+            >
+              Download
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              onClick={() => viewFile(download.output.savedFilePath)}
+            >
+              View
+            </Button>
+          </>
+        }
       </CardActions>
     </Card>
   )

@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -8,12 +10,14 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
@@ -193,4 +197,51 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
+}
+
+func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		procs := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessResponse) bool {
+			return e.Progress.Status != 2 // status completed
+		})
+
+		var (
+			buff      bytes.Buffer
+			zipWriter = zip.NewWriter(&buff)
+		)
+
+		for _, p := range procs {
+			wr, err := zipWriter.Create(filepath.Base(p.Output.SavedFilePath))
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			fd, err := os.Open(p.Output.SavedFilePath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			_, err = io.Copy(wr, fd)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+
+		err := zipWriter.Close()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Add(
+			"Content-Disposition",
+			"inline; filename=download-archive-"+time.Now().Format(time.RFC3339)+".zip",
+		)
+		w.Header().Set("Content-Type", "application/zip")
+
+		io.Copy(w, &buff)
+	}
 }

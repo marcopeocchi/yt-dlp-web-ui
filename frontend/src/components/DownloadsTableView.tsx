@@ -1,14 +1,15 @@
 import DeleteIcon from '@mui/icons-material/Delete'
 import DownloadIcon from '@mui/icons-material/Download'
 import DownloadDoneIcon from '@mui/icons-material/DownloadDone'
+import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import SmartDisplayIcon from '@mui/icons-material/SmartDisplay'
 import StopCircleIcon from '@mui/icons-material/StopCircle'
 import {
   Box,
-  Grid,
+  ButtonGroup,
   IconButton,
   LinearProgress,
   LinearProgressProps,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -19,8 +20,9 @@ import {
 } from "@mui/material"
 import { useRecoilValue } from 'recoil'
 import { activeDownloadsState } from '../atoms/downloads'
+import { serverURL } from '../atoms/settings'
 import { useRPC } from '../hooks/useRPC'
-import { formatSize, formatSpeedMiB } from "../utils"
+import { base64URLEncode, formatSize, formatSpeedMiB } from "../utils"
 
 function LinearProgressWithLabel(props: LinearProgressProps & { value: number }) {
   return (
@@ -38,11 +40,22 @@ function LinearProgressWithLabel(props: LinearProgressProps & { value: number })
 }
 
 const DownloadsTableView: React.FC = () => {
+  const serverAddr = useRecoilValue(serverURL)
   const downloads = useRecoilValue(activeDownloadsState)
 
   const { client } = useRPC()
 
   const abort = (id: string) => client.kill(id)
+
+  const viewFile = (path: string) => {
+    const encoded = base64URLEncode(path)
+    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
+  }
+
+  const downloadFile = (path: string) => {
+    const encoded = base64URLEncode(path)
+    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
+  }
 
   return (
     <TableContainer
@@ -108,13 +121,31 @@ const DownloadsTableView: React.FC = () => {
                   {new Date(download.info.created_at).toLocaleString()}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton
-                    size="small"
-                    onClick={() => abort(download.id)}
-                  >
-                    {download.progress.percentage === '-1' ? <DeleteIcon /> : <StopCircleIcon />}
+                  <ButtonGroup>
+                    <IconButton
+                      size="small"
+                      onClick={() => abort(download.id)}
+                    >
+                      {download.progress.percentage === '-1' ? <DeleteIcon /> : <StopCircleIcon />}
 
-                  </IconButton>
+                    </IconButton>
+                    {download.progress.percentage === '-1' &&
+                      <>
+                        <IconButton
+                          size="small"
+                          onClick={() => viewFile(download.output.savedFilePath)}
+                        >
+                          <SmartDisplayIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => downloadFile(download.output.savedFilePath)}
+                        >
+                          <FileDownloadIcon />
+                        </IconButton>
+                      </>
+                    }
+                  </ButtonGroup>
                 </TableCell>
               </TableRow>
             ))

@@ -49,6 +49,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -98,6 +99,7 @@ languages:
     templatesEditorContentLabel: Vorlagen Inhalt
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   french:
     urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
     statusTitle: Statut
@@ -149,6 +151,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   italian:
     urlInput: URL Video (uno per linea)
     statusTitle: Stato
@@ -197,6 +200,7 @@ languages:
     templatesEditorContentLabel: Contentunto template
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   chinese:
     urlInput: 视频 URL
     statusTitle: 状态
@@ -246,6 +250,7 @@ languages:
     templatesEditorContentLabel: 模板内容
     logsTitle: '日志'
     awaitingLogs: '正在等待日志…'
+    bulkDownload: 'Download files in a zip archive'
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -293,6 +298,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
     statusTitle: Статус
@@ -340,6 +346,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -387,6 +394,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -435,6 +443,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -482,6 +491,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
     statusTitle: Статус
@@ -529,6 +539,7 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
     statusTitle: Status
@@ -576,3 +587,4 @@ languages:
     templatesEditorContentLabel: Template content
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
+    bulkDownload: 'Download files in a zip archive'

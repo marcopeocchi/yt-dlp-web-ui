@@ -45,6 +45,9 @@ export type RPCResult = Readonly<{
   id: string
   progress: DownloadProgress
   info: DownloadInfo
+  output: {
+    savedFilePath: string
+  }
 }>
 
 export type RPCParams = {
