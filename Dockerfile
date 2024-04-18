@@ -25,7 +25,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 # -----------------------------------------------------------------------------
 
 # dependencies ----------------------------------------------------------------
-FROM alpine:edge
+FROM alpine:3.19
 
 VOLUME /downloads /config
 
