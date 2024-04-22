@@ -2,6 +2,19 @@ package internal
 
 import "time"
 
+type ProgressTemplate struct {
+	Percentage string  `json:"percentage"`
+	Speed      float32 `json:"speed"`
+	Size       string  `json:"size"`
+	Eta        float32 `json:"eta"`
+}
+
+type DownloadOutput struct {
+	Path          string
+	Filename      string
+	SavedFilePath string `json:"savedFilePath"`
+}
+
 // Progress for the Running call
 type DownloadProgress struct {
 	Status     int     `json:"process_status"`

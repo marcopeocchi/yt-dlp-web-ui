@@ -201,16 +201,20 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		procs := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessResponse) bool {
-			return e.Progress.Status != 2 // status completed
+		ps := slices.DeleteFunc(*mdb.All(), func(e internal.ProcessResponse) bool {
+			return e.Progress.Status != internal.StatusCompleted
 		})
+
+		if len(ps) == 0 {
+			return
+		}
 
 		var (
 			buff      bytes.Buffer
 			zipWriter = zip.NewWriter(&buff)
 		)
 
-		for _, p := range procs {
+		for _, p := range ps {
 			wr, err := zipWriter.Create(filepath.Base(p.Output.SavedFilePath))
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)

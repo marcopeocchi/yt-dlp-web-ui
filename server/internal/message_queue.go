@@ -1,19 +1,22 @@
 package internal
 
 import (
+	"log/slog"
+
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
 type MessageQueue struct {
 	producerCh chan *Process
 	consumerCh chan struct{}
+	logger     *slog.Logger
 }
 
 // Creates a new message queue.
 // By default it will be created with a size equals to nthe number of logical
 // CPU cores.
 // The queue size can be set via the qs flag.
-func NewMessageQueue() *MessageQueue {
+func NewMessageQueue(logger *slog.Logger) *MessageQueue {
 	size := config.Instance().QueueSize
 
 	if size <= 0 {
@@ -23,13 +26,20 @@ func NewMessageQueue() *MessageQueue {
 	return &MessageQueue{
 		producerCh: make(chan *Process, size),
 		consumerCh: make(chan struct{}, size),
+		logger:     logger,
 	}
 }
 
 // Publish a message to the queue and set the task to a peding state.
 func (m *MessageQueue) Publish(p *Process) {
 	p.SetPending()
-	go p.SetMetadata()
+	go func() {
+		err := p.SetMetadata()
+		m.logger.Error(
+			"failed to retrieve metadata",
+			slog.String("err", err.Error()),
+		)
+	}()
 	m.producerCh <- p
 }
 

@@ -89,7 +89,7 @@ func RunBlocking(cfg *RunConfig) {
 		logger.Error("failed to init database", slog.String("err", err.Error()))
 	}
 
-	mq := internal.NewMessageQueue()
+	mq := internal.NewMessageQueue(logger)
 	go mq.Subscriber()
 
 	srv := newServer(serverConfig{
