@@ -28,7 +28,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 FROM cgr.dev/chainguard/wolfi-base
 
 RUN apk update && \
-apk add ffmpeg wget ca-certificates python3 py3-pip
+apk add ffmpeg ca-certificates python3 py3-pip
 
 VOLUME /downloads /config
 
