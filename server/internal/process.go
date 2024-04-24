@@ -168,7 +168,7 @@ func (p *Process) Start() {
 			p.Logger.Info("progress",
 				slog.String("id", p.getShortId()),
 				slog.String("url", p.Url),
-				slog.String("percentege", progress.Percentage),
+				slog.String("percentage", progress.Percentage),
 			)
 		})
 	}()

@@ -26,10 +26,12 @@ func DirectoryTree() (*[]string, error) {
 		children []Node
 	}
 
-	rootPath := config.Instance().DownloadPath
+	var (
+		rootPath = config.Instance().DownloadPath
 
-	stack := internal.NewStack[Node]()
-	flattened := make([]string, 0)
+		stack     = internal.NewStack[Node]()
+		flattened = make([]string, 0)
+	)
 
 	stack.Push(Node{path: rootPath})
 
@@ -37,14 +39,16 @@ func DirectoryTree() (*[]string, error) {
 
 	for stack.IsNotEmpty() {
 		current := stack.Pop().Value
+
 		children, err := os.ReadDir(current.path)
 		if err != nil {
 			return nil, err
 		}
 		for _, entry := range children {
-			childPath := filepath.Join(current.path, entry.Name())
-			childNode := Node{path: childPath}
-
+			var (
+				childPath = filepath.Join(current.path, entry.Name())
+				childNode = Node{path: childPath}
+			)
 			if entry.IsDir() {
 				current.children = append(current.children, childNode)
 				stack.Push(childNode)

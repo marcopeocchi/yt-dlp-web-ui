@@ -6,6 +6,17 @@ import (
 	"github.com/reactivex/rxgo/v2"
 )
 
+/*
+	Logger implementation using the observable pattern.
+	Implements io.Writer interface.
+
+	The observable is an event source which drops everythigng unless there's
+	a subscriber connected.
+
+	The observer implementatios are a http ServerSentEvents handler and a
+	websocket one in handler.go
+*/
+
 var (
 	logsChan       = make(chan rxgo.Item, 100)
 	logsObservable = rxgo.

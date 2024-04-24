@@ -20,17 +20,10 @@ export function validateDomain(url: string): boolean {
   return urlRegex.test(url) || name === 'localhost' && slugRegex.test(slug)
 }
 
-export function isValidURL(url: string): boolean {
-  let urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/
-  return urlRegex.test(url)
-}
-
-export function ellipsis(str: string, lim: number): string {
-  if (str) {
-    return str.length > lim ? `${str.substring(0, lim)}...` : str
-  }
-  return ''
-}
+export const ellipsis = (str: string, lim: number) =>
+  str.length > lim
+    ? `${str.substring(0, lim)}...`
+    : str
 
 export function toFormatArgs(codes: string[]): string {
   if (codes.length > 1) {

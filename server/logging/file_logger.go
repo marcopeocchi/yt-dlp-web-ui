@@ -8,6 +8,15 @@ import (
 	"time"
 )
 
+/*
+	File base logger with log-rotate capabilities.
+	The rotate process must be initiated from an external goroutine.
+
+	After rotation the previous logs file are compressed with gzip algorithm.
+
+	The rotated log follows this naming: [filename].UTC time.gz
+*/
+
 // implements io.Writer interface
 type LogRotateWriter struct {
 	mu       sync.Mutex

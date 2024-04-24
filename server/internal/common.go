@@ -2,6 +2,7 @@ package internal
 
 import "time"
 
+// Used to unmarshall yt-dlp progress
 type ProgressTemplate struct {
 	Percentage string  `json:"percentage"`
 	Speed      float32 `json:"speed"`
@@ -9,6 +10,7 @@ type ProgressTemplate struct {
 	Eta        float32 `json:"eta"`
 }
 
+// Defines where and how the download needs to be saved
 type DownloadOutput struct {
 	Path          string
 	Filename      string
@@ -92,6 +94,7 @@ type SetCookiesRequest struct {
 	Cookies string `json:"cookies"`
 }
 
+// represents a user defined collection of yt-dlp arguments
 type CustomTemplate struct {
 	Id      string `json:"id"`
 	Name    string `json:"name"`

@@ -40,7 +40,7 @@ import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { CliArguments } from '../lib/argsParser'
 import type { DLMetadata } from '../types'
-import { isValidURL, toFormatArgs } from '../utils'
+import { toFormatArgs } from '../utils'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
 
 const Transition = forwardRef(function Transition(
@@ -166,7 +166,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
 
     file
       .split('\n')
-      .filter(u => isValidURL(u))
       .forEach(u => sendUrl(u))
   }
 
