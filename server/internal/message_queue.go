@@ -16,7 +16,7 @@ type MessageQueue struct {
 // By default it will be created with a size equals to nthe number of logical
 // CPU cores.
 // The queue size can be set via the qs flag.
-func NewMessageQueue(logger *slog.Logger) *MessageQueue {
+func NewMessageQueue(l *slog.Logger) *MessageQueue {
 	size := config.Instance().QueueSize
 
 	if size <= 0 {
@@ -26,7 +26,7 @@ func NewMessageQueue(logger *slog.Logger) *MessageQueue {
 	return &MessageQueue{
 		producerCh: make(chan *Process, size),
 		consumerCh: make(chan struct{}, size),
-		logger:     logger,
+		logger:     l,
 	}
 }
 
@@ -34,11 +34,12 @@ func NewMessageQueue(logger *slog.Logger) *MessageQueue {
 func (m *MessageQueue) Publish(p *Process) {
 	p.SetPending()
 	go func() {
-		err := p.SetMetadata()
-		m.logger.Error(
-			"failed to retrieve metadata",
-			slog.String("err", err.Error()),
-		)
+		if err := p.SetMetadata(); err != nil {
+			m.logger.Error(
+				"failed to retrieve metadata",
+				slog.String("err", err.Error()),
+			)
+		}
 	}()
 	m.producerCh <- p
 }
