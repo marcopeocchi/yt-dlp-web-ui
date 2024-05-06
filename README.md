@@ -140,11 +140,14 @@ docker run -d \
 ```yaml
 services:
   yt-dlp-webui:
+    image: marcobaobao/yt-dlp-webui
     ports:
       - 3033:3033
     volumes:
       - <your dir>:/downloads # replace <your dir> with a directory on your host system
-    image: marcobaobao/yt-dlp-webui
+    healthcheck:
+      test: curl -f http://localhost:3033 || exit 1
+    restart: unless-stopped
 ```
 
 ## [Prebuilt binaries](https://github.com/marcopeocchi/yt-dlp-web-ui/releases) installation
