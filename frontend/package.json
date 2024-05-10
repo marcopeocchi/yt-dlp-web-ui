@@ -1,6 +1,6 @@
 {
   "name": "yt-dlp-webui",
-  "version": "2.10.0",
+  "version": "3.0.8",
   "description": "Frontend compontent of yt-dlp-webui",
   "scripts": {
     "dev": "vite",
@@ -10,16 +10,16 @@
   "license": "MPL-2.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
-    "@fontsource/roboto": "^5.0.8",
-    "@fontsource/roboto-mono": "^5.0.16",
-    "@mui/icons-material": "^5.15.4",
-    "@mui/material": "^5.15.4",
-    "fp-ts": "^2.16.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.13",
+    "@fontsource/roboto-mono": "^5.0.18",
+    "@mui/icons-material": "^5.15.16",
+    "@mui/material": "^5.15.16",
+    "fp-ts": "^2.16.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.0",
     "recoil": "^0.7.7",
     "rxjs": "^7.8.1"
   },
@@ -32,7 +32,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "typescript": "^5.4.3",
-    "vite": "^5.2.6",
+    "vite": "^5.2.11",
     "million": "^3.0.6"
   }
 }
