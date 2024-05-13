@@ -88,7 +88,7 @@ func (m *MemoryDB) Persist() error {
 }
 
 // Restore a persisted state
-func (m *MemoryDB) Restore(logger *slog.Logger) {
+func (m *MemoryDB) Restore(mq *MessageQueue, logger *slog.Logger) {
 	fd, err := os.Open("session.dat")
 	if err != nil {
 		return
@@ -114,7 +114,7 @@ func (m *MemoryDB) Restore(logger *slog.Logger) {
 		m.table.Store(proc.Id, restored)
 
 		if restored.Progress.Percentage != "-1" {
-			go restored.Start()
+			mq.Publish(restored)
 		}
 	}
 }

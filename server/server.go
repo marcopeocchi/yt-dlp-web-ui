@@ -77,8 +77,6 @@ func RunBlocking(cfg *RunConfig) {
 		slog.NewTextHandler(io.MultiWriter(logWriters...), &slog.HandlerOptions{}),
 	)
 
-	mdb.Restore(logger)
-
 	db, err := sql.Open("sqlite", cfg.DBPath)
 	if err != nil {
 		logger.Error("failed to open database", slog.String("err", err.Error()))
@@ -90,7 +88,9 @@ func RunBlocking(cfg *RunConfig) {
 	}
 
 	mq := internal.NewMessageQueue(logger)
+
 	go mq.Subscriber()
+	go mdb.Restore(mq, logger)
 
 	srv := newServer(serverConfig{
 		frontend: cfg.App,
