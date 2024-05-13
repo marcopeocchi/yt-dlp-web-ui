@@ -2,6 +2,7 @@ package internal
 
 import (
 	"log/slog"
+	"runtime"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
@@ -9,6 +10,7 @@ import (
 type MessageQueue struct {
 	producerCh chan *Process
 	consumerCh chan struct{}
+	metadataCh chan struct{}
 	logger     *slog.Logger
 }
 
@@ -26,6 +28,7 @@ func NewMessageQueue(l *slog.Logger) *MessageQueue {
 	return &MessageQueue{
 		producerCh: make(chan *Process, size),
 		consumerCh: make(chan struct{}, size),
+		metadataCh: make(chan struct{}, runtime.NumCPU()),
 		logger:     l,
 	}
 }
@@ -33,6 +36,8 @@ func NewMessageQueue(l *slog.Logger) *MessageQueue {
 // Publish a message to the queue and set the task to a peding state.
 func (m *MessageQueue) Publish(p *Process) {
 	p.SetPending()
+	m.metadataCh <- struct{}{}
+
 	go func() {
 		if err := p.SetMetadata(); err != nil {
 			m.logger.Error(
@@ -40,14 +45,9 @@ func (m *MessageQueue) Publish(p *Process) {
 				slog.String("err", err.Error()),
 			)
 		}
+		<-m.metadataCh
 	}()
-	m.producerCh <- p
-}
 
-// Publish a message to the queue and set the task to a peding state.
-// ENSURE P IS PART OF A PLAYLIST
-// Needs a further review
-func (m *MessageQueue) PublishPlaylistEntry(p *Process) {
 	m.producerCh <- p
 }
 

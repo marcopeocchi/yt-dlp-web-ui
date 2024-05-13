@@ -55,9 +55,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 			slog.Int("count", m.Count),
 		)
 
-		for i, meta := range m.Entries {
-			delta := time.Second.Microseconds() * int64(i+1)
-
+		for _, meta := range m.Entries {
 			// detect playlist title from metadata since each playlist entry will be
 			// treated as an individual download
 			req.Rename = strings.Replace(
@@ -77,11 +75,11 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 			}
 
 			proc.Info.URL = meta.OriginalURL
-			proc.Info.CreatedAt = time.Now().Add(time.Duration(delta))
+
+			time.Sleep(time.Millisecond)
 
 			db.Set(proc)
-			proc.SetPending()
-			mq.PublishPlaylistEntry(proc)
+			mq.Publish(proc)
 		}
 
 		err = cmd.Wait()
@@ -94,6 +92,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		Logger: logger,
 	}
 
+	db.Set(proc)
 	mq.Publish(proc)
 	logger.Info("sending new process to message queue", slog.String("url", proc.Url))
 
