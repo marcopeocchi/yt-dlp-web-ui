@@ -84,7 +84,7 @@ func (p *Process) Start() {
 
 	go p.GetFileName(&out)
 
-	params := []string{
+	baseParams := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
 		"--no-colors",
@@ -94,12 +94,12 @@ func (p *Process) Start() {
 	}
 
 	// if user asked to manually override the output path...
-	if !(slices.Contains(params, "-P") || slices.Contains(params, "--paths")) {
-		params = append(params, "-o")
-		params = append(params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
+	if !(slices.Contains(p.Params, "-P") || slices.Contains(p.Params, "--paths")) {
+		p.Params = append(p.Params, "-o")
+		p.Params = append(p.Params, fmt.Sprintf("%s/%s", out.Path, out.Filename))
 	}
 
-	params = append(params, p.Params...)
+	params := append(baseParams, p.Params...)
 
 	// ----------------- main block ----------------- //
 	cmd := exec.Command(config.Instance().DownloaderPath, params...)
@@ -114,8 +114,7 @@ func (p *Process) Start() {
 		panic(err)
 	}
 
-	err = cmd.Start()
-	if err != nil {
+	if err := cmd.Start(); err != nil {
 		p.Logger.Error(
 			"failed to start yt-dlp process",
 			slog.String("err", err.Error()),
