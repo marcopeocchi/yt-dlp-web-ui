@@ -39,14 +39,9 @@ var (
 )
 
 func init() {
-	qs := runtime.NumCPU() - 1
-	if qs == 0 {
-		qs = 1
-	}
-
 	flag.StringVar(&host, "host", "0.0.0.0", "Host where server will listen at")
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
-	flag.IntVar(&queueSize, "qs", qs, "Download queue size")
+	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
 
 	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
