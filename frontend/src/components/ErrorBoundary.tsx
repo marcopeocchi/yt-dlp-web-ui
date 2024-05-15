@@ -39,7 +39,7 @@ const ErrorBoundary: React.FC = () => {
         </Button>
       </Link>
       <Typography sx={{ mt: 2 }} color={'gray'} fontWeight={500}>
-        Or login if authentication is enabled
+        Or login if authentification is enabled
       </Typography>
       <Link to={'/login'} >
         <Button variant='contained' sx={{ mt: 2 }}>
