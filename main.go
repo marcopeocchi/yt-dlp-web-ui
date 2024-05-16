@@ -41,7 +41,7 @@ var (
 func init() {
 	flag.StringVar(&host, "host", "0.0.0.0", "Host where server will listen at")
 	flag.IntVar(&port, "port", 3033, "Port where server will listen at")
-	flag.IntVar(&queueSize, "qs", runtime.NumCPU(), "Download queue size")
+	flag.IntVar(&queueSize, "qs", 2, "Queue size (concurrent downloads)")
 
 	flag.StringVar(&configFile, "conf", "./config.yml", "Config file path")
 	flag.StringVar(&downloadPath, "out", ".", "Where files will be saved")
@@ -78,6 +78,11 @@ func main() {
 	c.RequireAuth = requireAuth
 	c.Username = username
 	c.Password = password
+
+	// limit concurrent downloads for systems with 2 or less logical cores
+	if runtime.NumCPU() <= 2 {
+		c.QueueSize = 1
+	}
 
 	// if config file is found it will be merged with the current config struct
 	if err := c.LoadFile(configFile); err != nil {

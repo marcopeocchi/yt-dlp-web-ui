@@ -78,7 +78,13 @@ func (m *MessageQueue) downloadConsumer() {
 func (m *MessageQueue) metadataSubscriber() {
 	// How many concurrent metadata fetcher jobs are spawned
 	// Since there's ongoing downloads, 1 job at time seems a good compromise
-	m.eventBus.Subscribe(queueName, func(p *Process) {
+	sem := semaphore.NewWeighted(1)
+
+	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
+		//TODO: provide valid context
+		sem.Acquire(context.TODO(), 1)
+		defer sem.Release(1)
+
 		m.logger.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "metadataConsumer"),
@@ -91,5 +97,5 @@ func (m *MessageQueue) metadataSubscriber() {
 				slog.String("err", err.Error()),
 			)
 		}
-	})
+	}, false)
 }

@@ -82,6 +82,7 @@ func (p *Process) Start() {
 
 	buildFilename(&p.Output)
 
+	//TODO: it spawn another one yt-dlp process, too slow.
 	go p.GetFileName(&out)
 
 	baseParams := []string{
