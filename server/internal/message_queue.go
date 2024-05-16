@@ -1,18 +1,20 @@
 package internal
 
 import (
+	"context"
 	"log/slog"
 
 	evbus "github.com/asaskevich/EventBus"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"golang.org/x/sync/semaphore"
 )
 
 const queueName = "process:pending"
 
 type MessageQueue struct {
-	eventBus   evbus.Bus
-	consumerCh chan struct{}
-	logger     *slog.Logger
+	concurrency int
+	eventBus    evbus.Bus
+	logger      *slog.Logger
 }
 
 // Creates a new message queue.
@@ -27,9 +29,9 @@ func NewMessageQueue(l *slog.Logger) *MessageQueue {
 	}
 
 	return &MessageQueue{
-		eventBus:   evbus.New(),
-		consumerCh: make(chan struct{}, qs),
-		logger:     l,
+		concurrency: qs,
+		eventBus:    evbus.New(),
+		logger:      l,
 	}
 }
 
@@ -49,23 +51,25 @@ func (m *MessageQueue) SetupConsumers() {
 // Setup the consumer listener which subscribes to the changes to the producer
 // channel and triggers the "download" action.
 func (m *MessageQueue) downloadConsumer() {
+	sem := semaphore.NewWeighted(int64(m.concurrency))
+
 	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
-		m.consumerCh <- struct{}{}
+		//TODO: provide valid context
+		sem.Acquire(context.TODO(), 1)
+		defer sem.Release(1)
 
 		m.logger.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "downloadConsumer"),
-			slog.String("id", p.Id),
+			slog.String("id", p.getShortId()),
 		)
 
 		p.Start()
 
 		m.logger.Info("started process",
 			slog.String("bus", queueName),
-			slog.String("id", p.Id),
+			slog.String("id", p.getShortId()),
 		)
-
-		<-m.consumerCh
 	}, false)
 }
 
@@ -78,21 +82,14 @@ func (m *MessageQueue) metadataSubscriber() {
 		m.logger.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "metadataConsumer"),
-			slog.String("id", p.Id),
+			slog.String("id", p.getShortId()),
 		)
 
 		if err := p.SetMetadata(); err != nil {
 			m.logger.Error("failed to retrieve metadata",
-				slog.String("id", p.Id),
+				slog.String("id", p.getShortId()),
 				slog.String("err", err.Error()),
 			)
 		}
 	})
-}
-
-// Empties the message queue
-func (m *MessageQueue) Empty() {
-	for range m.consumerCh {
-		<-m.consumerCh
-	}
 }

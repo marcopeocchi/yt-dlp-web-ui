@@ -109,8 +109,12 @@ func (s *Service) Kill(args string, killed *string) error {
 // the memory db
 func (s *Service) KillAll(args NoArgs, killed *string) error {
 	s.logger.Info("Killing all spawned processes")
-	keys := s.db.Keys()
-	var err error
+
+	var (
+		keys = s.db.Keys()
+		err  error
+	)
+
 	for _, key := range *keys {
 		proc, err := s.db.Get(key)
 		if err != nil {
@@ -121,7 +125,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 			s.db.Delete(proc.Id)
 		}
 	}
-	s.mq.Empty()
+
 	return err
 }
 
