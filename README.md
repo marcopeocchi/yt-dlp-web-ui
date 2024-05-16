@@ -229,6 +229,29 @@ WantedBy=multi-user.target
 systemctl enable yt-dlp-webui
 systemctl start yt-dlp-webui
 ```
+It could be that yt-dlp-webui works correctly when started manually from the console, but with systemd, it does not see the yt-dlp executable, or has issues writing to the database file. One way to fix these issues could be as follows:
+```shell
+cd
+mkdir yt-dlp-webui-workingdir
+# optionally move the already existing database file there:
+mv local.db yt-dlp-webui-workingdir
+nano yt-dlp-webui-workingdir/my.conf
+```
+The config file format is described above; make sure to include the `downloaderPath` setting (the path can possibly be found by running `which yt-dlp`). For example, one could have:
+```
+downloadPath: /stuff/media
+downloaderPath: /home/your_user/.local/bin/yt-dlp
+log_path: /home/your_user/yt-dlp-webui-workingdir
+session_file_path: /home/your_user/yt-dlp-webui-workingdir
+```
+Adjust the Service section in the `/etc/systemd/system/yt-dlp-webui.service` file as follows:
+```
+[Service]
+User=your_user
+Group=your_user
+WorkingDirectory=/home/your_user/yt-dlp-webui-workingdir
+ExecStart=/usr/local/bin/yt-dlp-webui --conf /home/your_user/yt-dlp-webui-workingdir/my.conf
+```
 
 ## Manual installation
 ```sh
