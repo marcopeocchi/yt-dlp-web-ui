@@ -88,8 +88,8 @@ func RunBlocking(cfg *RunConfig) {
 	}
 
 	mq := internal.NewMessageQueue(logger)
+	mq.SetupConsumers()
 
-	go mq.Subscriber()
 	go mdb.Restore(mq, logger)
 
 	srv := newServer(serverConfig{
