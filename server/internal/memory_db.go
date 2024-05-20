@@ -23,14 +23,17 @@ func (m *MemoryDB) Get(id string) (*Process, error) {
 	if !ok {
 		return nil, errors.New("no process found for the given key")
 	}
+
 	return entry.(*Process), nil
 }
 
 // Store a pointer of a process and return its id
 func (m *MemoryDB) Set(process *Process) string {
 	id := uuid.NewString()
+
 	m.table.Store(id, process)
 	process.Id = id
+
 	return id
 }
 
@@ -40,17 +43,20 @@ func (m *MemoryDB) Delete(id string) {
 }
 
 func (m *MemoryDB) Keys() *[]string {
-	running := []string{}
+	var running []string
+
 	m.table.Range(func(key, value any) bool {
 		running = append(running, key.(string))
 		return true
 	})
+
 	return &running
 }
 
 // Returns a slice of all currently stored processes progess
 func (m *MemoryDB) All() *[]ProcessResponse {
 	running := []ProcessResponse{}
+
 	m.table.Range(func(key, value any) bool {
 		running = append(running, ProcessResponse{
 			Id:       key.(string),
@@ -61,6 +67,7 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 		})
 		return true
 	})
+
 	return &running
 }
 
@@ -75,12 +82,9 @@ func (m *MemoryDB) Persist() error {
 		return errors.Join(errors.New("failed to persist session"), err)
 	}
 
-	session := Session{
-		Processes: *running,
-	}
+	session := Session{Processes: *running}
 
-	err = gob.NewEncoder(fd).Encode(session)
-	if err != nil {
+	if err := gob.NewEncoder(fd).Encode(session); err != nil {
 		return errors.Join(errors.New("failed to persist session"), err)
 	}
 
@@ -113,7 +117,7 @@ func (m *MemoryDB) Restore(mq *MessageQueue, logger *slog.Logger) {
 
 		m.table.Store(proc.Id, restored)
 
-		if restored.Progress.Percentage != "-1" {
+		if restored.Progress.Status != StatusCompleted {
 			mq.Publish(restored)
 		}
 	}

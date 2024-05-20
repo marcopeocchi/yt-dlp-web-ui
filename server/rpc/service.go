@@ -54,7 +54,6 @@ func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) er
 	}
 
 	*result = ""
-
 	return nil
 }
 
@@ -64,14 +63,17 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 	if err != nil {
 		return err
 	}
+
 	*progress = proc.Progress
 	return nil
 }
 
 // Progess retrieves available format for a given resource
 func (s *Service) Formats(args Args, meta *internal.DownloadFormats) error {
-	var err error
-	p := internal.Process{Url: args.URL, Logger: s.logger}
+	var (
+		err error
+		p   = internal.Process{Url: args.URL, Logger: s.logger}
+	)
 	*meta, err = p.GetFormatsSync()
 	return err
 }
@@ -91,11 +93,12 @@ func (s *Service) Running(args NoArgs, running *Running) error {
 // Kill kills a process given its id and remove it from the memoryDB
 func (s *Service) Kill(args string, killed *string) error {
 	s.logger.Info("Trying killing process with id", slog.String("id", args))
-	proc, err := s.db.Get(args)
 
+	proc, err := s.db.Get(args)
 	if err != nil {
 		return err
 	}
+
 	if proc != nil {
 		err = proc.Kill()
 		s.db.Delete(proc.Id)
@@ -120,6 +123,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 		if err != nil {
 			return err
 		}
+
 		if proc != nil {
 			proc.Kill()
 			s.db.Delete(proc.Id)
@@ -139,6 +143,10 @@ func (s *Service) Clear(args string, killed *string) error {
 // FreeSpace gets the available from package sys util
 func (s *Service) FreeSpace(args NoArgs, free *uint64) error {
 	freeSpace, err := sys.FreeSpace()
+	if err != nil {
+		return err
+	}
+
 	*free = freeSpace
 	return err
 }
@@ -146,21 +154,31 @@ func (s *Service) FreeSpace(args NoArgs, free *uint64) error {
 // Return a flattned tree of the download directory
 func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 	dfsTree, err := sys.DirectoryTree()
+
+	if err != nil {
+		*tree = nil
+		return err
+	}
+
 	if dfsTree != nil {
 		*tree = *dfsTree
 	}
-	return err
+
+	return nil
 }
 
 // Updates the yt-dlp binary using its builtin function
 func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
 	s.logger.Info("Updating yt-dlp executable to the latest release")
-	err := updater.UpdateExecutable()
-	if err != nil {
-		*updated = true
-		s.logger.Info("Succesfully updated yt-dlp")
+
+	if err := updater.UpdateExecutable(); err != nil {
+		s.logger.Error("Failed updating yt-dlp")
+		*updated = false
 		return err
 	}
-	*updated = false
-	return err
+
+	*updated = true
+	s.logger.Info("Succesfully updated yt-dlp")
+
+	return nil
 }

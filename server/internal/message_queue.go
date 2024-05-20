@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 
 	evbus "github.com/asaskevich/EventBus"
@@ -21,18 +22,18 @@ type MessageQueue struct {
 // By default it will be created with a size equals to nthe number of logical
 // CPU cores -1.
 // The queue size can be set via the qs flag.
-func NewMessageQueue(l *slog.Logger) *MessageQueue {
+func NewMessageQueue(l *slog.Logger) (*MessageQueue, error) {
 	qs := config.Instance().QueueSize
 
 	if qs <= 0 {
-		panic("invalid queue size")
+		return nil, errors.New("invalid queue size")
 	}
 
 	return &MessageQueue{
 		concurrency: qs,
 		eventBus:    evbus.New(),
 		logger:      l,
-	}
+	}, nil
 }
 
 // Publish a message to the queue and set the task to a peding state.

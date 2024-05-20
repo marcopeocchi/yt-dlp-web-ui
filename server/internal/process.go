@@ -125,6 +125,8 @@ func (p *Process) Start() {
 
 	p.proc = cmd.Process
 
+	go p.SetMetadata()
+
 	// --------------- progress block --------------- //
 	var (
 		sourceChan = make(chan []byte)
@@ -139,7 +141,9 @@ func (p *Process) Start() {
 		defer func() {
 			r.Close()
 			p.Complete()
+
 			doneChan <- struct{}{}
+
 			close(sourceChan)
 			close(doneChan)
 		}()
@@ -215,6 +219,7 @@ func (p *Process) Kill() error {
 }
 
 // Returns the available format for this URL
+// TODO: Move out from process.go
 func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
 
@@ -356,9 +361,7 @@ func (p *Process) SetMetadata() error {
 	return nil
 }
 
-func (p *Process) getShortId() string {
-	return strings.Split(p.Id, "-")[0]
-}
+func (p *Process) getShortId() string { return strings.Split(p.Id, "-")[0] }
 
 func buildFilename(o *DownloadOutput) {
 	if o.Filename != "" && strings.Contains(o.Filename, ".%(ext)s") {

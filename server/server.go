@@ -19,7 +19,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutils"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutil"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/logging"
@@ -82,12 +82,14 @@ func RunBlocking(cfg *RunConfig) {
 		logger.Error("failed to open database", slog.String("err", err.Error()))
 	}
 
-	err = dbutils.AutoMigrate(context.Background(), db)
-	if err != nil {
+	if err := dbutil.AutoMigrate(context.Background(), db); err != nil {
 		logger.Error("failed to init database", slog.String("err", err.Error()))
 	}
 
-	mq := internal.NewMessageQueue(logger)
+	mq, err := internal.NewMessageQueue(logger)
+	if err != nil {
+		panic(err)
+	}
 	mq.SetupConsumers()
 
 	go mdb.Restore(mq, logger)
