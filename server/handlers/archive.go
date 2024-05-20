@@ -6,10 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"io"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"sort"
 	"strings"
@@ -18,13 +20,26 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
 
 /*
 	File based operation handlers (should be moved to rest/handlers.go) or in
 	a entirely self-contained package
 */
+
+var (
+	videoRe = regexp.MustCompile(`(?i)/\.mov|\.mp4|\.webm|\.mvk|/gmi`)
+)
+
+func isVideo(d fs.DirEntry) bool {
+	return videoRe.MatchString(d.Name())
+}
+
+func isValidEntry(d fs.DirEntry) bool {
+	return !strings.HasPrefix(d.Name(), ".") &&
+		!strings.HasSuffix(d.Name(), ".part") &&
+		!strings.HasSuffix(d.Name(), ".ytdl")
+}
 
 type DirectoryEntry struct {
 	Name        string    `json:"name"`
@@ -44,7 +59,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 	var files []DirectoryEntry
 
 	for _, d := range dirs {
-		if !utils.IsValidEntry(d) {
+		if !isValidEntry(d) {
 			continue
 		}
 
@@ -59,7 +74,7 @@ func walkDir(root string) (*[]DirectoryEntry, error) {
 			Path:        path,
 			Name:        d.Name(),
 			Size:        info.Size(),
-			IsVideo:     utils.IsVideo(d),
+			IsVideo:     isVideo(d),
 			IsDirectory: d.IsDir(),
 			ModTime:     info.ModTime(),
 		})

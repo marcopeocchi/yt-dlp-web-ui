@@ -8,8 +8,9 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/utils"
 )
+
+const TOKEN_COOKIE_NAME = "jwt-yt-dlp-webui"
 
 type LoginRequest struct {
 	Username string `json:"username"`
@@ -55,7 +56,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
-		Name:     utils.TOKEN_COOKIE_NAME,
+		Name:     TOKEN_COOKIE_NAME,
 		HttpOnly: true,
 		Secure:   false,
 		Expires:  time.Now(),
