@@ -278,6 +278,9 @@ npm run build
 
 go build -o yt-dlp-webui main.go
 ```
+## Open-API
+Navigate to `/openapi` to see the related swagger.
+
 
 ## Extendable
 You dont'like the Material feel?
