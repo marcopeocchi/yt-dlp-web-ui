@@ -1,0 +1,273 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Swagger yt-dlp-webui - OpenAPI 3.1",
+    "description": "yt-dlp-webui api based on the OpenAPI 3.1 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). \n\nSome useful links:\n- [yt-dlp-webui repository](https://github.com/marcopeocchi/yt-dlp-web-ui)",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.11"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "download",
+      "description": "Everything about your Pets",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://github.com/marcopeocchi/yt-dlp-web-ui"
+      }
+    }
+  ],
+  "paths": {
+    "/exec": {
+      "post": {
+        "tags": [
+          "download"
+        ],
+        "summary": "Add a new download in the pending state ready to be processed",
+        "description": "Add a new download in the pending state ready to be processed",
+        "operationId": "addDownload",
+        "requestBody": {
+          "description": "Create a new download",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Process uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "api_key": [
+              "write:download",
+              "read:download"
+            ]
+          }
+        ]
+      }
+    },
+    "/running": {
+      "get": {
+        "tags": [
+          "download"
+        ],
+        "summary": "Returns all running and pending process",
+        "description": "Returns all running and pending process",
+        "operationId": "running",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "api_key": [
+              "write:download",
+              "read:download"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DownloadRequest": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "examples": [
+              "https://..."
+            ]
+          },
+          "params": {
+            "type": "array",
+            "format": "string",
+            "examples": [
+              "-N",
+              "4",
+              "-R",
+              "infinite"
+            ]
+          }
+        }
+      },
+      "DownloadResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "examples": [
+              "https://..."
+            ]
+          },
+          "params": {
+            "type": "array",
+            "format": "string",
+            "examples": [
+              "-N",
+              "4",
+              "-R",
+              "infinite"
+            ]
+          }
+        }
+      },
+      "DownloadProgress": {
+        "type": "object",
+        "properties": {
+          "process_status": {
+            "type": "integer",
+            "examples": [
+              0,
+              1,
+              2,
+              3
+            ]
+          },
+          "percentage": {
+            "type": "string",
+            "examples": [
+              "50%"
+            ]
+          },
+          "speed": {
+            "type": "integer",
+            "examples": [
+              7289347
+            ]
+          },
+          "eta": {
+            "type": "integer",
+            "examples": [
+              3600
+            ]
+          }
+        }
+      },
+      "DownloadInfo": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "vcodec": {
+            "type": "string"
+          },
+          "acodec": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "original_url": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "object"
+          }
+        }
+      },
+      "DownloadOutput": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "saveFilePath": {
+            "type": "string"
+          }
+        }
+      },
+      "ProcessResponse": {
+        "type": "object",
+        "properties": {
+          "progress": {
+            "$ref": "#/components/schemas/DownloadProgress"
+          },
+          "info": {
+            "$ref": "#/components/schemas/DownloadInfo"
+          },
+          "output": {
+            "$ref": "#/components/schemas/DownloadOutput"
+          },
+          "params": {
+            "type": "array",
+            "format": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "api_key",
+        "in": "header"
+      }
+    }
+  }
+}

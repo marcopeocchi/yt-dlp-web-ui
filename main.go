@@ -36,6 +36,9 @@ var (
 	//go:embed frontend/dist/index.html
 	//go:embed frontend/dist/assets/*
 	frontend embed.FS
+
+	//go:embed openapi/*
+	swagger embed.FS
 )
 
 func init() {
@@ -61,7 +64,6 @@ func init() {
 
 func main() {
 	frontend, err := fs.Sub(frontend, "frontend/dist")
-
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -92,9 +94,10 @@ func main() {
 	server.RunBlocking(&server.RunConfig{
 		Host:        c.Host,
 		Port:        c.Port,
-		App:         frontend,
 		DBPath:      localDatabasePath,
 		FileLogging: enableFileLogging,
 		LogFile:     logFile,
+		App:         frontend,
+		Swagger:     swagger,
 	})
 }

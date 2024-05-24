@@ -33,14 +33,16 @@ import (
 type RunConfig struct {
 	Host        string
 	Port        int
-	App         fs.FS
 	DBPath      string
 	LogFile     string
 	FileLogging bool
+	App         fs.FS
+	Swagger     fs.FS
 }
 
 type serverConfig struct {
 	frontend fs.FS
+	swagger  fs.FS
 	logger   *slog.Logger
 	host     string
 	port     int
@@ -96,6 +98,7 @@ func RunBlocking(cfg *RunConfig) {
 
 	srv := newServer(serverConfig{
 		frontend: cfg.App,
+		swagger:  cfg.Swagger,
 		logger:   logger,
 		host:     cfg.Host,
 		port:     cfg.Port,
@@ -155,6 +158,7 @@ func newServer(c serverConfig) *http.Server {
 	// r.Use(middleware.Logger)
 
 	r.Mount("/", http.FileServer(http.FS(c.frontend)))
+	r.Mount("/openapi", http.FileServer(http.FS(c.swagger)))
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
