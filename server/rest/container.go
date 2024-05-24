@@ -1,24 +1,21 @@
 package rest
 
 import (
-	"database/sql"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 )
 
-func Container(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) *Handler {
+func Container(args *ContainerArgs) *Handler {
 	var (
-		service = ProvideService(db, mdb, mq)
+		service = ProvideService(args)
 		handler = ProvideHandler(service)
 	)
 	return handler
 }
 
-func ApplyRouter(db *sql.DB, mdb *internal.MemoryDB, mq *internal.MessageQueue) func(chi.Router) {
-	h := Container(db, mdb, mq)
+func ApplyRouter(args *ContainerArgs) func(chi.Router) {
+	h := Container(args)
 
 	return func(r chi.Router) {
 		if config.Instance().RequireAuth {

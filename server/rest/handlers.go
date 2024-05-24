@@ -22,7 +22,7 @@ func (h *Handler) Exec() http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 
-		req := internal.DownloadRequest{}
+		var req internal.DownloadRequest
 
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
