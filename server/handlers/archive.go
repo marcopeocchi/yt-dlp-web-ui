@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"archive/zip"
-	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -193,14 +192,8 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	root := config.Instance().DownloadPath
 
 	if strings.Contains(filepath.Dir(filename), root) {
-		w.Header().Add(
-			"Content-Disposition",
-			"inline; filename=\""+filepath.Base(filename)+"\"",
-		)
-		w.Header().Set(
-			"Content-Type",
-			"application/octet-stream",
-		)
+		w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
+		w.Header().Set("Content-Type", "application/octet-stream")
 
 		fd, err := os.Open(filename)
 		if err != nil {
@@ -224,10 +217,13 @@ func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
 			return
 		}
 
-		var (
-			buff      bytes.Buffer
-			zipWriter = zip.NewWriter(&buff)
+		zipWriter := zip.NewWriter(w)
+
+		w.Header().Add(
+			"Content-Disposition",
+			"inline; filename=download-archive-"+time.Now().Format(time.RFC3339)+".zip",
 		)
+		w.Header().Set("Content-Type", "application/zip")
 
 		for _, p := range ps {
 			wr, err := zipWriter.Create(filepath.Base(p.Output.SavedFilePath))
@@ -242,25 +238,15 @@ func BulkDownload(mdb *internal.MemoryDB) http.HandlerFunc {
 				return
 			}
 
-			_, err = io.Copy(wr, fd)
-			if err != nil {
+			if _, err := io.Copy(wr, fd); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		}
 
-		err := zipWriter.Close()
-		if err != nil {
+		if err := zipWriter.Close(); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-
-		w.Header().Add(
-			"Content-Disposition",
-			"inline; filename=download-archive-"+time.Now().Format(time.RFC3339)+".zip",
-		)
-		w.Header().Set("Content-Type", "application/zip")
-
-		io.Copy(w, &buff)
 	}
 }
