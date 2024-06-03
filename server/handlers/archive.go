@@ -195,7 +195,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	if strings.Contains(filepath.Dir(filename), root) {
 		w.Header().Add(
 			"Content-Disposition",
-			"inline; filename="+filepath.Base(filename),
+			"inline; filename=\""+filepath.Base(filename)+"\"",
 		)
 		w.Header().Set(
 			"Content-Type",
