@@ -136,11 +136,11 @@ export const servedFromReverseProxyState = atom({
 })
 
 export const servedFromReverseProxySubDirState = atom<string>({
-  key: 'servedFromReverseProxyState',
+  key: 'servedFromReverseProxySubDirState',
   default: localStorage.getItem('reverseProxySubDir') ?? '',
   effects: [
     ({ onSet }) =>
-      onSet(a => localStorage.setItem('reverseProxySubDir', a.toString()))
+      onSet(a => localStorage.setItem('reverseProxySubDir', a))
   ]
 })
 
