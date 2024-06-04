@@ -155,11 +155,15 @@ export const appTitleState = atom({
 
 export const serverAddressAndPortState = selector({
   key: 'serverAddressAndPortState',
-  get: ({ get }) => get(servedFromReverseProxyState)
-    ? get(servedFromReverseProxySubDirState) ?
-      `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
-      : `${get(serverAddressState)}`
-    : `${get(serverAddressState)}:${get(serverPortState)}`
+  get: ({ get }) => {
+    if (get(servedFromReverseProxySubDirState)) {
+      return `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
+    }
+    if (get(servedFromReverseProxyState)) {
+      return `${get(serverAddressState)}`
+    }
+    return `${get(serverAddressState)}:${get(serverPortState)}`
+  }
 })
 
 export const serverURL = selector({
