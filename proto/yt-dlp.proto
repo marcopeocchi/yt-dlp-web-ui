@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+message Empty {}
+
+message BaseRequest {
+  string id = 1;
+  string url = 2;
+}
+
+message DownloadRequest {
+  string id = 1;
+  string url = 2;
+  string path = 3;
+  string rename = 4;
+  repeated string params = 5;
+}
+
+message ExecResponse {
+  string id = 1;
+}
+
+message DownloadProgress {
+  int32 status = 1;
+  string percentage = 2;
+  float speed = 3;
+  float eta = 4;
+}
+
+message DownloadInfo {
+  string url = 1;
+  string title = 2;
+  string thumbnail = 3;
+  string resolution = 4;
+  int32  size = 5;
+  string vcodec = 6;
+  string acodec = 7;
+  string extension = 8;
+  string originalURL = 9;
+  string createdAt = 10;
+}
+
+message DownloadOutput {
+  string path = 1;
+  string filename = 2;
+  string savedFilePath = 3;
+}
+
+message ProcessResponse {
+  string id = 1;
+  DownloadProgress progress = 2;
+  DownloadInfo info = 3;
+  DownloadOutput output = 4;
+  repeated string params = 5;
+}
+
+service Ytdlp {
+  rpc Exec (DownloadRequest) returns (ExecResponse);
+  rpc ExecPlaylist (DownloadRequest) returns (ExecResponse);
+
+  rpc Progress (BaseRequest) returns (DownloadProgress);
+  rpc Running (Empty) returns (stream ProcessResponse);
+
+  rpc Kill (BaseRequest) returns (ExecResponse);
+  rpc KillAll (Empty) returns (stream ExecResponse);
+}
