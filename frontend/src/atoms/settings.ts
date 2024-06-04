@@ -135,6 +135,15 @@ export const servedFromReverseProxyState = atom({
   ]
 })
 
+export const servedFromReverseProxySubDirState = atom<string>({
+  key: 'servedFromReverseProxyState',
+  default: localStorage.getItem('reverseProxySubDir') ?? '',
+  effects: [
+    ({ onSet }) =>
+      onSet(a => localStorage.setItem('reverseProxySubDir', a.toString()))
+  ]
+})
+
 export const appTitleState = atom({
   key: 'appTitleState',
   default: localStorage.getItem('appTitle') ?? 'yt-dlp Web UI',
@@ -147,7 +156,9 @@ export const appTitleState = atom({
 export const serverAddressAndPortState = selector({
   key: 'serverAddressAndPortState',
   get: ({ get }) => get(servedFromReverseProxyState)
-    ? `${get(serverAddressState)}`
+    ? get(servedFromReverseProxySubDirState) ?
+      `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
+      : `${get(serverAddressState)}`
     : `${get(serverAddressState)}:${get(serverPortState)}`
 })
 

@@ -39,6 +39,7 @@ import {
   latestCliArgumentsState,
   pathOverridingState,
   servedFromReverseProxyState,
+  servedFromReverseProxySubDirState,
   serverAddressState,
   serverPortState,
   themeState
@@ -53,6 +54,7 @@ import { validateDomain, validateIP } from '../utils'
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
   const [reverseProxy, setReverseProxy] = useRecoilState(servedFromReverseProxyState)
+  const [baseURL, setBaseURL] = useRecoilState(servedFromReverseProxySubDirState)
   const [formatSelection, setFormatSelection] = useRecoilState(formatSelectionState)
   const [pathOverriding, setPathOverriding] = useRecoilState(pathOverridingState)
   const [fileRenaming, setFileRenaming] = useRecoilState(fileRenamingState)
@@ -73,8 +75,19 @@ export default function Settings() {
 
   const argsBuilder = useMemo(() => new CliArguments().fromString(cliArgs), [])
 
+  const baseURL$ = useMemo(() => new Subject<string>(), [])
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
   const serverPort$ = useMemo(() => new Subject<string>(), [])
+
+  useEffect(() => {
+    const sub = baseURL$
+      .pipe(debounceTime(500))
+      .subscribe(baseURL => {
+        setBaseURL(baseURL)
+        pushMessage(i18n.t('restartAppMessage'), 'info')
+      })
+    return () => sub.unsubscribe()
+  }, [])
 
   useEffect(() => {
     const sub = serverAddr$
@@ -145,7 +158,7 @@ export default function Settings() {
               minHeight: 240,
             }}
           >
-            <Typography pb={3} variant="h5" color="primary">
+            <Typography pb={2} variant="h6" color="primary">
               {i18n.t('settingsAnchor')}
             </Typography>
             <FormGroup>
@@ -183,6 +196,9 @@ export default function Settings() {
                   />
                 </Grid>
                 <Grid item xs={12}>
+                  <Typography variant="h6" color="primary" sx={{ mb: 0.5 }}>
+                    Reverse Proxy
+                  </Typography>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -191,10 +207,29 @@ export default function Settings() {
                       />
                     }
                     label={i18n.t('servedFromReverseProxyCheckbox')}
+                    sx={{ mb: 1 }}
+                  />
+                  <TextField
+                    fullWidth
+                    label={i18n.t('urlBase')}
+                    defaultValue={baseURL}
+                    onChange={(e) => {
+                      let value = e.currentTarget.value
+                      if (value.startsWith('/')) {
+                        value = value.substring(1)
+                      }
+                      if (value.endsWith('/')) {
+                        value = value.substring(0, value.length - 1)
+                      }
+                      baseURL$.next(value)
+                    }}
                     sx={{ mb: 2 }}
                   />
                 </Grid>
               </Grid>
+              <Typography variant="h6" color="primary" sx={{ mt: 0.5, mb: 2 }}>
+                Appaerance
+              </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                   <FormControl fullWidth>
@@ -227,6 +262,9 @@ export default function Settings() {
                   </FormControl>
                 </Grid>
               </Grid>
+              <Typography variant="h6" color="primary" sx={{ mt: 2, mb: 0.5 }}>
+                General download settings
+              </Typography>
               <FormControlLabel
                 control={
                   <Switch
@@ -235,7 +273,7 @@ export default function Settings() {
                   />
                 }
                 label={i18n.t('noMTimeCheckbox')}
-                sx={{ mt: 3 }}
+
               />
               <FormControlLabel
                 control={
@@ -299,7 +337,7 @@ export default function Settings() {
                   />
                 </Stack>
               </Grid>
-              <Grid sx={{ mr: 1, mt: 3 }}>
+              <Grid sx={{ mr: 1, mt: 2 }}>
                 <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
                   Cookies
                 </Typography>

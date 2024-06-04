@@ -34,7 +34,8 @@ languages:
     clipboardAction: Copied URL to clipboard
     playlistCheckbox: Download playlist (it will take time, after submitting you may close this window)
     restartAppMessage: Needs a page reload to take effect
-    servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
+    servedFromReverseProxyCheckbox: Is behind a reverse proxy
+    urlBase: URL base, for reverse proxy support (subdir), defaults to empty
     newDownloadButton: New download
     homeButtonLabel: Home
     archiveButtonLabel: Archive
