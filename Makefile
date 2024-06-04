@@ -1,11 +1,17 @@
+.PHONY : fe clean all
+
 default:
 	CGO_ENABLED=0 go build -o yt-dlp-webui main.go
 
+fe:
+	cd frontend && pnpm build
+
 all:
-	cd frontend && pnpm build && cd ..
+	$(MAKE) fe && cd ..
 	CGO_ENABLED=0 go build -o yt-dlp-webui main.go
 
 multiarch:
+	$(MAKE) fe
 	mkdir -p build
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/yt-dlp-webui_linux-amd64 main.go
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o build/yt-dlp-webui_linux-arm64 main.go
