@@ -6,6 +6,9 @@ default:
 fe:
 	cd frontend && pnpm build
 
+dev:
+	cd frontend && pnpm dev
+
 all:
 	$(MAKE) fe && cd ..
 	CGO_ENABLED=0 go build -o yt-dlp-webui main.go

@@ -25,14 +25,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 # -----------------------------------------------------------------------------
 
 # dependencies ----------------------------------------------------------------
-FROM cgr.dev/chainguard/wolfi-base
+FROM alpine:edge
 
 RUN apk update && \
-apk add ffmpeg ca-certificates python3 py3-pip wget
+apk add ffmpeg yt-dlp ca-certificates curl wget
 
 VOLUME /downloads /config
-
-RUN python3 -m pip install yt-dlp
 
 WORKDIR /app
 
