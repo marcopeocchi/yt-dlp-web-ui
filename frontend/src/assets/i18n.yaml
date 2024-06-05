@@ -51,6 +51,8 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    rpcPollingTimeTitle: RPC polling time
+    rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
   german:
     urlInput: Video URL
     statusTitle: Status
