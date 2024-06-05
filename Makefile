@@ -1,7 +1,7 @@
 .PHONY : fe clean all
 
 default:
-	CGO_ENABLED=0 go build -o yt-dlp-webui main.go
+	go run main.go
 
 fe:
 	cd frontend && pnpm build
