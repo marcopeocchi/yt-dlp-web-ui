@@ -1,15 +1,15 @@
+import DownloadIcon from '@mui/icons-material/Download'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
 import { AppBar, Chip, Divider, Toolbar } from '@mui/material'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
+import { totalDownloadSpeedState } from '../atoms/ui'
 import { useI18n } from '../hooks/useI18n'
+import { formatSpeedMiB } from '../utils'
 import FreeSpaceIndicator from './FreeSpaceIndicator'
 import VersionIndicator from './VersionIndicator'
-import DownloadIcon from '@mui/icons-material/Download'
-import { totalDownloadSpeedState } from '../atoms/ui'
-import { formatSpeedMiB } from '../utils'
 
 const Footer: React.FC = () => {
   const settings = useRecoilValue(settingsState)
@@ -35,7 +35,7 @@ const Footer: React.FC = () => {
         display: 'flex', gap: 1, justifyContent: 'space-between'
       }}>
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          <Chip label="RPC v3.0.8" variant="outlined" size="small" />
+          <Chip label="RPC v3.0.9" variant="outlined" size="small" />
           <VersionIndicator />
         </div>
         <div style={{ display: 'flex', gap: 4, 'alignItems': 'center' }}>

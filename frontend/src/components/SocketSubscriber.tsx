@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
+import { rpcPollingTimeState } from '../atoms/rpc'
 import { serverAddressAndPortState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
 import { useSubscription } from '../hooks/observable'
@@ -19,6 +20,7 @@ const SocketSubscriber: React.FC<Props> = () => {
   const [, setDownloads] = useRecoilState(downloadsState)
 
   const serverAddressAndPort = useRecoilValue(serverAddressAndPortState)
+  const rpcPollingTime = useRecoilValue(rpcPollingTimeState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()
@@ -70,11 +72,10 @@ const SocketSubscriber: React.FC<Props> = () => {
 
   useEffect(() => {
     if (connected) {
-      const sub = timer(0, 1000).subscribe(() => client.running())
-
+      const sub = timer(0, rpcPollingTime).subscribe(() => client.running())
       return () => sub.unsubscribe()
     }
-  }, [connected, client])
+  }, [connected, client, rpcPollingTime])
 
   return null
 }
