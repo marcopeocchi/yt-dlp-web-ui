@@ -36,6 +36,7 @@ type DownloadInfo struct {
 	ACodec      string    `json:"acodec"`
 	Extension   string    `json:"ext"`
 	OriginalURL string    `json:"original_url"`
+	FileName    string    `json:"filename"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 
