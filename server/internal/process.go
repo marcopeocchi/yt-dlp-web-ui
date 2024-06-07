@@ -82,6 +82,9 @@ func (p *Process) Start() {
 
 	buildFilename(&p.Output)
 
+	//TODO: it spawn another one yt-dlp process, too slow.
+	go p.GetFileName(&out)
+
 	baseParams := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
@@ -121,8 +124,6 @@ func (p *Process) Start() {
 	}
 
 	p.proc = cmd.Process
-
-	go p.SetMetadata()
 
 	// --------------- progress block --------------- //
 	var (
@@ -272,7 +273,6 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 	return info, nil
 }
 
-// TODO: remove, potentially unused
 func (p *Process) GetFileName(o *DownloadOutput) error {
 	cmd := exec.Command(
 		config.Instance().DownloaderPath,
@@ -302,12 +302,7 @@ func (p *Process) SetPending() {
 }
 
 func (p *Process) SetMetadata() error {
-	cmd := exec.Command(
-		config.Instance().DownloaderPath,
-		p.Url,
-		"-J",
-		"-o", fmt.Sprintf("%s/%s", p.Output.Path, p.Output.Filename),
-	)
+	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	stdout, err := cmd.StdoutPipe()
@@ -354,13 +349,12 @@ func (p *Process) SetMetadata() error {
 		return err
 	}
 
+	p.Info = info
+	p.Progress.Status = StatusPending
+
 	if err := cmd.Wait(); err != nil {
 		return errors.New(bufferedStderr.String())
 	}
-
-	p.Info = info
-	p.Progress.Status = StatusPending
-	p.Output.SavedFilePath = info.FileName
 
 	return nil
 }
