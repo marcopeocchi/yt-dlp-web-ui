@@ -27,7 +27,6 @@ import { useRPC } from '../hooks/useRPC'
 import { RPCResult } from '../types'
 import { base64URLEncode, formatSize, formatSpeedMiB } from "../utils"
 
-
 const columns = [
   {
     width: 8,
@@ -199,7 +198,7 @@ const DownloadsTableView: React.FC = () => {
   }
 
   return (
-    <Box style={{ height: '80vh', width: '100%' }}>
+    <Box style={{ height: downloads.length === 0 ? '0vh' : '80vh', width: '100%' }}>
       <TableVirtuoso
         hidden={downloads.length === 0}
         data={downloads}
