@@ -20,6 +20,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.0",
+    "react-virtuoso": "^4.7.11",
     "recoil": "^0.7.7",
     "rxjs": "^7.8.1"
   },
@@ -31,8 +32,8 @@
     "@types/react-helmet": "^6.1.11",
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react-swc": "^3.6.0",
+    "million": "^3.0.6",
     "typescript": "^5.4.3",
-    "vite": "^5.2.11",
-    "million": "^3.0.6"
+    "vite": "^5.2.11"
   }
 }
