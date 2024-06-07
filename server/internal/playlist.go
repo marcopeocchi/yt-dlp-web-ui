@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"os/exec"
+	"slices"
 	"strings"
 	"time"
 
@@ -41,21 +42,24 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		return err
 	}
 
-	logger.Info("decoded metadata", slog.String("url", req.URL))
+	if err := cmd.Wait(); err != nil {
+		return err
+	}
+
+	logger.Info("decoded playlist metadata", slog.String("url", req.URL))
 
 	if m.Type == "" {
-		cmd.Wait()
 		return errors.New("probably not a valid URL")
 	}
 
 	if m.Type == "playlist" {
-		logger.Info(
-			"playlist detected",
-			slog.String("url", req.URL),
-			slog.Int("count", m.Count),
-		)
+		entries := slices.CompactFunc(slices.Compact(m.Entries), func(a DownloadInfo, b DownloadInfo) bool {
+			return a.URL == b.URL
+		})
 
-		for _, meta := range m.Entries {
+		logger.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
+
+		for _, meta := range entries {
 			// detect playlist title from metadata since each playlist entry will be
 			// treated as an individual download
 			req.Rename = strings.Replace(
@@ -81,9 +85,6 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 			db.Set(proc)
 			mq.Publish(proc)
 		}
-
-		err = cmd.Wait()
-		return err
 	}
 
 	proc := &Process{

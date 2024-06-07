@@ -56,7 +56,7 @@ func (m *MessageQueue) downloadConsumer() {
 
 	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
 		//TODO: provide valid context
-		sem.Acquire(context.TODO(), 1)
+		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
 		m.logger.Info("received process from event bus",
