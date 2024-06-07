@@ -22,6 +22,18 @@ func AutoMigrate(ctx context.Context, db *sql.DB) error {
 			content TEXT NOT NULL
 		)`,
 	)
+	if err != nil {
+		return err
+	}
+
+	db.ExecContext(
+		ctx,
+		`INSERT INTO templates (id, name, content) VALUES
+			($1, $2, $3),
+			($4, $5, $6);`,
+		"0", "default", "--no-mtime",
+		"1", "audio only", "-x",
+	)
 
 	return err
 }

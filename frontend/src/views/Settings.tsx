@@ -37,7 +37,6 @@ import {
   formatSelectionState,
   languageState,
   languages,
-  latestCliArgumentsState,
   pathOverridingState,
   servedFromReverseProxyState,
   servedFromReverseProxySubDirState,
@@ -49,7 +48,6 @@ import CookiesTextField from '../components/CookiesTextField'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
-import { CliArguments } from '../lib/argsParser'
 import { validateDomain, validateIP } from '../utils'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
@@ -64,7 +62,6 @@ export default function Settings() {
 
   const [serverAddr, setServerAddr] = useRecoilState(serverAddressState)
   const [serverPort, setServerPort] = useRecoilState(serverPortState)
-  const [cliArgs, setCliArgs] = useRecoilState(latestCliArgumentsState)
 
   const [pollingTime, setPollingTime] = useRecoilState(rpcPollingTimeState)
   const [language, setLanguage] = useRecoilState(languageState)
@@ -78,8 +75,6 @@ export default function Settings() {
   const { client } = useRPC()
 
   const { pushMessage } = useToast()
-
-  const argsBuilder = useMemo(() => new CliArguments().fromString(cliArgs), [])
 
   const baseURL$ = useMemo(() => new Subject<string>(), [])
   const serverAddr$ = useMemo(() => new Subject<string>(), [])
@@ -296,32 +291,12 @@ export default function Settings() {
         <Typography variant="h6" color="primary" sx={{ mt: 2, mb: 0.5 }}>
           General download settings
         </Typography>
-        <FormControlLabel
-          control={
-            <Switch
-              defaultChecked={argsBuilder.noMTime}
-              onChange={() => setCliArgs(argsBuilder.toggleNoMTime().toString())}
-            />
-          }
-          label={i18n.t('noMTimeCheckbox')}
 
-        />
-        <FormControlLabel
-          control={
-            <Switch
-              defaultChecked={argsBuilder.extractAudio}
-              onChange={() => setCliArgs(argsBuilder.toggleExtractAudio().toString())}
-              disabled={formatSelection}
-            />
-          }
-          label={i18n.t('extractAudioCheckbox')}
-        />
         <FormControlLabel
           control={
             <Switch
               defaultChecked={formatSelection}
               onChange={() => {
-                setCliArgs(argsBuilder.disableExtractAudio().toString())
                 setFormatSelection(!formatSelection)
               }}
             />

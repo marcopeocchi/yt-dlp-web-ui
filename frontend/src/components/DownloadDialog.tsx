@@ -26,19 +26,17 @@ import {
   Suspense,
   forwardRef,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useTransition
 } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { customArgsState, downloadTemplateState, filenameTemplateState, savedTemplatesState } from '../atoms/downloadTemplate'
-import { latestCliArgumentsState, settingsState } from '../atoms/settings'
+import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
-import { CliArguments } from '../lib/argsParser'
 import type { DLMetadata } from '../types'
 import { toFormatArgs } from '../utils'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
@@ -71,7 +69,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const [pickedBestFormat, setPickedBestFormat] = useState('')
 
   const [customArgs, setCustomArgs] = useRecoilState(customArgsState)
-  const [, setCliArgs] = useRecoilState(latestCliArgumentsState)
 
   const [downloadPath, setDownloadPath] = useState('')
 
@@ -82,10 +79,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const [url, setUrl] = useState('')
 
   const [isPlaylist, setIsPlaylist] = useState(false)
-
-  const argsBuilder = useMemo(() =>
-    new CliArguments().fromString(settings.cliArgs), [settings.cliArgs]
-  )
 
   const { i18n } = useI18n()
   const { client } = useRPC()
@@ -112,7 +105,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
       await new Promise(r => setTimeout(r, 10))
       await client.download({
         url: immediate || line,
-        args: `${argsBuilder.toString()} ${toFormatArgs(codes)} ${downloadTemplate}`,
+        args: `${toFormatArgs(codes)} ${downloadTemplate}`,
         pathOverride: downloadPath ?? '',
         renameTo: settings.fileRenaming ? filenameTemplate : '',
         playlist: isPlaylist,
@@ -325,19 +318,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                         control={<Checkbox onChange={() => setIsPlaylist(state => !state)} />}
                         checked={isPlaylist}
                         label={i18n.t('playlistCheckbox')}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            onChange={() => setCliArgs(argsBuilder.toggleExtractAudio().toString())}
-                          />
-                        }
-                        checked={argsBuilder.extractAudio}
-                        onChange={() => setCliArgs(argsBuilder.toggleExtractAudio().toString())}
-                        disabled={settings.formatSelection}
-                        label={i18n.t('extractAudioCheckbox')}
                       />
                     </Grid>
                   </Grid>

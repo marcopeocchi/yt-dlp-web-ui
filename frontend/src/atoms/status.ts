@@ -6,16 +6,6 @@ export const connectedState = atom({
   default: false
 })
 
-export const updatedBinaryState = atom({
-  key: 'updatedBinaryState',
-  default: false
-})
-
-export const isDownloadingState = atom({
-  key: 'isDownloadingState',
-  default: false
-})
-
 export const freeSpaceBytesState = selector({
   key: 'freeSpaceBytesState',
   get: async ({ get }) => {

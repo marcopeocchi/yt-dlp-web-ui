@@ -64,8 +64,7 @@ export const serverAddressState = atom<string>({
 
 export const serverPortState = atom<number>({
   key: 'serverPortState',
-  default: Number(localStorage.getItem('server-port')) ||
-    Number(window.location.port),
+  default: Number(localStorage.getItem('server-port')) || Number(window.location.port),
   effects: [
     ({ onSet }) =>
       onSet(a => localStorage.setItem('server-port', a.toString()))
@@ -197,7 +196,7 @@ export const cookiesState = atom({
   ]
 })
 
-export const themeSelector = selector<ThemeNarrowed>({
+const themeSelector = selector<ThemeNarrowed>({
   key: 'themeSelector',
   get: ({ get }) => {
     const theme = get(themeState)

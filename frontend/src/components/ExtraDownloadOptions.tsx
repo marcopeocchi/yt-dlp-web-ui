@@ -15,6 +15,12 @@ const ExtraDownloadOptions: React.FC = () => {
         disablePortal
         options={customTemplates.map(({ name, content }) => ({ label: name, content }))}
         autoHighlight
+        defaultValue={
+          customTemplates
+            .filter(({ id, name }) => id === "0" || name === "default")
+            .map(({ name, content }) => ({ label: name, content }))
+            .at(0)
+        }
         getOptionLabel={(option) => option.label}
         onChange={(_, value) => {
           setCustomArgs(value?.content!)

@@ -1,13 +1,10 @@
 import LogoutIcon from '@mui/icons-material/Logout'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
-import { serverURL } from '../atoms/settings'
 import { useI18n } from '../hooks/useI18n'
 
 export default function Logout() {
   const navigate = useNavigate()
-  const url = useRecoilValue(serverURL)
 
   const logout = async () => {
     localStorage.removeItem('token')
