@@ -10,6 +10,7 @@ import (
 type Config struct {
 	CurrentLogFile  string
 	LogPath         string `yaml:"log_path"`
+	BaseURL         string `yaml:"base_url"`
 	Host            string `yaml:"host"`
 	Port            int    `yaml:"port"`
 	DownloadPath    string `yaml:"downloadPath"`

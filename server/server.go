@@ -157,8 +157,11 @@ func newServer(c serverConfig) *http.Server {
 	// use in dev
 	// r.Use(middleware.Logger)
 
-	r.Mount("/", http.FileServer(http.FS(c.frontend)))
-	r.Mount("/openapi", http.FileServer(http.FS(c.swagger)))
+	baseUrl := config.Instance().BaseURL
+	r.Mount(baseUrl+"/", http.StripPrefix(baseUrl, http.FileServerFS(c.frontend)))
+
+	// swagger
+	r.Mount("/openapi", http.FileServerFS(c.swagger))
 
 	// Archive routes
 	r.Route("/archive", func(r chi.Router) {
@@ -209,7 +212,7 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 		defer func() {
 			db.Persist()
 			stop()
-			srv.Shutdown(context.TODO())
+			srv.Shutdown(context.Background())
 		}()
 	}()
 }
