@@ -16,3 +16,6 @@ cookies.txt
 __debug*
 ui/
 .idea
+frontend/.pnp.cjs
+frontend/.pnp.loader.mjs
+frontend/.yarn/install-state.gz
