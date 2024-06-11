@@ -61,7 +61,10 @@ func sse(w http.ResponseWriter, r *http.Request) {
 		}
 
 		sb.WriteString("event: log\n")
-		sb.WriteString("data: " + b.String() + "\n\n")
+		sb.WriteString("data: ")
+		sb.WriteString(b.String())
+		sb.WriteRune('\n')
+		sb.WriteRune('\n')
 
 		fmt.Fprint(w, sb.String())
 
