@@ -103,7 +103,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
       if (pickedBestFormat !== '') codes.push(pickedBestFormat)
 
       await new Promise(r => setTimeout(r, 10))
-      await client.download({
+      client.download({
         url: immediate || line,
         args: `${toFormatArgs(codes)} ${downloadTemplate}`,
         pathOverride: downloadPath ?? '',
@@ -115,7 +115,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
         resetInput()
         setDownloadFormats(undefined)
         onDownloadStart(immediate || line)
-      }, 250)
+      }, 100)
     }
 
     setUrl('')

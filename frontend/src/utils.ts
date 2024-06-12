@@ -1,11 +1,6 @@
 import { pipe } from 'fp-ts/lib/function'
 import type { RPCResponse } from "./types"
 
-/**
- * Validate an ip v4 via regex
- * @param {string} ipAddr 
- * @returns ip validity test
- */
 export function validateIP(ipAddr: string): boolean {
   let ipRegex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm
   return ipRegex.test(ipAddr)
