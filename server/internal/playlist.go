@@ -22,7 +22,7 @@ type metadata struct {
 func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger *slog.Logger) error {
 	var (
 		downloader = config.Instance().DownloaderPath
-		cmd        = exec.Command(downloader, req.URL, "-J")
+		cmd        = exec.Command(downloader, req.URL, "--flat-playlist", "-J")
 	)
 
 	stdout, err := cmd.StdoutPipe()
@@ -59,7 +59,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 
 		logger.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
 
-		for _, meta := range entries {
+		for i, meta := range entries {
 			// detect playlist title from metadata since each playlist entry will be
 			// treated as an individual download
 			req.Rename = strings.Replace(
@@ -69,8 +69,11 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 				1,
 			)
 
+			//TODO: it's idiotic but it works: virtually delay the creation time
+			meta.CreatedAt = time.Now().Add(time.Millisecond * time.Duration(i*10))
+
 			proc := &Process{
-				Url:      meta.OriginalURL,
+				Url:      meta.URL,
 				Progress: DownloadProgress{},
 				Output:   DownloadOutput{Filename: req.Rename},
 				Info:     meta,
@@ -78,7 +81,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 				Logger:   logger,
 			}
 
-			proc.Info.URL = meta.OriginalURL
+			proc.Info.URL = meta.URL
 
 			time.Sleep(time.Millisecond)
 
