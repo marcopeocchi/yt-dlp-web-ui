@@ -28,7 +28,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 FROM alpine:edge
 
 RUN apk update && \
-apk add ffmpeg yt-dlp ca-certificates curl wget
+apk add ffmpeg yt-dlp ca-certificates curl wget psmisc
 
 VOLUME /downloads /config
 
