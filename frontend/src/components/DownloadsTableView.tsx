@@ -123,8 +123,6 @@ const DownloadsTableView: React.FC = () => {
   const serverAddr = useRecoilValue(serverURL)
   const { client } = useRPC()
 
-  const abort = (id: string) => client.kill(id)
-
   const viewFile = (path: string) => {
     const encoded = base64URLEncode(path)
     window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
@@ -170,7 +168,7 @@ const DownloadsTableView: React.FC = () => {
           <ButtonGroup>
             <IconButton
               size="small"
-              onClick={() => abort(download.id)}
+              onClick={() => client.kill(download.id)}
             >
               {download.progress.percentage === '-1' ? <DeleteIcon /> : <StopCircleIcon />}
 

@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 import { loadingDownloadsState } from '../atoms/downloads'
 import { listViewState } from '../atoms/settings'
 import { loadingAtom } from '../atoms/ui'
-import DownloadsCardView from './DownloadsCardView'
+import DownloadsGridView from './DownloadsGridView'
 import DownloadsTableView from './DownloadsTableView'
 
 const Downloads: React.FC = () => {
@@ -21,7 +21,7 @@ const Downloads: React.FC = () => {
 
   if (tableView) return <DownloadsTableView />
 
-  return <DownloadsCardView />
+  return <DownloadsGridView />
 }
 
 export default Downloads

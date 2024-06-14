@@ -6,14 +6,12 @@ import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import DownloadCard from './DownloadCard'
 
-const DownloadsCardView: React.FC = () => {
+const DownloadsGridView: React.FC = () => {
   const downloads = useRecoilValue(activeDownloadsState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()
   const { pushMessage } = useToast()
-
-  const abort = (id: string) => client.kill(id)
 
   return (
     <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12, xl: 12 }} pt={2}>
@@ -22,7 +20,7 @@ const DownloadsCardView: React.FC = () => {
           <Grid item xs={4} sm={8} md={6} xl={4} key={download.id}>
             <DownloadCard
               download={download}
-              onStop={() => abort(download.id)}
+              onStop={() => client.kill(download.id)}
               onCopy={() => pushMessage(i18n.t('clipboardAction'), 'info')}
             />
           </Grid>
@@ -32,4 +30,4 @@ const DownloadsCardView: React.FC = () => {
   )
 }
 
-export default DownloadsCardView
+export default DownloadsGridView

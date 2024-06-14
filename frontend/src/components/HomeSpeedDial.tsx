@@ -26,8 +26,6 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
   const { i18n } = useI18n()
   const { client } = useRPC()
 
-  const abort = () => client.killAll()
-
   return (
     <SpeedDial
       ariaLabel="Home speed dial"
@@ -47,7 +45,7 @@ const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
       <SpeedDialAction
         icon={<DeleteForeverIcon />}
         tooltipTitle={i18n.t('abortAllButton')}
-        onClick={abort}
+        onClick={() => client.killAll()}
       />
       <SpeedDialAction
         icon={<BuildCircleIcon />}

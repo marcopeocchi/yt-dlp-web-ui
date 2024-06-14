@@ -76,15 +76,14 @@ export type DirectoryEntry = {
   name: string
   path: string
   size: number
-  shaSum: string
   modTime: string
   isVideo: boolean
   isDirectory: boolean
 }
 
-export type DeleteRequest = Pick<DirectoryEntry, 'path' | 'shaSum'>
+export type DeleteRequest = Pick<DirectoryEntry, 'path'>
 
-export type PlayRequest = Pick<DirectoryEntry, 'path'>
+export type PlayRequest = DeleteRequest
 
 export type CustomTemplate = {
   id: string

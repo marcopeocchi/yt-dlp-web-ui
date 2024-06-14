@@ -113,7 +113,6 @@ export default function Downloaded() {
             modTime: '',
             name: '..',
             path: upperLevel,
-            shaSum: '',
             size: 0,
           }, ...r.filter(f => f.name !== '')]
           : r.filter(f => f.name !== '')
@@ -144,7 +143,6 @@ export default function Downloaded() {
       method: 'POST',
       body: JSON.stringify({
         path: entry.path,
-        shaSum: entry.shaSum,
       })
     }),
     matchW(
