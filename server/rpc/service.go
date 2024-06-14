@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"errors"
 	"log/slog"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -99,13 +100,19 @@ func (s *Service) Kill(args string, killed *string) error {
 		return err
 	}
 
-	if proc != nil {
-		err = proc.Kill()
-		s.db.Delete(proc.Id)
+	if proc == nil {
+		return errors.New("nil process")
+	}
+
+	if err := proc.Kill(); err != nil {
+		s.logger.Info("failed killing process", slog.String("id", proc.Id))
+		return err
 	}
 
 	s.db.Delete(proc.Id)
-	return err
+	s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
+
+	return nil
 }
 
 // KillAll kills all process unconditionally and removes them from
@@ -125,8 +132,17 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 		}
 
 		if proc != nil {
-			proc.Kill()
-			s.db.Delete(proc.Id)
+			err := proc.Kill()
+			if err != nil {
+				s.logger.Info(
+					"failed killing process",
+					slog.String("id", proc.Id),
+					slog.String("err", err.Error()),
+				)
+				return err
+			}
+
+			s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
 		}
 	}
 

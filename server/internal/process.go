@@ -202,14 +202,15 @@ func (p *Process) Kill() error {
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct
 	// process group
-	if p.proc != nil {
-		pgid, err := syscall.Getpgid(p.proc.Pid)
-		if err != nil {
-			return err
-		}
-		err = syscall.Kill(-pgid, syscall.SIGTERM)
+	if p.proc == nil {
+		return errors.New("*os.Process not set")
+	}
 
-		p.Logger.Info("killed process", slog.String("id", p.Id))
+	pgid, err := syscall.Getpgid(p.proc.Pid)
+	if err != nil {
+		return err
+	}
+	if err := syscall.Kill(-pgid, syscall.SIGTERM); err != nil {
 		return err
 	}
 
@@ -223,10 +224,7 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		p.Logger.Error(
-			"failed to retrieve metadata",
-			slog.String("err", err.Error()),
-		)
+		p.Logger.Error("failed to retrieve metadata", slog.String("err", err.Error()))
 		return DownloadFormats{}, err
 	}
 
