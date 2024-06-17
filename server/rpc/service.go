@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/updater"
 )
@@ -12,6 +13,7 @@ import (
 type Service struct {
 	db     *internal.MemoryDB
 	mq     *internal.MessageQueue
+	lm     *livestream.Monitor
 	logger *slog.Logger
 }
 
@@ -55,6 +57,20 @@ func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) er
 	}
 
 	*result = ""
+	return nil
+}
+
+// TODO: docs
+func (s *Service) ExecLivestream(args internal.DownloadRequest, result *string) error {
+	s.lm.Add(args.URL)
+
+	*result = args.URL
+	return nil
+}
+
+// TODO: docs
+func (s *Service) ProgressLivestream(args NoArgs, result *livestream.LiveStreamStatus) error {
+	*result = s.lm.Status()
 	return nil
 }
 
