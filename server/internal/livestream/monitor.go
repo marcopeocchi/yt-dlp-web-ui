@@ -26,13 +26,9 @@ func (s *Monitor) Schedule() {
 }
 
 func (s *Monitor) Add(url string) {
-	ls := &LiveStream{
-		url:  url,
-		done: s.done,
-	}
+	ls := New(url, s.done)
 
 	go ls.Start()
-
 	s.streams[url] = ls
 }
 
@@ -44,17 +40,17 @@ func (s *Monitor) Status() LiveStreamStatus {
 	status := make(LiveStreamStatus)
 
 	for k, v := range s.streams {
-		wt, ok := <-v.WaitTime()
-		if !ok {
-			continue
-		}
+		// wt, ok := <-v.WaitTime()
+		// if !ok {
+		// 	continue
+		// }
 
 		status[k] = struct {
 			Status   int
 			WaitTime time.Duration
 		}{
 			Status:   v.status,
-			WaitTime: wt,
+			WaitTime: v.waitTime,
 		}
 	}
 

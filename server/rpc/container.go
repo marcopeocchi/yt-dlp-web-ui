@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 )
 
@@ -13,11 +14,13 @@ import (
 func Container(
 	db *internal.MemoryDB,
 	mq *internal.MessageQueue,
+	lm *livestream.Monitor,
 	logger *slog.Logger,
 ) *Service {
 	return &Service{
 		db:     db,
 		mq:     mq,
+		lm:     lm,
 		logger: logger,
 	}
 }

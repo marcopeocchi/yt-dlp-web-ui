@@ -22,6 +22,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/dbutil"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/handlers"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/logging"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
@@ -134,7 +135,9 @@ func RunBlocking(cfg *RunConfig) {
 }
 
 func newServer(c serverConfig) *http.Server {
-	service := ytdlpRPC.Container(c.mdb, c.mq, c.logger)
+	lm := livestream.NewMonitor(c.logger)
+
+	service := ytdlpRPC.Container(c.mdb, c.mq, lm, c.logger)
 	rpc.Register(service)
 
 	r := chi.NewRouter()

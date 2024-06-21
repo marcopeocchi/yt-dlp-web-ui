@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	pending = iota
+	waiting = iota
 	inProgress
 	completed
 	errored
@@ -22,23 +22,25 @@ const (
 // Defines a generic livestream.
 // A livestream is identified by its url.
 type LiveStream struct {
-	url      string
-	proc     *os.Process        // used to manually kill the yt-dlp process
-	status   int                // whether is monitoring or completed
-	log      []byte             // keeps tracks of the process logs while monitoring, not when started
-	done     chan *LiveStream   // where to signal the completition
-	waitTime chan time.Duration // time to livestream start
-	errors   chan error
+	url          string
+	proc         *os.Process        // used to manually kill the yt-dlp process
+	status       int                // whether is monitoring or completed
+	log          []byte             // keeps tracks of the process logs while monitoring, not when started
+	done         chan *LiveStream   // where to signal the completition
+	waitTimeChan chan time.Duration // time to livestream start
+	errors       chan error
+	waitTime     time.Duration
 }
 
 func New(url string, done chan *LiveStream) *LiveStream {
 	return &LiveStream{
-		url:      url,
-		done:     done,
-		status:   pending,
-		log:      make([]byte, 0),
-		errors:   make(chan error),
-		waitTime: make(chan time.Duration),
+		url:          url,
+		done:         done,
+		status:       waiting,
+		waitTime:     time.Second * 0,
+		log:          make([]byte, 0),
+		errors:       make(chan error),
+		waitTimeChan: make(chan time.Duration),
 	}
 }
 
@@ -63,7 +65,7 @@ func (l *LiveStream) Start() error {
 		return err
 	}
 
-	l.status = inProgress
+	l.status = waiting
 
 	// Start monitoring when the livestream is goin to be live.
 	// If already live do nothing.
@@ -84,7 +86,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 	scanner := bufio.NewScanner(r)
 
 	defer func() {
-		close(l.waitTime)
+		close(l.waitTimeChan)
 	}()
 
 	// however the time to live is not shown in a new line (and atm there's nothing to to about)
@@ -111,7 +113,8 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 		// if this substring is in the current line the download is starting,
 		// no need to monitor the time to live.
-		if strings.Contains(scanner.Text(), ": Downloading") {
+		//TODO: silly
+		if !strings.Contains(scanner.Text(), "Remaining time until next attempt") {
 			l.status = inProgress
 			return nil
 		}
@@ -129,14 +132,16 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 		start = start.Add(time.Duration(parsed.Minute()) * time.Minute)
 		start = start.Add(time.Duration(parsed.Second()) * time.Second)
 
-		l.waitTime <- time.Until(start)
+		//TODO: check if useing channels is stupid or not
+		// l.waitTimeChan <- time.Until(start)
+		l.waitTime = time.Until(start)
 	}
 
 	return nil
 }
 
 func (l *LiveStream) WaitTime() <-chan time.Duration {
-	return l.waitTime
+	return l.waitTimeChan
 }
 
 func (l *LiveStream) Kill() error {

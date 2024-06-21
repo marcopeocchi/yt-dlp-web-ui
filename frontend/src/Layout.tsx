@@ -2,6 +2,7 @@ import { ThemeProvider } from '@emotion/react'
 import ArchiveIcon from '@mui/icons-material/Archive'
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
+import LiveTvIcon from '@mui/icons-material/LiveTv'
 import Menu from '@mui/icons-material/Menu'
 import SettingsIcon from '@mui/icons-material/Settings'
 import TerminalIcon from '@mui/icons-material/Terminal'
@@ -117,6 +118,19 @@ export default function Layout() {
               <ListItemButton>
                 <ListItemIcon>
                   <ArchiveIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+              </ListItemButton>
+            </Link>
+            <Link to={'/monitor'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <LiveTvIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('archiveButtonLabel')} />
               </ListItemButton>

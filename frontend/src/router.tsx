@@ -8,6 +8,7 @@ const Home = lazy(() => import('./views/Home'))
 const Login = lazy(() => import('./views/Login'))
 const Archive = lazy(() => import('./views/Archive'))
 const Settings = lazy(() => import('./views/Settings'))
+const LiveStream = lazy(() => import('./views/Livestream'))
 
 const ErrorBoundary = lazy(() => import('./components/ErrorBoundary'))
 
@@ -71,6 +72,14 @@ export const router = createHashRouter([
         element: (
           <Suspense fallback={<CircularProgress />}>
             <ErrorBoundary />
+          </Suspense >
+        )
+      },
+      {
+        path: '/monitor',
+        element: (
+          <Suspense fallback={<CircularProgress />}>
+            <LiveStream />
           </Suspense >
         )
       },

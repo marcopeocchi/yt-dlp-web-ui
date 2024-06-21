@@ -9,6 +9,8 @@ export type RPCMethods =
   | "Service.ExecPlaylist"
   | "Service.DirectoryTree"
   | "Service.UpdateExecutable"
+  | "Service.ExecLivestream"
+  | "Service.ProgressLivestream"
 
 export type RPCRequest = {
   method: RPCMethods
@@ -90,3 +92,8 @@ export type CustomTemplate = {
   name: string
   content: string
 }
+
+export type LiveStreamProgress = Record<string, {
+  Status: number
+  WaitTime: string
+}>
