@@ -105,7 +105,7 @@ func (s *Service) Kill(args string, killed *string) error {
 	}
 
 	if err := proc.Kill(); err != nil {
-		s.logger.Info("failed killing process", slog.String("id", proc.Id))
+		s.logger.Info("failed killing process", slog.String("id", proc.Id), slog.Any("err", err))
 		return err
 	}
 

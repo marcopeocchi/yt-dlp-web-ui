@@ -132,6 +132,13 @@ export class RPCClient {
     })
   }
 
+  public clear(id: string) {
+    this.sendHTTP({
+      method: 'Service.Clear',
+      params: [id],
+    })
+  }
+
   public killAll() {
     this.sendHTTP({
       method: 'Service.KillAll',

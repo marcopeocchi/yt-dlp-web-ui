@@ -24,7 +24,7 @@ import { useRecoilValue } from 'recoil'
 import { activeDownloadsState } from '../atoms/downloads'
 import { serverURL } from '../atoms/settings'
 import { useRPC } from '../hooks/useRPC'
-import { RPCResult } from '../types'
+import { ProcessStatus, RPCResult } from '../types'
 import { base64URLEncode, formatSize, formatSpeedMiB } from "../utils"
 
 const columns = [
@@ -133,6 +133,11 @@ const DownloadsTableView: React.FC = () => {
     window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
+  const stop = (r: RPCResult) => r.progress.process_status === ProcessStatus.Completed
+    ? client.clear(r.id)
+    : client.kill(r.id)
+
+
   function rowContent(_index: number, download: RPCResult) {
     return (
       <>
@@ -168,7 +173,7 @@ const DownloadsTableView: React.FC = () => {
           <ButtonGroup>
             <IconButton
               size="small"
-              onClick={() => client.kill(download.id)}
+              onClick={() => stop(download)}
             >
               {download.progress.percentage === '-1' ? <DeleteIcon /> : <StopCircleIcon />}
 
