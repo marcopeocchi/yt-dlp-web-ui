@@ -254,7 +254,7 @@ export default function Settings() {
           </Grid>
         </Grid>
         <Typography variant="h6" color="primary" sx={{ mt: 0.5, mb: 2 }}>
-          Appaerance
+          Appearance
         </Typography>
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
