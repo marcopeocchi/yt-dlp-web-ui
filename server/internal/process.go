@@ -198,6 +198,9 @@ func (p *Process) Complete() {
 
 // Kill a process and remove it from the memory
 func (p *Process) Kill() error {
+	defer func() {
+		p.Progress.Status = StatusCompleted
+	}()
 	// yt-dlp uses multiple child process the parent process
 	// has been spawned with setPgid = true. To properly kill
 	// all subprocesses a SIGTERM need to be sent to the correct

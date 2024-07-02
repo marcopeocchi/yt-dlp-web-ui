@@ -121,8 +121,11 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 	s.logger.Info("Killing all spawned processes")
 
 	var (
-		keys = s.db.Keys()
-		err  error
+		keys       = s.db.Keys()
+		removeFunc = func(p *internal.Process) error {
+			defer s.db.Delete(p.Id)
+			return p.Kill()
+		}
 	)
 
 	for _, key := range *keys {
@@ -131,22 +134,24 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 			return err
 		}
 
-		if proc != nil {
-			err := proc.Kill()
-			if err != nil {
-				s.logger.Info(
-					"failed killing process",
-					slog.String("id", proc.Id),
-					slog.String("err", err.Error()),
-				)
-				return err
-			}
-
-			s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
+		if proc == nil {
+			s.db.Delete(key)
+			continue
 		}
+
+		if err := removeFunc(proc); err != nil {
+			s.logger.Info(
+				"failed killing process",
+				slog.String("id", proc.Id),
+				slog.Any("err", err),
+			)
+			continue
+		}
+
+		s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
 	}
 
-	return err
+	return nil
 }
 
 // Remove a process from the db rendering it unusable if active
