@@ -75,7 +75,7 @@ func (s *Service) Formats(args Args, meta *internal.DownloadFormats) error {
 		err error
 		p   = internal.Process{Url: args.URL, Logger: s.logger}
 	)
-	*meta, err = p.GetFormatsSync()
+	*meta, err = p.GetFormats()
 	return err
 }
 

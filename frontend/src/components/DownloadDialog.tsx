@@ -125,7 +125,6 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
    * Retrive url from input and display the formats selection view
    */
   const sendUrlFormatSelection = () => {
-    setUrl('')
     setPickedAudioFormat('')
     setPickedVideoFormat('')
     setPickedBestFormat('')

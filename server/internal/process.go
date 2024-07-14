@@ -222,7 +222,7 @@ func (p *Process) Kill() error {
 
 // Returns the available format for this URL
 // TODO: Move out from process.go
-func (p *Process) GetFormatsSync() (DownloadFormats, error) {
+func (p *Process) GetFormats() (DownloadFormats, error) {
 	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
 
 	stdout, err := cmd.Output()
@@ -257,7 +257,6 @@ func (p *Process) GetFormatsSync() (DownloadFormats, error) {
 		decodingError = json.Unmarshal(stdout, &info)
 		wg.Done()
 	}()
-
 	go func() {
 		decodingError = json.Unmarshal(stdout, &best)
 		wg.Done()
