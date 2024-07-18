@@ -19,27 +19,36 @@ func NewMonitor(logger *slog.Logger) *Monitor {
 	}
 }
 
-func (s *Monitor) Schedule() {
-	for l := range s.done {
-		delete(s.streams, l.url)
+func (m *Monitor) Schedule() {
+	for l := range m.done {
+		delete(m.streams, l.url)
 	}
 }
 
-func (s *Monitor) Add(url string) {
-	ls := New(url, s.done)
+func (m *Monitor) Add(url string) {
+	ls := New(url, m.done)
 
 	go ls.Start()
-	s.streams[url] = ls
+	m.streams[url] = ls
 }
 
-func (s *Monitor) Remove(url string) error {
-	return s.streams[url].Kill()
+func (m *Monitor) Remove(url string) error {
+	return m.streams[url].Kill()
 }
 
-func (s *Monitor) Status() LiveStreamStatus {
+func (m *Monitor) RemoveAll() error {
+	for _, v := range m.streams {
+		if err := v.Kill(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (m *Monitor) Status() LiveStreamStatus {
 	status := make(LiveStreamStatus)
 
-	for k, v := range s.streams {
+	for k, v := range m.streams {
 		// wt, ok := <-v.WaitTime()
 		// if !ok {
 		// 	continue
@@ -55,4 +64,8 @@ func (s *Monitor) Status() LiveStreamStatus {
 	}
 
 	return status
+}
+
+func (m *Monitor) Persist() error {
+	return nil
 }

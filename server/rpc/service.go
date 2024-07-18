@@ -74,6 +74,24 @@ func (s *Service) ProgressLivestream(args NoArgs, result *livestream.LiveStreamS
 	return nil
 }
 
+// TODO: docs
+func (s *Service) KillLivestream(args string, result *struct{}) error {
+	s.logger.Info("killing livestream", slog.String("url", args))
+
+	err := s.lm.Remove(args)
+	if err != nil {
+		s.logger.Error("failed killing livestream", slog.String("url", args), slog.Any("err", err))
+		return err
+	}
+
+	return nil
+}
+
+// TODO: docs
+func (s *Service) KillAllLivestream(args NoArgs, result *struct{}) error {
+	return s.lm.RemoveAll()
+}
+
 // Progess retrieves the Progress of a specific Process given its Id
 func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error {
 	proc, err := s.db.Get(args.Id)

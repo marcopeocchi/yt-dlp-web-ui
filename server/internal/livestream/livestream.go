@@ -121,7 +121,6 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 		}
 
 		startsIn := parts[1]
-
 		parsed, err := parseTimeSpan(startsIn)
 		if err != nil {
 			continue
@@ -139,12 +138,14 @@ func (l *LiveStream) WaitTime() <-chan time.Duration {
 	return l.waitTimeChan
 }
 
+// Kills a livestream process and signal its completition
 func (l *LiveStream) Kill() error {
 	l.done <- l
 
 	if l.proc != nil {
 		return l.proc.Kill()
 	}
+
 	return errors.New("nil yt-dlp process")
 }
 

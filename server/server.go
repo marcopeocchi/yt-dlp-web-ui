@@ -136,6 +136,7 @@ func RunBlocking(cfg *RunConfig) {
 
 func newServer(c serverConfig) *http.Server {
 	lm := livestream.NewMonitor(c.logger)
+	go lm.Schedule()
 
 	service := ytdlpRPC.Container(c.mdb, c.mq, lm, c.logger)
 	rpc.Register(service)

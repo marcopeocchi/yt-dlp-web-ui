@@ -168,4 +168,18 @@ export class RPCClient {
       params: []
     })
   }
+
+  public killLivestream(url: string) {
+    return this.sendHTTP<LiveStreamProgress>({
+      method: 'Service.KillLivestream',
+      params: [url]
+    })
+  }
+
+  public killAllLivestream() {
+    return this.sendHTTP<LiveStreamProgress>({
+      method: 'Service.KillAllLivestream',
+      params: []
+    })
+  }
 }

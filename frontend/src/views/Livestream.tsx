@@ -31,6 +31,10 @@ const LiveStreamMonitorView: React.FC = () => {
 
   const exec = () => client.execLivestream('https://www.youtube.com/watch?v=PYVr6Rv8-Ug')
 
+  const stop = () => client.killLivestream('https://www.youtube.com/watch?v=PYVr6Rv8-Ug')
+
+  const stopAll = () => client.killAllLivestream()
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
       <Paper sx={{
@@ -41,6 +45,12 @@ const LiveStreamMonitorView: React.FC = () => {
       }}>
         <Button onClick={exec}>
           start
+        </Button>
+        <Button onClick={stop}>
+          stop
+        </Button>
+        <Button onClick={stopAll}>
+          stop all
         </Button>
         {progress && Object.keys(progress).map(k => (
           <div key={k}>

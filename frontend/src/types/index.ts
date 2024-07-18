@@ -11,6 +11,8 @@ export type RPCMethods =
   | "Service.UpdateExecutable"
   | "Service.ExecLivestream"
   | "Service.ProgressLivestream"
+  | "Service.KillLivestream"
+  | "Service.KillAllLivestream"
 
 export type RPCRequest = {
   method: RPCMethods
