@@ -65,7 +65,9 @@ func (m *MessageQueue) downloadConsumer() {
 			slog.String("id", p.getShortId()),
 		)
 
-		p.Start()
+		if p.Progress.Status != StatusCompleted {
+			p.Start()
+		}
 
 		m.logger.Info("started process",
 			slog.String("bus", queueName),
@@ -91,6 +93,14 @@ func (m *MessageQueue) metadataSubscriber() {
 			slog.String("consumer", "metadataConsumer"),
 			slog.String("id", p.getShortId()),
 		)
+
+		if p.Progress.Status == StatusCompleted {
+			m.logger.Warn("proccess has an illegal state",
+				slog.String("id", p.getShortId()),
+				slog.Int("status", p.Progress.Status),
+			)
+			return
+		}
 
 		if err := p.SetMetadata(); err != nil {
 			m.logger.Error("failed to retrieve metadata",

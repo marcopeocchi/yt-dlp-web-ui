@@ -38,11 +38,18 @@ type DownloadInfo = {
   created_at: string
 }
 
+export enum ProcessStatus {
+  Pending = 0,
+  Downloading,
+  Completed,
+  Errored,
+}
+
 type DownloadProgress = {
   speed: number
   eta: number
   percentage: string
-  process_status: number
+  process_status: ProcessStatus
 }
 
 export type RPCResult = Readonly<{

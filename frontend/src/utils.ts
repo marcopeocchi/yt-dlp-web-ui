@@ -1,5 +1,6 @@
 import { pipe } from 'fp-ts/lib/function'
 import type { RPCResponse } from "./types"
+import { ProcessStatus } from './types'
 
 export function validateIP(ipAddr: string): boolean {
   let ipRegex = /^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/gm
@@ -53,15 +54,15 @@ export function isRPCResponse(object: any): object is RPCResponse<any> {
   return 'result' in object && 'id' in object
 }
 
-export function mapProcessStatus(status: number) {
+export function mapProcessStatus(status: ProcessStatus) {
   switch (status) {
-    case 0:
+    case ProcessStatus.Pending:
       return 'Pending'
-    case 1:
+    case ProcessStatus.Downloading:
       return 'Downloading'
-    case 2:
+    case ProcessStatus.Completed:
       return 'Completed'
-    case 3:
+    case ProcessStatus.Errored:
       return 'Error'
     default:
       return 'Pending'

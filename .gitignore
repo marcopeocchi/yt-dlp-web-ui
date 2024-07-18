@@ -19,3 +19,4 @@ ui/
 frontend/.pnp.cjs
 frontend/.pnp.loader.mjs
 frontend/.yarn/install-state.gz
+.db.lock

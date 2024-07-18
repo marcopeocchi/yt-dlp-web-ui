@@ -85,7 +85,7 @@ func RunBlocking(cfg *RunConfig) {
 		logger.Error("failed to open database", slog.String("err", err.Error()))
 	}
 
-	if err := dbutil.AutoMigrate(context.Background(), db); err != nil {
+	if err := dbutil.Migrate(context.Background(), db); err != nil {
 		logger.Error("failed to init database", slog.String("err", err.Error()))
 	}
 

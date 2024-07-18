@@ -5,6 +5,7 @@ services:
       - 3033:3033
     volumes:
       - <your dir>:/downloads # replace <your dir> with a directory on your host system
+      - <your dir>:/config    # directory where config.yml will be stored
     healthcheck:
       test: curl -f http://localhost:3033 || exit 1
     restart: unless-stopped

@@ -3,27 +3,39 @@ package dbutil
 import (
 	"context"
 	"database/sql"
+	"os"
+	"path/filepath"
+
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
+var lockFilePath = filepath.Join(config.Instance().Dir(), ".db.lock")
+
 // Run the table migration
-func AutoMigrate(ctx context.Context, db *sql.DB) error {
+func Migrate(ctx context.Context, db *sql.DB) error {
 	conn, err := db.Conn(ctx)
 	if err != nil {
 		return err
 	}
 
-	defer conn.Close()
+	defer func() {
+		conn.Close()
+		createLockFile()
+	}()
 
-	_, err = db.ExecContext(
+	if _, err := db.ExecContext(
 		ctx,
 		`CREATE TABLE IF NOT EXISTS templates (
 			id CHAR(36) PRIMARY KEY,
 			name VARCHAR(255) NOT NULL,
 			content TEXT NOT NULL
 		)`,
-	)
-	if err != nil {
+	); err != nil {
 		return err
+	}
+
+	if lockFileExists() {
+		return nil
 	}
 
 	db.ExecContext(
@@ -35,5 +47,12 @@ func AutoMigrate(ctx context.Context, db *sql.DB) error {
 		"1", "audio only", "-x",
 	)
 
-	return err
+	return nil
+}
+
+func createLockFile() { os.Create(lockFilePath) }
+
+func lockFileExists() bool {
+	_, err := os.Stat(lockFilePath)
+	return os.IsExist(err)
 }
