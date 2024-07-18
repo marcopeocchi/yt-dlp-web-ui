@@ -1,8 +1,13 @@
 package livestream
 
 import (
+	"encoding/gob"
 	"log/slog"
+	"os"
+	"path/filepath"
 	"time"
+
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
 type Monitor struct {
@@ -67,5 +72,33 @@ func (m *Monitor) Status() LiveStreamStatus {
 }
 
 func (m *Monitor) Persist() error {
+	fd, err := os.Open(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
+	if err != nil {
+		return err
+	}
+
+	defer fd.Close()
+
+	return gob.NewEncoder(fd).Encode(m.streams)
+}
+
+func (m *Monitor) Restore() error {
+	fd, err := os.Open(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
+	if err != nil {
+		return err
+	}
+
+	defer fd.Close()
+
+	restored := make(map[string]*LiveStream)
+
+	if err := gob.NewDecoder(fd).Decode(&restored); err != nil {
+		return err
+	}
+
+	for k := range restored {
+		m.Add(k)
+	}
+
 	return nil
 }
