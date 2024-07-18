@@ -26,20 +26,20 @@ type LiveStream struct {
 	url          string
 	proc         *os.Process        // used to manually kill the yt-dlp process
 	status       int                // whether is monitoring or completed
-	log          []byte             // keeps tracks of the process logs while monitoring, not when started
+	log          chan []byte        // keeps tracks of the process logs while monitoring, not when started
 	done         chan *LiveStream   // where to signal the completition
 	waitTimeChan chan time.Duration // time to livestream start
 	errors       chan error
 	waitTime     time.Duration
 }
 
-func New(url string, done chan *LiveStream) *LiveStream {
+func New(url string, log chan []byte, done chan *LiveStream) *LiveStream {
 	return &LiveStream{
 		url:          url,
 		done:         done,
 		status:       waiting,
 		waitTime:     time.Second * 0,
-		log:          make([]byte, 0),
+		log:          log,
 		errors:       make(chan error),
 		waitTimeChan: make(chan time.Duration),
 	}
@@ -90,7 +90,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 		close(l.waitTimeChan)
 	}()
 
-	// however the time to live is not shown in a new line (and atm there's nothing to to about)
+	// however the time to live is not shown in a new line (and atm there's nothing to do about)
 	// use a custom split funciton to set the line separator to \r instead of \r\n or \n
 	scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		for i := 0; i < len(data); i++ {
@@ -107,6 +107,8 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 	// start scanning the stdout
 	for scanner.Scan() {
+		l.log <- scanner.Bytes()
+
 		parts := strings.Split(scanner.Text(), ": ")
 		if len(parts) < 2 {
 			continue
@@ -154,25 +156,17 @@ func (l *LiveStream) Kill() error {
 //	parsed := parseTimeSpan("76:12:15")
 //	fmt.Println(parsed) // 2024-07-21 13:59:59.634781 +0200 CEST
 func parseTimeSpan(timeStr string) (time.Time, error) {
-	hh, mm, ss, err := func() (int, int, int, error) {
-		parts := strings.Split(timeStr, ":")
+	parts := strings.Split(timeStr, ":")
 
-		hh, err := strconv.Atoi(parts[0])
-		if err != nil {
-			return 0, 0, 0, err
-		}
-		mm, err := strconv.Atoi(parts[1])
-		if err != nil {
-			return 0, 0, 0, err
-		}
-		ss, err := strconv.Atoi(parts[2])
-		if err != nil {
-			return 0, 0, 0, err
-		}
-
-		return hh, mm, ss, nil
-	}()
-
+	hh, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return time.Time{}, err
+	}
+	mm, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return time.Time{}, err
+	}
+	ss, err := strconv.Atoi(parts[2])
 	if err != nil {
 		return time.Time{}, err
 	}

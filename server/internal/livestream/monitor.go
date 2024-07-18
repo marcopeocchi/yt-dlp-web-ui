@@ -14,6 +14,7 @@ type Monitor struct {
 	logger  *slog.Logger
 	streams map[string]*LiveStream // keeps track of the livestreams
 	done    chan *LiveStream       // to signal individual processes completition
+	logs    chan []byte            // to signal individual processes completition
 }
 
 func NewMonitor(logger *slog.Logger) *Monitor {
@@ -31,7 +32,7 @@ func (m *Monitor) Schedule() {
 }
 
 func (m *Monitor) Add(url string) {
-	ls := New(url, m.done)
+	ls := New(url, m.logs, m.done)
 
 	go ls.Start()
 	m.streams[url] = ls
@@ -101,4 +102,8 @@ func (m *Monitor) Restore() error {
 	}
 
 	return nil
+}
+
+func (m *Monitor) Logs() <-chan []byte {
+	return m.logs
 }
