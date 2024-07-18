@@ -16,7 +16,7 @@ const LiveStreamMonitorView: React.FC = () => {
       .then(r => setProgress(r.result))
   })
 
-  function formatMicro(microseconds: number) {
+  const formatMicro = (microseconds: number) => {
     const ms = microseconds / 1_000_000
     let ss = ms / 1000
 
@@ -29,7 +29,7 @@ const LiveStreamMonitorView: React.FC = () => {
     return `${hrs.toFixed(0)}:${mts.toFixed(0)}:${ss.toFixed(0)}`
   }
 
-  const exec = () => client.execLivestream('https://www.youtube.com/watch?v=dHL0MNt9bHE')
+  const exec = () => client.execLivestream('https://www.youtube.com/watch?v=PYVr6Rv8-Ug')
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>

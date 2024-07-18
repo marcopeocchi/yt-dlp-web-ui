@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -49,7 +50,7 @@ func (l *LiveStream) Start() error {
 	cmd := exec.Command(
 		config.Instance().DownloaderPath,
 		l.url,
-		"--wait-for-video", "10", // wait for the stream to be live and rechecke every 10 secs
+		"--wait-for-video", "10", // wait for the stream to be live and recheck every 10 secs
 		"--no-colors", // no ansi color fuzz
 	)
 	l.proc = cmd.Process
@@ -121,20 +122,14 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 		startsIn := parts[1]
 
-		parsed, err := time.Parse("15:04:05", startsIn)
+		parsed, err := parseTimeSpan(startsIn)
 		if err != nil {
 			continue
 		}
 
-		start := time.Now()
-
-		start = start.Add(time.Duration(parsed.Hour()) * time.Hour)
-		start = start.Add(time.Duration(parsed.Minute()) * time.Minute)
-		start = start.Add(time.Duration(parsed.Second()) * time.Second)
-
 		//TODO: check if useing channels is stupid or not
 		// l.waitTimeChan <- time.Until(start)
-		l.waitTime = time.Until(start)
+		l.waitTime = time.Until(parsed)
 	}
 
 	return nil
@@ -151,4 +146,48 @@ func (l *LiveStream) Kill() error {
 		return l.proc.Kill()
 	}
 	return errors.New("nil yt-dlp process")
+}
+
+// Parse the timespan returned from yt-dlp (time to live)
+//
+//	parsed := parseTimeSpan("76:12:15")
+//	fmt.Println(parsed) // 2024-07-21 13:59:59.634781 +0200 CEST
+func parseTimeSpan(timeStr string) (time.Time, error) {
+	hh, mm, ss, err := func() (int, int, int, error) {
+		parts := strings.Split(timeStr, ":")
+
+		hh, err := strconv.Atoi(parts[0])
+		if err != nil {
+			return 0, 0, 0, err
+		}
+		mm, err := strconv.Atoi(parts[1])
+		if err != nil {
+			return 0, 0, 0, err
+		}
+		ss, err := strconv.Atoi(parts[2])
+		if err != nil {
+			return 0, 0, 0, err
+		}
+
+		return hh, mm, ss, nil
+	}()
+
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	dd := 0
+
+	if hh > 24 {
+		dd = hh / 24
+		hh = hh % 24
+	}
+
+	start := time.Now()
+	start = start.AddDate(0, 0, dd)
+	start = start.Add(time.Duration(hh) * time.Hour)
+	start = start.Add(time.Duration(mm) * time.Minute)
+	start = start.Add(time.Duration(ss) * time.Second)
+
+	return start, nil
 }

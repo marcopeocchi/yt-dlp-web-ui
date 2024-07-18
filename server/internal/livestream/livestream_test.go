@@ -16,10 +16,10 @@ func TestLivestream(t *testing.T) {
 
 	done := make(chan *LiveStream)
 
-	ls := New("https://www.youtube.com/watch?v=M6AABHQyB2g", done)
+	ls := New("https://www.youtube.com/watch?v=PYVr6Rv8-Ug", done)
 	go ls.Start()
 
-	time.AfterFunc(time.Second*10, func() {
+	time.AfterFunc(time.Second*20, func() {
 		ls.Kill()
 	})
 
