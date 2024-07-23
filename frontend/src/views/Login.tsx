@@ -92,12 +92,8 @@ export default function Login() {
             yt-dlp WebUI
           </Title>
           <Title fontWeight={'500'} fontSize={16} color={'gray'}>
-            Authentication token will expire after 30 days.
-          </Title>
-          <Title fontWeight={'500'} fontSize={16} color={'gray'}>
-            In order to enable RPC authentication append the --auth,
-            <br />
-            --user [username] and --pass [password] flags.
+            To configure authentication check the&nbsp;
+            <a href='https://github.com/marcopeocchi/yt-dlp-web-ui/wiki/Authentication-methods'>wiki</a>.
           </Title>
           <TextField
             label="Username"
