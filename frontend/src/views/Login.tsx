@@ -113,17 +113,14 @@ export default function Login() {
             Submit
           </Button>
 
-          <Divider>or use your openId</Divider>
+          <Divider>
+            <Typography color={'gray'}>
+              or use your authentication provider
+            </Typography>
+          </Divider>
 
-          <TextField
-            label="Email"
-            type="email"
-            autoComplete="yt-dlp-webui-openid-email"
-            error={formHasError}
-            onChange={e => setPassword(e.currentTarget.value)}
-          />
           <Button variant="contained" size="large" onClick={loginWithOpenId}>
-            Login with OpenId
+            Login with OpenID
           </Button>
         </Stack>
       </Paper>
