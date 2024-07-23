@@ -169,6 +169,9 @@ func newServer(c serverConfig) *http.Server {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
+		if config.Instance().UseOpenId {
+			r.Use(openid.Middleware)
+		}
 		r.Post("/downloaded", handlers.ListDownloaded)
 		r.Post("/delete", handlers.DeleteFile)
 		r.Get("/d/{id}", handlers.DownloadFile)

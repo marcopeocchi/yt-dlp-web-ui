@@ -3,6 +3,7 @@ package openid
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"time"
 
@@ -11,6 +12,11 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"golang.org/x/oauth2"
 )
+
+type OAuth2SuccessResponse struct {
+	OAuth2Token   *oauth2.Token
+	IDTokenClaims *json.RawMessage
+}
 
 var (
 	oauth2Config oauth2.Config
@@ -61,60 +67,59 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, oauth2Config.AuthCodeURL(state, oidc.Nonce(nonce)), http.StatusFound)
 }
 
-func SingIn(w http.ResponseWriter, r *http.Request) {
+func doAuthentification(r *http.Request) (*OAuth2SuccessResponse, error) {
 	state, err := r.Cookie("state")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return nil, err
 	}
 
 	if r.URL.Query().Get("state") != state.Value {
-		http.Error(w, "auth state does not match", http.StatusBadRequest)
-		return
+		return nil, errors.New("auth state does not match")
 	}
 
 	oauth2Token, err := oauth2Config.Exchange(r.Context(), r.URL.Query().Get("code"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
 	rawToken, ok := oauth2Token.Extra("id_token").(string)
 	if !ok {
-		http.Error(w, "openid field \"id_token\" not found in oauth2 token", http.StatusBadRequest)
-		return
+		return nil, errors.New("openid field \"id_token\" not found in oauth2 token")
 	}
 
 	idToken, err := verifier.Verify(r.Context(), rawToken)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return nil, err
 	}
 
 	nonce, err := r.Cookie("nonce")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		return nil, err
 	}
 
 	if idToken.Nonce != nonce.Value {
-		http.Error(w, "auth nonce does not match", http.StatusBadRequest)
-		return
+		return nil, errors.New("auth nonce does not match")
 	}
 
 	// redact
 	oauth2Token.AccessToken = ""
 
-	res := struct {
-		OAuth2Token   *oauth2.Token
-		IDTokenClaims *json.RawMessage
-	}{
+	res := OAuth2SuccessResponse{
 		oauth2Token,
 		&json.RawMessage{},
 	}
 
 	if err := idToken.Claims(&res.IDTokenClaims); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return nil, err
+	}
+
+	return &res, nil
+}
+
+func SingIn(w http.ResponseWriter, r *http.Request) {
+	res, err := doAuthentification(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -122,4 +127,15 @@ func SingIn(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func Middleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := doAuthentification(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
 }

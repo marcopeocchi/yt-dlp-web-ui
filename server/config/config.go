@@ -23,6 +23,7 @@ type Config struct {
 	SessionFilePath string `yaml:"session_file_path"`
 	path            string
 
+	UseOpenId          bool   `yaml:"use_openid"`
 	OpenIdProviderURL  string `yaml:"openid_provider_url"`
 	OpenIdClientId     string `yaml:"openid_client_id"`
 	OpenIdClientSecret string `yaml:"openid_client_secret"`

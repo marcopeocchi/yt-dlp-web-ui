@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 )
 
 var upgrader = websocket.Upgrader{
@@ -76,6 +77,9 @@ func ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
+		}
+		if config.Instance().UseOpenId {
+			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", webSocket)
 		r.Get("/sse", sse)

@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 )
 
 func Container(args *ContainerArgs) *Handler {
@@ -20,6 +21,9 @@ func ApplyRouter(args *ContainerArgs) func(chi.Router) {
 	return func(r chi.Router) {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
+		}
+		if config.Instance().UseOpenId {
+			r.Use(openid.Middleware)
 		}
 		r.Post("/exec", h.Exec())
 		r.Get("/running", h.Running())
