@@ -22,6 +22,11 @@ type Config struct {
 	QueueSize       int    `yaml:"queue_size"`
 	SessionFilePath string `yaml:"session_file_path"`
 	path            string
+
+	OpenIdProviderURL  string `yaml:"openid_provider_url"`
+	OpenIdClientId     string `yaml:"openid_client_id"`
+	OpenIdClientSecret string `yaml:"openid_client_secret"`
+	OpenIdRedirectURL  string `yaml:"openid_redirect_url"`
 }
 
 var (
