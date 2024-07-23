@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -14,8 +15,9 @@ import (
 )
 
 type OAuth2SuccessResponse struct {
-	OAuth2Token   *oauth2.Token
-	IDTokenClaims *json.RawMessage
+	OAuth2Token    *oauth2.Token
+	OAuth2RawToken string
+	IDTokenClaims  *json.RawMessage
 }
 
 var (
@@ -52,6 +54,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Name:     "state",
 		Value:    state,
 		HttpOnly: true,
+		Path:     "/",
 		Secure:   r.TLS != nil,
 		Expires:  time.Now().Add(time.Hour * 24 * 30),
 	})
@@ -60,6 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Name:     "nonce",
 		Value:    nonce,
 		HttpOnly: true,
+		Path:     "/",
 		Secure:   r.TLS != nil,
 		Expires:  time.Now().Add(time.Hour * 24 * 30),
 	})
@@ -106,6 +110,7 @@ func doAuthentification(r *http.Request) (*OAuth2SuccessResponse, error) {
 
 	res := OAuth2SuccessResponse{
 		oauth2Token,
+		rawToken,
 		&json.RawMessage{},
 	}
 
@@ -123,19 +128,45 @@ func SingIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oid-token",
+		Value:    res.OAuth2RawToken,
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   r.TLS != nil,
+		Expires:  time.Now().Add(time.Hour * 24 * 30),
+	})
+
+	// if err := json.NewEncoder(w).Encode(res); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	fmt.Fprintf(w, "Login succesfully, you may now close this window and refresh yt-dlp-webui.")
 }
 
-func Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, err := doAuthentification(r)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		next.ServeHTTP(w, r)
+func Logout(w http.ResponseWriter, r *http.Request) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oid-token",
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   r.TLS != nil,
+		Expires:  time.Now(),
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "state",
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   r.TLS != nil,
+		Expires:  time.Now(),
+	})
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "nonce",
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   r.TLS != nil,
+		Expires:  time.Now(),
 	})
 }

@@ -6,19 +6,20 @@ import styled from '@emotion/styled'
 import {
   Button,
   Container,
+  Divider,
   Paper,
   Stack,
   TextField,
   Typography
 } from '@mui/material'
+import { matchW } from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
-import { matchW } from 'fp-ts/lib/TaskEither'
-import { pipe } from 'fp-ts/lib/function'
 
 const LoginContainer = styled(Container)({
   display: 'flex',
@@ -81,6 +82,8 @@ export default function Login() {
     )()
   }
 
+  const loginWithOpenId = () => window.open(`${url}/auth/openid/login`)
+
   return (
     <LoginContainer>
       <Paper sx={{ padding: '1.5rem', minWidth: '25%' }}>
@@ -112,6 +115,19 @@ export default function Login() {
           />
           <Button variant="contained" size="large" onClick={() => login()}>
             Submit
+          </Button>
+
+          <Divider>or use your openId</Divider>
+
+          <TextField
+            label="Email"
+            type="email"
+            autoComplete="yt-dlp-webui-openid-email"
+            error={formHasError}
+            onChange={e => setPassword(e.currentTarget.value)}
+          />
+          <Button variant="contained" size="large" onClick={loginWithOpenId}>
+            Login with OpenId
           </Button>
         </Stack>
       </Paper>
