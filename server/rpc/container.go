@@ -8,6 +8,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 )
 
 // Dependency injection container.
@@ -30,6 +31,9 @@ func ApplyRouter() func(chi.Router) {
 	return func(r chi.Router) {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
+		}
+		if config.Instance().UseOpenId {
+			r.Use(openid.Middleware)
 		}
 		r.Get("/ws", WebSocket)
 		r.Post("/http", Post)

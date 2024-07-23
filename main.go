@@ -11,6 +11,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 )
 
 var (
@@ -90,6 +91,8 @@ func main() {
 	if err := c.LoadFile(configFile); err != nil {
 		log.Println(cli.BgRed, "config", cli.Reset, err)
 	}
+
+	openid.Configure()
 
 	server.RunBlocking(&server.RunConfig{
 		Host:        c.Host,

@@ -6,19 +6,20 @@ import styled from '@emotion/styled'
 import {
   Button,
   Container,
+  Divider,
   Paper,
   Stack,
   TextField,
   Typography
 } from '@mui/material'
+import { matchW } from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
-import { matchW } from 'fp-ts/lib/TaskEither'
-import { pipe } from 'fp-ts/lib/function'
 
 const LoginContainer = styled(Container)({
   display: 'flex',
@@ -81,6 +82,8 @@ export default function Login() {
     )()
   }
 
+  const loginWithOpenId = () => window.open(`${url}/auth/openid/login`)
+
   return (
     <LoginContainer>
       <Paper sx={{ padding: '1.5rem', minWidth: '25%' }}>
@@ -89,12 +92,8 @@ export default function Login() {
             yt-dlp WebUI
           </Title>
           <Title fontWeight={'500'} fontSize={16} color={'gray'}>
-            Authentication token will expire after 30 days.
-          </Title>
-          <Title fontWeight={'500'} fontSize={16} color={'gray'}>
-            In order to enable RPC authentication append the --auth,
-            <br />
-            --user [username] and --pass [password] flags.
+            To configure authentication check the&nbsp;
+            <a href='https://github.com/marcopeocchi/yt-dlp-web-ui/wiki/Authentication-methods'>wiki</a>.
           </Title>
           <TextField
             label="Username"
@@ -112,6 +111,16 @@ export default function Login() {
           />
           <Button variant="contained" size="large" onClick={() => login()}>
             Submit
+          </Button>
+
+          <Divider>
+            <Typography color={'gray'}>
+              or use your authentication provider
+            </Typography>
+          </Divider>
+
+          <Button variant="contained" size="large" onClick={loginWithOpenId}>
+            Login with OpenID
           </Button>
         </Stack>
       </Paper>
