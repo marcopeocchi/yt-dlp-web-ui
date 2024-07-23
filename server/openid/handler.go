@@ -26,6 +26,10 @@ var (
 )
 
 func Configure() {
+	if !config.Instance().UseOpenId {
+		return
+	}
+
 	provider, err := oidc.NewProvider(context.Background(), config.Instance().OpenIdProviderURL)
 	if err != nil {
 		panic(err)
