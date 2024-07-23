@@ -24,6 +24,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/logging"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/server/rpc"
 
@@ -168,6 +169,9 @@ func newServer(c serverConfig) *http.Server {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
+		if config.Instance().UseOpenId {
+			r.Use(openid.Middleware)
+		}
 		r.Post("/downloaded", handlers.ListDownloaded)
 		r.Post("/delete", handlers.DeleteFile)
 		r.Get("/d/{id}", handlers.DownloadFile)
@@ -179,6 +183,12 @@ func newServer(c serverConfig) *http.Server {
 	r.Route("/auth", func(r chi.Router) {
 		r.Post("/login", handlers.Login)
 		r.Get("/logout", handlers.Logout)
+
+		r.Route("/openid", func(r chi.Router) {
+			r.Get("/login", openid.Login)
+			r.Get("/signin", openid.SingIn)
+			r.Get("/logout", openid.Logout)
+		})
 	})
 
 	// RPC handlers
