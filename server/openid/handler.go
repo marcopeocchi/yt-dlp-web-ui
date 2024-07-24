@@ -1,33 +1,30 @@
 package openid
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 )
 
 type OAuth2SuccessResponse struct {
-	OAuth2Token    *oauth2.Token
-	OAuth2RawToken string
-	IDTokenClaims  *json.RawMessage
+	OAuth2Token   *oauth2.Token
+	IDTokenClaims *json.RawMessage
 }
 
-var (
-	oauth2Config oauth2.Config
-	verifier     *oidc.IDTokenVerifier
-)
-
 func Login(w http.ResponseWriter, r *http.Request) {
-	var (
-		state = uuid.NewString()
-		nonce = uuid.NewString() // maybe something cryptographycally more seucre?
-	)
+	state := uuid.NewString()
+
+	nonceBytes := make([]byte, 16)
+	rand.Read(nonceBytes)
+
+	nonce := hex.EncodeToString(nonceBytes)
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "state",
@@ -35,7 +32,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		MaxAge:   int(time.Hour * 24 * 30),
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -44,13 +41,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		MaxAge:   int(time.Hour * 24 * 30),
 	})
 
 	http.Redirect(w, r, oauth2Config.AuthCodeURL(state, oidc.Nonce(nonce)), http.StatusFound)
 }
 
-func doAuthentification(r *http.Request) (*OAuth2SuccessResponse, error) {
+func doAuthentification(r *http.Request, setCookieCallback func(t *oauth2.Token)) (*OAuth2SuccessResponse, error) {
 	state, err := r.Cookie("state")
 	if err != nil {
 		return nil, err
@@ -84,12 +81,13 @@ func doAuthentification(r *http.Request) (*OAuth2SuccessResponse, error) {
 		return nil, errors.New("auth nonce does not match")
 	}
 
+	setCookieCallback(oauth2Token)
+
 	// redact
-	oauth2Token.AccessToken = ""
+	oauth2Token.AccessToken = "*REDACTED*"
 
 	res := OAuth2SuccessResponse{
 		oauth2Token,
-		rawToken,
 		&json.RawMessage{},
 	}
 
@@ -101,7 +99,37 @@ func doAuthentification(r *http.Request) (*OAuth2SuccessResponse, error) {
 }
 
 func SingIn(w http.ResponseWriter, r *http.Request) {
-	res, err := doAuthentification(r)
+	_, err := doAuthentification(r, func(t *oauth2.Token) {
+		idToken, _ := t.Extra("id_token").(string)
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "oid-token",
+			Value:    idToken,
+			HttpOnly: true,
+			Path:     "/",
+			Secure:   r.TLS != nil,
+			MaxAge:   int(time.Hour * 24 * 30),
+		})
+	})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// if err := json.NewEncoder(w).Encode(res); err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	w.Write([]byte("Login succesfully, you may now close this window and refresh yt-dlp-webui."))
+}
+
+func Refresh(w http.ResponseWriter, r *http.Request) {
+	refreshToken := r.URL.Query().Get("refresh-token")
+
+	ts := oauth2Config.TokenSource(r.Context(), &oauth2.Token{RefreshToken: refreshToken})
+
+	token, err := ts.Token()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -109,19 +137,19 @@ func SingIn(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &http.Cookie{
 		Name:     "oid-token",
-		Value:    res.OAuth2RawToken,
+		Value:    token.AccessToken,
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		MaxAge:   int(time.Hour * 24 * 30),
 	})
 
-	// if err := json.NewEncoder(w).Encode(res); err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	token.AccessToken = "*redacted*"
 
-	fmt.Fprintf(w, "Login succesfully, you may now close this window and refresh yt-dlp-webui.")
+	if err := json.NewEncoder(w).Encode(token); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
@@ -130,7 +158,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now(),
+		MaxAge:   -1,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -138,7 +166,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now(),
+		MaxAge:   -1,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -146,6 +174,6 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		Expires:  time.Now(),
+		MaxAge:   -1,
 	})
 }
