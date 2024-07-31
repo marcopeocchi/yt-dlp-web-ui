@@ -26,7 +26,7 @@ languages:
     filenameOverrideOption: Enable output file name overriding
     customFilename: Custom filemame (leave blank to use default)
     customPath: Custom path
-    customArgs: Enable custom yt-dlp args (great power = great responsabilities)
+    customArgs: Enable custom yt-dlp args (great power = great responsibilities)
     customArgsInput: Custom yt-dlp arguments
     rpcConnErr: Error while conencting to RPC server
     splashText: No active downloads

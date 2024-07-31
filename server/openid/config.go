@@ -3,9 +3,14 @@ package openid
 import (
 	"context"
 
-	"github.com/coreos/go-oidc"
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"golang.org/x/oauth2"
+)
+
+var (
+	oauth2Config oauth2.Config
+	verifier     *oidc.IDTokenVerifier
 )
 
 func Configure() {
