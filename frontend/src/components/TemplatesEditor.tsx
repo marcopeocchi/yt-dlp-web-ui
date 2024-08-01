@@ -2,6 +2,7 @@ import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
+  Alert,
   AppBar,
   Backdrop,
   Box,
@@ -145,7 +146,12 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
         backgroundColor: (theme) => theme.palette.background.default,
         minHeight: (theme) => `calc(99vh - ${theme.mixins.toolbar.minHeight}px)`
       }}>
-        <Grid container spacing={2} sx={{ p: 4 }}>
+        <Grid container spacing={2} sx={{ px: 4, pt: 3, pb: 4 }}>
+          <Grid item>
+            <Alert severity="info">
+              {i18n.t('templatesReloadInfo')}
+            </Alert>
+          </Grid>
           <Grid item xs={12}>
             <Paper
               elevation={4}
