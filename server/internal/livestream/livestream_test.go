@@ -17,7 +17,7 @@ func TestLivestream(t *testing.T) {
 	done := make(chan *LiveStream)
 	log := make(chan []byte)
 
-	ls := New("https://www.youtube.com/watch?v=PYVr6Rv8-Ug", log, done)
+	ls := New("https://www.youtube.com/watch?v=LSm1daKezcE", log, done)
 	go ls.Start()
 
 	time.AfterFunc(time.Second*20, func() {

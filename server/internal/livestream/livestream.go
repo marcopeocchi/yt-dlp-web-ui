@@ -31,6 +31,7 @@ type LiveStream struct {
 	waitTimeChan chan time.Duration // time to livestream start
 	errors       chan error
 	waitTime     time.Duration
+	liveDate     time.Time
 }
 
 func New(url string, log chan []byte, done chan *LiveStream) *LiveStream {
@@ -88,6 +89,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 	defer func() {
 		close(l.waitTimeChan)
+		close(l.errors)
 	}()
 
 	// however the time to live is not shown in a new line (and atm there's nothing to do about)
@@ -107,7 +109,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 	// start scanning the stdout
 	for scanner.Scan() {
-		l.log <- scanner.Bytes()
+		// l.log <- scanner.Bytes()
 
 		parts := strings.Split(scanner.Text(), ": ")
 		if len(parts) < 2 {
@@ -127,6 +129,8 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 		if err != nil {
 			continue
 		}
+
+		l.liveDate = parsed
 
 		//TODO: check if useing channels is stupid or not
 		// l.waitTimeChan <- time.Until(start)

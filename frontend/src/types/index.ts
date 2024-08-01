@@ -105,4 +105,5 @@ export type CustomTemplate = {
 export type LiveStreamProgress = Record<string, {
   Status: number
   WaitTime: string
+  LiveDate: string
 }>

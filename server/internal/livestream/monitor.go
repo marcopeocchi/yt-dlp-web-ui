@@ -63,9 +63,11 @@ func (m *Monitor) Status() LiveStreamStatus {
 		status[k] = struct {
 			Status   int
 			WaitTime time.Duration
+			LiveDate time.Time
 		}{
 			Status:   v.status,
 			WaitTime: v.waitTime,
+			LiveDate: v.liveDate,
 		}
 	}
 

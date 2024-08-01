@@ -29,9 +29,24 @@ const LiveStreamMonitorView: React.FC = () => {
     return `${hrs.toFixed(0)}:${mts.toFixed(0)}:${ss.toFixed(0)}`
   }
 
-  const exec = () => client.execLivestream('https://www.youtube.com/watch?v=PYVr6Rv8-Ug')
+  const mapStatus = (status: number) => {
+    switch (status) {
+      case 0:
+        return 'Waiting'
+      case 1:
+        return 'Downloading'
+      case 2:
+        return 'Completed'
+      case 3:
+        return 'Errored'
+      default:
+        return 'Unknown state'
+    }
+  }
 
-  const stop = () => client.killLivestream('https://www.youtube.com/watch?v=PYVr6Rv8-Ug')
+  const exec = () => client.execLivestream('https://www.youtube.com/watch?v=skXfBd4xkZQ')
+
+  const stop = () => client.killLivestream('https://www.youtube.com/watch?v=skXfBd4xkZQ')
 
   const stopAll = () => client.killAllLivestream()
 
@@ -55,12 +70,13 @@ const LiveStreamMonitorView: React.FC = () => {
         {progress && Object.keys(progress).map(k => (
           <div key={k}>
             <div>{k}</div>
-            <div>{progress[k].Status}</div>
+            <div>{mapStatus(progress[k].Status)}</div>
             <div>{formatMicro(Number(progress[k].WaitTime))}</div>
+            <div>{new Date(progress[k].LiveDate).toLocaleString()}</div>
           </div>
         ))}
       </Paper>
-    </Container >
+    </Container>
   )
 }
 
