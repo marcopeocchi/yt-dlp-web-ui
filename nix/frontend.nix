@@ -7,7 +7,7 @@ let common = import ./common.nix { inherit lib; }; in
 stdenv.mkDerivation (finalAttrs: {
   pname = "yt-dlp-web-ui-frontend";
 
-  version = import ./version.nix;
+  inherit (common) version;
 
   src = lib.fileset.toSource {
     root = ../frontend;
