@@ -21,7 +21,7 @@
           frontend = pkgs.callPackage ./nix/frontend.nix { };
         };
         devShells.default = pkgs.callPackage ./env.nix { };
-        formatter.default = pkgs.nixpkgs-fmt;
+        formatter = pkgs.nixpkgs-fmt;
       };
       flake = {
         nixosModules.default = import ./nix/module.nix self.packages;
