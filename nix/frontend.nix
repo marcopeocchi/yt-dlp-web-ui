@@ -3,7 +3,7 @@
 , nodejs
 , pnpm
 }:
-let common = import ./common.nix; in
+let common = import ./common.nix { inherit lib; }; in
 stdenv.mkDerivation (finalAttrs: {
   pname = "yt-dlp-web-ui-frontend";
 
