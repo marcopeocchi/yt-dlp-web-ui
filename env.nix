@@ -1,4 +1,8 @@
-{ pkgs ? import <nixpkgs> {} }:
-  pkgs.mkShell {
-    nativeBuildInputs = with pkgs.buildPackages; [ yt-dlp nodejs_22 yarn-berry go ];
+{ pkgs ? import <nixpkgs> { } }:
+pkgs.mkShell {
+  nativeBuildInputs = [
+    pkgs.yt-dlp
+    pkgs.nodejs_22
+    pkgs.go
+  ];
 }
