@@ -1,6 +1,16 @@
-import { Button, Container, Paper } from '@mui/material'
+import {
+  Box,
+  Button,
+  Chip,
+  Container,
+  Paper,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from '@mui/material'
 import { useState } from 'react'
 import { interval } from 'rxjs'
+import LivestreamDialog from '../components/livestream/LivestreamDialog'
+import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
+import NoLivestreams from '../components/livestream/NoLivestreams'
 import { useSubscription } from '../hooks/observable'
 import { useRPC } from '../hooks/useRPC'
 import { LiveStreamProgress } from '../types'
@@ -9,6 +19,7 @@ const LiveStreamMonitorView: React.FC = () => {
   const { client } = useRPC()
 
   const [progress, setProgress] = useState<LiveStreamProgress>()
+  const [openDialog, setOpenDialog] = useState(false)
 
   useSubscription(interval(1000), () => {
     client
@@ -18,65 +29,97 @@ const LiveStreamMonitorView: React.FC = () => {
 
   const formatMicro = (microseconds: number) => {
     const ms = microseconds / 1_000_000
-    let ss = ms / 1000
+    let s = ms / 1000
 
-    const hrs = ss / 3600
-    ss %= 3600
+    const hr = s / 3600
+    s %= 3600
 
-    const mts = ss / 60
-    ss %= 60
+    const mt = s / 60
+    s %= 60
 
-    return `${hrs.toFixed(0)}:${mts.toFixed(0)}:${ss.toFixed(0)}`
+    //           huh?
+    const ss = (Math.abs(s - 1)).toFixed(0).padStart(2, '0')
+    const mts = mt.toFixed(0).padStart(2, '0')
+    const hrs = hr.toFixed(0).padStart(2, '0')
+
+    return `${hrs}:${mts}:${ss}`
   }
 
-  const mapStatus = (status: number) => {
+  const mapStatusToChip = (status: number): React.ReactNode => {
     switch (status) {
       case 0:
-        return 'Waiting'
+        return <Chip label='Waiting/Wait start' color='warning' size='small' />
       case 1:
-        return 'Downloading'
+        return <Chip label='Downloading' color='primary' size='small' />
       case 2:
-        return 'Completed'
+        return <Chip label='Completed' color='success' size='small' />
       case 3:
-        return 'Errored'
+        return <Chip label='Errored' color='error' size='small' />
       default:
-        return 'Unknown state'
+        return <Chip label='Unknown state' color='primary' size='small' />
     }
   }
 
-  const exec = () => client.execLivestream('https://www.youtube.com/watch?v=skXfBd4xkZQ')
-
-  const stop = () => client.killLivestream('https://www.youtube.com/watch?v=skXfBd4xkZQ')
-
   const stopAll = () => client.killAllLivestream()
+  const stop = (url: string) => client.killLivestream(url)
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-      <Paper sx={{
-        p: 2.5,
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: 240,
-      }}>
-        <Button onClick={exec}>
-          start
-        </Button>
-        <Button onClick={stop}>
-          stop
-        </Button>
-        <Button onClick={stopAll}>
-          stop all
-        </Button>
-        {progress && Object.keys(progress).map(k => (
-          <div key={k}>
-            <div>{k}</div>
-            <div>{mapStatus(progress[k].Status)}</div>
-            <div>{formatMicro(Number(progress[k].WaitTime))}</div>
-            <div>{new Date(progress[k].LiveDate).toLocaleString()}</div>
-          </div>
-        ))}
-      </Paper>
-    </Container>
+    <>
+      <LivestreamSpeedDial onOpen={() => setOpenDialog(s => !s)} onStopAll={stopAll} />
+      {progress && Object.keys(progress).length === 0 ?
+        <NoLivestreams /> :
+        <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
+          <Paper sx={{
+            p: 2.5,
+            display: 'flex',
+            flexDirection: 'column',
+            minHeight: '80vh',
+          }}>
+            <TableContainer component={Box}>
+              <Table sx={{ minWidth: '100%' }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Livestream URL</TableCell>
+                    <TableCell align="right">Status</TableCell>
+                    <TableCell align="right">Time to live</TableCell>
+                    <TableCell align="right">Starts on</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {progress && Object.keys(progress).map(k => (
+                    <TableRow
+                      key={k}
+                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    >
+                      <TableCell>{k}</TableCell>
+                      <TableCell align='right'>
+                        {mapStatusToChip(progress[k].Status)}
+                      </TableCell>
+                      <TableCell align='right'>
+                        {formatMicro(Number(progress[k].WaitTime))}
+                      </TableCell>
+                      <TableCell align='right'>
+                        {new Date(progress[k].LiveDate).toLocaleString()}
+                      </TableCell>
+                      <TableCell align='right'>
+                        <Button variant='contained' size='small' onClick={() => stop(k)}>
+                          Stop
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Container>
+      }
+      <LivestreamDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(s => !s)}
+      />
+    </>
   )
 }
 

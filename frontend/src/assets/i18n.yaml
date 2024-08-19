@@ -54,6 +54,7 @@ languages:
     rpcPollingTimeTitle: RPC polling time
     rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
     templatesReloadInfo: To register a new template it might need a page reload.
+    livestreamURLInput: Livestream url
   german:
     urlInput: Video URL
     statusTitle: Status
