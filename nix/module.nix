@@ -129,7 +129,7 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       (lib.mkIf cfg.rpcAuth.enable {
-        assertion = lib.xor (cfg.rpcAuth.passwordFile != null) (cfg.rpcAuth.insecurePasswordText != null);
+        assertion = lib.xor (cfg.rpcAuth.passwordFile == null) (cfg.rpcAuth.insecurePasswordText == null);
         message = ''
           RPC Auth is enabled for yt-dlp-web-ui! Exactly one RPC auth password source must be set!
 
