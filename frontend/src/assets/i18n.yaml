@@ -616,7 +616,7 @@ languages:
     overridesAnchor: Överskrivningar
     pathOverrideOption: Tillåt överskrivning av filsökvägen
     filenameOverrideOption: Tillåt överskrivning av filnamn
-    customFilename: Eget filamn (lämna blankt för standardnamn)
+    customFilename: Eget filnamn (lämna blankt för standardnamn)
     customPath: Egen filsökväg
     customArgs: Tillåt egna yt-dlp-argument (frihet under ansvar!)
     customArgsInput: Egna yt-dlp-argument
@@ -627,7 +627,7 @@ languages:
     playlistCheckbox: Ladda ner spellista (detta kommer ta did, efter start så kan du stänga detta fönster)
     restartAppMessage: En sidomladdning behövs innan förändringen får effekt
     servedFromReverseProxyCheckbox: Servern befinner sig bakom en omvänd proxy
-    urlBase: URL-bas, behövs för att stödja en omvänd proxy. Standardinställning: lämna tom
+    urlBase: URL-bas, måste anges när en omvänd proxy används. Standardinställning: lämna blank
     newDownloadButton: Ny nedladdning
     homeButtonLabel: Hem
     archiveButtonLabel: Arkiv
@@ -644,5 +644,5 @@ languages:
     awaitingLogs: 'Väntar på loggar...'
     bulkDownload: 'Ladda ner filer i ett zip-arkiv'
     rpcPollingTimeTitle: Frekvens av RPC-uppdateringar
-    rpcPollingTimeDescription: En högre frekvens leder kräver mer CPU-resurser för både servern och klienten
+    rpcPollingTimeDescription: En högre frekvens kräver mer CPU-resurser för både server och klient
     templatesReloadInfo: För att registrera en ny mall så kan en sidomladdning krävas.
