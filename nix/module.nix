@@ -11,7 +11,7 @@ in
       but due to the software's nonstandard "config file overrides CLI" behavior,
       we don't want to expose a config file catchall, and as such don't use '-conf'.
 
-    - Notably, '-driver' is missing as an configuration option. 
+    - Notably, '-driver' is missing as a configuration option. 
       This should instead be customized with idiomatic Nix, overriding 'cfg.package' with
       the desired yt-dlp package.
 
