@@ -19,7 +19,7 @@ type metadata struct {
 	Type          string         `json:"_type"`
 }
 
-func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger *slog.Logger) error {
+func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 	var (
 		downloader = config.Instance().DownloaderPath
 		cmd        = exec.Command(downloader, req.URL, "--flat-playlist", "-J")
@@ -36,7 +36,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		return err
 	}
 
-	logger.Info("decoding playlist metadata", slog.String("url", req.URL))
+	slog.Info("decoding playlist metadata", slog.String("url", req.URL))
 
 	if err := json.NewDecoder(stdout).Decode(&m); err != nil {
 		return err
@@ -46,7 +46,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 		return err
 	}
 
-	logger.Info("decoded playlist metadata", slog.String("url", req.URL))
+	slog.Info("decoded playlist metadata", slog.String("url", req.URL))
 
 	if m.Type == "" {
 		return errors.New("probably not a valid URL")
@@ -57,7 +57,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 			return a.URL == b.URL
 		})
 
-		logger.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
+		slog.Info("playlist detected", slog.String("url", req.URL), slog.Int("count", len(entries)))
 
 		for i, meta := range entries {
 			// detect playlist title from metadata since each playlist entry will be
@@ -78,7 +78,6 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 				Output:   DownloadOutput{Filename: req.Rename},
 				Info:     meta,
 				Params:   req.Params,
-				Logger:   logger,
 			}
 
 			proc.Info.URL = meta.URL
@@ -93,12 +92,11 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB, logger 
 	proc := &Process{
 		Url:    req.URL,
 		Params: req.Params,
-		Logger: logger,
 	}
 
 	db.Set(proc)
 	mq.Publish(proc)
-	logger.Info("sending new process to message queue", slog.String("url", proc.Url))
+	slog.Info("sending new process to message queue", slog.String("url", proc.Url))
 
 	return cmd.Wait()
 }

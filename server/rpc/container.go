@@ -1,25 +1,20 @@
 package rpc
 
 import (
-	"log/slog"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
 )
 
 // Dependency injection container.
-func Container(
-	db *internal.MemoryDB,
-	mq *internal.MessageQueue,
-	logger *slog.Logger,
-) *Service {
+func Container(db *internal.MemoryDB, mq *internal.MessageQueue, lm *livestream.Monitor) *Service {
 	return &Service{
-		db:     db,
-		mq:     mq,
-		logger: logger,
+		db: db,
+		mq: mq,
+		lm: lm,
 	}
 }
 

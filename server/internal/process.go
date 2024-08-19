@@ -47,7 +47,6 @@ type Process struct {
 	Progress DownloadProgress
 	Output   DownloadOutput
 	proc     *os.Process
-	Logger   *slog.Logger
 }
 
 // Starts spawns/forks a new yt-dlp process and parse its stdout.
@@ -108,7 +107,7 @@ func (p *Process) Start() {
 
 	r, err := cmd.StdoutPipe()
 	if err != nil {
-		p.Logger.Error(
+		slog.Error(
 			"failed to connect to stdout",
 			slog.String("err", err.Error()),
 		)
@@ -116,7 +115,7 @@ func (p *Process) Start() {
 	}
 
 	if err := cmd.Start(); err != nil {
-		p.Logger.Error(
+		slog.Error(
 			"failed to start yt-dlp process",
 			slog.String("err", err.Error()),
 		)
@@ -167,7 +166,7 @@ func (p *Process) Start() {
 				ETA:        progress.Eta,
 			}
 
-			p.Logger.Info("progress",
+			slog.Info("progress",
 				slog.String("id", p.getShortId()),
 				slog.String("url", p.Url),
 				slog.String("percentage", progress.Percentage),
@@ -190,7 +189,7 @@ func (p *Process) Complete() {
 		ETA:        0,
 	}
 
-	p.Logger.Info("finished",
+	slog.Info("finished",
 		slog.String("id", p.getShortId()),
 		slog.String("url", p.Url),
 	)
@@ -227,7 +226,7 @@ func (p *Process) GetFormats() (DownloadFormats, error) {
 
 	stdout, err := cmd.Output()
 	if err != nil {
-		p.Logger.Error("failed to retrieve metadata", slog.String("err", err.Error()))
+		slog.Error("failed to retrieve metadata", slog.String("err", err.Error()))
 		return DownloadFormats{}, err
 	}
 
@@ -247,7 +246,7 @@ func (p *Process) GetFormats() (DownloadFormats, error) {
 		p.Url,
 	)
 
-	p.Logger.Info(
+	slog.Info(
 		"retrieving metadata",
 		slog.String("caller", "getFormats"),
 		slog.String("url", p.Url),
@@ -307,7 +306,7 @@ func (p *Process) SetMetadata() error {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		p.Logger.Error("failed to connect to stdout",
+		slog.Error("failed to connect to stdout",
 			slog.String("id", p.getShortId()),
 			slog.String("url", p.Url),
 			slog.String("err", err.Error()),
@@ -317,7 +316,7 @@ func (p *Process) SetMetadata() error {
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		p.Logger.Error("failed to connect to stderr",
+		slog.Error("failed to connect to stderr",
 			slog.String("id", p.getShortId()),
 			slog.String("url", p.Url),
 			slog.String("err", err.Error()),
@@ -340,7 +339,7 @@ func (p *Process) SetMetadata() error {
 		io.Copy(&bufferedStderr, stderr)
 	}()
 
-	p.Logger.Info("retrieving metadata",
+	slog.Info("retrieving metadata",
 		slog.String("id", p.getShortId()),
 		slog.String("url", p.Url),
 	)

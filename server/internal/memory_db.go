@@ -3,7 +3,6 @@ package internal
 import (
 	"encoding/gob"
 	"errors"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"sync"
@@ -92,7 +91,7 @@ func (m *MemoryDB) Persist() error {
 }
 
 // Restore a persisted state
-func (m *MemoryDB) Restore(mq *MessageQueue, logger *slog.Logger) {
+func (m *MemoryDB) Restore(mq *MessageQueue) {
 	fd, err := os.Open("session.dat")
 	if err != nil {
 		return
@@ -112,7 +111,6 @@ func (m *MemoryDB) Restore(mq *MessageQueue, logger *slog.Logger) {
 			Progress: proc.Progress,
 			Output:   proc.Output,
 			Params:   proc.Params,
-			Logger:   logger,
 		}
 
 		m.table.Store(proc.Id, restored)

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import type { DLMetadata, RPCRequest, RPCResponse, RPCResult } from '../types'
+import type { DLMetadata, LiveStreamProgress, RPCRequest, RPCResponse, RPCResult } from '../types'
 
 import { WebSocketSubject, webSocket } from 'rxjs/webSocket'
 
@@ -160,9 +160,32 @@ export class RPCClient {
     })
   }
 
-  public updateExecutable() {
+  public execLivestream(url: string) {
     return this.sendHTTP({
-      method: 'Service.UpdateExecutable',
+      method: 'Service.ExecLivestream',
+      params: [{
+        URL: url
+      }]
+    })
+  }
+
+  public progressLivestream() {
+    return this.sendHTTP<LiveStreamProgress>({
+      method: 'Service.ProgressLivestream',
+      params: []
+    })
+  }
+
+  public killLivestream(url: string) {
+    return this.sendHTTP<LiveStreamProgress>({
+      method: 'Service.KillLivestream',
+      params: [url]
+    })
+  }
+
+  public killAllLivestream() {
+    return this.sendHTTP<LiveStreamProgress>({
+      method: 'Service.KillAllLivestream',
       params: []
     })
   }
