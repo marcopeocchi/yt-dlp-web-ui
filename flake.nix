@@ -13,12 +13,12 @@
       systems = [ "x86_64-linux" ];
       perSystem = { config, self', inputs', pkgs, system, ... }: {
         packages = {
+          frontend = pkgs.callPackage ./nix/frontend.nix { };
           default =
             let
               frontendApplied = import ./nix/server.nix { inherit (self'.packages) frontend; };
             in
             pkgs.callPackage frontendApplied { };
-          frontend = pkgs.callPackage ./nix/frontend.nix { };
         };
         devShells.default = pkgs.callPackage ./env.nix { };
         formatter = pkgs.nixpkgs-fmt;
