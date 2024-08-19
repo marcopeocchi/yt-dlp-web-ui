@@ -1,3 +1,4 @@
+// a stupid package name...
 package server
 
 import (
@@ -57,9 +58,10 @@ func RunBlocking(cfg *RunConfig) {
 
 	logWriters := []io.Writer{
 		os.Stdout,
-		logging.NewObservableLogger(),
+		logging.NewObservableLogger(), // for web-ui
 	}
 
+	// file based logging
 	if cfg.FileLogging {
 		logger, err := logging.NewRotableLogger(cfg.LogFile)
 		if err != nil {
@@ -77,9 +79,10 @@ func RunBlocking(cfg *RunConfig) {
 	}
 
 	logger := slog.New(slog.NewTextHandler(io.MultiWriter(logWriters...), &slog.HandlerOptions{
-		Level: slog.LevelInfo,
+		Level: slog.LevelInfo, // TODO: detect when launched in debug mode -> slog.LevelDebug
 	}))
 
+	// make the new logger the default one with all the new writers
 	slog.SetDefault(logger)
 
 	db, err := sql.Open("sqlite", cfg.DBPath)
@@ -117,6 +120,7 @@ func RunBlocking(cfg *RunConfig) {
 		address = fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
 	)
 
+	// support unix sockets
 	if strings.HasPrefix(cfg.Host, "/") {
 		network = "unix"
 		address = cfg.Host
@@ -138,6 +142,14 @@ func RunBlocking(cfg *RunConfig) {
 func newServer(c serverConfig) *http.Server {
 	lm := livestream.NewMonitor()
 	go lm.Schedule()
+	go lm.Restore()
+
+	go func() {
+		for {
+			lm.Persist()
+			time.Sleep(time.Minute * 5)
+		}
+	}()
 
 	service := ytdlpRPC.Container(c.mdb, c.mq, lm)
 	rpc.Register(service)
@@ -233,7 +245,7 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 func autoPersist(d time.Duration, db *internal.MemoryDB) {
 	for {
 		if err := db.Persist(); err != nil {
-			slog.Info(
+			slog.Warn(
 				"failed to persisted session",
 				slog.String("err", err.Error()),
 			)

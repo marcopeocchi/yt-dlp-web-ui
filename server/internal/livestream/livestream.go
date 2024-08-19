@@ -53,6 +53,7 @@ func (l *LiveStream) Start() error {
 		l.url,
 		"--wait-for-video", "10", // wait for the stream to be live and recheck every 10 secs
 		"--no-colors", // no ansi color fuzz
+		"--paths", config.Instance().DownloadPath,
 	)
 	l.proc = cmd.Process
 

@@ -2,6 +2,7 @@ package livestream
 
 import (
 	"encoding/gob"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
@@ -22,6 +23,7 @@ func NewMonitor() *Monitor {
 	}
 }
 
+// Detect each livestream completition, if done remove it from the monitor.
 func (m *Monitor) Schedule() {
 	for l := range m.done {
 		delete(m.streams, l.url)
@@ -71,17 +73,22 @@ func (m *Monitor) Status() LiveStreamStatus {
 	return status
 }
 
+// Persist the monitor current state to a file.
+// The file is located in the configured config directory
 func (m *Monitor) Persist() error {
-	fd, err := os.Open(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
+	fd, err := os.Create(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
 	if err != nil {
 		return err
 	}
 
 	defer fd.Close()
 
+	slog.Debug("persisting livestream monitor state")
+
 	return gob.NewEncoder(fd).Encode(m.streams)
 }
 
+// Restore a saved state and resume the monitored livestreams
 func (m *Monitor) Restore() error {
 	fd, err := os.Open(filepath.Join(config.Instance().Dir(), "livestreams.dat"))
 	if err != nil {
@@ -100,9 +107,12 @@ func (m *Monitor) Restore() error {
 		m.Add(k)
 	}
 
+	slog.Debug("restored livestream monitor state")
+
 	return nil
 }
 
+// Return a fan-in logs channel
 func (m *Monitor) Logs() <-chan []byte {
 	return m.logs
 }
