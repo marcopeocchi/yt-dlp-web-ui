@@ -66,54 +66,55 @@ const LiveStreamMonitorView: React.FC = () => {
   return (
     <>
       <LivestreamSpeedDial onOpen={() => setOpenDialog(s => !s)} onStopAll={stopAll} />
-      {progress && Object.keys(progress).length === 0 ?
-        <NoLivestreams /> :
-        <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-          <Paper sx={{
-            p: 2.5,
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: '80vh',
-          }}>
-            <TableContainer component={Box}>
-              <Table sx={{ minWidth: '100%' }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Livestream URL</TableCell>
-                    <TableCell align="right">Status</TableCell>
-                    <TableCell align="right">Time to live</TableCell>
-                    <TableCell align="right">Starts on</TableCell>
-                    <TableCell align="right">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {progress && Object.keys(progress).map(k => (
-                    <TableRow
-                      key={k}
-                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                    >
-                      <TableCell>{k}</TableCell>
-                      <TableCell align='right'>
-                        {mapStatusToChip(progress[k].Status)}
-                      </TableCell>
-                      <TableCell align='right'>
-                        {formatMicro(Number(progress[k].WaitTime))}
-                      </TableCell>
-                      <TableCell align='right'>
-                        {new Date(progress[k].LiveDate).toLocaleString()}
-                      </TableCell>
-                      <TableCell align='right'>
-                        <Button variant='contained' size='small' onClick={() => stop(k)}>
-                          Stop
-                        </Button>
-                      </TableCell>
+      {
+        !progress || Object.keys(progress).length === 0 ?
+          <NoLivestreams /> :
+          <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
+            <Paper sx={{
+              p: 2.5,
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '80vh',
+            }}>
+              <TableContainer component={Box}>
+                <Table sx={{ minWidth: '100%' }}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Livestream URL</TableCell>
+                      <TableCell align="right">Status</TableCell>
+                      <TableCell align="right">Time to live</TableCell>
+                      <TableCell align="right">Starts on</TableCell>
+                      <TableCell align="right">Actions</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </Container>
+                  </TableHead>
+                  <TableBody>
+                    {progress && Object.keys(progress).map(k => (
+                      <TableRow
+                        key={k}
+                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                      >
+                        <TableCell>{k}</TableCell>
+                        <TableCell align='right'>
+                          {mapStatusToChip(progress[k].Status)}
+                        </TableCell>
+                        <TableCell align='right'>
+                          {formatMicro(Number(progress[k].WaitTime))}
+                        </TableCell>
+                        <TableCell align='right'>
+                          {new Date(progress[k].LiveDate).toLocaleString()}
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Button variant='contained' size='small' onClick={() => stop(k)}>
+                            Stop
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Paper>
+          </Container>
       }
       <LivestreamDialog
         open={openDialog}
