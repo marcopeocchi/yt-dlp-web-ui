@@ -155,8 +155,6 @@ in
       path = [ cfg.package pkgs.tree ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig =
-        (lib.optionalAttrs (cfg.user != "yt-dlp-web-ui") { User = cfg.user; }) //
-        (lib.optionalAttrs (cfg.group != "yt-dlp-web-ui") { Group = cfg.group; }) //
         rec {
           ExecStart =
             let
