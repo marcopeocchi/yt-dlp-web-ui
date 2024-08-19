@@ -18,6 +18,8 @@ type OAuth2SuccessResponse struct {
 	IDTokenClaims *json.RawMessage
 }
 
+// var cookieMaxAge = int(time.Hour * 24 * 30) XXX: overflows on 32 bit architectures.
+
 func Login(w http.ResponseWriter, r *http.Request) {
 	state := uuid.NewString()
 
@@ -32,7 +34,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		MaxAge:   int(time.Hour * 24 * 30),
+		// MaxAge:   cookieMaxAge,
+		Expires: time.Now().Add(time.Hour * 24 * 30), // XXX: change to MaxAge
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -41,7 +44,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		MaxAge:   int(time.Hour * 24 * 30),
+		// MaxAge:   cookieMaxAge,
+		Expires: time.Now().Add(time.Hour * 24 * 30), // XXX: change to MaxAge
 	})
 
 	http.Redirect(w, r, oauth2Config.AuthCodeURL(state, oidc.Nonce(nonce)), http.StatusFound)
@@ -108,18 +112,13 @@ func SingIn(w http.ResponseWriter, r *http.Request) {
 			HttpOnly: true,
 			Path:     "/",
 			Secure:   r.TLS != nil,
-			MaxAge:   int(time.Hour * 24 * 30),
+			// MaxAge:   int(time.Hour * 24 * 30), XXX: overflows on 32 bit architectures.
 		})
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// if err := json.NewEncoder(w).Encode(res); err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
 
 	w.Write([]byte("Login succesfully, you may now close this window and refresh yt-dlp-webui."))
 }
@@ -141,7 +140,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Path:     "/",
 		Secure:   r.TLS != nil,
-		MaxAge:   int(time.Hour * 24 * 30),
+		// MaxAge:   int(time.Hour * 24 * 30), XXX: overflows on 32 bit architectures.
 	})
 
 	token.AccessToken = "*redacted*"
