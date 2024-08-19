@@ -77,14 +77,6 @@ in
       '';
     };
 
-    dataDir = lib.mkOption {
-      default = "/var/lib/yt-dlp-web-ui";
-      type = lib.types.str;
-      description = lib.mdDoc ''
-        The directory where yt-dlp-web-ui stores its data files.
-      '';
-    };
-
     queueSize = lib.mkOption {
       default = 2;
       type = lib.types.ints.unsigned; # >= 0
