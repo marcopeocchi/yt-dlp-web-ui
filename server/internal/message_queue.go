@@ -15,14 +15,13 @@ const queueName = "process:pending"
 type MessageQueue struct {
 	concurrency int
 	eventBus    evbus.Bus
-	logger      *slog.Logger
 }
 
 // Creates a new message queue.
 // By default it will be created with a size equals to nthe number of logical
 // CPU cores -1.
 // The queue size can be set via the qs flag.
-func NewMessageQueue(l *slog.Logger) (*MessageQueue, error) {
+func NewMessageQueue() (*MessageQueue, error) {
 	qs := config.Instance().QueueSize
 
 	if qs <= 0 {
@@ -32,7 +31,6 @@ func NewMessageQueue(l *slog.Logger) (*MessageQueue, error) {
 	return &MessageQueue{
 		concurrency: qs,
 		eventBus:    evbus.New(),
-		logger:      l,
 	}, nil
 }
 
@@ -59,7 +57,7 @@ func (m *MessageQueue) downloadConsumer() {
 		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
-		m.logger.Info("received process from event bus",
+		slog.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "downloadConsumer"),
 			slog.String("id", p.getShortId()),
@@ -69,7 +67,7 @@ func (m *MessageQueue) downloadConsumer() {
 			p.Start()
 		}
 
-		m.logger.Info("started process",
+		slog.Info("started process",
 			slog.String("bus", queueName),
 			slog.String("id", p.getShortId()),
 		)
@@ -88,14 +86,14 @@ func (m *MessageQueue) metadataSubscriber() {
 		sem.Acquire(context.TODO(), 1)
 		defer sem.Release(1)
 
-		m.logger.Info("received process from event bus",
+		slog.Info("received process from event bus",
 			slog.String("bus", queueName),
 			slog.String("consumer", "metadataConsumer"),
 			slog.String("id", p.getShortId()),
 		)
 
 		if p.Progress.Status == StatusCompleted {
-			m.logger.Warn("proccess has an illegal state",
+			slog.Warn("proccess has an illegal state",
 				slog.String("id", p.getShortId()),
 				slog.Int("status", p.Progress.Status),
 			)
@@ -103,7 +101,7 @@ func (m *MessageQueue) metadataSubscriber() {
 		}
 
 		if err := p.SetMetadata(); err != nil {
-			m.logger.Error("failed to retrieve metadata",
+			slog.Error("failed to retrieve metadata",
 				slog.String("id", p.getShortId()),
 				slog.String("err", err.Error()),
 			)

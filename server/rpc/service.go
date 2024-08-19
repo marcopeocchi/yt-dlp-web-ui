@@ -11,10 +11,9 @@ import (
 )
 
 type Service struct {
-	db     *internal.MemoryDB
-	mq     *internal.MessageQueue
-	lm     *livestream.Monitor
-	logger *slog.Logger
+	db *internal.MemoryDB
+	mq *internal.MessageQueue
+	lm *livestream.Monitor
 }
 
 type Running []internal.ProcessResponse
@@ -38,7 +37,6 @@ func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 			Path:     args.Path,
 			Filename: args.Rename,
 		},
-		Logger: s.logger,
 	}
 
 	s.db.Set(p)
@@ -51,7 +49,7 @@ func (s *Service) Exec(args internal.DownloadRequest, result *string) error {
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
 func (s *Service) ExecPlaylist(args internal.DownloadRequest, result *string) error {
-	err := internal.PlaylistDetect(args, s.mq, s.db, s.logger)
+	err := internal.PlaylistDetect(args, s.mq, s.db)
 	if err != nil {
 		return err
 	}
@@ -76,11 +74,11 @@ func (s *Service) ProgressLivestream(args NoArgs, result *livestream.LiveStreamS
 
 // TODO: docs
 func (s *Service) KillLivestream(args string, result *struct{}) error {
-	s.logger.Info("killing livestream", slog.String("url", args))
+	slog.Info("killing livestream", slog.String("url", args))
 
 	err := s.lm.Remove(args)
 	if err != nil {
-		s.logger.Error("failed killing livestream", slog.String("url", args), slog.Any("err", err))
+		slog.Error("failed killing livestream", slog.String("url", args), slog.Any("err", err))
 		return err
 	}
 
@@ -107,7 +105,7 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 func (s *Service) Formats(args Args, meta *internal.DownloadFormats) error {
 	var (
 		err error
-		p   = internal.Process{Url: args.URL, Logger: s.logger}
+		p   = internal.Process{Url: args.URL}
 	)
 	*meta, err = p.GetFormats()
 	return err
@@ -127,7 +125,7 @@ func (s *Service) Running(args NoArgs, running *Running) error {
 
 // Kill kills a process given its id and remove it from the memoryDB
 func (s *Service) Kill(args string, killed *string) error {
-	s.logger.Info("Trying killing process with id", slog.String("id", args))
+	slog.Info("Trying killing process with id", slog.String("id", args))
 
 	proc, err := s.db.Get(args)
 	if err != nil {
@@ -139,12 +137,12 @@ func (s *Service) Kill(args string, killed *string) error {
 	}
 
 	if err := proc.Kill(); err != nil {
-		s.logger.Info("failed killing process", slog.String("id", proc.Id), slog.Any("err", err))
+		slog.Info("failed killing process", slog.String("id", proc.Id), slog.Any("err", err))
 		return err
 	}
 
 	s.db.Delete(proc.Id)
-	s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
+	slog.Info("succesfully killed process", slog.String("id", proc.Id))
 
 	return nil
 }
@@ -152,7 +150,7 @@ func (s *Service) Kill(args string, killed *string) error {
 // KillAll kills all process unconditionally and removes them from
 // the memory db
 func (s *Service) KillAll(args NoArgs, killed *string) error {
-	s.logger.Info("Killing all spawned processes")
+	slog.Info("Killing all spawned processes")
 
 	var (
 		keys       = s.db.Keys()
@@ -174,7 +172,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 		}
 
 		if err := removeFunc(proc); err != nil {
-			s.logger.Info(
+			slog.Info(
 				"failed killing process",
 				slog.String("id", proc.Id),
 				slog.Any("err", err),
@@ -182,7 +180,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 			continue
 		}
 
-		s.logger.Info("succesfully killed process", slog.String("id", proc.Id))
+		slog.Info("succesfully killed process", slog.String("id", proc.Id))
 	}
 
 	return nil
@@ -190,7 +188,7 @@ func (s *Service) KillAll(args NoArgs, killed *string) error {
 
 // Remove a process from the db rendering it unusable if active
 func (s *Service) Clear(args string, killed *string) error {
-	s.logger.Info("Clearing process with id", slog.String("id", args))
+	slog.Info("Clearing process with id", slog.String("id", args))
 	s.db.Delete(args)
 	return nil
 }
@@ -224,16 +222,16 @@ func (s *Service) DirectoryTree(args NoArgs, tree *[]string) error {
 
 // Updates the yt-dlp binary using its builtin function
 func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
-	s.logger.Info("Updating yt-dlp executable to the latest release")
+	slog.Info("Updating yt-dlp executable to the latest release")
 
 	if err := updater.UpdateExecutable(); err != nil {
-		s.logger.Error("Failed updating yt-dlp")
+		slog.Error("Failed updating yt-dlp")
 		*updated = false
 		return err
 	}
 
 	*updated = true
-	s.logger.Info("Succesfully updated yt-dlp")
+	slog.Info("Succesfully updated yt-dlp")
 
 	return nil
 }

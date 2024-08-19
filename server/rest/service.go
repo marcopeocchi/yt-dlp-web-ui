@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log/slog"
 	"os"
 	"os/exec"
 	"time"
@@ -15,10 +14,9 @@ import (
 )
 
 type Service struct {
-	mdb    *internal.MemoryDB
-	db     *sql.DB
-	mq     *internal.MessageQueue
-	logger *slog.Logger
+	mdb *internal.MemoryDB
+	db  *sql.DB
+	mq  *internal.MessageQueue
 }
 
 func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
@@ -29,7 +27,6 @@ func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
 			Path:     req.Path,
 			Filename: req.Rename,
 		},
-		Logger: s.logger,
 	}
 
 	id := s.mdb.Set(p)

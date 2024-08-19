@@ -15,10 +15,9 @@ var (
 func ProvideService(args *ContainerArgs) *Service {
 	serviceOnce.Do(func() {
 		service = &Service{
-			mdb:    args.MDB,
-			db:     args.DB,
-			mq:     args.MQ,
-			logger: args.Logger,
+			mdb: args.MDB,
+			db:  args.DB,
+			mq:  args.MQ,
 		}
 	})
 	return service

@@ -2,7 +2,6 @@ package livestream
 
 import (
 	"encoding/gob"
-	"log/slog"
 	"os"
 	"path/filepath"
 	"time"
@@ -11,15 +10,13 @@ import (
 )
 
 type Monitor struct {
-	logger  *slog.Logger
 	streams map[string]*LiveStream // keeps track of the livestreams
 	done    chan *LiveStream       // to signal individual processes completition
 	logs    chan []byte            // to signal individual processes completition
 }
 
-func NewMonitor(logger *slog.Logger) *Monitor {
+func NewMonitor() *Monitor {
 	return &Monitor{
-		logger:  logger,
 		streams: make(map[string]*LiveStream),
 		done:    make(chan *LiveStream),
 	}
