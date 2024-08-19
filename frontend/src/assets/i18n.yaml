@@ -627,7 +627,7 @@ languages:
     playlistCheckbox: Ladda ner spellista (detta kommer ta did, efter start så kan du stänga detta fönster)
     restartAppMessage: En sidomladdning behövs innan förändringen får effekt
     servedFromReverseProxyCheckbox: Servern befinner sig bakom en omvänd proxy
-    urlBase: URL-bas, måste anges när en omvänd proxy används. Standardinställning: lämna blank
+    urlBase: "URL-bas, måste anges när en omvänd proxy används. Standardinställning: lämna blank"
     newDownloadButton: Ny nedladdning
     homeButtonLabel: Hem
     archiveButtonLabel: Arkiv
