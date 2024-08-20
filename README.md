@@ -1,8 +1,3 @@
-> [!IMPORTANT]
-> Major frontend refactoring in progress.  
-> I won't add features or fix minor issues until completition.
----
-
 # yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp.  
