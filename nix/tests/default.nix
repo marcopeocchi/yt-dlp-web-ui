@@ -1,5 +1,5 @@
 { self, pkgs }: {
-  testServiceStarts = pkgs.nixosTest {
+  testServiceStarts = pkgs.testers.runNixOSTest (_: {
     name = "service-starts";
     nodes = {
       machine = _: {
@@ -16,5 +16,5 @@
     testScript = ''
       machine.wait_for_unit("yt-dlp-web-ui")
     '';
-  };
+  });
 }
