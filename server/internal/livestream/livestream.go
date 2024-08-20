@@ -133,7 +133,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader) error {
 
 		l.liveDate = parsed
 
-		//TODO: check if useing channels is stupid or not
+		//TODO: check if using channels is stupid or not
 		// l.waitTimeChan <- time.Until(start)
 		l.waitTime = time.Until(parsed)
 	}
