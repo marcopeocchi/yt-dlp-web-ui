@@ -69,7 +69,7 @@ func PlaylistDetect(req DownloadRequest, mq *MessageQueue, db *MemoryDB) error {
 				1,
 			)
 
-			//TODO: it's idiotic but it works: virtually delay the creation time
+			//XXX: it's idiotic but it works: virtually delay the creation time
 			meta.CreatedAt = time.Now().Add(time.Millisecond * time.Duration(i*10))
 
 			proc := &Process{

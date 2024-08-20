@@ -53,7 +53,6 @@ func (m *MessageQueue) downloadConsumer() {
 	sem := semaphore.NewWeighted(int64(m.concurrency))
 
 	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
-		//TODO: provide valid context
 		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
@@ -82,8 +81,7 @@ func (m *MessageQueue) metadataSubscriber() {
 	sem := semaphore.NewWeighted(1)
 
 	m.eventBus.SubscribeAsync(queueName, func(p *Process) {
-		//TODO: provide valid context
-		sem.Acquire(context.TODO(), 1)
+		sem.Acquire(context.Background(), 1)
 		defer sem.Release(1)
 
 		slog.Info("received process from event bus",

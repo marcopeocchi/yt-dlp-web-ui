@@ -102,8 +102,15 @@ export type CustomTemplate = {
   content: string
 }
 
+export enum LiveStreamStatus {
+  WAITING,
+  IN_PROGRESS,
+  COMPLETED,
+  ERRORED
+}
+
 export type LiveStreamProgress = Record<string, {
-  Status: number
+  Status: LiveStreamStatus
   WaitTime: string
   LiveDate: string
 }>

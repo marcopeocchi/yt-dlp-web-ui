@@ -13,7 +13,7 @@ import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
 import NoLivestreams from '../components/livestream/NoLivestreams'
 import { useSubscription } from '../hooks/observable'
 import { useRPC } from '../hooks/useRPC'
-import { LiveStreamProgress } from '../types'
+import { LiveStreamProgress, LiveStreamStatus } from '../types'
 
 const LiveStreamMonitorView: React.FC = () => {
   const { client } = useRPC()
@@ -45,15 +45,15 @@ const LiveStreamMonitorView: React.FC = () => {
     return `${hrs}:${mts}:${ss}`
   }
 
-  const mapStatusToChip = (status: number): React.ReactNode => {
+  const mapStatusToChip = (status: LiveStreamStatus): React.ReactNode => {
     switch (status) {
-      case 0:
+      case LiveStreamStatus.WAITING:
         return <Chip label='Waiting/Wait start' color='warning' size='small' />
-      case 1:
+      case LiveStreamStatus.IN_PROGRESS:
         return <Chip label='Downloading' color='primary' size='small' />
-      case 2:
+      case LiveStreamStatus.COMPLETED:
         return <Chip label='Completed' color='success' size='small' />
-      case 3:
+      case LiveStreamStatus.ERRORED:
         return <Chip label='Errored' color='error' size='small' />
       default:
         return <Chip label='Unknown state' color='primary' size='small' />
@@ -99,15 +99,13 @@ const LiveStreamMonitorView: React.FC = () => {
                         {mapStatusToChip(progress[k].Status)}
                       </TableCell>
                       <TableCell align='right'>
-                        {/* TODO: change to enum */}
-                        {progress[k].Status === 0
+                        {progress[k].Status === LiveStreamStatus.WAITING
                           ? formatMicro(Number(progress[k].WaitTime))
                           : "-"
                         }
                       </TableCell>
                       <TableCell align='right'>
-                        {/* TODO: change to enum */}
-                        {progress[k].Status === 0
+                        {progress[k].Status === LiveStreamStatus.WAITING
                           ? new Date(progress[k].LiveDate).toLocaleString()
                           : "-"
                         }

@@ -167,8 +167,9 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 			waitTimeScanner()
 		}
 
-		l.status = inProgress
 	}
+
+	l.status = inProgress
 }
 
 func (l *LiveStream) WaitTime() <-chan time.Duration {

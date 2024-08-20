@@ -158,7 +158,6 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 
 	root := config.Instance().DownloadPath
 
-	// TODO: further path / file validations
 	if strings.Contains(filepath.Dir(filename), root) {
 		http.ServeFile(w, r, filename)
 		return
