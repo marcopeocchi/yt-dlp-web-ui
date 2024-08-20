@@ -152,7 +152,6 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 	}
 
 	const TRIES = 5
-
 	/*
 		if it's waiting a livestream the 5th line will indicate the time to live
 		its a dumb and not robust method.

@@ -99,10 +99,18 @@ const LiveStreamMonitorView: React.FC = () => {
                         {mapStatusToChip(progress[k].Status)}
                       </TableCell>
                       <TableCell align='right'>
-                        {formatMicro(Number(progress[k].WaitTime))}
+                        {/* TODO: change to enum */}
+                        {progress[k].Status === 0
+                          ? formatMicro(Number(progress[k].WaitTime))
+                          : "-"
+                        }
                       </TableCell>
                       <TableCell align='right'>
-                        {new Date(progress[k].LiveDate).toLocaleString()}
+                        {/* TODO: change to enum */}
+                        {progress[k].Status === 0
+                          ? new Date(progress[k].LiveDate).toLocaleString()
+                          : "-"
+                        }
                       </TableCell>
                       <TableCell align='right'>
                         <Button variant='contained' size='small' onClick={() => stop(k)}>
