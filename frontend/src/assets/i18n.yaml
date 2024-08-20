@@ -335,23 +335,23 @@ languages:
     splashText: Нет активных загрузок
     archiveTitle: Архив
     clipboardAction: URL скопирован в буфер обмена
-    playlistCheckbox: Download playlist (it will take time, after submitting you may even close this window)
-    servedFromReverseProxyCheckbox: Is behind a reverse proxy subfolder
-    newDownloadButton: New download
+    playlistCheckbox: Скачать плейлист. Это займет время, после отправки вы сможете закрыть окно
+    servedFromReverseProxyCheckbox: Находится за обратным прокси
+    newDownloadButton: Новая загрузка
     homeButtonLabel: Home
-    archiveButtonLabel: Archive
-    settingsButtonLabel: Settings
-    rpcAuthenticationLabel: RPC authentication
-    themeTogglerLabel: Theme toggler
-    loadingLabel: Loading...
-    appTitle: App title
-    savedTemplates: Saved templates
-    templatesEditor: Templates editor
-    templatesEditorNameLabel: Template name
-    templatesEditorContentLabel: Template content
-    logsTitle: 'Logs'
-    awaitingLogs: 'Awaiting logs...'
-    bulkDownload: 'Download files in a zip archive'
+    archiveButtonLabel: Архив
+    settingsButtonLabel: Настройки
+    rpcAuthenticationLabel: RPC-аутентификация
+    themeTogglerLabel: Переключить тему
+    loadingLabel: Загрузка...
+    appTitle: Название приложения
+    savedTemplates: Сохраненные шаблоны
+    templatesEditor: Редактор шаблонов
+    templatesEditorNameLabel: Имя шаблона
+    templatesEditorContentLabel: Содержание шаблона
+    logsTitle: 'Логи'
+    awaitingLogs: 'Ожидание логов...'
+    bulkDownload: 'Скачать файлы в zip архиве'
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
