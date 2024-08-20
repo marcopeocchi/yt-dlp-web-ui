@@ -1,4 +1,4 @@
-{ frontend }: { buildGoModule, lib, callPackage, makeWrapper, yt-dlp, ... }:
+{ yt-dlp-web-ui-frontend, buildGoModule, lib, makeWrapper, yt-dlp, ... }:
 let
   fs = lib.fileset;
   common = import ./common.nix { inherit lib; };
@@ -18,7 +18,8 @@ buildGoModule {
       ../Dockerfile
       ../docker-compose.yml
       # nix
-      ../env.nix
+      ./devShell.nix
+      ../.envrc
       # make
       ../Makefile # this derivation does not use the project Makefile
       # repo commons
@@ -32,7 +33,7 @@ buildGoModule {
 
   # https://github.com/golang/go/issues/44507
   preBuild = ''
-    cp -r ${frontend} frontend
+    cp -r ${yt-dlp-web-ui-frontend} frontend
   '';
 
   nativeBuildInputs = [ makeWrapper ];
