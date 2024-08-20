@@ -12,7 +12,9 @@
       imports = [
         inputs.pre-commit-hooks-nix.flakeModule
       ];
-      systems = [ "x86_64-linux" ];
+      systems = [
+        "x86_64-linux"
+      ];
       perSystem = { config, self', pkgs, ... }: {
 
         packages = {
@@ -21,6 +23,8 @@
             inherit (self'.packages) yt-dlp-web-ui-frontend;
           };
         };
+
+        checks = import ./nix/tests { inherit self pkgs; };
 
         pre-commit = {
           check.enable = true;

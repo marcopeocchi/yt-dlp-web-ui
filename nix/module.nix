@@ -70,7 +70,6 @@ in
     };
 
     downloadDir = lib.mkOption {
-      default = cfg.dataDir;
       type = lib.types.str;
       description = lib.mdDoc ''
         The directory where yt-dlp-web-ui stores downloads.

@@ -20,6 +20,7 @@ buildGoModule {
       # nix
       ./devShell.nix
       ../.envrc
+      ./tests
       # make
       ../Makefile # this derivation does not use the project Makefile
       # repo commons
