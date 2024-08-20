@@ -65,6 +65,12 @@ func (l *LiveStream) Start() error {
 	}
 	defer stdout.Close()
 
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
+	defer stderr.Close()
+
 	if err := cmd.Start(); err != nil {
 		l.status = errored
 		return err
@@ -79,7 +85,7 @@ func (l *LiveStream) Start() error {
 
 	go func() {
 		<-doneWaiting
-		l.logFFMpeg(stdout)
+		l.logFFMpeg(io.MultiReader(stdout, stderr))
 	}()
 
 	// Wait to the yt-dlp+ffmpeg process to finish.
@@ -107,18 +113,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 
 	// however the time to live is not shown in a new line (and atm there's nothing to do about)
 	// use a custom split funciton to set the line separator to \r instead of \r\n or \n
-	scanner.Split(func(data []byte, atEOF bool) (advance int, token []byte, err error) {
-		for i := 0; i < len(data); i++ {
-			if data[i] == '\r' || data[i] == '\n' {
-				return i + 1, data[:i], nil
-			}
-		}
-		if !atEOF {
-			return 0, nil, nil
-		}
-
-		return 0, data, bufio.ErrFinalToken
-	})
+	scanner.Split(stdoutSplitFunc)
 
 	waitTimeScanner := func() {
 		for scanner.Scan() {
@@ -164,7 +159,6 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 			WARNING: [youtube] This live event will begin in 27 minutes.       <- STDERR, ignore
 			[wait] Waiting for 00:27:15 - Press Ctrl+C to try now              <- 5th line
 	*/
-
 	for range TRIES {
 		scanner.Scan()
 		line := scanner.Text()
@@ -172,6 +166,8 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 		if strings.Contains(line, "Waiting for") {
 			waitTimeScanner()
 		}
+
+		l.status = inProgress
 	}
 }
 
