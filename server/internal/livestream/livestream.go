@@ -57,16 +57,17 @@ func (l *LiveStream) Start() error {
 		"--newline",
 		"--paths", config.Instance().DownloadPath,
 	)
-	l.proc = cmd.Process
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
+		l.status = errored
 		return err
 	}
 	defer stdout.Close()
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
+		l.status = errored
 		return err
 	}
 	defer stderr.Close()
@@ -76,6 +77,7 @@ func (l *LiveStream) Start() error {
 		return err
 	}
 
+	l.proc = cmd.Process
 	l.status = waiting
 
 	// Start monitoring when the livestream is goin to be live.
@@ -106,7 +108,9 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 	scanner := bufio.NewScanner(r)
 
 	defer func() {
+		l.status = inProgress
 		doneWait <- struct{}{}
+
 		close(l.waitTimeChan)
 		close(l.errors)
 	}()
@@ -123,7 +127,6 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 			// no need to monitor the time to live.
 			//TODO: silly
 			if !strings.Contains(scanner.Text(), "Remaining time until next attempt") {
-				l.status = inProgress
 				return
 			}
 
@@ -166,10 +169,7 @@ func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
 		if strings.Contains(line, "Waiting for") {
 			waitTimeScanner()
 		}
-
 	}
-
-	l.status = inProgress
 }
 
 func (l *LiveStream) WaitTime() <-chan time.Duration {
