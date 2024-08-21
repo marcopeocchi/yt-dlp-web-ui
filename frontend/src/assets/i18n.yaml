@@ -24,7 +24,7 @@ languages:
     overridesAnchor: Overrides
     pathOverrideOption: Enable output path overriding
     filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
+    customFilename: Custom filename (leave blank to use default)
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsibilities)
     customArgsInput: Custom yt-dlp arguments
@@ -79,7 +79,7 @@ languages:
     overridesAnchor: Überschreibungen
     pathOverrideOption: Ausgabe-Pfad Überschreibung aktivieren
     filenameOverrideOption: Ausgabe-Dateiname Überschreibung aktivieren
-    customFilename: Custom filemame (leave blank to use default)
+    customFilename: Custom filename (leave blank to use default)
     customPath: Benutzerdefinierter Pfad
     customArgs: Benutzerdefinierte yt-dlp Argumente aktivieren (viel Macht = viel Verantwortung)
     customArgsInput: Benutzerdefinierte yt-dlp Argumente
@@ -180,7 +180,7 @@ languages:
     overridesAnchor: Sovrascritture
     pathOverrideOption: Abilita sovrascrittura percorso di output
     filenameOverrideOption: Abilita sovrascrittura del nome del file di output
-    customFilename: Custom filemame (leave blank to use default)
+    customFilename: Custom filename (leave blank to use default)
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
@@ -375,7 +375,7 @@ languages:
     overridesAnchor: Overrides
     pathOverrideOption: Enable output path overriding
     filenameOverrideOption: Enable output file name overriding
-    customFilename: Custom filemame (leave blank to use default)
+    customFilename: Custom filename (leave blank to use default)
     customPath: Custom path
     customArgs: Enable custom yt-dlp args (great power = great responsabilities)
     customArgsInput: Custom yt-dlp arguments
