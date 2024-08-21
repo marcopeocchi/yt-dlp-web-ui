@@ -11,6 +11,7 @@ import { interval } from 'rxjs'
 import LivestreamDialog from '../components/livestream/LivestreamDialog'
 import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
 import NoLivestreams from '../components/livestream/NoLivestreams'
+import LoadingBackdrop from '../components/LoadingBackdrop'
 import { useSubscription } from '../hooks/observable'
 import { useRPC } from '../hooks/useRPC'
 import { LiveStreamProgress, LiveStreamStatus } from '../types'
@@ -65,6 +66,8 @@ const LiveStreamMonitorView: React.FC = () => {
 
   return (
     <>
+      <LoadingBackdrop isLoading={!progress} />
+
       <LivestreamSpeedDial onOpen={() => setOpenDialog(s => !s)} onStopAll={stopAll} />
       <LivestreamDialog open={openDialog} onClose={() => setOpenDialog(s => !s)} />
 

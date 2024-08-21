@@ -1,10 +1,10 @@
 import { Backdrop, CircularProgress } from '@mui/material'
-import { useRecoilValue } from 'recoil'
-import { loadingAtom } from '../atoms/ui'
 
-const LoadingBackdrop: React.FC = () => {
-  const isLoading = useRecoilValue(loadingAtom)
+type Props = {
+  isLoading: boolean
+}
 
+const LoadingBackdrop: React.FC<Props> = ({ isLoading }) => {
   return (
     <Backdrop
       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
