@@ -13,10 +13,12 @@ import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
 import NoLivestreams from '../components/livestream/NoLivestreams'
 import LoadingBackdrop from '../components/LoadingBackdrop'
 import { useSubscription } from '../hooks/observable'
+import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { LiveStreamProgress, LiveStreamStatus } from '../types'
 
 const LiveStreamMonitorView: React.FC = () => {
+  const { i18n } = useI18n()
   const { client } = useRPC()
 
   const [progress, setProgress] = useState<LiveStreamProgress>()
@@ -57,7 +59,7 @@ const LiveStreamMonitorView: React.FC = () => {
       case LiveStreamStatus.ERRORED:
         return <Chip label='Errored' color='error' size='small' />
       default:
-        return <Chip label='Unknown state' color='primary' size='small' />
+        return <Chip label='Unknown state' color='secondary' size='small' />
     }
   }
 
@@ -84,7 +86,7 @@ const LiveStreamMonitorView: React.FC = () => {
               <Table sx={{ minWidth: '100%' }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Livestream URL</TableCell>
+                    <TableCell>{i18n.t('livestreamURLInput')}</TableCell>
                     <TableCell align="right">Status</TableCell>
                     <TableCell align="right">Time to live</TableCell>
                     <TableCell align="right">Starts on</TableCell>

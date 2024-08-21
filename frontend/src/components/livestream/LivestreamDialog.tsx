@@ -83,11 +83,10 @@ const LivestreamDialog: React.FC<Props> = ({ open, onClose }) => {
                 <Grid container>
                   <Grid item xs={12} mb={2}>
                     <Alert severity="info">
-                      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.<br />
-                      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+                      {i18n.t('livestreamDownloadInfo')}
                     </Alert>
                     <Alert severity="warning" sx={{ mt: 1 }}>
-                      This feature is still experimental. Something might break!
+                      {i18n.t('livestreamExperimentalWarning')}
                     </Alert>
                   </Grid>
                   <Grid item xs={12}>

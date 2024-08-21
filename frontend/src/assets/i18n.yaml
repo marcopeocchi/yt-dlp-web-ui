@@ -54,7 +54,16 @@ languages:
     rpcPollingTimeTitle: RPC polling time
     rpcPollingTimeDescription: A lower interval results in higher CPU usage (server and client side)
     templatesReloadInfo: To register a new template it might need a page reload.
-    livestreamURLInput: Livestream url
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -105,6 +114,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   french:
     urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
     statusTitle: Statut
@@ -157,6 +176,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   italian:
     urlInput: URL Video (uno per linea)
     statusTitle: Stato
@@ -206,6 +235,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   chinese:
     urlInput: 视频 URL
     statusTitle: 状态
@@ -256,6 +295,16 @@ languages:
     logsTitle: '日志'
     awaitingLogs: '正在等待日志…'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -304,6 +353,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
     statusTitle: Статус
@@ -352,6 +411,16 @@ languages:
     logsTitle: 'Логи'
     awaitingLogs: 'Ожидание логов...'
     bulkDownload: 'Скачать файлы в zip архиве'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -400,6 +469,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -449,6 +528,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -497,6 +586,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
     statusTitle: Статус
@@ -545,6 +644,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
     statusTitle: Status
@@ -593,6 +702,16 @@ languages:
     logsTitle: 'Logs'
     awaitingLogs: 'Awaiting logs...'
     bulkDownload: 'Download files in a zip archive'
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
   swedish:
     urlInput: Videolänk (en per rad)
     statusTitle: Status
@@ -647,3 +766,13 @@ languages:
     rpcPollingTimeTitle: Frekvens av RPC-uppdateringar
     rpcPollingTimeDescription: En högre frekvens kräver mer CPU-resurser för både server och klient
     templatesReloadInfo: För att registrera en ny mall så kan en sidomladdning krävas.
+    livestreamURLInput: Livestream URL
+    livestreamStatusWaiting: Waiting/Wait start
+    livestreamStatusDownloading: Downloading
+    livestreamStatusCompleted: Completed
+    livestreamStatusErrored: Errored
+    livestreamStatusUnknown: Unknown
+    livestreamDownloadInfo: |
+      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
+      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+    livestreamExperimentalWarning: This feature is still experimental. Something might break!
