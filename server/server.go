@@ -140,7 +140,7 @@ func RunBlocking(cfg *RunConfig) {
 }
 
 func newServer(c serverConfig) *http.Server {
-	lm := livestream.NewMonitor()
+	lm := livestream.NewMonitor(c.mq, c.mdb)
 	go lm.Schedule()
 	go lm.Restore()
 

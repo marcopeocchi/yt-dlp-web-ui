@@ -2,10 +2,8 @@ package livestream
 
 import (
 	"bufio"
-	"context"
 	"errors"
 	"io"
-	"log/slog"
 	"os"
 	"os/exec"
 	"strconv"
@@ -13,6 +11,7 @@ import (
 	"time"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
 const (
@@ -28,34 +27,35 @@ type LiveStream struct {
 	url          string
 	proc         *os.Process        // used to manually kill the yt-dlp process
 	status       int                // whether is monitoring or completed
-	log          chan []byte        // keeps tracks of the process logs while monitoring, not when started
 	done         chan *LiveStream   // where to signal the completition
 	waitTimeChan chan time.Duration // time to livestream start
 	waitTime     time.Duration
 	liveDate     time.Time
+
+	mq *internal.MessageQueue
+	db *internal.MemoryDB
 }
 
-func New(url string, log chan []byte, done chan *LiveStream) *LiveStream {
+func New(url string, done chan *LiveStream, mq *internal.MessageQueue, db *internal.MemoryDB) *LiveStream {
 	return &LiveStream{
 		url:          url,
 		done:         done,
 		status:       waiting,
 		waitTime:     time.Second * 0,
-		log:          log,
 		waitTimeChan: make(chan time.Duration),
+		mq:           mq,
+		db:           db,
 	}
 }
 
 // Start the livestream monitoring process, once completion signals on the done channel
 func (l *LiveStream) Start() error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	cmd := exec.Command(
 		config.Instance().DownloaderPath,
 		l.url,
-		"--wait-for-video", "10", // wait for the stream to be live and recheck every 10 secs
+		"--wait-for-video", "30", // wait for the stream to be live and recheck every 10 secs
 		"--no-colors", // no ansi color fuzz
+		"--simulate",
 		"--newline",
 		"--paths", config.Instance().DownloadPath,
 	)
@@ -67,13 +67,6 @@ func (l *LiveStream) Start() error {
 	}
 	defer stdout.Close()
 
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		l.status = errored
-		return err
-	}
-	defer stderr.Close()
-
 	if err := cmd.Start(); err != nil {
 		l.status = errored
 		return err
@@ -84,37 +77,29 @@ func (l *LiveStream) Start() error {
 
 	// Start monitoring when the livestream is goin to be live.
 	// If already live do nothing.
-	doneWaiting := make(chan struct{})
-	go l.monitorStartTime(stdout, doneWaiting)
+	go l.monitorStartTime(stdout)
 
-	//TODO: FFmpeg cannot be logged since is a subprocess of yt-dlp.
-	//      It also may have implication on how the process is killed.
-	go func() {
-		<-doneWaiting
-		l.logFFMpeg(ctx, io.MultiReader(stdout, stderr))
-	}()
-
-	// Wait to the yt-dlp+ffmpeg process to finish.
+	// Wait to the simulated download process to finish.
 	cmd.Wait()
 
 	// Set the job as completed and notify the parent the completion.
 	l.status = completed
 	l.done <- l
 
-	// cleanup
-	close(doneWaiting)
+	// Send the started livestream to the message queue! :D
+	p := &internal.Process{Url: l.url, Livestream: true}
+	l.db.Set(p)
+	l.mq.Publish(p)
 
 	return nil
 }
 
-func (l *LiveStream) monitorStartTime(r io.Reader, doneWait chan struct{}) {
+func (l *LiveStream) monitorStartTime(r io.Reader) {
 	// yt-dlp shows the time in the stdout
 	scanner := bufio.NewScanner(r)
 
 	defer func() {
 		l.status = inProgress
-		doneWait <- struct{}{}
-
 		close(l.waitTimeChan)
 	}()
 
@@ -223,17 +208,4 @@ func parseTimeSpan(timeStr string) (time.Time, error) {
 	start = start.Add(time.Duration(ss) * time.Second)
 
 	return start, nil
-}
-
-func (l *LiveStream) logFFMpeg(ctx context.Context, r io.Reader) {
-	scanner := bufio.NewScanner(r)
-
-	select {
-	case <-ctx.Done():
-		return
-	default:
-		for scanner.Scan() {
-			slog.Info("livestream output", slog.String("url", l.url), slog.String("stdout", scanner.Text()))
-		}
-	}
 }

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
 func setupTest() {
@@ -15,9 +16,8 @@ func TestLivestream(t *testing.T) {
 	setupTest()
 
 	done := make(chan *LiveStream)
-	log := make(chan []byte)
 
-	ls := New("https://www.youtube.com/watch?v=LSm1daKezcE", log, done)
+	ls := New("https://www.youtube.com/watch?v=LSm1daKezcE", done, &internal.MessageQueue{}, &internal.MemoryDB{})
 	go ls.Start()
 
 	time.AfterFunc(time.Second*20, func() {

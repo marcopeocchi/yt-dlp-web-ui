@@ -36,17 +36,19 @@ const (
 	StatusDownloading
 	StatusCompleted
 	StatusErrored
+	StatusLivestream
 )
 
 // Process descriptor
 type Process struct {
-	Id       string
-	Url      string
-	Params   []string
-	Info     DownloadInfo
-	Progress DownloadProgress
-	Output   DownloadOutput
-	proc     *os.Process
+	Id         string
+	Url        string
+	Livestream bool
+	Params     []string
+	Info       DownloadInfo
+	Progress   DownloadProgress
+	Output     DownloadOutput
+	proc       *os.Process
 }
 
 // Starts spawns/forks a new yt-dlp process and parse its stdout.
@@ -164,6 +166,10 @@ func (p *Process) Start() {
 				Percentage: progress.Percentage,
 				Speed:      progress.Speed,
 				ETA:        progress.Eta,
+			}
+
+			if p.Livestream {
+				p.Progress.Status = StatusLivestream
 			}
 
 			slog.Info("progress",

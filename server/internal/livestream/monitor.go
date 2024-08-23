@@ -8,22 +8,26 @@ import (
 	"time"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
 )
 
 type Monitor struct {
+	db      *internal.MemoryDB     // where the just started livestream will be published
+	mq      *internal.MessageQueue // where the just started livestream will be published
 	streams map[string]*LiveStream // keeps track of the livestreams
 	done    chan *LiveStream       // to signal individual processes completition
-	logs    chan []byte            // to signal individual processes completition
 }
 
-func NewMonitor() *Monitor {
+func NewMonitor(mq *internal.MessageQueue, db *internal.MemoryDB) *Monitor {
 	return &Monitor{
+		mq:      mq,
+		db:      db,
 		streams: make(map[string]*LiveStream),
 		done:    make(chan *LiveStream),
 	}
 }
 
-// Detect each livestream completition, if done remove it from the monitor.
+// Detect each livestream completition, if done detach it from the monitor.
 func (m *Monitor) Schedule() {
 	for l := range m.done {
 		delete(m.streams, l.url)
@@ -31,7 +35,7 @@ func (m *Monitor) Schedule() {
 }
 
 func (m *Monitor) Add(url string) {
-	ls := New(url, m.logs, m.done)
+	ls := New(url, m.done, m.mq, m.db)
 
 	go ls.Start()
 	m.streams[url] = ls
@@ -110,9 +114,4 @@ func (m *Monitor) Restore() error {
 	slog.Debug("restored livestream monitor state")
 
 	return nil
-}
-
-// Return a fan-in logs channel
-func (m *Monitor) Logs() <-chan []byte {
-	return m.logs
 }

@@ -63,7 +63,11 @@ func (m *MessageQueue) downloadConsumer() {
 		)
 
 		if p.Progress.Status != StatusCompleted {
-			p.Start()
+			if p.Livestream {
+				go p.Start() // livestreams have higher priorty and will ignore the queue
+			} else {
+				p.Start()
+			}
 		}
 
 		slog.Info("started process",
