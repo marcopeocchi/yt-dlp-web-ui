@@ -56,14 +56,16 @@ export function isRPCResponse(object: any): object is RPCResponse<any> {
 
 export function mapProcessStatus(status: ProcessStatus) {
   switch (status) {
-    case ProcessStatus.Pending:
+    case ProcessStatus.PENDING:
       return 'Pending'
-    case ProcessStatus.Downloading:
+    case ProcessStatus.DOWNLOADING:
       return 'Downloading'
-    case ProcessStatus.Completed:
+    case ProcessStatus.COMPLETED:
       return 'Completed'
-    case ProcessStatus.Errored:
+    case ProcessStatus.ERRORED:
       return 'Error'
+    case ProcessStatus.LIVESTREAM:
+      return 'Livestream'
     default:
       return 'Pending'
   }

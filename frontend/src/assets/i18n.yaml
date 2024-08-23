@@ -63,6 +63,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   german:
     urlInput: Video URL
@@ -123,6 +124,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   french:
     urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
@@ -185,6 +187,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   italian:
     urlInput: URL Video (uno per linea)
@@ -244,6 +247,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   chinese:
     urlInput: 视频 URL
@@ -304,6 +308,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
@@ -362,6 +367,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
@@ -420,6 +426,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
@@ -478,6 +485,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
@@ -537,6 +545,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
@@ -595,6 +604,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
@@ -653,6 +663,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
@@ -711,6 +722,7 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
   swedish:
     urlInput: Videolänk (en per rad)
@@ -775,4 +787,5 @@ languages:
     livestreamDownloadInfo: |
       This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
+      Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!

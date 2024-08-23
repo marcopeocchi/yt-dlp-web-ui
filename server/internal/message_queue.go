@@ -64,7 +64,8 @@ func (m *MessageQueue) downloadConsumer() {
 
 		if p.Progress.Status != StatusCompleted {
 			if p.Livestream {
-				go p.Start() // livestreams have higher priorty and will ignore the queue
+				// livestreams have higher priorty and they ignore the semaphore
+				go p.Start()
 			} else {
 				p.Start()
 			}

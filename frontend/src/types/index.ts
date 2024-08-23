@@ -39,10 +39,11 @@ type DownloadInfo = {
 }
 
 export enum ProcessStatus {
-  Pending = 0,
-  Downloading,
-  Completed,
-  Errored,
+  PENDING = 0,
+  DOWNLOADING,
+  COMPLETED,
+  ERRORED,
+  LIVESTREAM,
 }
 
 type DownloadProgress = {

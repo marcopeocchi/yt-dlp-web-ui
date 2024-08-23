@@ -168,10 +168,6 @@ func (p *Process) Start() {
 				ETA:        progress.Eta,
 			}
 
-			if p.Livestream {
-				p.Progress.Status = StatusLivestream
-			}
-
 			slog.Info("progress",
 				slog.String("id", p.getShortId()),
 				slog.String("url", p.Url),
