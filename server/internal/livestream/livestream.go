@@ -87,7 +87,11 @@ func (l *LiveStream) Start() error {
 	l.done <- l
 
 	// Send the started livestream to the message queue! :D
-	p := &internal.Process{Url: l.url, Livestream: true}
+	p := &internal.Process{
+		Url:        l.url,
+		Livestream: true,
+		Params:     []string{"--downloader", "ffmpeg", "--ppa", "\"Merger+ffmpeg_i1:-v quiet\""},
+	}
 	l.db.Set(p)
 	l.mq.Publish(p)
 
