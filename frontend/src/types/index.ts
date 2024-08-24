@@ -111,7 +111,7 @@ export enum LiveStreamStatus {
 }
 
 export type LiveStreamProgress = Record<string, {
-  Status: LiveStreamStatus
-  WaitTime: string
-  LiveDate: string
+  status: LiveStreamStatus
+  waitTime: string
+  liveDate: string
 }>

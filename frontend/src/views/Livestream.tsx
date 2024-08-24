@@ -101,17 +101,17 @@ const LiveStreamMonitorView: React.FC = () => {
                     >
                       <TableCell>{k}</TableCell>
                       <TableCell align='right'>
-                        {mapStatusToChip(progress[k].Status)}
+                        {mapStatusToChip(progress[k].status)}
                       </TableCell>
                       <TableCell align='right'>
-                        {progress[k].Status === LiveStreamStatus.WAITING
-                          ? formatMicro(Number(progress[k].WaitTime))
+                        {progress[k].status === LiveStreamStatus.WAITING
+                          ? formatMicro(Number(progress[k].waitTime))
                           : "-"
                         }
                       </TableCell>
                       <TableCell align='right'>
-                        {progress[k].Status === LiveStreamStatus.WAITING
-                          ? new Date(progress[k].LiveDate).toLocaleString()
+                        {progress[k].status === LiveStreamStatus.WAITING
+                          ? new Date(progress[k].liveDate).toLocaleString()
                           : "-"
                         }
                       </TableCell>

@@ -5,7 +5,7 @@ import "time"
 type LiveStreamStatus = map[string]Status
 
 type Status = struct {
-	Status   int
-	WaitTime time.Duration
-	LiveDate time.Time
+	Status   int           `json:"status"`
+	WaitTime time.Duration `json:"waitTime"`
+	LiveDate time.Time     `json:"liveDate"`
 }

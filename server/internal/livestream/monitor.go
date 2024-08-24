@@ -5,7 +5,6 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
@@ -63,11 +62,7 @@ func (m *Monitor) Status() LiveStreamStatus {
 		// 	continue
 		// }
 
-		status[k] = struct {
-			Status   int
-			WaitTime time.Duration
-			LiveDate time.Time
-		}{
+		status[k] = Status{
 			Status:   v.status,
 			WaitTime: v.waitTime,
 			LiveDate: v.liveDate,
