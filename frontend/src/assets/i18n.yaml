@@ -298,18 +298,18 @@ languages:
     templatesEditorContentLabel: 模板内容
     logsTitle: '日志'
     awaitingLogs: '正在等待日志…'
-    bulkDownload: 'Download files in a zip archive'
-    livestreamURLInput: Livestream URL
-    livestreamStatusWaiting: Waiting/Wait start
-    livestreamStatusDownloading: Downloading
-    livestreamStatusCompleted: Completed
-    livestreamStatusErrored: Errored
-    livestreamStatusUnknown: Unknown
+    bulkDownload: '下载 zip 压缩包中的文件'
+    livestreamURLInput: 直播 URL
+    livestreamStatusWaiting: 等待直播开始
+    livestreamStatusDownloading: 下载中
+    livestreamStatusCompleted: 已完成
+    livestreamStatusErrored: 发生错误
+    livestreamStatusUnknown: 未知
     livestreamDownloadInfo: |
-      This will monitor yet to start livestream. Each process will be executed with --wait-for-video 10.
-      If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
-      Once started the livestream will be migrated to the downloads page.
-    livestreamExperimentalWarning: This feature is still experimental. Something might break!
+      本功能将会监控即将开始的直播流，每个进程都会传入参数：--wait-for-video 10 （重试间隔10秒）
+      如果直播已经开始，那么依然可以下载，但是不会记录下载进度。
+      直播开始后，将会转移到下载页面
+    livestreamExperimentalWarning: 实验性功能，可能存在未知Bug，请谨慎使用
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
