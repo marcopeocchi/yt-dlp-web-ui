@@ -187,13 +187,15 @@ export const rpcHTTPEndpoint = selector({
   }
 })
 
-export const cookiesState = atom({
-  key: 'cookiesState',
-  default: localStorage.getItem('yt-dlp-cookies') ?? '',
-  effects: [
-    ({ onSet }) =>
-      onSet(c => localStorage.setItem('yt-dlp-cookies', c))
-  ]
+
+export const serverSideCookiesState = selector<string>({
+  key: 'serverSideCookiesState',
+  get: async ({ get }) => {
+    return await fetch(`${get(serverURL)}/api/v1/cookies`)
+      .then(res => res.json())
+      .then(data => data.cookies)
+      .catch(() => '')
+  }
 })
 
 const themeSelector = selector<ThemeNarrowed>({

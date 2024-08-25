@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"io"
 	"os"
 	"os/exec"
 	"time"
@@ -42,6 +43,22 @@ func (s *Service) Running(ctx context.Context) (*[]internal.ProcessResponse, err
 	default:
 		return s.mdb.All(), nil
 	}
+}
+
+func (s *Service) GetCookies(ctx context.Context) ([]byte, error) {
+	fd, err := os.Open("cookies.txt")
+	if err != nil {
+		return nil, err
+	}
+
+	defer fd.Close()
+
+	cookies, err := io.ReadAll(fd)
+	if err != nil {
+		return nil, err
+	}
+
+	return cookies, nil
 }
 
 func (s *Service) SetCookies(ctx context.Context, cookies string) error {

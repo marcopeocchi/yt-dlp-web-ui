@@ -1,9 +1,9 @@
-import { atom, selector } from 'recoil'
-import { CustomTemplate } from '../types'
-import { ffetch } from '../lib/httpClient'
-import { serverURL } from './settings'
-import { pipe } from 'fp-ts/lib/function'
 import { getOrElse } from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/function'
+import { atom, selector } from 'recoil'
+import { ffetch } from '../lib/httpClient'
+import { CustomTemplate } from '../types'
+import { serverURL } from './settings'
 
 export const cookiesTemplateState = atom({
   key: 'cookiesTemplateState',
