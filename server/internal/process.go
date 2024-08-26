@@ -14,13 +14,11 @@ import (
 	"sync"
 	"syscall"
 
-	"log"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
@@ -109,13 +107,13 @@ func (p *Process) Start() {
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		slog.Error("failed to connect to stdout", slog.Any("err", err))
+		slog.Error("failed to get a stdout pipe", slog.Any("err", err))
 		panic(err)
 	}
 
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		slog.Error("failed to connect to stdout", slog.Any("err", err))
+		slog.Error("failed to get a stderr pipe", slog.Any("err", err))
 		panic(err)
 	}
 
@@ -253,6 +251,12 @@ func (p *Process) GetFormats() (DownloadFormats, error) {
 		return DownloadFormats{}, err
 	}
 
+	slog.Info(
+		"retrieving metadata",
+		slog.String("caller", "getFormats"),
+		slog.String("url", p.Url),
+	)
+
 	info := DownloadFormats{URL: p.Url}
 	best := Format{}
 
@@ -262,18 +266,6 @@ func (p *Process) GetFormats() (DownloadFormats, error) {
 	)
 
 	wg.Add(2)
-
-	log.Println(
-		cli.BgRed, "Metadata", cli.Reset,
-		cli.BgBlue, "Formats", cli.Reset,
-		p.Url,
-	)
-
-	slog.Info(
-		"retrieving metadata",
-		slog.String("caller", "getFormats"),
-		slog.String("url", p.Url),
-	)
 
 	go func() {
 		decodingError = json.Unmarshal(stdout, &info)
