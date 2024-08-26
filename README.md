@@ -3,12 +3,6 @@
 A not so terrible web ui for yt-dlp.  
 Created for the only purpose of *fetching* videos from my server/nas. 
 
-Intended to be used with docker and in standalone mode. 😎👍
-
-Developed to be as lightweight as possible (because my server is basically an intel atom sbc). 
-
-The bottleneck remains yt-dlp startup time.
-
 **Docker images are available on [Docker Hub](https://hub.docker.com/r/marcobaobao/yt-dlp-webui) or [ghcr.io](https://github.com/marcopeocchi/yt-dlp-web-ui/pkgs/container/yt-dlp-web-ui)**.
 
 ```sh
@@ -29,34 +23,6 @@ docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 Stream or download your content, easily.
 
 ![](https://i.ibb.co/k0qzLds/image.png)
-
-## Changelog
-```
-05/03/22: Korean translation by kimpig
-
-03/03/22: cut-down image size by switching to Alpine linux based container
-
-01/03/22: Chinese translation by deluxghost
-
-03/02/22: i18n enabled! I need help with the translations :/
-
-27/01/22: Multidownload implemented!
-
-26/01/22: Multiple downloads are being implemented. Maybe by next release they will be there.
-Refactoring and JSDoc.
-
-04/01/22: Background jobs now are retrieved!! It's still rudimentary but it leverages on yt-dlp resume feature.
-
-05/05/22: Material UI update.
-
-03/06/22: The most requested feature finally implemented: Format Selection!!
-
-08/06/22: ARM builds.
-
-28/06/22: Reworked resume download feature. Now it's pratically instantaneous. It no longer stops and restarts each process, references to each process are saved in memory.
-
-12/01/23: Switched from TypeScript to Golang on the backend. It was a great effort but it was worth it.
-```
 
 ## Settings
 
