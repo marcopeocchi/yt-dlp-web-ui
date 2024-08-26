@@ -90,7 +90,7 @@ func (l *LiveStream) Start() error {
 	p := &internal.Process{
 		Url:        l.url,
 		Livestream: true,
-		Params:     []string{"--downloader", "ffmpeg", "--ppa", "\"Merger+ffmpeg_i1:-v quiet\"", "--no-part"},
+		Params:     []string{"--downloader", "ffmpeg", "--no-part"},
 	}
 	l.db.Set(p)
 	l.mq.Publish(p)
