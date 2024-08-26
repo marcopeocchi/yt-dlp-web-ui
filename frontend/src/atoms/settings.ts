@@ -1,4 +1,7 @@
+import { pipe } from 'fp-ts/lib/function'
+import { matchW } from 'fp-ts/lib/TaskEither'
 import { atom, selector } from 'recoil'
+import { ffetch } from '../lib/httpClient'
 import { prefersDarkMode } from '../utils'
 
 export const languages = [
@@ -187,13 +190,15 @@ export const rpcHTTPEndpoint = selector({
   }
 })
 
-export const cookiesState = atom({
-  key: 'cookiesState',
-  default: localStorage.getItem('yt-dlp-cookies') ?? '',
-  effects: [
-    ({ onSet }) =>
-      onSet(c => localStorage.setItem('yt-dlp-cookies', c))
-  ]
+export const serverSideCookiesState = selector<string>({
+  key: 'serverSideCookiesState',
+  get: async ({ get }) => await pipe(
+    ffetch<Readonly<{ cookies: string }>>(`${get(serverURL)}/api/v1/cookies`),
+    matchW(
+      () => '',
+      (r) => r.cookies
+    )
+  )()
 })
 
 const themeSelector = selector<ThemeNarrowed>({

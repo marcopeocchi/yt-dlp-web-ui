@@ -1,22 +1,20 @@
-import { TextField } from '@mui/material'
+import { Button, TextField } from '@mui/material'
 import * as A from 'fp-ts/Array'
 import * as E from 'fp-ts/Either'
 import * as O from 'fp-ts/Option'
+import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { useMemo } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
-import { cookiesTemplateState } from '../atoms/downloadTemplate'
-import { cookiesState, serverURL } from '../atoms/settings'
+import { serverSideCookiesState, serverURL } from '../atoms/settings'
 import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
 
 const validateCookie = (cookie: string) => pipe(
   cookie,
-  cookie => cookie.replace(/\s\s+/g, ' '),
-  cookie => cookie.replaceAll('\t', ' '),
-  cookie => cookie.split(' '),
+  cookie => cookie.split('\t'),
   E.of,
   E.flatMap(
     E.fromPredicate(
@@ -68,13 +66,19 @@ const validateCookie = (cookie: string) => pipe(
   ),
 )
 
+const noopValidator = (s: string): E.Either<string, string[]> => pipe(
+  s,
+  s => s.split('\t'),
+  E.of
+)
+
+const isCommentOrNewLine = (s: string) => s === '' || s.startsWith('\n') || s.startsWith('#')
+
 const CookiesTextField: React.FC = () => {
   const serverAddr = useRecoilValue(serverURL)
-  const [, setCookies] = useRecoilState(cookiesTemplateState)
-  const [savedCookies, setSavedCookies] = useRecoilState(cookiesState)
+  const savedCookies = useRecoilValue(serverSideCookiesState)
 
   const { pushMessage } = useToast()
-  const flag = '--cookies=cookies.txt'
 
   const cookies$ = useMemo(() => new Subject<string>(), [])
 
@@ -86,28 +90,41 @@ const CookiesTextField: React.FC = () => {
       })
     })()
 
+  const deleteCookies = () => pipe(
+    ffetch(`${serverAddr}/api/v1/cookies`, {
+      method: 'DELETE',
+    }),
+    matchW(
+      (l) => pushMessage(l, 'error'),
+      (_) => {
+        pushMessage('Deleted cookies', 'success')
+        pushMessage(`Reload the page to apply the changes`, 'info')
+      }
+    )
+  )()
+
   const validateNetscapeCookies = (cookies: string) => pipe(
     cookies,
     cookies => cookies.split('\n'),
-    cookies => cookies.filter(f => !f.startsWith('\n')), // empty lines
-    cookies => cookies.filter(f => !f.startsWith('# ')), // comments
-    cookies => cookies.filter(Boolean), // empty lines
-    A.map(validateCookie),
-    A.mapWithIndex((i, either) => pipe(
+    A.map(c => isCommentOrNewLine(c) ? noopValidator(c) : validateCookie(c)), // validate line
+    A.mapWithIndex((i, either) => pipe(                  // detect errors and return the either
       either,
-      E.matchW(
-        (l) => pushMessage(`Error in line ${i + 1}: ${l}`, 'warning'),
-        () => E.isRight(either)
+      E.match(
+        (l) => {
+          pushMessage(`Error in line ${i + 1}: ${l}`, 'warning')
+          return either
+        },
+        (_) => either
       ),
     )),
-    A.filter(Boolean),
-    A.match(
-      () => false,
-      (c) => {
-        pushMessage(`Valid ${c.length} Netscape cookies`, 'info')
-        return true
-      }
-    )
+    A.filter(c => E.isRight(c)),                         // filter the line who didn't pass the validation
+    A.map(E.getOrElse(() => new Array<string>())),       // cast the array of eithers to an array of tokens
+    A.filter(f => f.length > 0),                         // filter the empty tokens
+    A.map(f => f.join('\t')),                            // join the tokens in a TAB separated string
+    A.reduce('', (c, n) => `${c}${n}\n`),                // reduce all to a single string separated by \n
+    parsed => parsed.length > 0                          // if nothing has passed the validation return none
+      ? O.some(parsed)
+      : O.none
   )
 
   useSubscription(
@@ -117,22 +134,17 @@ const CookiesTextField: React.FC = () => {
     ),
     (cookies) => pipe(
       cookies,
-      cookies => {
-        setSavedCookies(cookies)
-        return cookies
-      },
       validateNetscapeCookies,
-      O.fromPredicate(f => f === true),
       O.match(
-        () => setCookies(''),
-        async () => {
+        () => pushMessage('No valid cookies', 'warning'),
+        async (some) => {
           pipe(
-            await submitCookies(cookies),
+            await submitCookies(some.trimEnd()),
             E.match(
               (l) => pushMessage(`${l}`, 'error'),
               () => {
-                pushMessage(`Saved Netscape cookies`, 'success')
-                setCookies(flag)
+                pushMessage(`Saved ${some.split('\n').length} Netscape cookies`, 'success')
+                pushMessage('Reload the page to apply the changes', 'info')
               }
             )
           )
@@ -142,15 +154,18 @@ const CookiesTextField: React.FC = () => {
   )
 
   return (
-    <TextField
-      label="Netscape Cookies"
-      multiline
-      maxRows={20}
-      minRows={4}
-      fullWidth
-      defaultValue={savedCookies}
-      onChange={(e) => cookies$.next(e.currentTarget.value)}
-    />
+    <>
+      <TextField
+        label="Netscape Cookies"
+        multiline
+        maxRows={20}
+        minRows={4}
+        fullWidth
+        defaultValue={savedCookies}
+        onChange={(e) => cookies$.next(e.currentTarget.value)}
+      />
+      <Button onClick={deleteCookies}>Delete cookies</Button>
+    </>
   )
 }
 

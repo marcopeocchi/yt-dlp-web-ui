@@ -18,7 +18,7 @@ import {
   Typography,
   capitalize
 } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import {
   Subject,
@@ -347,7 +347,9 @@ export default function Settings() {
           <Typography variant="h6" color="primary" sx={{ mb: 2 }}>
             Cookies
           </Typography>
-          <CookiesTextField />
+          <Suspense>
+            <CookiesTextField />
+          </Suspense>
         </Grid>
         <Grid>
           <Stack direction="row">

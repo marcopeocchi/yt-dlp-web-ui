@@ -82,7 +82,9 @@ export class RPCClient {
       : ''
 
     const sanitizedArgs = this.argsSanitizer(
-      req.args.replace('-o', '').replace(rename, '')
+      req.args
+        .replace('-o', '')
+        .replace(rename, '')
     )
 
     if (req.playlist) {
@@ -177,14 +179,14 @@ export class RPCClient {
   }
 
   public killLivestream(url: string) {
-    return this.sendHTTP<LiveStreamProgress>({
+    return this.sendHTTP({
       method: 'Service.KillLivestream',
       params: [url]
     })
   }
 
   public killAllLivestream() {
-    return this.sendHTTP<LiveStreamProgress>({
+    return this.sendHTTP({
       method: 'Service.KillAllLivestream',
       params: []
     })

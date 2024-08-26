@@ -1,5 +1,10 @@
+import { pipe } from 'fp-ts/lib/function'
+import { of } from 'fp-ts/lib/Task'
+import { getOrElse } from 'fp-ts/lib/TaskEither'
 import { atom, selector } from 'recoil'
+import { ffetch } from '../lib/httpClient'
 import { rpcClientState } from './rpc'
+import { serverURL } from './settings'
 
 export const connectedState = atom({
   key: 'connectedState',
@@ -22,4 +27,15 @@ export const availableDownloadPathsState = selector({
       .catch(() => ({ result: [] }))
     return res.result
   }
+})
+
+export const ytdlpVersionState = selector<string>({
+  key: 'ytdlpVersionState',
+  get: async ({ get }) => await pipe(
+    ffetch<string>(`${get(serverURL)}/api/v1/version`),
+    getOrElse(() => pipe(
+      'unknown version',
+      of
+    )),
+  )()
 })
