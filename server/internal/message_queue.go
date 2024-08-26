@@ -63,6 +63,10 @@ func (m *MessageQueue) downloadConsumer() {
 		)
 
 		if p.Progress.Status != StatusCompleted {
+			slog.Info("started process",
+				slog.String("bus", queueName),
+				slog.String("id", p.getShortId()),
+			)
 			if p.Livestream {
 				// livestreams have higher priorty and they ignore the semaphore
 				go p.Start()
@@ -70,11 +74,6 @@ func (m *MessageQueue) downloadConsumer() {
 				p.Start()
 			}
 		}
-
-		slog.Info("started process",
-			slog.String("bus", queueName),
-			slog.String("id", p.getShortId()),
-		)
 	}, false)
 }
 

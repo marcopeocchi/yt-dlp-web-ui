@@ -5,9 +5,8 @@ import * as O from 'fp-ts/Option'
 import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { useMemo } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
-import { cookiesTemplateState } from '../atoms/downloadTemplate'
 import { serverSideCookiesState, serverURL } from '../atoms/settings'
 import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
@@ -67,16 +66,21 @@ const validateCookie = (cookie: string) => pipe(
   ),
 )
 
+const noopValidator = (s: string): E.Either<string, string[]> => pipe(
+  s,
+  s => s.split('\t'),
+  E.of
+)
+
+const isCommentOrNewLine = (s: string) => s === '' || s.startsWith('\n') || s.startsWith('#')
+
 const CookiesTextField: React.FC = () => {
   const serverAddr = useRecoilValue(serverURL)
-  const [, setCookies] = useRecoilState(cookiesTemplateState)
   const savedCookies = useRecoilValue(serverSideCookiesState)
 
   const { pushMessage } = useToast()
 
   const cookies$ = useMemo(() => new Subject<string>(), [])
-
-  const flag = '--cookies=cookies.txt'
 
   const submitCookies = (cookies: string) =>
     ffetch(`${serverAddr}/api/v1/cookies`, {
@@ -102,10 +106,7 @@ const CookiesTextField: React.FC = () => {
   const validateNetscapeCookies = (cookies: string) => pipe(
     cookies,
     cookies => cookies.split('\n'),
-    cookies => cookies.filter(f => !f.startsWith('\n')), // empty lines
-    cookies => cookies.filter(f => !f.startsWith('# ')), // comments
-    cookies => cookies.filter(Boolean),                  // empty lines
-    A.map(validateCookie),                               // validate each line
+    A.map(c => isCommentOrNewLine(c) ? noopValidator(c) : validateCookie(c)), // validate line
     A.mapWithIndex((i, either) => pipe(                  // detect errors and return the either
       either,
       E.match(
@@ -135,16 +136,15 @@ const CookiesTextField: React.FC = () => {
       cookies,
       validateNetscapeCookies,
       O.match(
-        () => setCookies(''),
+        () => pushMessage('No valid cookies', 'warning'),
         async (some) => {
           pipe(
-            await submitCookies(some.trimEnd().slice(0, -1)),
+            await submitCookies(some.trimEnd()),
             E.match(
               (l) => pushMessage(`${l}`, 'error'),
               () => {
-                pushMessage(`Saved Netscape cookies`, 'success')
-                pushMessage(`Reload the page to apply the changes`, 'info')
-                setCookies(flag)
+                pushMessage(`Saved ${some.split('\n').length} Netscape cookies`, 'success')
+                pushMessage('Reload the page to apply the changes', 'info')
               }
             )
           )

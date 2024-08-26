@@ -3,14 +3,13 @@ import { pipe } from 'fp-ts/lib/function'
 import { atom, selector } from 'recoil'
 import { ffetch } from '../lib/httpClient'
 import { CustomTemplate } from '../types'
-import { serverURL } from './settings'
+import { serverSideCookiesState, serverURL } from './settings'
 
-export const cookiesTemplateState = atom({
+export const cookiesTemplateState = selector({
   key: 'cookiesTemplateState',
-  default: localStorage.getItem('cookiesTemplate') ?? '',
-  effects: [
-    ({ onSet }) => onSet(e => localStorage.setItem('cookiesTemplate', e))
-  ]
+  get: ({ get }) => get(serverSideCookiesState)
+    ? '--cookies=cookies.txt'
+    : ''
 })
 
 export const customArgsState = atom({
