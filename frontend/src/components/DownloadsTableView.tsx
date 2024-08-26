@@ -133,7 +133,7 @@ const DownloadsTableView: React.FC = () => {
     window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
-  const stop = (r: RPCResult) => r.progress.process_status === ProcessStatus.Completed
+  const stop = (r: RPCResult) => r.progress.process_status === ProcessStatus.COMPLETED
     ? client.clear(r.id)
     : client.kill(r.id)
 
