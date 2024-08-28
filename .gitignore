@@ -1,3 +1,7 @@
+.pre-commit-config.yaml
+.direnv/
+result/
+result
 dist
 .pnpm-debug.log
 node_modules

@@ -235,6 +235,10 @@ It is **planned** to also expose a **gRPC** server.
 
 For more information open an issue on GitHub and I will provide more info ASAP.
 
+## Nix
+This repo adds support for Nix(OS) in various ways through a `flake-parts` flake. 
+For more info, please refer to the [official documentation](https://nixos.org/learn/).
+
 ## What yt-dlp-webui is not
 `yt-dlp-webui` isn't your ordinary website where to download stuff from the internet, so don't try asking for links of where this is hosted. It's a self hosted platform for a Linux NAS.
 
