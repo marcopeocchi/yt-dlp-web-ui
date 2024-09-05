@@ -55,7 +55,7 @@ type serverConfig struct {
 }
 
 func RunBlocking(cfg *RunConfig) {
-	var mdb internal.MemoryDB
+	mdb := internal.NewMemoryDB()
 
 	// ---- LOGGING ---------------------------------------------------
 	logWriters := []io.Writer{
@@ -104,7 +104,7 @@ func RunBlocking(cfg *RunConfig) {
 	mq.SetupConsumers()
 	go mdb.Restore(mq)
 
-	lm := livestream.NewMonitor(mq, &mdb)
+	lm := livestream.NewMonitor(mq, mdb)
 	go lm.Schedule()
 	go lm.Restore()
 
@@ -113,14 +113,14 @@ func RunBlocking(cfg *RunConfig) {
 		swagger:  cfg.Swagger,
 		host:     cfg.Host,
 		port:     cfg.Port,
-		mdb:      &mdb,
+		mdb:      mdb,
 		mq:       mq,
 		db:       db,
 		lm:       lm,
 	})
 
-	go gracefulShutdown(srv, &mdb)
-	go autoPersist(time.Minute*5, &mdb)
+	go gracefulShutdown(srv, mdb)
+	go autoPersist(time.Minute*5, mdb)
 
 	var (
 		network = "tcp"
