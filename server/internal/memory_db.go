@@ -3,7 +3,6 @@ package internal
 import (
 	"encoding/gob"
 	"errors"
-	"maps"
 	"os"
 	"path/filepath"
 	"sync"
@@ -62,7 +61,7 @@ func (m *MemoryDB) Keys() *[]string {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	for id := range maps.Keys(m.table) {
+	for id := range m.table {
 		running = append(running, id)
 	}
 
@@ -74,7 +73,7 @@ func (m *MemoryDB) All() *[]ProcessResponse {
 	running := []ProcessResponse{}
 
 	m.mu.RLock()
-	for k, v := range maps.All(m.table) {
+	for k, v := range m.table {
 		running = append(running, ProcessResponse{
 			Id:       k,
 			Info:     v.Info,
