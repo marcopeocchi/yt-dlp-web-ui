@@ -26,6 +26,8 @@ func ApplyRouter(args *ContainerArgs) func(chi.Router) {
 			r.Use(openid.Middleware)
 		}
 		r.Post("/exec", h.Exec())
+		r.Post("/execPlaylist", h.ExecPlaylist())
+		r.Post("/execLivestream", h.ExecLivestream())
 		r.Get("/running", h.Running())
 		r.Get("/version", h.GetVersion())
 		r.Get("/cookies", h.GetCookies())

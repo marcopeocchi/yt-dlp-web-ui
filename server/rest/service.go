@@ -12,12 +12,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
 )
 
 type Service struct {
 	mdb *internal.MemoryDB
 	db  *sql.DB
 	mq  *internal.MessageQueue
+	lm  *livestream.Monitor
 }
 
 func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
@@ -36,10 +38,18 @@ func (s *Service) Exec(req internal.DownloadRequest) (string, error) {
 	return id, nil
 }
 
+func (s *Service) ExecPlaylist(req internal.DownloadRequest) error {
+	return internal.PlaylistDetect(req, s.mq, s.mdb)
+}
+
+func (s *Service) ExecLivestream(req internal.DownloadRequest) {
+	s.lm.Add(req.URL)
+}
+
 func (s *Service) Running(ctx context.Context) (*[]internal.ProcessResponse, error) {
 	select {
 	case <-ctx.Done():
-		return nil, errors.New("context cancelled")
+		return nil, context.Canceled
 	default:
 		return s.mdb.All(), nil
 	}
