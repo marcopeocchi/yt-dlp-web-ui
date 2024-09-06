@@ -101,6 +101,7 @@ export default function FormatsGrid({
                   >
                     {format.format_note} - {format.vcodec === 'none' ? format.acodec : format.vcodec}
                     {(format.filesize_approx > 0) ? " (~" + Math.round(format.filesize_approx / 1024 / 1024) + " MiB)" : ""}
+                    {format.language}
                   </Button>
                 </Grid>
               ))

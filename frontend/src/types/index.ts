@@ -82,6 +82,7 @@ export type DLFormat = {
   vcodec: string
   acodec: string
   filesize_approx: number
+  language: string
 }
 
 export type DirectoryEntry = {
