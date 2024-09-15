@@ -10,6 +10,11 @@ type ProgressTemplate struct {
 	Eta        float32 `json:"eta"`
 }
 
+
+type PostprocessTemplate struct {
+	FilePath string `json:"filepath"`
+}
+
 // Defines where and how the download needs to be saved
 type DownloadOutput struct {
 	Path          string
