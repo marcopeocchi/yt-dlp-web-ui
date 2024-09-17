@@ -201,6 +201,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 		}
 
 		io.Copy(w, fd)
+		return
 	}
 
 	w.WriteHeader(http.StatusUnauthorized)
