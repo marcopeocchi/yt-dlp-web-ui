@@ -9,7 +9,6 @@ import (
 )
 
 type Config struct {
-	CurrentLogFile    string
 	LogPath           string `yaml:"log_path"`
 	EnableFileLogging bool   `yaml:"enable_file_logging"`
 	BaseURL           string `yaml:"base_url"`
