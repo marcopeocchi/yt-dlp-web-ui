@@ -3,6 +3,7 @@ package livestream
 import (
 	"encoding/gob"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 
@@ -84,7 +85,12 @@ func (m *Monitor) Persist() error {
 
 	slog.Debug("persisting livestream monitor state")
 
-	return gob.NewEncoder(fd).Encode(m.streams)
+	var toPersist []string
+	for url := range maps.Keys(m.streams) {
+		toPersist = append(toPersist, url)
+	}
+
+	return gob.NewEncoder(fd).Encode(toPersist)
 }
 
 // Restore a saved state and resume the monitored livestreams
@@ -96,14 +102,14 @@ func (m *Monitor) Restore() error {
 
 	defer fd.Close()
 
-	restored := make(map[string]*LiveStream)
+	var toRestore []string
 
-	if err := gob.NewDecoder(fd).Decode(&restored); err != nil {
+	if err := gob.NewDecoder(fd).Decode(&toRestore); err != nil {
 		return err
 	}
 
-	for k := range restored {
-		m.Add(k)
+	for _, url := range toRestore {
+		m.Add(url)
 	}
 
 	slog.Debug("restored livestream monitor state")
