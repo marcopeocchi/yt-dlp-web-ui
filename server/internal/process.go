@@ -22,12 +22,19 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 )
 
-const template = `download:
+const downloadTemplate = `download:
 {
 	"eta":%(progress.eta)s, 
 	"percentage":"%(progress._percent_str)s",
 	"speed":%(progress.speed)s
 }`
+
+// filename not returning the correct extension after postprocess
+const postprocessTemplate = `postprocess:
+{
+	"filepath":"%(info.filepath)s"
+}
+`
 
 const (
 	StatusPending = iota
@@ -80,16 +87,16 @@ func (p *Process) Start() {
 
 	buildFilename(&p.Output)
 
-	//TODO: it spawn another one yt-dlp process, too slow.
-	go p.GetFileName(&out)
-
+	templateReplacer := strings.NewReplacer("\n", "", "\t", "", " ", "")
 	baseParams := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
 		"--no-colors",
 		"--no-playlist",
 		"--progress-template",
-		strings.NewReplacer("\n", "", "\t", "", " ", "").Replace(template),
+		templateReplacer.Replace(downloadTemplate),
+		"--progress-template",
+		templateReplacer.Replace(postprocessTemplate),
 	}
 
 	// if user asked to manually override the output path...
@@ -167,23 +174,33 @@ func (p *Process) consumeLogs(ctx context.Context, logs <-chan []byte) {
 
 func (p *Process) parseLogEntry(entry []byte) {
 	var progress ProgressTemplate
+	var postprocess PostprocessTemplate
 
-	if err := json.Unmarshal(entry, &progress); err != nil {
-		return
+	if err := json.Unmarshal(entry, &progress); err == nil {
+		p.Progress = DownloadProgress{
+			Status:     StatusDownloading,
+			Percentage: progress.Percentage,
+			Speed:      progress.Speed,
+			ETA:        progress.Eta,
+		}
+
+		slog.Info("progress",
+			slog.String("id", p.getShortId()),
+			slog.String("url", p.Url),
+			slog.String("percentage", progress.Percentage),
+		)
 	}
 
-	p.Progress = DownloadProgress{
-		Status:     StatusDownloading,
-		Percentage: progress.Percentage,
-		Speed:      progress.Speed,
-		ETA:        progress.Eta,
+	if err := json.Unmarshal(entry, &postprocess); err == nil {
+		p.Output.SavedFilePath = postprocess.FilePath
+
+		slog.Info("postprocess",
+			slog.String("id", p.getShortId()),
+			slog.String("url", p.Url),
+			slog.String("filepath", postprocess.FilePath),
+		)
 	}
 
-	slog.Info("progress",
-		slog.String("id", p.getShortId()),
-		slog.String("url", p.Url),
-		slog.String("percentage", progress.Percentage),
-	)
 }
 
 func (p *Process) detectYtDlpErrors(r io.Reader) {
@@ -207,6 +224,11 @@ func (p *Process) Complete() {
 		Percentage: "-1",
 		Speed:      0,
 		ETA:        0,
+	}
+	
+	// for safety, if the filename is not set, set it with original function
+	if p.Output.SavedFilePath == "" {
+		p.GetFileName(&p.Output)
 	}
 
 	slog.Info("finished",
