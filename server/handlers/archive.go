@@ -158,7 +158,7 @@ func SendFile(w http.ResponseWriter, r *http.Request) {
 
 	root := config.Instance().DownloadPath
 
-	if strings.Contains(filepath.Dir(filename), root) {
+	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		http.ServeFile(w, r, filename)
 		return
 	}
@@ -190,7 +190,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	root := config.Instance().DownloadPath
 
-	if strings.Contains(filepath.Dir(filename), root) {
+	if strings.Contains(filepath.Dir(filepath.Clean(filename)), filepath.Clean(root)) {
 		w.Header().Add("Content-Disposition", "inline; filename=\""+filepath.Base(filename)+"\"")
 		w.Header().Set("Content-Type", "application/octet-stream")
 
