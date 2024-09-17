@@ -34,27 +34,20 @@ import (
 )
 
 type RunConfig struct {
-	Host        string
-	Port        int
-	DBPath      string
-	LogFile     string
-	FileLogging bool
-	App         fs.FS
-	Swagger     fs.FS
+	App     fs.FS
+	Swagger fs.FS
 }
 
 type serverConfig struct {
 	frontend fs.FS
 	swagger  fs.FS
-	host     string
-	port     int
 	mdb      *internal.MemoryDB
 	db       *sql.DB
 	mq       *internal.MessageQueue
 	lm       *livestream.Monitor
 }
 
-func RunBlocking(cfg *RunConfig) {
+func RunBlocking(rc *RunConfig) {
 	mdb := internal.NewMemoryDB()
 
 	// ---- LOGGING ---------------------------------------------------
@@ -63,9 +56,11 @@ func RunBlocking(cfg *RunConfig) {
 		logging.NewObservableLogger(), // for web-ui
 	}
 
+	conf := config.Instance()
+
 	// file based logging
-	if cfg.FileLogging {
-		logger, err := logging.NewRotableLogger(cfg.LogFile)
+	if conf.EnableFileLogging {
+		logger, err := logging.NewRotableLogger(conf.LogPath)
 		if err != nil {
 			panic(err)
 		}
@@ -88,7 +83,7 @@ func RunBlocking(cfg *RunConfig) {
 	slog.SetDefault(logger)
 	// ----------------------------------------------------------------
 
-	db, err := sql.Open("sqlite", cfg.DBPath)
+	db, err := sql.Open("sqlite", conf.LocalDatabasePath)
 	if err != nil {
 		slog.Error("failed to open database", slog.String("err", err.Error()))
 	}
@@ -109,10 +104,8 @@ func RunBlocking(cfg *RunConfig) {
 	go lm.Restore()
 
 	srv := newServer(serverConfig{
-		frontend: cfg.App,
-		swagger:  cfg.Swagger,
-		host:     cfg.Host,
-		port:     cfg.Port,
+		frontend: rc.App,
+		swagger:  rc.Swagger,
 		mdb:      mdb,
 		mq:       mq,
 		db:       db,
@@ -120,17 +113,17 @@ func RunBlocking(cfg *RunConfig) {
 	})
 
 	go gracefulShutdown(srv, mdb)
-	go autoPersist(time.Minute*5, mdb)
+	go autoPersist(time.Minute*5, mdb, lm)
 
 	var (
 		network = "tcp"
-		address = fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
+		address = fmt.Sprintf("%s:%d", conf.Host, conf.Port)
 	)
 
 	// support unix sockets
-	if strings.HasPrefix(cfg.Host, "/") {
+	if strings.HasPrefix(conf.Host, "/") {
 		network = "unix"
-		address = cfg.Host
+		address = conf.Host
 	}
 
 	listener, err := net.Listen(network, address)
@@ -147,13 +140,6 @@ func RunBlocking(cfg *RunConfig) {
 }
 
 func newServer(c serverConfig) *http.Server {
-	go func() {
-		for {
-			c.lm.Persist()
-			time.Sleep(time.Minute * 5)
-		}
-	}()
-
 	service := ytdlpRPC.Container(c.mdb, c.mq, c.lm)
 	rpc.Register(service)
 
@@ -246,13 +232,14 @@ func gracefulShutdown(srv *http.Server, db *internal.MemoryDB) {
 	}()
 }
 
-func autoPersist(d time.Duration, db *internal.MemoryDB) {
+func autoPersist(d time.Duration, db *internal.MemoryDB, lm *livestream.Monitor) {
 	for {
 		if err := db.Persist(); err != nil {
+			slog.Warn("failed to persisted session", slog.Any("err", err))
+		}
+		if err := lm.Persist(); err != nil {
 			slog.Warn(
-				"failed to persisted session",
-				slog.String("err", err.Error()),
-			)
+				"failed to persisted livestreams monitor session", slog.Any("err", err.Error()))
 		}
 		slog.Debug("sucessfully persisted session")
 		time.Sleep(d)

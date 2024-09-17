@@ -71,16 +71,26 @@ func main() {
 
 	c := config.Instance()
 
-	c.Host = host
-	c.Port = port
-	c.QueueSize = queueSize
-	c.DownloadPath = downloadPath
-	c.DownloaderPath = downloaderPath
-	c.SessionFilePath = sessionFilePath
+	{
+		// init the config struct with the values from flags
+		// TODO: find an alternative way to populate the config struct from flags or config file
+		c.Host = host
+		c.Port = port
 
-	c.RequireAuth = requireAuth
-	c.Username = username
-	c.Password = password
+		c.QueueSize = queueSize
+
+		c.DownloadPath = downloadPath
+		c.DownloaderPath = downloaderPath
+		c.SessionFilePath = sessionFilePath
+		c.LocalDatabasePath = localDatabasePath
+
+		c.LogPath = logFile
+		c.EnableFileLogging = enableFileLogging
+
+		c.RequireAuth = requireAuth
+		c.Username = username
+		c.Password = password
+	}
 
 	// limit concurrent downloads for systems with 2 or less logical cores
 	if runtime.NumCPU() <= 2 {
@@ -95,12 +105,7 @@ func main() {
 	openid.Configure()
 
 	server.RunBlocking(&server.RunConfig{
-		Host:        c.Host,
-		Port:        c.Port,
-		DBPath:      localDatabasePath,
-		FileLogging: enableFileLogging,
-		LogFile:     logFile,
-		App:         frontend,
-		Swagger:     swagger,
+		App:     frontend,
+		Swagger: swagger,
 	})
 }

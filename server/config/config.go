@@ -9,19 +9,21 @@ import (
 )
 
 type Config struct {
-	CurrentLogFile  string
-	LogPath         string `yaml:"log_path"`
-	BaseURL         string `yaml:"base_url"`
-	Host            string `yaml:"host"`
-	Port            int    `yaml:"port"`
-	DownloadPath    string `yaml:"downloadPath"`
-	DownloaderPath  string `yaml:"downloaderPath"`
-	RequireAuth     bool   `yaml:"require_auth"`
-	Username        string `yaml:"username"`
-	Password        string `yaml:"password"`
-	QueueSize       int    `yaml:"queue_size"`
-	SessionFilePath string `yaml:"session_file_path"`
-	path            string
+	CurrentLogFile    string
+	LogPath           string `yaml:"log_path"`
+	EnableFileLogging bool   `yaml:"enable_file_logging"`
+	BaseURL           string `yaml:"base_url"`
+	Host              string `yaml:"host"`
+	Port              int    `yaml:"port"`
+	DownloadPath      string `yaml:"downloadPath"`
+	DownloaderPath    string `yaml:"downloaderPath"`
+	RequireAuth       bool   `yaml:"require_auth"`
+	Username          string `yaml:"username"`
+	Password          string `yaml:"password"`
+	QueueSize         int    `yaml:"queue_size"`
+	LocalDatabasePath string `yaml:"local_database_path"`
+	SessionFilePath   string `yaml:"session_file_path"`
+	path              string
 
 	UseOpenId          bool   `yaml:"use_openid"`
 	OpenIdProviderURL  string `yaml:"openid_provider_url"`
