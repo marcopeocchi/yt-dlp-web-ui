@@ -3,6 +3,7 @@ import { of } from 'fp-ts/lib/Task'
 import { getOrElse } from 'fp-ts/lib/TaskEither'
 import { atom, selector } from 'recoil'
 import { ffetch } from '../lib/httpClient'
+import { RPCVersion } from '../types'
 import { rpcClientState } from './rpc'
 import { serverURL } from './settings'
 
@@ -29,12 +30,15 @@ export const availableDownloadPathsState = selector({
   }
 })
 
-export const ytdlpVersionState = selector<string>({
-  key: 'ytdlpVersionState',
+export const ytdlpRpcVersionState = selector<RPCVersion>({
+  key: 'ytdlpRpcVersionState',
   get: async ({ get }) => await pipe(
-    ffetch<string>(`${get(serverURL)}/api/v1/version`),
+    ffetch<RPCVersion>(`${get(serverURL)}/api/v1/version`),
     getOrElse(() => pipe(
-      'unknown version',
+      {
+        rpcVersion: 'unknown version',
+        ytdlpVersion: 'unknown version',
+      },
       of
     )),
   )()

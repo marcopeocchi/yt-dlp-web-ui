@@ -146,22 +146,25 @@ func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *Service) GetVersion(ctx context.Context) (string, error) {
-	ch := make(chan string, 1)
+func (s *Service) GetVersion(ctx context.Context) (string, string, error) {
+	//TODO: load from realease properties file, or anything else outside code
+	const CURRENT_RPC_VERSION = "3.2.1"
 
-	c, cancel := context.WithTimeout(ctx, time.Second*10)
+	result := make(chan string, 1)
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
-	cmd := exec.CommandContext(c, config.Instance().DownloaderPath, "--version")
+	cmd := exec.CommandContext(ctx, config.Instance().DownloaderPath, "--version")
 	go func() {
 		stdout, _ := cmd.Output()
-		ch <- string(stdout)
+		result <- string(stdout)
 	}()
 
 	select {
-	case <-c.Done():
-		return "", errors.New("requesting yt-dlp version took too long")
-	case res := <-ch:
-		return res, nil
+	case <-ctx.Done():
+		return CURRENT_RPC_VERSION, "", errors.New("requesting yt-dlp version took too long")
+	case res := <-result:
+		return CURRENT_RPC_VERSION, res, nil
 	}
 }

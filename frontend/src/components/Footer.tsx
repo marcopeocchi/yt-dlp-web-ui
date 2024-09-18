@@ -1,6 +1,6 @@
 import DownloadIcon from '@mui/icons-material/Download'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
-import { AppBar, Chip, Divider, Toolbar } from '@mui/material'
+import { AppBar, CircularProgress, Divider, Toolbar } from '@mui/material'
 import { Suspense } from 'react'
 import { useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
@@ -34,13 +34,9 @@ const Footer: React.FC = () => {
         fontSize: 14,
         display: 'flex', gap: 1, justifyContent: 'space-between'
       }}>
-        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {/* TODO: make it dynamic */}
-          <Chip label="RPC v3.2.0" variant="outlined" size="small" />
-          <Suspense>
-            <VersionIndicator />
-          </Suspense>
-        </div>
+        <Suspense fallback={<CircularProgress size={15} />}>
+          <VersionIndicator />
+        </Suspense>
         <div style={{ display: 'flex', gap: 4, 'alignItems': 'center' }}>
           <div style={{
             display: 'flex',

@@ -1,14 +1,15 @@
-import { Chip, CircularProgress } from '@mui/material'
+import { Chip } from '@mui/material'
 import { useRecoilValue } from 'recoil'
-import { ytdlpVersionState } from '../atoms/status'
+import { ytdlpRpcVersionState } from '../atoms/status'
 
 const VersionIndicator: React.FC = () => {
-  const version = useRecoilValue(ytdlpVersionState)
+  const version = useRecoilValue(ytdlpRpcVersionState)
 
   return (
-    version
-      ? <Chip label={`yt-dlp v${version}`} variant="outlined" size="small" />
-      : <CircularProgress size={15} />
+    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      <Chip label={`RPC v${version.rpcVersion}`} variant="outlined" size="small" />
+      <Chip label={`yt-dlp v${version.ytdlpVersion}`} variant="outlined" size="small" />
+    </div>
   )
 }
 

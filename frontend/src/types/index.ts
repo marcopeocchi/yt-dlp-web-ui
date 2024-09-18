@@ -116,3 +116,8 @@ export type LiveStreamProgress = Record<string, {
   waitTime: string
   liveDate: string
 }>
+
+export type RPCVersion = {
+  rpcVersion: string
+  ytdlpVersion: string
+}

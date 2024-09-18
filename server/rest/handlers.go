@@ -243,18 +243,28 @@ func (h *Handler) DeleteTemplate() http.HandlerFunc {
 }
 
 func (h *Handler) GetVersion() http.HandlerFunc {
+	type Response struct {
+		RPCVersion   string `json:"rpcVersion"`
+		YtdlpVersion string `json:"ytdlpVersion"`
+	}
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
 		w.Header().Set("Content-Type", "application/json")
 
-		version, err := h.service.GetVersion(r.Context())
+		rpcVersion, ytdlpVersion, err := h.service.GetVersion(r.Context())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		if err := json.NewEncoder(w).Encode(version); err != nil {
+		res := Response{
+			RPCVersion:   rpcVersion,
+			YtdlpVersion: ytdlpVersion,
+		}
+
+		if err := json.NewEncoder(w).Encode(res); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
