@@ -111,7 +111,9 @@ func (m *MemoryDB) Persist() error {
 
 // Restore a persisted state
 func (m *MemoryDB) Restore(mq *MessageQueue) {
-	fd, err := os.Open("session.dat")
+	sf := filepath.Join(config.Instance().SessionFilePath, "session.dat")
+
+	fd, err := os.Open(sf)
 	if err != nil {
 		return
 	}
