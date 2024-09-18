@@ -47,13 +47,16 @@ type serverConfig struct {
 	lm       *livestream.Monitor
 }
 
+// TODO: change scope
+var observableLogger = logging.NewObservableLogger()
+
 func RunBlocking(rc *RunConfig) {
 	mdb := internal.NewMemoryDB()
 
 	// ---- LOGGING ---------------------------------------------------
 	logWriters := []io.Writer{
 		os.Stdout,
-		logging.NewObservableLogger(), // for web-ui
+		observableLogger, // for web-ui
 	}
 
 	conf := config.Instance()
@@ -207,7 +210,7 @@ func newServer(c serverConfig) *http.Server {
 	}))
 
 	// Logging
-	r.Route("/log", logging.ApplyRouter())
+	r.Route("/log", logging.ApplyRouter(observableLogger))
 
 	return &http.Server{Handler: r}
 }

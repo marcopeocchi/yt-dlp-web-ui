@@ -22,8 +22,8 @@ const LogTerminal: React.FC = () => {
 
   useEffect(() => {
     eventSource.addEventListener('log', event => {
-      const msg: string[] = JSON.parse(event.data)
-      setLogBuffer(buff => [...buff, ...msg].slice(-500))
+      const msg: string = JSON.parse(event.data)
+      setLogBuffer(buff => [...buff, msg].slice(-500))
 
       boxRef.current?.scrollTo(0, boxRef.current.scrollHeight)
     })
