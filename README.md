@@ -1,4 +1,4 @@
-# yt-dlp Web UI
+![image](https://github.com/user-attachments/assets/cd75c965-aac3-4ac8-a32e-a8493877a999)# yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp. 
 
@@ -16,13 +16,18 @@ docker pull marcobaobao/yt-dlp-webui
 docker pull ghcr.io/marcopeocchi/yt-dlp-web-ui:latest
 ```
 
-## Video showcase
-[app.webm](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/91545bc4-233d-4dde-8504-27422cb26964)
-
 ## Donate to yt-dlp-webui development
 [PayPal](https://paypal.me/marcofw)
 
-Keeps the project alive! 😃
+*Keeps the project alive!* 😃
+
+## Some screeshots
+![image](https://github.com/user-attachments/assets/fc43a3fb-ecf9-449d-b5cb-5d5635020c00)
+![image](https://github.com/user-attachments/assets/3210f6ac-0dd8-403c-b839-3c24ff7d7d00)
+![image](https://github.com/user-attachments/assets/16450a40-cda6-4c8b-9d20-8ec36282f6ed)
+
+## Video showcase
+[app.webm](https://github.com/marcopeocchi/yt-dlp-web-ui/assets/35533749/91545bc4-233d-4dde-8504-27422cb26964)
 
 ## Settings
 
