@@ -3,9 +3,9 @@ package logging
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io"
+	"log/slog"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
@@ -22,58 +22,74 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1000,
 }
 
-func webSocket(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	for msg := range logsObservable.Observe() {
-		c.WriteJSON(msg.V)
-	}
-}
-
-func sse(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/event-stream")
-	w.Header().Set("Cache-Control", "no-cache")
-	w.Header().Set("Connection", "keep-alive")
-
-	flusher, ok := w.(http.Flusher)
-	if !ok {
-		http.Error(w, "SSE not supported", http.StatusInternalServerError)
-		return
-	}
-
-	for msg := range logsObservable.Observe() {
-		if msg.E != nil {
-			http.Error(w, msg.E.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		var (
-			b  bytes.Buffer
-			sb strings.Builder
-		)
-
-		if err := json.NewEncoder(&b).Encode(msg.V); err != nil {
+func webSocket(logger *ObservableLogger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		c, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		sb.WriteString("event: log\n")
-		sb.WriteString("data: ")
-		sb.WriteString(b.String())
-		sb.WriteRune('\n')
-		sb.WriteRune('\n')
+		logs := logger.Observe(r.Context())
 
-		fmt.Fprint(w, sb.String())
-
-		flusher.Flush()
+		for {
+			select {
+			case <-r.Context().Done():
+				return
+			case msg := <-logs:
+				c.WriteJSON(msg)
+			}
+		}
 	}
 }
 
-func ApplyRouter() func(chi.Router) {
+func sse(logger *ObservableLogger) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/event-stream")
+		w.Header().Set("Cache-Control", "no-cache")
+		w.Header().Set("Connection", "keep-alive")
+
+		flusher, ok := w.(http.Flusher)
+		if !ok {
+			http.Error(w, "SSE not supported", http.StatusInternalServerError)
+			return
+		}
+
+		logs := logger.Observe(r.Context())
+
+		for {
+			select {
+			case <-r.Context().Done():
+				slog.Info("detaching from logger")
+				return
+			case msg, ok := <-logs:
+				if !ok {
+					http.Error(w, "closed logs channel", http.StatusInternalServerError)
+					return
+				}
+
+				var b bytes.Buffer
+
+				b.WriteString("event: log\n")
+				b.WriteString("data: ")
+
+				if err := json.NewEncoder(&b).Encode(msg); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+				b.WriteRune('\n')
+				b.WriteRune('\n')
+
+				io.Copy(w, &b)
+
+				flusher.Flush()
+			}
+		}
+	}
+}
+
+func ApplyRouter(logger *ObservableLogger) func(chi.Router) {
 	return func(r chi.Router) {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
@@ -81,7 +97,7 @@ func ApplyRouter() func(chi.Router) {
 		if config.Instance().UseOpenId {
 			r.Use(openid.Middleware)
 		}
-		r.Get("/ws", webSocket)
-		r.Get("/sse", sse)
+		r.Get("/ws", webSocket(logger))
+		r.Get("/sse", sse(logger))
 	}
 }

@@ -1,40 +1,53 @@
 package logging
 
 import (
-	"time"
-
-	"github.com/reactivex/rxgo/v2"
+	"context"
 )
 
 /*
-	Logger implementation using the observable pattern.
-	Implements io.Writer interface.
+Logger implementation using the observable pattern.
+Implements io.Writer interface.
 
-	The observable is an event source which drops everythigng unless there's
-	a subscriber connected.
+The observable is an event source which drops everythigng unless there's
+a subscriber connected.
 
-	The observer implementatios are a http ServerSentEvents handler and a
-	websocket one in handler.go
+The observer implementatios are a http ServerSentEvents handler and a
+websocket one in handler.go
 */
-
-var (
-	logsChan       = make(chan rxgo.Item, 100)
-	logsObservable = rxgo.
-			FromEventSource(logsChan, rxgo.WithBackPressureStrategy(rxgo.Drop)).
-			BufferWithTime(rxgo.WithDuration(time.Millisecond * 500))
-)
-
-type ObservableLogger struct{}
+type ObservableLogger struct {
+	logsChan chan []byte
+}
 
 func NewObservableLogger() *ObservableLogger {
-	return &ObservableLogger{}
+	return &ObservableLogger{
+		logsChan: make(chan []byte, 100),
+	}
 }
 
 func (o *ObservableLogger) Write(p []byte) (n int, err error) {
-	logsChan <- rxgo.Of(string(p))
+	select {
+	case o.logsChan <- p:
+		n = len(p)
+		err = nil
+		return
+	default:
+		return
+	}
+}
 
-	n = len(p)
-	err = nil
+func (o *ObservableLogger) Observe(ctx context.Context) <-chan string {
+	logs := make(chan string)
 
-	return
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case logLine := <-o.logsChan:
+				logs <- string(logLine)
+			}
+		}
+	}()
+
+	return logs
 }
