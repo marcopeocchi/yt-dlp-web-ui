@@ -8,12 +8,14 @@ export const languages = [
   'english',
   'chinese',
   'russian',
+  'french',
   'italian',
   'spanish',
   'korean',
   'japanese',
   'catalan',
   'ukrainian',
+  'swedish',
   'polish',
   'german'
 ] as const
