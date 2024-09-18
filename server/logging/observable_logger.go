@@ -5,16 +5,15 @@ import (
 )
 
 /*
-	Logger implementation using the observable pattern.
-	Implements io.Writer interface.
+Logger implementation using the observable pattern.
+Implements io.Writer interface.
 
-	The observable is an event source which drops everythigng unless there's
-	a subscriber connected.
+The observable is an event source which drops everythigng unless there's
+a subscriber connected.
 
-	The observer implementatios are a http ServerSentEvents handler and a
-	websocket one in handler.go
+The observer implementatios are a http ServerSentEvents handler and a
+websocket one in handler.go
 */
-
 type ObservableLogger struct {
 	logsChan chan []byte
 }

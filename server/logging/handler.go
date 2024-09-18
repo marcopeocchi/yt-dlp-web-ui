@@ -3,10 +3,9 @@ package logging
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
@@ -69,23 +68,20 @@ func sse(logger *ObservableLogger) http.HandlerFunc {
 					return
 				}
 
-				var (
-					b  bytes.Buffer
-					sb strings.Builder
-				)
+				var b bytes.Buffer
+
+				b.WriteString("event: log\n")
+				b.WriteString("data: ")
 
 				if err := json.NewEncoder(&b).Encode(msg); err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
 
-				sb.WriteString("event: log\n")
-				sb.WriteString("data: ")
-				sb.WriteString(b.String())
-				sb.WriteRune('\n')
-				sb.WriteRune('\n')
+				b.WriteRune('\n')
+				b.WriteRune('\n')
 
-				fmt.Fprint(w, sb.String())
+				io.Copy(w, &b)
 
 				flusher.Flush()
 			}
