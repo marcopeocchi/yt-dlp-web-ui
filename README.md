@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/cd75c965-aac3-4ac8-a32e-a8493877a999)# yt-dlp Web UI
+# yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp. 
 
