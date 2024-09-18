@@ -68,6 +68,8 @@ func RunBlocking(rc *RunConfig) {
 			panic(err)
 		}
 
+		defer logger.Rotate()
+
 		go func() {
 			for {
 				time.Sleep(time.Hour * 24)

@@ -3,21 +3,23 @@ package logging
 import (
 	"compress/gzip"
 	"io"
+	"log/slog"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
 
 /*
-	File base logger with log-rotate capabilities.
-	The rotate process must be initiated from an external goroutine.
+implements io.Writer interface
 
-	After rotation the previous logs file are compressed with gzip algorithm.
+File base logger with log-rotate capabilities.
+The rotate process must be initiated from an external goroutine.
 
-	The rotated log follows this naming: [filename].UTC time.gz
+After rotation the previous logs file are compressed with gzip algorithm.
+
+The rotated log follows this naming: [filename].UTC time.gz
 */
-
-// implements io.Writer interface
 type LogRotateWriter struct {
 	mu       sync.Mutex
 	fd       *os.File
@@ -40,50 +42,41 @@ func (w *LogRotateWriter) Write(b []byte) (int, error) {
 }
 
 func (w *LogRotateWriter) Rotate() error {
-	var err error
+	slog.Info("started log rotation")
+
 	w.mu.Lock()
 
-	gzFile, err := os.Create(w.filename + "." + time.Now().Format(time.RFC3339) + ".gz")
+	gzFile, err := os.Create(strings.TrimSuffix(w.filename, ".log") + "-" + time.Now().Format(time.RFC3339) + ".log.gz")
 	if err != nil {
 		return err
 	}
 
-	data, err := io.ReadAll(w.fd)
-	if err != nil {
-		return err
-	}
+	zw := gzip.NewWriter(gzFile)
 
 	defer func() {
-		w.mu.Unlock()
-		w.gzipLog(gzFile, &data)
+		zw.Close()
+		zw.Flush()
+		gzFile.Close()
 	}()
 
-	_, err = os.Stat(w.filename)
-	if err != nil {
+	if _, err := os.Stat(w.filename); err != nil {
 		return err
 	}
 
-	if w.fd != nil {
-		err = w.fd.Close()
-		w.fd = nil
-		if err != nil {
-			return err
-		}
-	}
+	fd, _ := os.Open(w.filename)
+	io.Copy(zw, fd)
+	fd.Close()
 
-	err = os.Remove(w.filename)
-	if err != nil {
+	w.fd.Close()
+
+	if err := os.Remove(w.filename); err != nil {
 		return err
 	}
 
-	w.fd, err = os.Create(w.filename)
+	w.fd, _ = os.Create(w.filename)
+
+	w.mu.Unlock()
+	slog.Info("ended log rotation")
+
 	return err
-}
-
-func (w *LogRotateWriter) gzipLog(wr io.Writer, data *[]byte) error {
-	if _, err := gzip.NewWriter(wr).Write(*data); err != nil {
-		return err
-	}
-
-	return nil
 }
