@@ -1,9 +1,9 @@
-{ yt-dlp-web-ui-frontend, buildGoModule, lib, makeWrapper, yt-dlp, ... }:
+{ yt-dlp-web-ui-frontend, buildGo123Module, lib, makeWrapper, yt-dlp, ... }:
 let
   fs = lib.fileset;
   common = import ./common.nix { inherit lib; };
 in
-buildGoModule {
+buildGo123Module {
   pname = "yt-dlp-web-ui";
   inherit (common) version;
   src = fs.toSource rec {
@@ -26,7 +26,7 @@ buildGoModule {
       # repo commons
       ../.github
       ../README.md
-      ../LICENSE.md
+      ../LICENSE
       ../.gitignore
       ../.vscode
     ]);
@@ -44,7 +44,7 @@ buildGoModule {
       --prefix PATH : ${lib.makeBinPath [ yt-dlp ]}
   '';
 
-  vendorHash = "sha256-guM/U9DROJMx2ctPKBQis1YRhaf6fKvvwEWgswQKMG0=";
+  vendorHash = "sha256-c7IdCmYJEn5qJn3K8wt0qz3t0Nq9rbgWp1eONlCJOwM=";
 
   meta = common.meta // {
     mainProgram = "yt-dlp-web-ui";
