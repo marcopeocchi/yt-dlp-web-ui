@@ -35,9 +35,7 @@
   "paths": {
     "/exec": {
       "post": {
-        "tags": [
-          "download"
-        ],
+        "tags": ["download"],
         "summary": "Add a new download in the pending state ready to be processed",
         "description": "Add a new download in the pending state ready to be processed",
         "operationId": "addDownload",
@@ -74,19 +72,14 @@
         "security": [
           {},
           {
-            "api_key": [
-              "write:download",
-              "read:download"
-            ]
+            "api_key": ["write:download", "read:download"]
           }
         ]
       }
     },
     "/execPlaylist": {
       "post": {
-        "tags": [
-          "download"
-        ],
+        "tags": ["download"],
         "summary": "Add a new playlist download in the pending state ready to be processed",
         "description": "Add a new playlist download in the pending state ready to be processed",
         "operationId": "addDownloadPlaylist",
@@ -123,19 +116,14 @@
         "security": [
           {},
           {
-            "api_key": [
-              "write:download",
-              "read:download"
-            ]
+            "api_key": ["write:download", "read:download"]
           }
         ]
       }
     },
     "/execLivestream": {
       "post": {
-        "tags": [
-          "download"
-        ],
+        "tags": ["download"],
         "summary": "Add a new livestream download in the pending state ready to be processed",
         "description": "Add a new livestream download in the pending state ready to be processed",
         "operationId": "addDwonloadLivestream",
@@ -172,19 +160,14 @@
         "security": [
           {},
           {
-            "api_key": [
-              "write:download",
-              "read:download"
-            ]
+            "api_key": ["write:download", "read:download"]
           }
         ]
       }
     },
     "/running": {
       "get": {
-        "tags": [
-          "download"
-        ],
+        "tags": ["download"],
         "summary": "Returns all running and pending process",
         "description": "Returns all running and pending process",
         "operationId": "running",
@@ -212,10 +195,7 @@
         "security": [
           {},
           {
-            "api_key": [
-              "write:download",
-              "read:download"
-            ]
+            "api_key": ["write:download", "read:download"]
           }
         ]
       }
@@ -355,14 +335,16 @@
     },
     "/template/{id}": {
       "delete": {
-        "parameters": [{
-          "name": "id",
-          "in": "path",
-          "schema": {
-            "type": "string"
-          },
-          "required": true
-        }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -393,9 +375,7 @@
           "url": {
             "type": "string",
             "format": "uri",
-            "examples": [
-              "https://..."
-            ]
+            "examples": ["https://..."]
           },
           "path": {
             "type": "string"
@@ -408,12 +388,7 @@
             "items": {
               "type": "string"
             },
-            "examples": [
-              "-N",
-              "4",
-              "-R",
-              "infinite"
-            ]
+            "examples": ["-N", "4", "-R", "infinite"]
           }
         }
       },
@@ -422,21 +397,14 @@
         "properties": {
           "url": {
             "type": "string",
-            "examples": [
-              "https://..."
-            ]
+            "examples": ["https://..."]
           },
           "params": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "examples": [
-              "-N",
-              "4",
-              "-R",
-              "infinite"
-            ]
+            "examples": ["-N", "4", "-R", "infinite"]
           }
         }
       },
@@ -445,40 +413,24 @@
         "properties": {
           "process_status": {
             "type": "integer",
-            "examples": [
-              0,
-              1,
-              2,
-              3
-            ]
+            "examples": [0, 1, 2, 3]
           },
           "percentage": {
             "type": "string",
-            "examples": [
-              "50%"
-            ]
+            "examples": ["50%"]
           },
           "speed": {
             "type": "number",
             "format": "float",
-            "examples": [
-              7289347
-            ]
+            "examples": [7289347]
           },
           "eta": {
             "type": "number",
             "format": "float",
-            "examples": [
-              3600
-            ]
+            "examples": [3600]
           }
         },
-        "required": [
-          "process_status",
-          "percentage",
-          "speed",
-          "eta"
-        ]
+        "required": ["process_status", "percentage", "speed", "eta"]
       },
       "DownloadInfo": {
         "type": "object",
@@ -541,11 +493,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "path",
-          "filename",
-          "savedFilePath"
-        ]
+        "required": ["path", "filename", "savedFilePath"]
       },
       "ProcessResponse": {
         "type": "object",
@@ -566,12 +514,7 @@
             }
           }
         },
-        "required": [
-          "progress",
-          "info",
-          "output",
-          "params"
-        ]
+        "required": ["progress", "info", "output", "params"]
       },
       "GetVersionResponse": {
         "type": "object",
@@ -583,10 +526,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "rpcVersion",
-          "ytdlpVersion"
-        ]
+        "required": ["rpcVersion", "ytdlpVersion"]
       },
       "SetCookiesRequest": {
         "type": "object",
@@ -595,9 +535,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "cookies"
-        ]
+        "required": ["cookies"]
       },
       "CustomTemplate": {
         "type": "object",
@@ -614,11 +552,7 @@
             "minLength": 1
           }
         },
-        "required": [
-          "id",
-          "name",
-          "content"
-        ]
+        "required": ["id", "name", "content"]
       }
     },
     "securitySchemes": {
