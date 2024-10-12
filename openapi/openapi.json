@@ -72,6 +72,105 @@
           }
         },
         "security": [
+          {},
+          {
+            "api_key": [
+              "write:download",
+              "read:download"
+            ]
+          }
+        ]
+      }
+    },
+    "/execPlaylist": {
+      "post": {
+        "tags": [
+          "download"
+        ],
+        "summary": "Add a new playlist download in the pending state ready to be processed",
+        "description": "Add a new playlist download in the pending state ready to be processed",
+        "operationId": "addDownloadPlaylist",
+        "requestBody": {
+          "description": "Create a new playlist download",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {},
+          {
+            "api_key": [
+              "write:download",
+              "read:download"
+            ]
+          }
+        ]
+      }
+    },
+    "/execLivestream": {
+      "post": {
+        "tags": [
+          "download"
+        ],
+        "summary": "Add a new livestream download in the pending state ready to be processed",
+        "description": "Add a new livestream download in the pending state ready to be processed",
+        "operationId": "addDwonloadLivestream",
+        "requestBody": {
+          "description": "Create a new livestream download",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DownloadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {},
           {
             "api_key": [
               "write:download",
@@ -95,7 +194,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcessResponse"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessResponse"
+                  }
                 }
               }
             }
@@ -108,6 +210,7 @@
           }
         },
         "security": [
+          {},
           {
             "api_key": [
               "write:download",
@@ -115,6 +218,170 @@
             ]
           }
         ]
+      }
+    },
+    "/version": {
+      "get": {
+        "operationId": "getVersion",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetVersionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cookies": {
+      "get": {
+        "operationId": "getCookies",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetCookiesRequest"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "setCookies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCookiesRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCookies",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template": {
+      "post": {
+        "operationId": "addTemplate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomTemplate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/template/all": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomTemplate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/template/{id}": {
+      "delete": {
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "schema": {
+            "type": "string"
+          },
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "enum": ["ok"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
       }
     }
   },
@@ -125,13 +392,22 @@
         "properties": {
           "url": {
             "type": "string",
+            "format": "uri",
             "examples": [
               "https://..."
             ]
           },
+          "path": {
+            "type": "string"
+          },
+          "rename": {
+            "type": "string"
+          },
           "params": {
             "type": "array",
-            "format": "string",
+            "items": {
+              "type": "string"
+            },
             "examples": [
               "-N",
               "4",
@@ -152,7 +428,9 @@
           },
           "params": {
             "type": "array",
-            "format": "string",
+            "items": {
+              "type": "string"
+            },
             "examples": [
               "-N",
               "4",
@@ -181,18 +459,26 @@
             ]
           },
           "speed": {
-            "type": "integer",
+            "type": "number",
+            "format": "float",
             "examples": [
               7289347
             ]
           },
           "eta": {
-            "type": "integer",
+            "type": "number",
+            "format": "float",
             "examples": [
               3600
             ]
           }
-        }
+        },
+        "required": [
+          "process_status",
+          "percentage",
+          "speed",
+          "eta"
+        ]
       },
       "DownloadInfo": {
         "type": "object",
@@ -225,9 +511,22 @@
             "type": "string"
           },
           "created_at": {
-            "type": "object"
+            "type": "string",
+            "format": "date-time"
           }
-        }
+        },
+        "required": [
+          "url",
+          "title",
+          "thumbnail",
+          "resolution",
+          "size",
+          "vcodec",
+          "acodec",
+          "extension",
+          "original_url",
+          "created_at"
+        ]
       },
       "DownloadOutput": {
         "type": "object",
@@ -238,10 +537,15 @@
           "filename": {
             "type": "string"
           },
-          "saveFilePath": {
+          "savedFilePath": {
             "type": "string"
           }
-        }
+        },
+        "required": [
+          "path",
+          "filename",
+          "savedFilePath"
+        ]
       },
       "ProcessResponse": {
         "type": "object",
@@ -257,9 +561,64 @@
           },
           "params": {
             "type": "array",
-            "format": "string"
+            "items": {
+              "type": "string"
+            }
           }
-        }
+        },
+        "required": [
+          "progress",
+          "info",
+          "output",
+          "params"
+        ]
+      },
+      "GetVersionResponse": {
+        "type": "object",
+        "properties": {
+          "rpcVersion": {
+            "type": "string"
+          },
+          "ytdlpVersion": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rpcVersion",
+          "ytdlpVersion"
+        ]
+      },
+      "SetCookiesRequest": {
+        "type": "object",
+        "properties": {
+          "cookies": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cookies"
+        ]
+      },
+      "CustomTemplate": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "content"
+        ]
       }
     },
     "securitySchemes": {
