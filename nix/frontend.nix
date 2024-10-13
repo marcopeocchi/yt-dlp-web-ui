@@ -1,9 +1,10 @@
 { lib
+, pkgs
 , stdenv
 , nodejs
 , pnpm
 }:
-let common = import ./common.nix { inherit lib; }; in
+let common = import ./common.nix { inherit lib; inherit pkgs; }; in
 stdenv.mkDerivation (finalAttrs: {
   pname = "yt-dlp-web-ui-frontend";
 

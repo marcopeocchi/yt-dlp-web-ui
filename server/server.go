@@ -205,7 +205,7 @@ func newServer(c serverConfig) *http.Server {
 	r.Route("/rpc", ytdlpRPC.ApplyRouter())
 
 	// REST API handlers
-	r.Route("/api/v1", rest.ApplyRouter(&rest.ContainerArgs{
+	r.Mount("/api/v1", rest.ApplyRouter(&rest.ContainerArgs{
 		DB:  c.db,
 		MDB: c.mdb,
 		MQ:  c.mq,

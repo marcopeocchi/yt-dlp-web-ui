@@ -1,10 +1,14 @@
 package rest
 
 import (
-	"github.com/go-chi/chi/v5"
+	"log/slog"
+	"net/http"
+	"os"
+
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
 	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest/ogen"
 )
 
 func Container(args *ContainerArgs) *Handler {
@@ -15,26 +19,25 @@ func Container(args *ContainerArgs) *Handler {
 	return handler
 }
 
-func ApplyRouter(args *ContainerArgs) func(chi.Router) {
+func ApplyRouter(args *ContainerArgs) http.Handler {
 	h := Container(args)
 
-	return func(r chi.Router) {
-		if config.Instance().RequireAuth {
-			r.Use(middlewares.Authenticated)
-		}
-		if config.Instance().UseOpenId {
-			r.Use(openid.Middleware)
-		}
-		r.Post("/exec", h.Exec())
-		r.Post("/execPlaylist", h.ExecPlaylist())
-		r.Post("/execLivestream", h.ExecLivestream())
-		r.Get("/running", h.Running())
-		r.Get("/version", h.GetVersion())
-		r.Get("/cookies", h.GetCookies())
-		r.Post("/cookies", h.SetCookies())
-		r.Delete("/cookies", h.DeleteCookies())
-		r.Post("/template", h.AddTemplate())
-		r.Get("/template/all", h.GetTemplates())
-		r.Delete("/template/{id}", h.DeleteTemplate())
+	srv, err := ogen.NewServer(h, &secHandler{}, ogen.WithPathPrefix("/api/v1"))
+	if err != nil {
+		slog.Error("create the REST server",
+			slog.String("err", err.Error()))
+
+		os.Exit(1)
 	}
+
+	var hand http.Handler = srv
+	if config.Instance().RequireAuth {
+		hand = middlewares.Authenticated(hand)
+	}
+
+	if config.Instance().UseOpenId {
+		hand = openid.Middleware(hand)
+	}
+
+	return hand
 }
