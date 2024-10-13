@@ -1,12 +1,14 @@
+//go:generate ogen --target ./ogen -package ogen --clean ../../openapi/openapi.json
 package rest
 
 import (
-	"encoding/json"
-	"net/http"
+	"context"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/server/rest/ogen"
 )
+
+var _ ogen.Handler = &Handler{}
 
 type Handler struct {
 	service *Service
@@ -16,256 +18,172 @@ type Handler struct {
 	REST version of the JSON-RPC interface
 */
 
-func (h *Handler) Exec() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		w.Header().Set("Content-Type", "application/json")
-
-		var req internal.DownloadRequest
-
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		id, err := h.service.Exec(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode(id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+func transformInternalDownloadRequest(req *ogen.DownloadRequest) internal.DownloadRequest {
+	var iReq internal.DownloadRequest
+	if req.URL.Set {
+		iReq.URL = req.URL.Value.String()
 	}
+
+	if req.Path.Set {
+		iReq.Path = req.Path.Value
+	}
+
+	if req.Rename.Set {
+		iReq.Rename = req.Rename.Value
+	}
+
+	iReq.Params = req.Params
+
+	return iReq
 }
 
-func (h *Handler) ExecPlaylist() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+func (h *Handler) AddDownload(ctx context.Context, req *ogen.DownloadRequest) (ogen.AddDownloadRes, error) {
+	iReq := transformInternalDownloadRequest(req)
 
-		w.Header().Set("Content-Type", "application/json")
-
-		var req internal.DownloadRequest
-
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		err := h.service.ExecPlaylist(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if err := json.NewEncoder(w).Encode("ok"); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	id, err := h.service.Exec(iReq)
+	if err != nil {
+		return nil, err
 	}
+
+	res := ogen.AddDownloadOKApplicationJSON(id)
+	return &res, nil
 }
 
-func (h *Handler) ExecLivestream() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+func (h *Handler) AddDownloadPlaylist(ctx context.Context, req *ogen.DownloadRequest) (ogen.AddDownloadPlaylistRes, error) {
+	iReq := transformInternalDownloadRequest(req)
 
-		w.Header().Set("Content-Type", "application/json")
-
-		var req internal.DownloadRequest
-
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-
-		h.service.ExecLivestream(req)
-
-		err := json.NewEncoder(w).Encode("ok")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	if err := h.service.ExecPlaylist(iReq); err != nil {
+		return nil, err
 	}
+
+	ok := ogen.AddDownloadPlaylistOKOk
+	return &ok, nil
 }
 
-func (h *Handler) Running() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+func (h *Handler) AddDwonloadLivestream(ctx context.Context, req *ogen.DownloadRequest) (ogen.AddDwonloadLivestreamRes, error) {
+	iReq := transformInternalDownloadRequest(req)
 
-		w.Header().Set("Content-Type", "application/json")
+	h.service.ExecLivestream(iReq)
 
-		res, err := h.service.Running(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode(res)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	}
+	ok := ogen.AddDwonloadLivestreamOKOk
+	return &ok, nil
 }
 
-func (h *Handler) GetCookies() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		cookies, err := h.service.GetCookies(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		res := &internal.SetCookiesRequest{
-			Cookies: string(cookies),
-		}
-
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
+func (h *Handler) Running(ctx context.Context) (ogen.RunningRes, error) {
+	iRes, err := h.service.Running(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	res := ogen.RunningOKApplicationJSON{}
+	for _, r := range *iRes {
+		res = append(res, ogen.ProcessResponse{
+			Progress: ogen.DownloadProgress{
+				ProcessStatus: r.Progress.Status,
+				Percentage:    r.Progress.Percentage,
+				Speed:         r.Progress.Speed,
+				Eta:           r.Progress.ETA,
+			},
+			Info: ogen.DownloadInfo{
+				URL:         r.Info.URL,
+				Title:       r.Info.Title,
+				Thumbnail:   r.Info.Thumbnail,
+				Resolution:  r.Info.Resolution,
+				Size:        int(r.Info.Size),
+				Vcodec:      r.Info.VCodec,
+				Acodec:      r.Info.ACodec,
+				Extension:   r.Info.Extension,
+				OriginalURL: r.Info.OriginalURL,
+				CreatedAt:   r.Info.CreatedAt,
+			},
+			Output: ogen.DownloadOutput{
+				Path:          r.Output.Path,
+				Filename:      r.Output.Filename,
+				SavedFilePath: r.Output.SavedFilePath,
+			},
+		})
+	}
+
+	return &res, nil
 }
 
-func (h *Handler) SetCookies() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		w.Header().Set("Content-Type", "application/json")
-
-		req := new(internal.SetCookiesRequest)
-
-		err := json.NewDecoder(r.Body).Decode(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		err = h.service.SetCookies(r.Context(), req.Cookies)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+func (h *Handler) GetVersion(ctx context.Context) (*ogen.GetVersionResponse, error) {
+	rpc, ytdlp, err := h.service.GetVersion(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	return &ogen.GetVersionResponse{
+		RpcVersion:   rpc,
+		YtdlpVersion: ytdlp,
+	}, nil
 }
 
-func (h *Handler) DeleteCookies() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-
-		err := h.service.SetCookies(r.Context(), "")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+func (h *Handler) GetCookies(ctx context.Context) (*ogen.SetCookiesRequest, error) {
+	cookies, err := h.service.GetCookies(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	return &ogen.SetCookiesRequest{
+		Cookies: string(cookies),
+	}, nil
 }
 
-func (h *Handler) AddTemplate() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		w.Header().Set("Content-Type", "application/json")
-
-		req := new(internal.CustomTemplate)
-
-		err := json.NewDecoder(r.Body).Decode(req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-
-		if req.Name == "" || req.Content == "" {
-			http.Error(w, "Invalid template", http.StatusBadRequest)
-			return
-		}
-
-		err = h.service.SaveTemplate(r.Context(), req)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+func (h *Handler) SetCookies(ctx context.Context, req *ogen.SetCookiesRequest) (ogen.SetCookiesRes, error) {
+	if err := h.service.SetCookies(ctx, req.Cookies); err != nil {
+		return nil, err
 	}
+
+	ok := ogen.SetCookiesOKOk
+	return &ok, nil
 }
 
-func (h *Handler) GetTemplates() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		w.Header().Set("Content-Type", "application/json")
-
-		templates, err := h.service.GetTemplates(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode(templates)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+func (h *Handler) DeleteCookies(ctx context.Context) (ogen.DeleteCookiesOK, error) {
+	if err := h.service.SetCookies(ctx, ""); err != nil {
+		return "", err
 	}
+
+	return ogen.DeleteCookiesOKOk, nil
 }
 
-func (h *Handler) DeleteTemplate() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
+func (h *Handler) AddTemplate(ctx context.Context, req *ogen.CustomTemplate) (ogen.AddTemplateRes, error) {
+	var iReq internal.CustomTemplate
+	iReq.Id = req.ID
+	iReq.Name = req.Name
+	iReq.Content = req.Content
 
-		w.Header().Set("Content-Type", "application/json")
-
-		id := chi.URLParam(r, "id")
-
-		err := h.service.DeleteTemplate(r.Context(), id)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	if err := h.service.SaveTemplate(ctx, &iReq); err != nil {
+		return nil, err
 	}
+
+	ok := ogen.AddTemplateOKOk
+	return &ok, nil
 }
 
-func (h *Handler) GetVersion() http.HandlerFunc {
-	type Response struct {
-		RPCVersion   string `json:"rpcVersion"`
-		YtdlpVersion string `json:"ytdlpVersion"`
+func (h *Handler) TemplateAllGet(ctx context.Context) ([]ogen.CustomTemplate, error) {
+	templates, err := h.service.GetTemplates(ctx)
+	if err != nil {
+		return nil, err
 	}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-
-		w.Header().Set("Content-Type", "application/json")
-
-		rpcVersion, ytdlpVersion, err := h.service.GetVersion(r.Context())
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		res := Response{
-			RPCVersion:   rpcVersion,
-			YtdlpVersion: ytdlpVersion,
-		}
-
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
+	res := []ogen.CustomTemplate{}
+	for _, t := range *templates {
+		res = append(res, ogen.CustomTemplate{
+			ID:      t.Id,
+			Name:    t.Name,
+			Content: t.Content,
+		})
 	}
+
+	return res, nil
+}
+
+func (h *Handler) TemplateIDDelete(ctx context.Context, params ogen.TemplateIDDeleteParams) (ogen.TemplateIDDeleteRes, error) {
+	if err := h.service.DeleteTemplate(ctx, params.ID); err != nil {
+		return nil, err
+	}
+
+	ok := ogen.TemplateIDDeleteOKOk
+	return &ok, nil
 }

@@ -9,7 +9,13 @@ fe:
 dev:
 	cd frontend && pnpm dev
 
-all:
+gen:
+ifeq (, $(shell which ogen))
+		go install github.com/ogen-go/ogen/cmd/ogen@v1.4.1
+endif
+	go generate ./...
+
+all: gen
 	$(MAKE) fe && cd ..
 	CGO_ENABLED=0 go build -o yt-dlp-webui main.go
 

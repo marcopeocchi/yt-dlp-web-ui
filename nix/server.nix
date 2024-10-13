@@ -1,9 +1,9 @@
-{ yt-dlp-web-ui-frontend, buildGoModule, lib, makeWrapper, yt-dlp, ... }:
+{ pkgs, yt-dlp-web-ui-frontend, buildGo123Module, lib, makeWrapper, yt-dlp, ... }:
 let
   fs = lib.fileset;
-  common = import ./common.nix { inherit lib; };
+  common = import ./common.nix { inherit lib; inherit pkgs; };
 in
-buildGoModule {
+buildGo123Module {
   pname = "yt-dlp-web-ui";
   inherit (common) version;
   src = fs.toSource rec {
@@ -26,7 +26,7 @@ buildGoModule {
       # repo commons
       ../.github
       ../README.md
-      ../LICENSE.md
+      ../LICENSE
       ../.gitignore
       ../.vscode
     ]);
@@ -35,16 +35,18 @@ buildGoModule {
   # https://github.com/golang/go/issues/44507
   preBuild = ''
     cp -r ${yt-dlp-web-ui-frontend} frontend
+
+    go generate ./...
   '';
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper common.ogen ];
 
   postInstall = ''
     wrapProgram $out/bin/yt-dlp-web-ui \
       --prefix PATH : ${lib.makeBinPath [ yt-dlp ]}
   '';
 
-  vendorHash = "sha256-guM/U9DROJMx2ctPKBQis1YRhaf6fKvvwEWgswQKMG0=";
+  vendorHash = "sha256-9QZRj3HBNJI0Iv/6QSFb8lbcsPyLXV3rPJ3Ige8Ww9o=";
 
   meta = common.meta // {
     mainProgram = "yt-dlp-web-ui";

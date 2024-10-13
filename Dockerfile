@@ -21,7 +21,8 @@ WORKDIR /usr/src/yt-dlp-webui
 COPY . .
 COPY --from=ui /usr/src/yt-dlp-webui/frontend /usr/src/yt-dlp-webui/frontend
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
+RUN make gen && \
+    CGO_ENABLED=0 GOOS=linux go build -o yt-dlp-webui
 # -----------------------------------------------------------------------------
 
 # dependencies ----------------------------------------------------------------
