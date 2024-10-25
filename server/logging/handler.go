@@ -9,9 +9,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/websocket"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/server/middleware"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	middlewares "github.com/marcopeocchi/yt-dlp-web-ui/v3/server/middleware"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
 )
 
 var upgrader = websocket.Upgrader{

@@ -8,10 +8,10 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/cli"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/openid"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/cli"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
 )
 
 var (

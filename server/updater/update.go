@@ -3,7 +3,7 @@ package updater
 import (
 	"os/exec"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
 )
 
 // Update using the builtin function of yt-dlp

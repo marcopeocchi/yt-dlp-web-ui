@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
 )
 
 const TOKEN_COOKIE_NAME = "jwt-yt-dlp-webui"
