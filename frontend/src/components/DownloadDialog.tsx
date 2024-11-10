@@ -40,6 +40,8 @@ import { useRPC } from '../hooks/useRPC'
 import type { DLMetadata } from '../types'
 import { toFormatArgs } from '../utils'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
+import { useToast } from '../hooks/toast'
+import LoadingBackdrop from './LoadingBackdrop'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -67,6 +69,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const [pickedVideoFormat, setPickedVideoFormat] = useState('')
   const [pickedAudioFormat, setPickedAudioFormat] = useState('')
   const [pickedBestFormat, setPickedBestFormat] = useState('')
+  const [isFormatsLoading, setIsFormatsLoading] = useState(false)
 
   const [customArgs, setCustomArgs] = useRecoilState(customArgsState)
 
@@ -82,6 +85,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
 
   const { i18n } = useI18n()
   const { client } = useRPC()
+  const { pushMessage } = useToast()
 
   const urlInputRef = useRef<HTMLInputElement>(null)
   const customFilenameInputRef = useRef<HTMLInputElement>(null)
@@ -129,11 +133,28 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
     setPickedVideoFormat('')
     setPickedBestFormat('')
 
+
+    if (isPlaylist) {
+      pushMessage('Format selection on playlist is not supported', 'warning')
+      resetInput()
+      onClose()
+      return
+    }
+
+    setIsFormatsLoading(true)
+
     client.formats(url)
       ?.then(formats => {
+        if (formats.result._type === 'playlist') {
+          pushMessage('Format selection on playlist is not supported. Downloading as playlist.', 'info')
+          resetInput()
+          onClose()
+          return
+        }
         setDownloadFormats(formats.result)
         resetInput()
       })
+      .then(() => setIsFormatsLoading(false))
   }
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,10 +196,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
       onClose={onClose}
       TransitionComponent={Transition}
     >
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isPending}
-      />
+      <LoadingBackdrop isLoading={isPending || isFormatsLoading} />
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
           <IconButton

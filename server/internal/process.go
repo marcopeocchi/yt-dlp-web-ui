@@ -11,7 +11,6 @@ import (
 	"log/slog"
 	"regexp"
 	"slices"
-	"sync"
 	"syscall"
 
 	"os"
@@ -259,54 +258,6 @@ func (p *Process) Kill() error {
 	}
 
 	return nil
-}
-
-// Returns the available format for this URL
-//
-// TODO: Move out from process.go
-func (p *Process) GetFormats() (DownloadFormats, error) {
-	cmd := exec.Command(config.Instance().DownloaderPath, p.Url, "-J")
-
-	stdout, err := cmd.Output()
-	if err != nil {
-		slog.Error("failed to retrieve metadata", slog.String("err", err.Error()))
-		return DownloadFormats{}, err
-	}
-
-	slog.Info(
-		"retrieving metadata",
-		slog.String("caller", "getFormats"),
-		slog.String("url", p.Url),
-	)
-
-	info := DownloadFormats{URL: p.Url}
-	best := Format{}
-
-	var (
-		wg            sync.WaitGroup
-		decodingError error
-	)
-
-	wg.Add(2)
-
-	go func() {
-		decodingError = json.Unmarshal(stdout, &info)
-		wg.Done()
-	}()
-	go func() {
-		decodingError = json.Unmarshal(stdout, &best)
-		wg.Done()
-	}()
-
-	wg.Wait()
-
-	if decodingError != nil {
-		return DownloadFormats{}, err
-	}
-
-	info.Best = best
-
-	return info, nil
 }
 
 func (p *Process) GetFileName(o *DownloadOutput) error {

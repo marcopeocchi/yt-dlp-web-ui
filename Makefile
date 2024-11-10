@@ -7,7 +7,7 @@ fe:
 	cd frontend && pnpm install && pnpm build
 
 dev:
-	( cd frontend && pnpm install && pnpm dev )
+	cd frontend && pnpm install && pnpm dev
 
 all: fe
 	CGO_ENABLED=0 go build -o yt-dlp-webui main.go

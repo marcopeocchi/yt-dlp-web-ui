@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log/slog"
 
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/formats"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal/livestream"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/sys"
@@ -20,12 +21,6 @@ type Running []internal.ProcessResponse
 type Pending []string
 
 type NoArgs struct{}
-
-type Args struct {
-	Id     string
-	URL    string
-	Params []string
-}
 
 // Exec spawns a Process.
 // The result of the execution is the newly spawned process Id.
@@ -91,7 +86,7 @@ func (s *Service) KillAllLivestream(args NoArgs, result *struct{}) error {
 }
 
 // Progess retrieves the Progress of a specific Process given its Id
-func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error {
+func (s *Service) Progess(args internal.DownloadRequest, progress *internal.DownloadProgress) error {
 	proc, err := s.db.Get(args.Id)
 	if err != nil {
 		return err
@@ -102,13 +97,20 @@ func (s *Service) Progess(args Args, progress *internal.DownloadProgress) error 
 }
 
 // Progess retrieves available format for a given resource
-func (s *Service) Formats(args Args, meta *internal.DownloadFormats) error {
-	var (
-		err error
-		p   = internal.Process{Url: args.URL}
-	)
-	*meta, err = p.GetFormats()
-	return err
+func (s *Service) Formats(args internal.DownloadRequest, meta *formats.Metadata) error {
+	var err error
+
+	metadata, err := formats.ParseURL(args.URL)
+	if err != nil && metadata == nil {
+		return err
+	}
+
+	if metadata.IsPlaylist() {
+		go internal.PlaylistDetect(args, s.mq, s.db)
+	}
+
+	*meta = *metadata
+	return nil
 }
 
 // Pending retrieves a slice of all Pending/Running processes ids

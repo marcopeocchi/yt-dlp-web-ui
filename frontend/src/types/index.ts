@@ -69,9 +69,11 @@ export type RPCParams = {
 
 export type DLMetadata = {
   formats: Array<DLFormat>
+  _type: string
   best: DLFormat
   thumbnail: string
   title: string
+  entries: Array<DLMetadata>
 }
 
 export type DLFormat = {
