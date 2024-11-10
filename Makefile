@@ -4,7 +4,7 @@ default:
 	go run main.go
 
 fe:
-	( cd frontend && pnpm install && pnpm build )
+	cd frontend && pnpm install && pnpm build
 
 dev:
 	( cd frontend && pnpm install && pnpm dev )
