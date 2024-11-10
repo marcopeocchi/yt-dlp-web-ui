@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
 	"golang.org/x/sys/unix"
 )
 

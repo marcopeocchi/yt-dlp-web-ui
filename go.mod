@@ -1,4 +1,4 @@
-module github.com/marcopeocchi/yt-dlp-web-ui
+module github.com/marcopeocchi/yt-dlp-web-ui/v3
 
 go 1.23
 

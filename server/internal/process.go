@@ -19,12 +19,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/config"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
 )
 
 const downloadTemplate = `download:
 {
-	"eta":%(progress.eta)s, 
+	"eta":%(progress.eta)s,
 	"percentage":"%(progress._percent_str)s",
 	"speed":%(progress.speed)s
 }`
@@ -225,7 +225,7 @@ func (p *Process) Complete() {
 		Speed:      0,
 		ETA:        0,
 	}
-	
+
 	// for safety, if the filename is not set, set it with original function
 	if p.Output.SavedFilePath == "" {
 		p.GetFileName(&p.Output)

@@ -3,7 +3,7 @@ package rest
 import (
 	"database/sql"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
 )
 
 type ContainerArgs struct {

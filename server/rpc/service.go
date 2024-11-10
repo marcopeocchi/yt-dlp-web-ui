@@ -4,10 +4,10 @@ import (
 	"errors"
 	"log/slog"
 
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/internal/livestream"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/sys"
-	"github.com/marcopeocchi/yt-dlp-web-ui/server/updater"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/internal/livestream"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/sys"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/updater"
 )
 
 type Service struct {
