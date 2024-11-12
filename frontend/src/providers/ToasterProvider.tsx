@@ -1,10 +1,10 @@
 import { Alert, Snackbar } from "@mui/material"
-import { useRecoilState } from 'recoil'
 import { Toast, toastListState } from '../atoms/toast'
 import { useEffect } from 'react'
+import { useAtom } from 'jotai'
 
 const Toaster: React.FC = () => {
-  const [toasts, setToasts] = useRecoilState(toastListState)
+  const [toasts, setToasts] = useAtom(toastListState)
 
   const deletePredicate = (t: Toast) => (Date.now() - t.createdAt) < 2000
 

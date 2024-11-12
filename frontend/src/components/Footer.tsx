@@ -2,7 +2,6 @@ import DownloadIcon from '@mui/icons-material/Download'
 import SettingsEthernet from '@mui/icons-material/SettingsEthernet'
 import { AppBar, CircularProgress, Divider, Toolbar } from '@mui/material'
 import { Suspense } from 'react'
-import { useRecoilValue } from 'recoil'
 import { settingsState } from '../atoms/settings'
 import { connectedState } from '../atoms/status'
 import { totalDownloadSpeedState } from '../atoms/ui'
@@ -10,11 +9,12 @@ import { useI18n } from '../hooks/useI18n'
 import { formatSpeedMiB } from '../utils'
 import FreeSpaceIndicator from './FreeSpaceIndicator'
 import VersionIndicator from './VersionIndicator'
+import { useAtomValue } from 'jotai'
 
 const Footer: React.FC = () => {
-  const settings = useRecoilValue(settingsState)
-  const isConnected = useRecoilValue(connectedState)
-  const totalDownloadSpeed = useRecoilValue(totalDownloadSpeedState)
+  const settings = useAtomValue(settingsState)
+  const isConnected = useAtomValue(connectedState)
+  const totalDownloadSpeed = useAtomValue(totalDownloadSpeedState)
 
   const mode = settings.theme
   const { i18n } = useI18n()

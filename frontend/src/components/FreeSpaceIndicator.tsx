@@ -1,10 +1,10 @@
 import StorageIcon from '@mui/icons-material/Storage'
-import { useRecoilValue } from 'recoil'
 import { freeSpaceBytesState } from '../atoms/status'
 import { formatSize } from '../utils'
+import { useAtomValue } from 'jotai'
 
 const FreeSpaceIndicator = () => {
-  const freeSpace = useRecoilValue(freeSpaceBytesState)
+  const freeSpace = useAtomValue(freeSpaceBytesState)
 
   return (
     <div style={{

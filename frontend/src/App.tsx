@@ -1,11 +1,11 @@
 import { RouterProvider } from 'react-router-dom'
-import { RecoilRoot } from 'recoil'
+import { Provider } from 'jotai'
 import { router } from './router'
 
 export function App() {
   return (
-    <RecoilRoot>
+    <Provider>
       <RouterProvider router={router} />
-    </RecoilRoot>
+    </Provider>
   )
 }

@@ -1,8 +1,8 @@
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import { Container, SvgIcon, Typography, styled } from '@mui/material'
-import { useRecoilValue } from 'recoil'
 import { activeDownloadsState } from '../atoms/downloads'
 import { useI18n } from '../hooks/useI18n'
+import { useAtomValue } from 'jotai'
 
 const FlexContainer = styled(Container)({
   display: 'flex',
@@ -23,7 +23,7 @@ const Title = styled(Typography)({
 
 export default function Splash() {
   const { i18n } = useI18n()
-  const activeDownloads = useRecoilValue(activeDownloadsState)
+  const activeDownloads = useAtomValue(activeDownloadsState)
 
   if (activeDownloads.length !== 0) {
     return null

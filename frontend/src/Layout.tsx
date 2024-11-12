@@ -19,7 +19,6 @@ import Typography from '@mui/material/Typography'
 import { grey } from '@mui/material/colors'
 import { useMemo, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
 import { settingsState } from './atoms/settings'
 import AppBar from './components/AppBar'
 import Drawer from './components/Drawer'
@@ -29,11 +28,12 @@ import SocketSubscriber from './components/SocketSubscriber'
 import ThemeToggler from './components/ThemeToggler'
 import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
+import { useAtomValue } from 'jotai'
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
 
-  const settings = useRecoilValue(settingsState)
+  const settings = useAtomValue(settingsState)
 
   const mode = settings.theme
   const theme = useMemo(() =>

@@ -1,8 +1,9 @@
 import { pipe } from 'fp-ts/lib/function'
 import { matchW } from 'fp-ts/lib/TaskEither'
-import { atom, selector } from 'recoil'
 import { ffetch } from '../lib/httpClient'
 import { prefersDarkMode } from '../utils'
+import { atomWithStorage } from 'jotai/utils'
+import { atom } from 'jotai'
 
 export const languages = [
   'english',
@@ -40,194 +41,126 @@ export interface SettingsState {
   appTitle: string
 }
 
-export const languageState = atom<Language>({
-  key: 'languageState',
-  default: localStorage.getItem('language') as Language || 'english',
-  effects: [
-    ({ onSet }) =>
-      onSet(l => localStorage.setItem('language', l.toString()))
-  ]
-})
+export const languageState = atomWithStorage<Language>(
+  'language',
+  localStorage.getItem('language') as Language || 'english'
+)
 
-export const themeState = atom<Theme>({
-  key: 'themeStateState',
-  default: localStorage.getItem('theme') as Theme || 'system',
-  effects: [
-    ({ onSet }) =>
-      onSet(l => localStorage.setItem('theme', l.toString()))
-  ]
-})
+export const themeState = atomWithStorage<Theme>(
+  'theme',
+  localStorage.getItem('theme') as Theme || 'system'
+)
 
-export const serverAddressState = atom<string>({
-  key: 'serverAddressState',
-  default: localStorage.getItem('server-addr') || window.location.hostname,
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('server-addr', a.toString()))
-  ]
-})
+export const serverAddressState = atomWithStorage<string>(
+  'server-addr',
+  localStorage.getItem('server-addr') || window.location.hostname
+)
 
-export const serverPortState = atom<number>({
-  key: 'serverPortState',
-  default: Number(localStorage.getItem('server-port')) || Number(window.location.port),
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('server-port', a.toString()))
-  ]
-})
+export const serverPortState = atomWithStorage<number>(
+  'server-port',
+  Number(localStorage.getItem('server-port')) || Number(window.location.port)
+)
 
-export const latestCliArgumentsState = atom<string>({
-  key: 'latestCliArgumentsState',
-  default: localStorage.getItem('cli-args') || '--no-mtime',
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('cli-args', a.toString()))
-  ]
-})
+export const latestCliArgumentsState = atomWithStorage<string>(
+  'cli-args',
+  localStorage.getItem('cli-args') || '--no-mtime'
+)
 
-export const formatSelectionState = atom({
-  key: 'formatSelectionState',
-  default: localStorage.getItem('format-selection') === "true",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('format-selection', a.toString()))
-  ]
-})
+export const formatSelectionState = atomWithStorage(
+  'format-selection',
+  localStorage.getItem('format-selection') === 'true'
+)
 
-export const fileRenamingState = atom({
-  key: 'fileRenamingState',
-  default: localStorage.getItem('file-renaming') === "true",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('file-renaming', a.toString()))
-  ]
-})
+export const fileRenamingState = atomWithStorage(
+  'file-renaming',
+  localStorage.getItem('file-renaming') === 'true'
+)
 
-export const pathOverridingState = atom({
-  key: 'pathOverridingState',
-  default: localStorage.getItem('path-overriding') === "true",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('path-overriding', a.toString()))
-  ]
-})
+export const pathOverridingState = atomWithStorage(
+  'path-overriding',
+  localStorage.getItem('path-overriding') === 'true'
+)
 
-export const enableCustomArgsState = atom({
-  key: 'enableCustomArgsState',
-  default: localStorage.getItem('enable-custom-args') === "true",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('enable-custom-args', a.toString()))
-  ]
-})
+export const enableCustomArgsState = atomWithStorage(
+  'enable-custom-args',
+  localStorage.getItem('enable-custom-args') === 'true'
+)
 
-export const listViewState = atom({
-  key: 'listViewState',
-  default: localStorage.getItem('listview') === "true",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('listview', a.toString()))
-  ]
-})
+export const listViewState = atomWithStorage(
+  'listview',
+  localStorage.getItem('listview') === 'true'
+)
 
-export const servedFromReverseProxyState = atom({
-  key: 'servedFromReverseProxyState',
-  default: localStorage.getItem('reverseProxy') === "true" || window.location.port == "",
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('reverseProxy', a.toString()))
-  ]
-})
+export const servedFromReverseProxyState = atomWithStorage(
+  'reverseProxy',
+  localStorage.getItem('reverseProxy') === 'true' || window.location.port == ''
+)
 
-export const servedFromReverseProxySubDirState = atom<string>({
-  key: 'servedFromReverseProxySubDirState',
-  default: localStorage.getItem('reverseProxySubDir') ?? '',
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('reverseProxySubDir', a))
-  ]
-})
+export const servedFromReverseProxySubDirState = atomWithStorage<string>(
+  'reverseProxySubDir',
+  localStorage.getItem('reverseProxySubDir') ?? ''
+)
 
-export const appTitleState = atom({
-  key: 'appTitleState',
-  default: localStorage.getItem('appTitle') ?? 'yt-dlp Web UI',
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('appTitle', a.toString()))
-  ]
-})
+export const appTitleState = atomWithStorage(
+  'appTitle',
+  localStorage.getItem('appTitle') ?? 'yt-dlp Web UI'
+)
 
-export const serverAddressAndPortState = selector({
-  key: 'serverAddressAndPortState',
-  get: ({ get }) => {
-    if (get(servedFromReverseProxySubDirState)) {
-      return `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
-    }
-    if (get(servedFromReverseProxyState)) {
-      return `${get(serverAddressState)}`
-    }
-    return `${get(serverAddressState)}:${get(serverPortState)}`
+export const serverAddressAndPortState = atom((get) => {
+  if (get(servedFromReverseProxySubDirState)) {
+    return `${get(serverAddressState)}/${get(servedFromReverseProxySubDirState)}/`
   }
-})
-
-export const serverURL = selector({
-  key: 'serverURL',
-  get: ({ get }) =>
-    `${window.location.protocol}//${get(serverAddressAndPortState)}`
-})
-
-export const rpcWebSocketEndpoint = selector({
-  key: 'rpcWebSocketEndpoint',
-  get: ({ get }) => {
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-    return `${proto}//${get(serverAddressAndPortState)}/rpc/ws`
+  if (get(servedFromReverseProxyState)) {
+    return `${get(serverAddressState)}`
   }
+  return `${get(serverAddressState)}:${get(serverPortState)}`
 })
 
-export const rpcHTTPEndpoint = selector({
-  key: 'rpcHTTPEndpoint',
-  get: ({ get }) => {
-    const proto = window.location.protocol
-    return `${proto}//${get(serverAddressAndPortState)}/rpc/http`
+export const serverURL = atom((get) =>
+  `${window.location.protocol}//${get(serverAddressAndPortState)}`
+)
+
+export const rpcWebSocketEndpoint = atom((get) => {
+  const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${proto}//${get(serverAddressAndPortState)}/rpc/ws`
+}
+)
+
+export const rpcHTTPEndpoint = atom((get) => {
+  const proto = window.location.protocol
+  return `${proto}//${get(serverAddressAndPortState)}/rpc/http`
+}
+)
+
+export const serverSideCookiesState = atom<Promise<string>>(async (get) => await pipe(
+  ffetch<Readonly<{ cookies: string }>>(`${get(serverURL)}/api/v1/cookies`),
+  matchW(
+    () => '',
+    (r) => r.cookies
+  )
+)())
+
+const themeSelector = atom<ThemeNarrowed>((get) => {
+  const theme = get(themeState)
+  if ((theme === 'system' && prefersDarkMode()) || theme === 'dark') {
+    return 'dark'
   }
-})
+  return 'light'
+}
+)
 
-export const serverSideCookiesState = selector<string>({
-  key: 'serverSideCookiesState',
-  get: async ({ get }) => await pipe(
-    ffetch<Readonly<{ cookies: string }>>(`${get(serverURL)}/api/v1/cookies`),
-    matchW(
-      () => '',
-      (r) => r.cookies
-    )
-  )()
+export const settingsState = atom<SettingsState>((get) => ({
+  serverAddr: get(serverAddressState),
+  serverPort: get(serverPortState),
+  language: get(languageState),
+  theme: get(themeSelector),
+  cliArgs: get(latestCliArgumentsState),
+  formatSelection: get(formatSelectionState),
+  fileRenaming: get(fileRenamingState),
+  pathOverriding: get(pathOverridingState),
+  enableCustomArgs: get(enableCustomArgsState),
+  listView: get(listViewState),
+  servedFromReverseProxy: get(servedFromReverseProxyState),
+  appTitle: get(appTitleState)
 })
-
-const themeSelector = selector<ThemeNarrowed>({
-  key: 'themeSelector',
-  get: ({ get }) => {
-    const theme = get(themeState)
-    if ((theme === 'system' && prefersDarkMode()) || theme === 'dark') {
-      return 'dark'
-    }
-    return 'light'
-  }
-})
-
-export const settingsState = selector<SettingsState>({
-  key: 'settingsState',
-  get: ({ get }) => ({
-    serverAddr: get(serverAddressState),
-    serverPort: get(serverPortState),
-    language: get(languageState),
-    theme: get(themeSelector),
-    cliArgs: get(latestCliArgumentsState),
-    formatSelection: get(formatSelectionState),
-    fileRenaming: get(fileRenamingState),
-    pathOverriding: get(pathOverridingState),
-    enableCustomArgs: get(enableCustomArgsState),
-    listView: get(listViewState),
-    servedFromReverseProxy: get(servedFromReverseProxyState),
-    appTitle: get(appTitleState)
-  })
-})
+)

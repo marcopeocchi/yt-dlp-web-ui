@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material'
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import { activeDownloadsState } from '../atoms/downloads'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
@@ -8,7 +8,7 @@ import { ProcessStatus, RPCResult } from '../types'
 import DownloadCard from './DownloadCard'
 
 const DownloadsGridView: React.FC = () => {
-  const downloads = useRecoilValue(activeDownloadsState)
+  const downloads = useAtomValue(activeDownloadsState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()

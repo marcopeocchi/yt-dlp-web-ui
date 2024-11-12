@@ -33,7 +33,6 @@ import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilValue } from 'recoil'
 import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
 import { serverURL } from '../atoms/settings'
 import { useObservable } from '../hooks/observable'
@@ -42,13 +41,14 @@ import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { DirectoryEntry } from '../types'
 import { base64URLEncode, formatSize } from '../utils'
+import { useAtomValue } from 'jotai'
 
 export default function Downloaded() {
   const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
   const [showMenu, setShowMenu] = useState(false)
   const [currentFile, setCurrentFile] = useState<DirectoryEntry>()
 
-  const serverAddr = useRecoilValue(serverURL)
+  const serverAddr = useAtomValue(serverURL)
   const navigate = useNavigate()
 
   const { i18n } = useI18n()

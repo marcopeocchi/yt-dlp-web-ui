@@ -16,10 +16,10 @@ import {
   Typography
 } from '@mui/material'
 import { useCallback } from 'react'
-import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
 import { RPCResult } from '../types'
 import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
+import { useAtomValue } from 'jotai'
 
 type Props = {
   download: RPCResult
@@ -37,7 +37,7 @@ const Resolution: React.FC<{ resolution?: string }> = ({ resolution }) => {
 }
 
 const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
-  const serverAddr = useRecoilValue(serverURL)
+  const serverAddr = useAtomValue(serverURL)
 
   const isCompleted = useCallback(
     () => download.progress.percentage === '-1',
