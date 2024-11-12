@@ -1,9 +1,9 @@
 import { AlertColor } from '@mui/material'
-import { useRecoilState } from 'recoil'
 import { toastListState } from '../atoms/toast'
+import { useSetAtom } from 'jotai'
 
 export const useToast = () => {
-  const [, setToasts] = useRecoilState(toastListState)
+  const setToasts = useSetAtom(toastListState)
 
   return {
     pushMessage: (message: string, severity?: AlertColor) => {

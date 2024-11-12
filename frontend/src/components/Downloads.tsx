@@ -1,5 +1,5 @@
+import { useAtom, useAtomValue } from 'jotai'
 import { useEffect } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
 import { loadingDownloadsState } from '../atoms/downloads'
 import { listViewState } from '../atoms/settings'
 import { loadingAtom } from '../atoms/ui'
@@ -7,10 +7,10 @@ import DownloadsGridView from './DownloadsGridView'
 import DownloadsTableView from './DownloadsTableView'
 
 const Downloads: React.FC = () => {
-  const tableView = useRecoilValue(listViewState)
-  const loadingDownloads = useRecoilValue(loadingDownloadsState)
+  const tableView = useAtomValue(listViewState)
+  const loadingDownloads = useAtomValue(loadingDownloadsState)
 
-  const [isLoading, setIsLoading] = useRecoilState(loadingAtom)
+  const [isLoading, setIsLoading] = useAtom(loadingAtom)
 
   useEffect(() => {
     if (loadingDownloads) {

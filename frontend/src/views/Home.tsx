@@ -1,15 +1,15 @@
 import {
   Container
 } from '@mui/material'
-import { useRecoilValue } from 'recoil'
 import { loadingAtom } from '../atoms/ui'
 import Downloads from '../components/Downloads'
 import HomeActions from '../components/HomeActions'
 import LoadingBackdrop from '../components/LoadingBackdrop'
 import Splash from '../components/Splash'
+import { useAtomValue } from 'jotai'
 
 export default function Home() {
-  const isLoading = useRecoilValue(loadingAtom)
+  const isLoading = useAtomValue(loadingAtom)
 
   return (
     <Container maxWidth="xl" sx={{ mt: 2, mb: 8 }}>

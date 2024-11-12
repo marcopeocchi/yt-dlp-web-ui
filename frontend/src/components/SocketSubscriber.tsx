@@ -1,7 +1,6 @@
 import * as O from 'fp-ts/Option'
 import { useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
 import { take, timer } from 'rxjs'
 import { downloadsState } from '../atoms/downloads'
 import { rpcPollingTimeState } from '../atoms/rpc'
@@ -12,15 +11,16 @@ import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { datetimeCompareFunc, isRPCResponse } from '../utils'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
 interface Props extends React.HTMLAttributes<HTMLBaseElement> { }
 
 const SocketSubscriber: React.FC<Props> = () => {
-  const [connected, setIsConnected] = useRecoilState(connectedState)
-  const [, setDownloads] = useRecoilState(downloadsState)
+  const [connected, setIsConnected] = useAtom(connectedState)
+  const setDownloads = useSetAtom(downloadsState)
 
-  const serverAddressAndPort = useRecoilValue(serverAddressAndPortState)
-  const rpcPollingTime = useRecoilValue(rpcPollingTimeState)
+  const serverAddressAndPort = useAtomValue(serverAddressAndPortState)
+  const rpcPollingTime = useAtomValue(rpcPollingTimeState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()

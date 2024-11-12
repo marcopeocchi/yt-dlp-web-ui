@@ -2,12 +2,12 @@ import Brightness4 from '@mui/icons-material/Brightness4'
 import Brightness5 from '@mui/icons-material/Brightness5'
 import BrightnessAuto from '@mui/icons-material/BrightnessAuto'
 import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { useRecoilState } from 'recoil'
 import { Theme, themeState } from '../atoms/settings'
 import { useI18n } from '../hooks/useI18n'
+import { useAtom } from 'jotai'
 
 const ThemeToggler: React.FC = () => {
-  const [theme, setTheme] = useRecoilState(themeState)
+  const [theme, setTheme] = useAtom(themeState)
 
   const actions: Record<Theme, React.ReactNode> = {
     system: <BrightnessAuto />,

@@ -1,9 +1,9 @@
 import { Chip } from '@mui/material'
-import { useRecoilValue } from 'recoil'
 import { ytdlpRpcVersionState } from '../atoms/status'
+import { useAtomValue } from 'jotai'
 
 const VersionIndicator: React.FC = () => {
-  const version = useRecoilValue(ytdlpRpcVersionState)
+  const version = useAtomValue(ytdlpRpcVersionState)
 
   return (
     <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>

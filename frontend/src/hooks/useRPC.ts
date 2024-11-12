@@ -1,8 +1,8 @@
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import { rpcClientState } from '../atoms/rpc'
 
 export const useRPC = () => {
-  const client = useRecoilValue(rpcClientState)
+  const client = useAtomValue(rpcClientState)
 
   return {
     client

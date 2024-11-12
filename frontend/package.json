@@ -21,7 +21,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
     "react-virtuoso": "^4.7.11",
-    "recoil": "^0.7.7",
+    "jotai": "^2.10.2",
     "rxjs": "^7.8.1"
   },
   "devDependencies": {

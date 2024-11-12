@@ -5,12 +5,12 @@ import * as O from 'fp-ts/Option'
 import { matchW } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function'
 import { useMemo } from 'react'
-import { useRecoilValue } from 'recoil'
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs'
 import { serverSideCookiesState, serverURL } from '../atoms/settings'
 import { useSubscription } from '../hooks/observable'
 import { useToast } from '../hooks/toast'
 import { ffetch } from '../lib/httpClient'
+import { useAtomValue } from 'jotai'
 
 const validateCookie = (cookie: string) => pipe(
   cookie,
@@ -75,8 +75,8 @@ const noopValidator = (s: string): E.Either<string, string[]> => pipe(
 const isCommentOrNewLine = (s: string) => s === '' || s.startsWith('\n') || s.startsWith('#')
 
 const CookiesTextField: React.FC = () => {
-  const serverAddr = useRecoilValue(serverURL)
-  const savedCookies = useRecoilValue(serverSideCookiesState)
+  const serverAddr = useAtomValue(serverURL)
+  const savedCookies = useAtomValue(serverSideCookiesState)
 
   const { pushMessage } = useToast()
 

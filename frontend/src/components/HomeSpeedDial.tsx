@@ -9,7 +9,7 @@ import {
   SpeedDialAction,
   SpeedDialIcon
 } from '@mui/material'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useAtom, useAtomValue } from 'jotai'
 import { listViewState, serverURL } from '../atoms/settings'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
@@ -20,8 +20,8 @@ type Props = {
 }
 
 const HomeSpeedDial: React.FC<Props> = ({ onDownloadOpen, onEditorOpen }) => {
-  const serverAddr = useRecoilValue(serverURL)
-  const [listView, setListView] = useRecoilState(listViewState)
+  const serverAddr = useAtomValue(serverURL)
+  const [listView, setListView] = useAtom(listViewState)
 
   const { i18n } = useI18n()
   const { client } = useRPC()

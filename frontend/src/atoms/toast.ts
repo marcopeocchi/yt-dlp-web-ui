@@ -1,5 +1,5 @@
 import { AlertColor } from '@mui/material'
-import { atom } from 'recoil'
+import { atom } from 'jotai'
 
 export type Toast = {
   open: boolean,
@@ -9,7 +9,4 @@ export type Toast = {
   severity?: AlertColor
 }
 
-export const toastListState = atom<Toast[]>({
-  key: 'toastListState',
-  default: [],
-})
+export const toastListState = atom<Toast[]>([])

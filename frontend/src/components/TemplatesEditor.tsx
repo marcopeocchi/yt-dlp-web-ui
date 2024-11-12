@@ -20,12 +20,12 @@ import { TransitionProps } from '@mui/material/transitions'
 import { matchW } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
 import { forwardRef, useEffect, useState, useTransition } from 'react'
-import { useRecoilValue } from 'recoil'
 import { serverURL } from '../atoms/settings'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { CustomTemplate } from '../types'
+import { useAtomValue } from 'jotai'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -45,7 +45,7 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
   const [templateName, setTemplateName] = useState('')
   const [templateContent, setTemplateContent] = useState('')
 
-  const serverAddr = useRecoilValue(serverURL)
+  const serverAddr = useAtomValue(serverURL)
   const [isPending, startTransition] = useTransition()
 
   const [templates, setTemplates] = useState<CustomTemplate[]>([])

@@ -1,8 +1,8 @@
-import { useRecoilValue } from 'recoil'
+import { useAtomValue } from 'jotai'
 import { i18nBuilderState } from '../atoms/i18n'
 
 export const useI18n = () => {
-  const instance = useRecoilValue(i18nBuilderState)
+  const instance = useAtomValue(i18nBuilderState)
 
   return {
     i18n: instance

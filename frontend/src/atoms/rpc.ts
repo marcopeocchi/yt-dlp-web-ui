@@ -1,23 +1,17 @@
-import { atom, selector } from 'recoil'
+import { atom } from 'jotai'
 import { RPCClient } from '../lib/rpcClient'
 import { rpcHTTPEndpoint, rpcWebSocketEndpoint } from './settings'
+import { atomWithStorage } from 'jotai/utils'
 
-export const rpcClientState = selector({
-  key: 'rpcClientState',
-  get: ({ get }) =>
-    new RPCClient(
-      get(rpcHTTPEndpoint),
-      get(rpcWebSocketEndpoint),
-      localStorage.getItem('token') ?? ''
-    ),
-  dangerouslyAllowMutability: true,
-})
+export const rpcClientState = atom((get) =>
+  new RPCClient(
+    get(rpcHTTPEndpoint),
+    get(rpcWebSocketEndpoint),
+    localStorage.getItem('token') ?? ''
+  ),
+)
 
-export const rpcPollingTimeState = atom({
-  key: 'rpcPollingTimeState',
-  default: Number(localStorage.getItem('rpc-polling-time')) || 1000,
-  effects: [
-    ({ onSet }) =>
-      onSet(a => localStorage.setItem('rpc-polling-time', a.toString()))
-  ]
-})
+export const rpcPollingTimeState = atomWithStorage(
+  'rpc-polling-time',
+  Number(localStorage.getItem('rpc-polling-time')) || 1000
+)

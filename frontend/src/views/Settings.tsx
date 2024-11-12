@@ -19,7 +19,6 @@ import {
   capitalize
 } from '@mui/material'
 import { Suspense, useEffect, useMemo, useState } from 'react'
-import { useRecoilState } from 'recoil'
 import {
   Subject,
   debounceTime,
@@ -49,25 +48,26 @@ import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import { validateDomain, validateIP } from '../utils'
+import { useAtom } from 'jotai'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
-  const [reverseProxy, setReverseProxy] = useRecoilState(servedFromReverseProxyState)
-  const [baseURL, setBaseURL] = useRecoilState(servedFromReverseProxySubDirState)
+  const [reverseProxy, setReverseProxy] = useAtom(servedFromReverseProxyState)
+  const [baseURL, setBaseURL] = useAtom(servedFromReverseProxySubDirState)
 
-  const [formatSelection, setFormatSelection] = useRecoilState(formatSelectionState)
-  const [pathOverriding, setPathOverriding] = useRecoilState(pathOverridingState)
-  const [fileRenaming, setFileRenaming] = useRecoilState(fileRenamingState)
-  const [enableArgs, setEnableArgs] = useRecoilState(enableCustomArgsState)
+  const [formatSelection, setFormatSelection] = useAtom(formatSelectionState)
+  const [pathOverriding, setPathOverriding] = useAtom(pathOverridingState)
+  const [fileRenaming, setFileRenaming] = useAtom(fileRenamingState)
+  const [enableArgs, setEnableArgs] = useAtom(enableCustomArgsState)
 
-  const [serverAddr, setServerAddr] = useRecoilState(serverAddressState)
-  const [serverPort, setServerPort] = useRecoilState(serverPortState)
+  const [serverAddr, setServerAddr] = useAtom(serverAddressState)
+  const [serverPort, setServerPort] = useAtom(serverPortState)
 
-  const [pollingTime, setPollingTime] = useRecoilState(rpcPollingTimeState)
-  const [language, setLanguage] = useRecoilState(languageState)
-  const [appTitle, setApptitle] = useRecoilState(appTitleState)
+  const [pollingTime, setPollingTime] = useAtom(rpcPollingTimeState)
+  const [language, setLanguage] = useAtom(languageState)
+  const [appTitle, setApptitle] = useAtom(appTitleState)
 
-  const [theme, setTheme] = useRecoilState(themeState)
+  const [theme, setTheme] = useAtom(themeState)
 
   const [invalidIP, setInvalidIP] = useState(false)
 

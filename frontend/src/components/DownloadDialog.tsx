@@ -30,7 +30,6 @@ import {
   useState,
   useTransition
 } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
 import { customArgsState, downloadTemplateState, filenameTemplateState, savedTemplatesState } from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
@@ -42,6 +41,7 @@ import { toFormatArgs } from '../utils'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
 import { useToast } from '../hooks/toast'
 import LoadingBackdrop from './LoadingBackdrop'
+import { useAtom, useAtomValue } from 'jotai'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -59,11 +59,11 @@ type Props = {
 }
 
 const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
-  const settings = useRecoilValue(settingsState)
-  const isConnected = useRecoilValue(connectedState)
-  const availableDownloadPaths = useRecoilValue(availableDownloadPathsState)
-  const downloadTemplate = useRecoilValue(downloadTemplateState)
-  const savedTemplates = useRecoilValue(savedTemplatesState)
+  const settings = useAtomValue(settingsState)
+  const isConnected = useAtomValue(connectedState)
+  const availableDownloadPaths = useAtomValue(availableDownloadPathsState)
+  const downloadTemplate = useAtomValue(downloadTemplateState)
+  const savedTemplates = useAtomValue(savedTemplatesState)
 
   const [downloadFormats, setDownloadFormats] = useState<DLMetadata>()
   const [pickedVideoFormat, setPickedVideoFormat] = useState('')
@@ -71,11 +71,11 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
   const [pickedBestFormat, setPickedBestFormat] = useState('')
   const [isFormatsLoading, setIsFormatsLoading] = useState(false)
 
-  const [customArgs, setCustomArgs] = useRecoilState(customArgsState)
+  const [customArgs, setCustomArgs] = useAtom(customArgsState)
 
   const [downloadPath, setDownloadPath] = useState('')
 
-  const [filenameTemplate, setFilenameTemplate] = useRecoilState(
+  const [filenameTemplate, setFilenameTemplate] = useAtom(
     filenameTemplateState
   )
 
