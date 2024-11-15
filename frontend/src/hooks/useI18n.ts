@@ -5,6 +5,7 @@ export const useI18n = () => {
   const instance = useAtomValue(i18nBuilderState)
 
   return {
-    i18n: instance
+    i18n: instance,
+    t: instance.t
   }
 }

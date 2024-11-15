@@ -133,6 +133,22 @@ func (s *Service) GetTemplates(ctx context.Context) (*[]internal.CustomTemplate,
 	return &templates, nil
 }
 
+func (s *Service) UpdateTemplate(ctx context.Context, t *internal.CustomTemplate) (*internal.CustomTemplate, error) {
+	conn, err := s.db.Conn(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	defer conn.Close()
+
+	_, err = conn.ExecContext(ctx, "UPDATE templates SET name = ?, content = ? WHERE id = ?", t.Name, t.Content, t.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, nil
+}
+
 func (s *Service) DeleteTemplate(ctx context.Context, id string) error {
 	conn, err := s.db.Conn(ctx)
 	if err != nil {

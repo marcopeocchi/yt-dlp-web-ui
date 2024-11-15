@@ -34,9 +34,9 @@ func (h *Handler) Exec() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(id)
-		if err != nil {
+		if err := json.NewEncoder(w).Encode(id); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -61,6 +61,7 @@ func (h *Handler) ExecPlaylist() http.HandlerFunc {
 
 		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -75,13 +76,14 @@ func (h *Handler) ExecLivestream() http.HandlerFunc {
 
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		h.service.ExecLivestream(req)
 
-		err := json.NewEncoder(w).Encode("ok")
-		if err != nil {
+		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -98,9 +100,9 @@ func (h *Handler) Running() http.HandlerFunc {
 			return
 		}
 
-		err = json.NewEncoder(w).Encode(res)
-		if err != nil {
+		if err := json.NewEncoder(w).Encode(res); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -134,21 +136,19 @@ func (h *Handler) SetCookies() http.HandlerFunc {
 
 		req := new(internal.SetCookiesRequest)
 
-		err := json.NewDecoder(r.Body).Decode(req)
-		if err != nil {
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = h.service.SetCookies(r.Context(), req.Cookies)
-		if err != nil {
+		if err := h.service.SetCookies(r.Context(), req.Cookies); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
+		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -157,15 +157,14 @@ func (h *Handler) DeleteCookies() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		err := h.service.SetCookies(r.Context(), "")
-		if err != nil {
+		if err := h.service.SetCookies(r.Context(), ""); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
+		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -178,8 +177,7 @@ func (h *Handler) AddTemplate() http.HandlerFunc {
 
 		req := new(internal.CustomTemplate)
 
-		err := json.NewDecoder(r.Body).Decode(req)
-		if err != nil {
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -189,15 +187,14 @@ func (h *Handler) AddTemplate() http.HandlerFunc {
 			return
 		}
 
-		err = h.service.SaveTemplate(r.Context(), req)
-		if err != nil {
+		if err := h.service.SaveTemplate(r.Context(), req); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
+		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -221,6 +218,33 @@ func (h *Handler) GetTemplates() http.HandlerFunc {
 	}
 }
 
+func (h *Handler) UpdateTemplate() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+
+		w.Header().Set("Content-Type", "application/json")
+
+		req := &internal.CustomTemplate{}
+
+		if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		res, err := h.service.UpdateTemplate(r.Context(), req)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
 func (h *Handler) DeleteTemplate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
@@ -229,15 +253,14 @@ func (h *Handler) DeleteTemplate() http.HandlerFunc {
 
 		id := chi.URLParam(r, "id")
 
-		err := h.service.DeleteTemplate(r.Context(), id)
-		if err != nil {
+		if err := h.service.DeleteTemplate(r.Context(), id); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = json.NewEncoder(w).Encode("ok")
-		if err != nil {
+		if err := json.NewEncoder(w).Encode("ok"); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }
@@ -266,6 +289,7 @@ func (h *Handler) GetVersion() http.HandlerFunc {
 
 		if err := json.NewEncoder(w).Encode(res); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 }

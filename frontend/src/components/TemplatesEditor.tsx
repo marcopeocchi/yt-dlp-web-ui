@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
 import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 import {
   Alert,
   AppBar,
@@ -26,6 +27,7 @@ import { useI18n } from '../hooks/useI18n'
 import { ffetch } from '../lib/httpClient'
 import { CustomTemplate } from '../types'
 import { useAtomValue } from 'jotai'
+import TemplateTextField from './TemplateTextField'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {
@@ -55,11 +57,11 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
 
   useEffect(() => {
     if (open) {
-      getTemplates()
+      fetchTemplates()
     }
   }, [open])
 
-  const getTemplates = async () => {
+  const fetchTemplates = async () => {
     const task = ffetch<CustomTemplate[]>(`${serverAddr}/api/v1/template/all`)
     const either = await task()
 
@@ -89,9 +91,29 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
         (l) => pushMessage(l, 'warning'),
         () => {
           pushMessage('Added template')
-          getTemplates()
+          fetchTemplates()
           setTemplateName('')
           setTemplateContent('')
+        }
+      )
+    )
+  }
+
+  const updateTemplate = async (template: CustomTemplate) => {
+    const task = ffetch<CustomTemplate>(`${serverAddr}/api/v1/template`, {
+      method: 'PATCH',
+      body: JSON.stringify(template)
+    })
+
+    const either = await task()
+
+    pipe(
+      either,
+      matchW(
+        (l) => pushMessage(l, 'warning'),
+        (r) => {
+          pushMessage(`Updated template ${r.name}`)
+          fetchTemplates()
         }
       )
     )
@@ -110,7 +132,7 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
         (l) => pushMessage(l, 'warning'),
         () => {
           pushMessage('Deleted template')
-          getTemplates()
+          fetchTemplates()
         }
       )
     )
@@ -188,38 +210,12 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
                 </Grid>
               </Grid>
               {templates.map(template => (
-                <Grid
-                  container
-                  spacing={2}
-                  justifyContent="center"
-                  alignItems="center"
+                <TemplateTextField
                   key={template.id}
-                  sx={{ mt: 1 }}
-                >
-                  <Grid item xs={3}>
-                    <TextField
-                      fullWidth
-                      label={i18n.t('templatesEditorNameLabel')}
-                      value={template.name}
-                    />
-                  </Grid>
-                  <Grid item xs={9}>
-                    <TextField
-                      fullWidth
-                      label={i18n.t('templatesEditorContentLabel')}
-                      value={template.content}
-                      InputProps={{
-                        endAdornment: <Button
-                          variant='contained'
-                          onClick={() => {
-                            startTransition(() => { deleteTemplate(template.id) })
-                          }}>
-                          <DeleteIcon />
-                        </Button>
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+                  template={template}
+                  onChange={updateTemplate}
+                  onDelete={deleteTemplate}
+                />
               ))}
             </Paper>
           </Grid>
