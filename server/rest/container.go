@@ -34,6 +34,7 @@ func ApplyRouter(args *ContainerArgs) func(chi.Router) {
 		r.Post("/cookies", h.SetCookies())
 		r.Delete("/cookies", h.DeleteCookies())
 		r.Post("/template", h.AddTemplate())
+		r.Patch("/template", h.UpdateTemplate())
 		r.Get("/template/all", h.GetTemplates())
 		r.Delete("/template/{id}", h.DeleteTemplate())
 	}
