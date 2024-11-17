@@ -180,7 +180,7 @@ password: my_random_secret
 queue_size: 4 # min. 2
 
 # [optional] Full path to the yt-dlp (default: "yt-dlp")
-downloaderPath: /usr/local/bin/yt-dlp
+#downloaderPath: /usr/local/bin/yt-dlp
 
 # [optional] Enable file based logging with rotation (default: false)
 #enable_file_logging: false
