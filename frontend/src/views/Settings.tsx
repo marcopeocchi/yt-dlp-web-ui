@@ -1,5 +1,4 @@
 import {
-  Button,
   Checkbox,
   Container,
   FormControl,
@@ -18,6 +17,7 @@ import {
   Typography,
   capitalize
 } from '@mui/material'
+import { useAtom } from 'jotai'
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import {
   Subject,
@@ -44,11 +44,10 @@ import {
   themeState
 } from '../atoms/settings'
 import CookiesTextField from '../components/CookiesTextField'
+import UpdateBinaryButton from '../components/UpdateBinaryButton'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
-import { useRPC } from '../hooks/useRPC'
 import { validateDomain, validateIP } from '../utils'
-import { useAtom } from 'jotai'
 
 // NEED ABSOLUTELY TO BE SPLIT IN MULTIPLE COMPONENTS
 export default function Settings() {
@@ -72,7 +71,6 @@ export default function Settings() {
   const [invalidIP, setInvalidIP] = useState(false)
 
   const { i18n } = useI18n()
-  const { client } = useRPC()
 
   const { pushMessage } = useToast()
 
@@ -138,13 +136,6 @@ export default function Settings() {
    */
   const handleThemeChange = (event: SelectChangeEvent<Theme>) => {
     setTheme(event.target.value as Theme)
-  }
-
-  /**
-   * Updates yt-dlp binary via RPC
-   */
-  const updateBinary = () => {
-    client.updateExecutable().then(() => pushMessage(i18n.t('toastUpdated'), 'success'))
   }
 
   return (
@@ -352,14 +343,8 @@ export default function Settings() {
           </Suspense>
         </Grid>
         <Grid>
-          <Stack direction="row">
-            <Button
-              sx={{ mr: 1, mt: 3 }}
-              variant="contained"
-              onClick={() => updateBinary()}
-            >
-              {i18n.t('updateBinButton')}
-            </Button>
+          <Stack direction="row" sx={{ pt: 2 }}>
+            <UpdateBinaryButton />
           </Stack>
         </Grid>
       </Paper>
