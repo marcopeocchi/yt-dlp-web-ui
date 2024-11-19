@@ -191,4 +191,11 @@ export class RPCClient {
       params: []
     })
   }
+
+  public updateExecutable() {
+    return this.sendHTTP({
+      method: 'Service.UpdateExecutable',
+      params: []
+    })
+  }
 }
