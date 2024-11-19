@@ -1,3 +1,7 @@
+> [!NOTE]  
+> A poll is up to decide the future of yt-dlp-web-ui frontend! If you're interested you can take part.  
+> https://github.com/marcopeocchi/yt-dlp-web-ui/discussions/223
+
 # yt-dlp Web UI
 
 A not so terrible web ui for yt-dlp. 
