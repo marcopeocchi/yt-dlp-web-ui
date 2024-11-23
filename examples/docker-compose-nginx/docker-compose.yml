@@ -1,0 +1,15 @@
+services:
+  app:
+    image: marcobaobao/yt-dlp-webui
+    volumes:
+      - ./downloads:/downloads
+    restart: unless-stopped
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./app.conf:/etc/nginx/conf.d/app.conf
+    depends_on: 
+      - app
+    ports: 
+      - 80:80
