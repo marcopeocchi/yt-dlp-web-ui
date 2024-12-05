@@ -155,6 +155,8 @@ Usage yt-dlp-webui:
         session file path (default ".")
   -user string
         Username required for auth
+  -web string
+        frontend web resources path
 ```
 
 ### Config file
@@ -197,6 +199,9 @@ queue_size: 4 # min. 2
 
 # [optional] Path where the sqlite database will be created/opened (default: "./local.db")
 #local_database_path
+
+# [optional] Path where a custom frontend will be loaded (instead of the embedded one)
+#frontend_path: ./web/solid-frontend
 ```
 
 ### Systemd integration
@@ -261,6 +266,22 @@ Want to build your own frontend? We got you covered 🤠
 It is **planned** to also expose a **gRPC** server.
 
 For more information open an issue on GitHub and I will provide more info ASAP.
+
+## Custom frontend
+To load a custom frontend you need to specify its path either in the config file ([see config file](#config-file)) or via flags.
+
+The frontend needs to follow this structure:
+```
+path/to/my/frontend
+├── assets
+│   ├── js-chunk-1.js (example)
+│   ├── js-chunk-2.js (example)
+│   ├── style.css (example)
+└── index.html
+```
+
+`assets` is where the resources will be loaded.  
+`index.html` is the entrypoint.
 
 ## Nix
 This repo adds support for Nix(OS) in various ways through a `flake-parts` flake. 

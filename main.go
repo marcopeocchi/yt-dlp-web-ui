@@ -23,6 +23,7 @@ var (
 	downloaderPath    string
 	sessionFilePath   string
 	localDatabasePath string
+	frontendPath      string
 
 	requireAuth bool
 	username    string
@@ -52,6 +53,7 @@ func init() {
 	flag.StringVar(&downloaderPath, "driver", "yt-dlp", "yt-dlp executable path")
 	flag.StringVar(&sessionFilePath, "session", ".", "session file path")
 	flag.StringVar(&localDatabasePath, "db", "local.db", "local database path")
+	flag.StringVar(&frontendPath, "web", "", "frontend web resources path")
 
 	flag.BoolVar(&enableFileLogging, "fl", false, "enable outputting logs to a file")
 	flag.StringVar(&logFile, "lf", "yt-dlp-webui.log", "set log file location")
@@ -67,6 +69,10 @@ func main() {
 	frontend, err := fs.Sub(frontend, "frontend/dist")
 	if err != nil {
 		log.Fatalln(err)
+	}
+
+	if frontendPath != "" {
+		frontend = os.DirFS(frontendPath)
 	}
 
 	c := config.Instance()
