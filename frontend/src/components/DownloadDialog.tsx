@@ -2,7 +2,6 @@ import { FileUpload } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
 import {
   Autocomplete,
-  Backdrop,
   Box,
   Button,
   Checkbox,
@@ -21,6 +20,7 @@ import Slide from '@mui/material/Slide'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { TransitionProps } from '@mui/material/transitions'
+import { useAtom, useAtomValue } from 'jotai'
 import {
   FC,
   Suspense,
@@ -30,18 +30,22 @@ import {
   useState,
   useTransition
 } from 'react'
-import { customArgsState, downloadTemplateState, filenameTemplateState, savedTemplatesState } from '../atoms/downloadTemplate'
+import {
+  customArgsState,
+  downloadTemplateState,
+  filenameTemplateState,
+  savedTemplatesState
+} from '../atoms/downloadTemplate'
 import { settingsState } from '../atoms/settings'
 import { availableDownloadPathsState, connectedState } from '../atoms/status'
 import FormatsGrid from '../components/FormatsGrid'
+import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import { useRPC } from '../hooks/useRPC'
 import type { DLMetadata } from '../types'
 import { toFormatArgs } from '../utils'
 import ExtraDownloadOptions from './ExtraDownloadOptions'
-import { useToast } from '../hooks/toast'
 import LoadingBackdrop from './LoadingBackdrop'
-import { useAtom, useAtomValue } from 'jotai'
 
 const Transition = forwardRef(function Transition(
   props: TransitionProps & {

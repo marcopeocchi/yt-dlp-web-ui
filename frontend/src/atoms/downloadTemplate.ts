@@ -22,8 +22,8 @@ export const filenameTemplateState = atomWithStorage(
   localStorage.getItem('lastFilenameTemplate') ?? ''
 )
 
-export const downloadTemplateState = atom<string>((get) =>
-  `${get(customArgsState)} ${get(cookiesTemplateState)}`
+export const downloadTemplateState = atom<Promise<string>>(async (get) =>
+  `${get(customArgsState)} ${await get(cookiesTemplateState)}`
     .replace(/  +/g, ' ')
     .trim()
 )
