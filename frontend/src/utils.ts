@@ -1,4 +1,6 @@
+import { blue, red } from '@mui/material/colors'
 import { pipe } from 'fp-ts/lib/function'
+import { Accent } from './atoms/settings'
 import type { RPCResponse } from "./types"
 import { ProcessStatus } from './types'
 
@@ -80,3 +82,14 @@ export const base64URLEncode = (s: string) => pipe(
   btoa,
   encodeURIComponent
 )
+
+export const getAccentValue = (accent: Accent) => {
+  switch (accent) {
+    case 'default':
+      return blue[700]
+    case 'red':
+      return red[600]
+    default:
+      return blue[700]
+  }
+}

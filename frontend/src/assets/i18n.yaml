@@ -65,6 +65,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   german:
     urlInput: Video URL
     statusTitle: Status
@@ -126,6 +127,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   french:
     urlInput: URL vidéo de YouTube ou d'un autre service pris en charge
     statusTitle: Statut
@@ -189,6 +191,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   italian:
     urlInput: URL Video (uno per linea)
     statusTitle: Stato
@@ -249,6 +252,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   chinese:
     urlInput: 视频 URL
     statusTitle: 状态
@@ -310,6 +314,7 @@ languages:
       如果直播已经开始，那么依然可以下载，但是不会记录下载进度。
       直播开始后，将会转移到下载页面
     livestreamExperimentalWarning: 实验性功能，可能存在未知Bug，请谨慎使用
+    accentSelect: 'Accent'
   spanish:
     urlInput: URL de YouTube u otro servicio compatible
     statusTitle: Estado
@@ -369,6 +374,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   russian:
     urlInput: URL-адрес YouTube или любого другого поддерживаемого сервиса
     statusTitle: Статус
@@ -428,6 +434,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   korean:
     urlInput: YouTube나 다른 지원되는 사이트의 URL
     statusTitle: 상태
@@ -487,6 +494,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   japanese:
     urlInput: YouTubeまたはサポート済み動画のURL
     statusTitle: 状態
@@ -547,6 +555,7 @@ languages:
       すでに開始されているライブストリームが提供された場合、ダウンロードは継続されますが進行状況は追跡されません。
       ライブストリームが開始されると、ダウンロードページに移動されます。
     livestreamExperimentalWarning: この機能は実験的なものです。何かが壊れるかもしれません！
+    accentSelect: 'Accent'
   catalan:
     urlInput: URL de YouTube o d'un altre servei compatible
     statusTitle: Estat
@@ -606,6 +615,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   ukrainian:
     urlInput: URL-адреса YouTube або будь-якого іншого підтримуваного сервісу
     statusTitle: Статус
@@ -665,6 +675,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   polish:
     urlInput: Adres URL YouTube lub innej obsługiwanej usługi
     statusTitle: Status
@@ -724,6 +735,7 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'
   swedish:
     urlInput: Videolänk (en per rad)
     statusTitle: Status
@@ -789,3 +801,4 @@ languages:
       If an already started livestream is provided it will be still downloaded but its progress will not be tracked.
       Once started the livestream will be migrated to the downloads page.
     livestreamExperimentalWarning: This feature is still experimental. Something might break!
+    accentSelect: 'Accent'

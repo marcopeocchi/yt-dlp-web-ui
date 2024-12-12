@@ -16,7 +16,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import { grey } from '@mui/material/colors'
+import { grey, red } from '@mui/material/colors'
 import { useMemo, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { settingsState } from './atoms/settings'
@@ -29,6 +29,7 @@ import ThemeToggler from './components/ThemeToggler'
 import { useI18n } from './hooks/useI18n'
 import Toaster from './providers/ToasterProvider'
 import { useAtomValue } from 'jotai'
+import { getAccentValue } from './utils'
 
 export default function Layout() {
   const [open, setOpen] = useState(false)
@@ -40,11 +41,14 @@ export default function Layout() {
     createTheme({
       palette: {
         mode: settings.theme,
+        primary: {
+          main: getAccentValue(settings.accent)
+        },
         background: {
           default: settings.theme === 'light' ? grey[50] : '#121212'
         },
       },
-    }), [settings.theme]
+    }), [settings.theme, settings.accent]
   )
 
   const toggleDrawer = () => setOpen(state => !state)

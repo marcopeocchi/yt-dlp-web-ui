@@ -28,8 +28,11 @@ import {
 } from 'rxjs'
 import { rpcPollingTimeState } from '../atoms/rpc'
 import {
+  Accent,
   Language,
   Theme,
+  accentState,
+  accents,
   appTitleState,
   enableCustomArgsState,
   fileRenamingState,
@@ -65,6 +68,7 @@ export default function Settings() {
   const [pollingTime, setPollingTime] = useAtom(rpcPollingTimeState)
   const [language, setLanguage] = useAtom(languageState)
   const [appTitle, setApptitle] = useAtom(appTitleState)
+  const [accent, setAccent] = useAtom(accentState)
 
   const [theme, setTheme] = useAtom(themeState)
 
@@ -248,7 +252,7 @@ export default function Settings() {
           Appearance
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12}>
             <FormControl fullWidth>
               <InputLabel>{i18n.t('languageSelect')}</InputLabel>
               <Select
@@ -275,6 +279,22 @@ export default function Settings() {
                 <MenuItem value="light">Light</MenuItem>
                 <MenuItem value="dark">Dark</MenuItem>
                 <MenuItem value="system">System</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel>{i18n.t('accentSelect')}</InputLabel>
+              <Select
+                defaultValue={accent}
+                label={i18n.t('accentSelect')}
+                onChange={(e) => setAccent(e.target.value as Accent)}
+              >
+                {accents.map((accent) => (
+                  <MenuItem key={accent} value={accent}>
+                    {capitalize(accent)}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
           </Grid>

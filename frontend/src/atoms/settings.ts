@@ -26,11 +26,15 @@ export type Language = (typeof languages)[number]
 export type Theme = 'light' | 'dark' | 'system'
 export type ThemeNarrowed = 'light' | 'dark'
 
+export const accents = ['default', 'red'] as const
+export type Accent = (typeof accents)[number]
+
 export interface SettingsState {
   serverAddr: string
   serverPort: number
   language: Language
   theme: ThemeNarrowed
+  accent: Accent
   cliArgs: string
   formatSelection: boolean
   fileRenaming: boolean
@@ -146,7 +150,11 @@ const themeSelector = atom<ThemeNarrowed>((get) => {
     return 'dark'
   }
   return 'light'
-}
+})
+
+export const accentState = atomWithStorage<Accent>(
+  'accent-color',
+  localStorage.getItem('accent-color') as Accent ?? 'default',
 )
 
 export const settingsState = atom<SettingsState>((get) => ({
@@ -154,6 +162,7 @@ export const settingsState = atom<SettingsState>((get) => ({
   serverPort: get(serverPortState),
   language: get(languageState),
   theme: get(themeSelector),
+  accent: get(accentState),
   cliArgs: get(latestCliArgumentsState),
   formatSelection: get(formatSelectionState),
   fileRenaming: get(fileRenamingState),
