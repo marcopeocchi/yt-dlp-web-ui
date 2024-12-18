@@ -19,6 +19,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archive"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archiver"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/dbutil"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/handlers"
@@ -145,6 +147,8 @@ func RunBlocking(rc *RunConfig) {
 }
 
 func newServer(c serverConfig) *http.Server {
+	archiver.Register(c.db)
+
 	service := ytdlpRPC.Container(c.mdb, c.mq, c.lm)
 	rpc.Register(service)
 
@@ -174,8 +178,8 @@ func newServer(c serverConfig) *http.Server {
 	// swagger
 	r.Mount("/openapi", http.FileServerFS(c.swagger))
 
-	// Archive routes
-	r.Route("/archive", func(r chi.Router) {
+	// Filebrowser routes
+	r.Route("/filebrowser", func(r chi.Router) {
 		if config.Instance().RequireAuth {
 			r.Use(middlewares.Authenticated)
 		}
@@ -188,6 +192,9 @@ func newServer(c serverConfig) *http.Server {
 		r.Get("/v/{id}", handlers.SendFile)
 		r.Get("/bulk", handlers.BulkDownload(c.mdb))
 	})
+
+	// Archive routes
+	r.Route("/archive", archive.ApplyRouter(c.db))
 
 	// Authentication routes
 	r.Route("/auth", func(r chi.Router) {

@@ -128,21 +128,21 @@ export class RPCClient {
   }
 
   public kill(id: string) {
-    this.sendHTTP({
+    return this.sendHTTP({
       method: 'Service.Kill',
       params: [id],
     })
   }
 
   public clear(id: string) {
-    this.sendHTTP({
+    return this.sendHTTP({
       method: 'Service.Clear',
       params: [id],
     })
   }
 
   public killAll() {
-    this.sendHTTP({
+    return this.sendHTTP({
       method: 'Service.KillAll',
       params: [],
     })

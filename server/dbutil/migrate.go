@@ -34,6 +34,21 @@ func Migrate(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 
+	if _, err := db.ExecContext(
+		ctx,
+		`CREATE TABLE IF NOT EXISTS archive (
+			id CHAR(36) PRIMARY KEY,
+			title VARCHAR(255) NOT NULL,
+			path VARCHAR(255) NOT NULL,
+			thumbnail TEXT,
+			source VARCHAR(255),
+			metadata TEXT,
+			created_at DATETIME
+		)`,
+	); err != nil {
+		return err
+	}
+
 	if lockFileExists() {
 		return nil
 	}

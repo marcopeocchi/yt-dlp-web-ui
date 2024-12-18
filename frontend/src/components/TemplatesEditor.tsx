@@ -201,7 +201,7 @@ const TemplatesEditor: React.FC<Props> = ({ open, onClose }) => {
                     InputProps={{
                       endAdornment: <Button
                         variant='contained'
-                        onClick={() => startTransition(() => { addTemplate() })}
+                        onClick={() => startTransition(async () => await addTemplate())}
                       >
                         <AddIcon />
                       </Button>

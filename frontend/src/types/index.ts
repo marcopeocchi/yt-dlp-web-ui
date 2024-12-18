@@ -123,3 +123,19 @@ export type RPCVersion = {
   rpcVersion: string
   ytdlpVersion: string
 }
+
+export type ArchiveEntry = {
+  id: string
+  title: string
+  path: string
+  thumbnail: string
+  source: string
+  metadata: string
+  created_at: string
+}
+
+export type PaginatedResponse<T> = {
+  first: number
+  next: number
+  data: T
+}

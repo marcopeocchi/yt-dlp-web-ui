@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@emotion/react'
 import ArchiveIcon from '@mui/icons-material/Archive'
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import ChevronLeft from '@mui/icons-material/ChevronLeft'
 import Dashboard from '@mui/icons-material/Dashboard'
 import LiveTvIcon from '@mui/icons-material/LiveTv'
@@ -42,7 +43,7 @@ export default function Layout() {
       palette: {
         mode: settings.theme,
         primary: {
-          main: getAccentValue(settings.accent)
+          main: getAccentValue(settings.accent, settings.theme)
         },
         background: {
           default: settings.theme === 'light' ? grey[50] : '#121212'
@@ -113,7 +114,7 @@ export default function Layout() {
                 <ListItemText primary={i18n.t('homeButtonLabel')} />
               </ListItemButton>
             </Link>
-            <Link to={'/archive'} style={
+            {/* <Link to={'/archive'} style={
               {
                 textDecoration: 'none',
                 color: mode === 'dark' ? '#ffffff' : '#000000DE'
@@ -122,6 +123,19 @@ export default function Layout() {
               <ListItemButton>
                 <ListItemIcon>
                   <ArchiveIcon />
+                </ListItemIcon>
+                <ListItemText primary={i18n.t('archiveButtonLabel')} />
+              </ListItemButton>
+            </Link> */}
+            <Link to={'/filebrowser'} style={
+              {
+                textDecoration: 'none',
+                color: mode === 'dark' ? '#ffffff' : '#000000DE'
+              }
+            }>
+              <ListItemButton>
+                <ListItemIcon>
+                  <CloudDownloadIcon />
                 </ListItemIcon>
                 <ListItemText primary={i18n.t('archiveButtonLabel')} />
               </ListItemButton>

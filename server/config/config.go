@@ -29,6 +29,7 @@ type Config struct {
 	OpenIdClientSecret string `yaml:"openid_client_secret"`
 	OpenIdRedirectURL  string `yaml:"openid_redirect_url"`
 	FrontendPath       string `yaml:"frontend_path"`
+	AutoArchive        bool   `yaml:"auto_archive"`
 }
 
 var (

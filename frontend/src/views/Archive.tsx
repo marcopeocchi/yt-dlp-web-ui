@@ -1,363 +1,112 @@
-import {
-  Backdrop,
-  Button,
-  Checkbox,
-  CircularProgress,
-  Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  MenuList,
-  Paper,
-  SpeedDial,
-  SpeedDialAction,
-  SpeedDialIcon,
-  Typography
-} from '@mui/material'
-
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import FolderIcon from '@mui/icons-material/Folder'
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile'
-import VideoFileIcon from '@mui/icons-material/VideoFile'
-
-import DownloadIcon from '@mui/icons-material/Download'
-import { matchW } from 'fp-ts/lib/TaskEither'
+import { Container, FormControl, Grid2, InputLabel, MenuItem, Pagination, Select } from '@mui/material'
 import { pipe } from 'fp-ts/lib/function'
-import { useEffect, useMemo, useState, useTransition } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { BehaviorSubject, Subject, combineLatestWith, map, share } from 'rxjs'
-import { serverURL } from '../atoms/settings'
-import { useObservable } from '../hooks/observable'
-import { useToast } from '../hooks/toast'
-import { useI18n } from '../hooks/useI18n'
-import { ffetch } from '../lib/httpClient'
-import { DirectoryEntry } from '../types'
-import { base64URLEncode, formatSize } from '../utils'
+import { matchW } from 'fp-ts/lib/TaskEither'
 import { useAtomValue } from 'jotai'
+import { useEffect, useState, useTransition } from 'react'
+import { serverURL } from '../atoms/settings'
+import ArchiveCard from '../components/ArchiveCard'
+import EmptyArchive from '../components/EmptyArchive'
+import { useToast } from '../hooks/toast'
+import { ffetch } from '../lib/httpClient'
+import { ArchiveEntry, PaginatedResponse } from '../types'
+import LoadingBackdrop from '../components/LoadingBackdrop'
 
-export default function Downloaded() {
-  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 })
-  const [showMenu, setShowMenu] = useState(false)
-  const [currentFile, setCurrentFile] = useState<DirectoryEntry>()
+const Archive: React.FC = () => {
+  const [isLoading, setLoading] = useState(true)
+  const [archiveEntries, setArchiveEntries] = useState<ArchiveEntry[]>()
 
-  const serverAddr = useAtomValue(serverURL)
-  const navigate = useNavigate()
-
-  const { i18n } = useI18n()
-  const { pushMessage } = useToast()
-
-  const [openDialog, setOpenDialog] = useState(false)
-
-  const files$ = useMemo(() => new Subject<DirectoryEntry[]>(), [])
-  const selected$ = useMemo(() => new BehaviorSubject<string[]>([]), [])
+  const [currentCursor, setCurrentCursor] = useState(0)
+  const [cursor, setCursor] = useState({ first: 0, next: 0 })
+  const [pageSize, setPageSize] = useState(25)
 
   const [isPending, startTransition] = useTransition()
 
-  const fetcher = () => pipe(
-    ffetch<DirectoryEntry[]>(
-      `${serverAddr}/archive/downloaded`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          subdir: '',
-        })
-      }
-    ),
+  const serverAddr = useAtomValue(serverURL)
+  const { pushMessage } = useToast()
+
+  const fetchArchived = (startCursor = 0) => pipe(
+    ffetch<PaginatedResponse<ArchiveEntry[]>>(`${serverAddr}/archive?id=${startCursor}&limit=${pageSize}`),
     matchW(
-      (e) => {
-        pushMessage(e, 'error')
-        navigate('/login')
-      },
-      (d) => files$.next(d ?? []),
+      (l) => pushMessage(l, 'error'),
+      (r) => {
+        setArchiveEntries(r.data)
+        setCursor({ ...cursor, first: r.first, next: r.next })
+      }
     )
   )()
 
-  const fetcherSubfolder = (sub: string) => {
-    const folders = sub.startsWith('/')
-      ? sub.substring(1).split('/')
-      : sub.split('/')
-
-    const relpath = folders.length >= 2
-      ? folders.slice(-(folders.length - 1)).join('/')
-      : folders.pop()
-
-    const _upperLevel = folders.slice(1, -1)
-    const upperLevel = _upperLevel.length === 2
-      ? ['.', ..._upperLevel].join('/')
-      : _upperLevel.join('/')
-
-    const task = ffetch<DirectoryEntry[]>(`${serverAddr}/archive/downloaded`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ subdir: relpath })
-    })
-
-    pipe(
-      task,
-      matchW(
-        (l) => pushMessage(l, 'error'),
-        (r) => files$.next(sub
-          ? [{
-            isDirectory: true,
-            isVideo: false,
-            modTime: '',
-            name: '..',
-            path: upperLevel,
-            size: 0,
-          }, ...r.filter(f => f.name !== '')]
-          : r.filter(f => f.name !== '')
-        )
-      )
-    )()
-  }
-
-  const selectable$ = useMemo(() => files$.pipe(
-    combineLatestWith(selected$),
-    map(([data, selected]) => data.map(x => ({
-      ...x,
-      selected: selected.includes(x.name)
-    }))),
-    share()
-  ), [])
-
-  const selectable = useObservable(selectable$, [])
-
-  const addSelected = (name: string) => {
-    selected$.value.includes(name)
-      ? selected$.next(selected$.value.filter(val => val !== name))
-      : selected$.next([...selected$.value, name])
-  }
-
-  const deleteFile = (entry: DirectoryEntry) => pipe(
-    ffetch(`${serverAddr}/archive/delete`, {
-      method: 'POST',
-      body: JSON.stringify({
-        path: entry.path,
-      })
+  const softDelete = (id: string) => pipe(
+    ffetch<ArchiveEntry[]>(`${serverAddr}/archive/soft/${id}`, {
+      method: 'DELETE'
     }),
     matchW(
       (l) => pushMessage(l, 'error'),
-      (_) => fetcher()
+      (_) => startTransition(async () => await fetchArchived())
     )
   )()
 
-  const deleteSelected = () => {
-    Promise.all(selectable
-      .filter(entry => entry.selected)
-      .map(deleteFile)
-    ).then(fetcher)
-  }
+  const hardDelete = (id: string) => pipe(
+    ffetch<ArchiveEntry[]>(`${serverAddr}/archive/hard/${id}`, {
+      method: 'DELETE'
+    }),
+    matchW(
+      (l) => pushMessage(l, 'error'),
+      (_) => startTransition(async () => await fetchArchived())
+    )
+  )()
+
+  const setPage = (page: number) => setCurrentCursor(pageSize * (page - 1))
 
   useEffect(() => {
-    fetcher()
-  }, [serverAddr])
-
-  const onFileClick = (path: string) => startTransition(() => {
-    const encoded = base64URLEncode(path)
-
-    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
-  })
-
-  const downloadFile = (path: string) => startTransition(() => {
-    const encoded = base64URLEncode(path)
-
-    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
-  })
-
-  const onFolderClick = (path: string) => startTransition(() => {
-    fetcherSubfolder(path)
-  })
+    fetchArchived(currentCursor).then(() => setLoading(false))
+  }, [currentCursor])
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{ mt: 4, mb: 4, height: '100%' }}
-      onClick={() => setShowMenu(false)}
-    >
-      <IconMenu
-        posX={menuPos.x}
-        posY={menuPos.y}
-        hide={!showMenu}
-        onDownload={() => {
-          if (currentFile) {
-            downloadFile(currentFile?.path)
-            setCurrentFile(undefined)
-          }
-        }}
-        onDelete={() => {
-          if (currentFile) {
-            deleteFile(currentFile)
-            setCurrentFile(undefined)
-          }
-        }}
-      />
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={!(files$.observed) || isPending}
-      >
-        <CircularProgress color="primary" />
-      </Backdrop>
-      <Paper
-        sx={{
-          p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-        onClick={() => setShowMenu(false)}
-      >
-        <Typography py={1} variant="h5" color="primary">
-          {i18n.t('archiveTitle')}
-        </Typography>
-        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-          {selectable.length === 0 && 'No files found'}
-          {selectable.map((file, idx) => (
-            <ListItem
-              onContextMenu={(e) => {
-                e.preventDefault()
-                setCurrentFile(file)
-                setMenuPos({ x: e.clientX, y: e.clientY })
-                setShowMenu(true)
-              }}
-              key={idx}
-              secondaryAction={
-                <div>
-                  {!file.isDirectory && <Typography
-                    variant="caption"
-                    component="span"
-                  >
-                    {formatSize(file.size)}
-                  </Typography>
-                  }
-                  {!file.isDirectory && <>
-                    <Checkbox
-                      edge="end"
-                      checked={file.selected}
-                      onChange={() => addSelected(file.name)}
-                    />
-                  </>}
-                </div>
-              }
-              disablePadding
-            >
-              <ListItemButton onClick={
-                () => file.isDirectory
-                  ? onFolderClick(file.path)
-                  : onFileClick(file.path)
-              }>
-                <ListItemIcon>
-                  {file.isDirectory
-                    ? <FolderIcon />
-                    : file.isVideo
-                      ? <VideoFileIcon />
-                      : <InsertDriveFileIcon />
-                  }
-                </ListItemIcon>
-                <ListItemText
-                  primary={file.name}
-                  secondary={file.name != '..' && new Date(file.modTime).toLocaleString()}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-      <SpeedDial
-        ariaLabel='archive actions'
-        sx={{ position: 'absolute', bottom: 64, right: 24 }}
-        icon={<SpeedDialIcon />}
-      >
-        <SpeedDialAction
-          icon={<DeleteForeverIcon />}
-          tooltipTitle={`Delete selected`}
-          tooltipOpen
-          onClick={() => {
-            if (selected$.value.length > 0) {
-              setOpenDialog(true)
-            }
-          }}
-        />
-      </SpeedDial>
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-      >
-        <DialogTitle>
-          Are you sure?
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            You're deleting:
-          </DialogContentText>
-          <ul>
-            {selected$.value.map((entry, idx) => (
-              <li key={idx}>{entry}</li>
-            ))}
-          </ul>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              deleteSelected()
-              setOpenDialog(false)
-            }}
-            autoFocus
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 8, minHeight: '80vh' }}>
+      <LoadingBackdrop isLoading={isPending || isLoading} />
+      {
+        archiveEntries && archiveEntries.length !== 0 ?
+          <Grid2
+            container
+            spacing={{ xs: 2, md: 2 }}
+            columns={{ xs: 4, sm: 8, md: 12, xl: 12 }}
+            pt={2}
+            sx={{ minHeight: '77.5vh' }}
           >
-            Ok
-          </Button>
-        </DialogActions>
-      </Dialog>
+            {
+              archiveEntries.map((entry) => (
+                <Grid2 size={{ xs: 4, sm: 8, md: 4, xl: 3 }} key={entry.id}>
+                  <ArchiveCard
+                    entry={entry}
+                    onDelete={() => startTransition(async () => await softDelete(entry.id))}
+                    onHardDelete={() => startTransition(async () => await hardDelete(entry.id))}
+                  />
+                </Grid2>
+              ))
+            }
+          </Grid2>
+          : <EmptyArchive />
+      }
+      <Pagination
+        sx={{ mx: 'auto', pt: 2 }}
+        count={Math.floor(cursor.next / pageSize) + 1}
+        onChange={(_, v) => setPage(v)}
+      />
+      <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="page-size-select-label">Page size</InputLabel>
+        <Select
+          labelId="page-size-select-label"
+          value={pageSize}
+          onChange={(e) => setPageSize(Number(e.target.value))}
+          label="Page size"
+        >
+          <MenuItem value={25}>25</MenuItem>
+          <MenuItem value={50}>50</MenuItem>
+          <MenuItem value={100}>100</MenuItem>
+        </Select>
+      </FormControl>
     </Container>
   )
 }
 
-const IconMenu: React.FC<{
-  posX: number
-  posY: number
-  hide: boolean
-  onDownload: () => void
-  onDelete: () => void
-}> = ({ posX, posY, hide, onDelete, onDownload }) => {
-  return (
-    <Paper sx={{
-      width: 320,
-      maxWidth: '100%',
-      position: 'absolute',
-      top: posY,
-      left: posX,
-      display: hide ? 'none' : 'block',
-      zIndex: (theme) => theme.zIndex.drawer + 1,
-    }}>
-      <MenuList>
-        <MenuItem onClick={onDownload}>
-          <ListItemIcon>
-            <DownloadIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>
-            Download
-          </ListItemText>
-        </MenuItem>
-        <MenuItem onClick={onDelete}>
-          <ListItemIcon>
-            <DeleteForeverIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>
-            Delete
-          </ListItemText>
-        </MenuItem>
-      </MenuList>
-    </Paper>
-  )
-}
+export default Archive

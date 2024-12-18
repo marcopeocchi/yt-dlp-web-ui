@@ -348,7 +348,7 @@ const DownloadDialog: FC<Props> = ({ open, onClose, onDownloadStart }) => {
                       disabled={url === ''}
                       onClick={() => settings.formatSelection
                         ? startTransition(() => sendUrlFormatSelection())
-                        : sendUrl()
+                        : startTransition(async () => await sendUrl())
                       }
                     >
                       {

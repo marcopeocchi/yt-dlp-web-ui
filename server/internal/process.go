@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/archiver"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/config"
 )
 
@@ -87,6 +88,7 @@ func (p *Process) Start() {
 	buildFilename(&p.Output)
 
 	templateReplacer := strings.NewReplacer("\n", "", "\t", "", " ", "")
+
 	baseParams := []string{
 		strings.Split(p.Url, "?list")[0], //no playlist
 		"--newline",
@@ -193,13 +195,12 @@ func (p *Process) parseLogEntry(entry []byte) {
 	if err := json.Unmarshal(entry, &postprocess); err == nil {
 		p.Output.SavedFilePath = postprocess.FilePath
 
-		slog.Info("postprocess",
-			slog.String("id", p.getShortId()),
-			slog.String("url", p.Url),
-			slog.String("filepath", postprocess.FilePath),
-		)
+		// slog.Info("postprocess",
+		// 	slog.String("id", p.getShortId()),
+		// 	slog.String("url", p.Url),
+		// 	slog.String("filepath", postprocess.FilePath),
+		// )
 	}
-
 }
 
 func (p *Process) detectYtDlpErrors(r io.Reader) {
@@ -218,6 +219,24 @@ func (p *Process) detectYtDlpErrors(r io.Reader) {
 // Convention: All completed processes has progress -1
 // and speed 0 bps.
 func (p *Process) Complete() {
+	// auto archive
+	// TODO: it's not that deterministic :/
+	if p.Progress.Percentage == "" && p.Progress.Speed == 0 {
+		var serializedMetadata bytes.Buffer
+
+		json.NewEncoder(&serializedMetadata).Encode(p.Info)
+
+		archiver.Publish(&archiver.Message{
+			Id:        p.Id,
+			Path:      p.Output.SavedFilePath,
+			Title:     p.Info.Title,
+			Thumbnail: p.Info.Thumbnail,
+			Source:    p.Url,
+			Metadata:  serializedMetadata.String(),
+			CreatedAt: p.Info.CreatedAt,
+		})
+	}
+
 	p.Progress = DownloadProgress{
 		Status:     StatusCompleted,
 		Percentage: "-1",

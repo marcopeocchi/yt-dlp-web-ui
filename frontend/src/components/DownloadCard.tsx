@@ -1,7 +1,3 @@
-import EightK from '@mui/icons-material/EightK'
-import FourK from '@mui/icons-material/FourK'
-import Hd from '@mui/icons-material/Hd'
-import Sd from '@mui/icons-material/Sd'
 import {
   Button,
   Card,
@@ -10,30 +6,28 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  IconButton,
   LinearProgress,
   Skeleton,
   Stack,
+  Tooltip,
   Typography
 } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import { serverURL } from '../atoms/settings'
 import { RPCResult } from '../types'
 import { base64URLEncode, ellipsis, formatSize, formatSpeedMiB, mapProcessStatus } from '../utils'
-import { useAtomValue } from 'jotai'
+import ResolutionBadge from './ResolutionBadge'
+import ClearIcon from '@mui/icons-material/Clear'
+import StopCircleIcon from '@mui/icons-material/StopCircle'
+import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser'
+import SaveAltIcon from '@mui/icons-material/SaveAlt'
 
 type Props = {
   download: RPCResult
   onStop: () => void
   onCopy: () => void
-}
-
-const Resolution: React.FC<{ resolution?: string }> = ({ resolution }) => {
-  if (!resolution) return null
-  if (resolution.includes('4320')) return <EightK color="primary" />
-  if (resolution.includes('2160')) return <FourK color="primary" />
-  if (resolution.includes('1080')) return <Hd color="primary" />
-  if (resolution.includes('720')) return <Sd color="primary" />
-  return null
 }
 
 const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
@@ -53,12 +47,12 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
 
   const viewFile = (path: string) => {
     const encoded = base64URLEncode(path)
-    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
+    window.open(`${serverAddr}/filebrowser/v/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
   const downloadFile = (path: string) => {
     const encoded = base64URLEncode(path)
-    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
+    window.open(`${serverAddr}/filebrowser/d/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
   return (
@@ -110,37 +104,44 @@ const DownloadCard: React.FC<Props> = ({ download, onStop, onCopy }) => {
             <Typography>
               {formatSize(download.info.filesize_approx ?? 0)}
             </Typography>
-            <Resolution resolution={download.info.resolution} />
+            <ResolutionBadge resolution={download.info.resolution} />
           </Stack>
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          onClick={onStop}
-        >
-          {isCompleted() ? "Clear" : "Stop"}
-        </Button>
+        {isCompleted() ?
+          <Tooltip title="Clear from the view">
+            <IconButton
+              onClick={onStop}
+            >
+              <ClearIcon />
+            </IconButton>
+          </Tooltip>
+          :
+          <Tooltip title="Stop this download">
+            <IconButton
+              onClick={onStop}
+            >
+              <StopCircleIcon />
+            </IconButton>
+          </Tooltip>
+        }
         {isCompleted() &&
           <>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => downloadFile(download.output.savedFilePath)}
-            >
-              Download
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              color="primary"
-              onClick={() => viewFile(download.output.savedFilePath)}
-            >
-              View
-            </Button>
+            <Tooltip title="Download this file">
+              <IconButton
+                onClick={() => downloadFile(download.output.savedFilePath)}
+              >
+                <SaveAltIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Open in a new tab">
+              <IconButton
+                onClick={() => viewFile(download.output.savedFilePath)}
+              >
+                <OpenInBrowserIcon />
+              </IconButton>
+            </Tooltip>
           </>
         }
       </CardActions>

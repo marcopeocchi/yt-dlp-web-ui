@@ -125,12 +125,12 @@ const DownloadsTableView: React.FC = () => {
 
   const viewFile = (path: string) => {
     const encoded = base64URLEncode(path)
-    window.open(`${serverAddr}/archive/v/${encoded}?token=${localStorage.getItem('token')}`)
+    window.open(`${serverAddr}/filebrowser/v/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
   const downloadFile = (path: string) => {
     const encoded = base64URLEncode(path)
-    window.open(`${serverAddr}/archive/d/${encoded}?token=${localStorage.getItem('token')}`)
+    window.open(`${serverAddr}/filebrowser/d/${encoded}?token=${localStorage.getItem('token')}`)
   }
 
   const stop = (r: RPCResult) => r.progress.process_status === ProcessStatus.COMPLETED
