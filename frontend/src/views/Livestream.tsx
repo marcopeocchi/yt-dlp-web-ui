@@ -6,8 +6,10 @@ import {
   Paper,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material'
+import { useAtomValue } from 'jotai'
 import { useState } from 'react'
 import { interval } from 'rxjs'
+import { rpcPollingTimeState } from '../atoms/rpc'
 import LivestreamDialog from '../components/livestream/LivestreamDialog'
 import LivestreamSpeedDial from '../components/livestream/LivestreamSpeedDial'
 import NoLivestreams from '../components/livestream/NoLivestreams'
@@ -24,7 +26,9 @@ const LiveStreamMonitorView: React.FC = () => {
   const [progress, setProgress] = useState<LiveStreamProgress>()
   const [openDialog, setOpenDialog] = useState(false)
 
-  useSubscription(interval(1000), () => {
+  const rpcPollingRate = useAtomValue(rpcPollingTimeState)
+
+  useSubscription(interval(rpcPollingRate), () => {
     client
       .progressLivestream()
       .then(r => setProgress(r.result))
