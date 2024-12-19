@@ -31,6 +31,7 @@ import (
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/openid"
 	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/rest"
 	ytdlpRPC "github.com/marcopeocchi/yt-dlp-web-ui/v3/server/rpc"
+	"github.com/marcopeocchi/yt-dlp-web-ui/v3/server/status"
 
 	_ "modernc.org/sqlite"
 )
@@ -220,6 +221,9 @@ func newServer(c serverConfig) *http.Server {
 
 	// Logging
 	r.Route("/log", logging.ApplyRouter(observableLogger))
+
+	// Status
+	r.Route("/status", status.ApplyRouter(c.mdb))
 
 	return &http.Server{Handler: r}
 }

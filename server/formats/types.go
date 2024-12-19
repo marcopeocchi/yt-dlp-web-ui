@@ -23,6 +23,6 @@ type Format struct {
 	Resolution  string  `json:"resolution"`
 	VCodec      string  `json:"vcodec"`
 	ACodec      string  `json:"acodec"`
-	Size        float32 `json:"filesize_approx"`
+	Size        float64 `json:"filesize_approx"`
 	Language    string  `json:"language"`
 }

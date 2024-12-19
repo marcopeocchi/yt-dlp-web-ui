@@ -5,9 +5,9 @@ import "time"
 // Used to unmarshall yt-dlp progress
 type ProgressTemplate struct {
 	Percentage string  `json:"percentage"`
-	Speed      float32 `json:"speed"`
+	Speed      float64 `json:"speed"`
 	Size       string  `json:"size"`
-	Eta        float32 `json:"eta"`
+	Eta        float64 `json:"eta"`
 }
 
 type PostprocessTemplate struct {
@@ -25,8 +25,8 @@ type DownloadOutput struct {
 type DownloadProgress struct {
 	Status     int     `json:"process_status"`
 	Percentage string  `json:"percentage"`
-	Speed      float32 `json:"speed"`
-	ETA        float32 `json:"eta"`
+	Speed      float64 `json:"speed"`
+	ETA        float64 `json:"eta"`
 }
 
 // Used to deser the yt-dlp -J output
