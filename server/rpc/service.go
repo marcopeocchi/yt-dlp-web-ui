@@ -268,3 +268,19 @@ func (s *Service) UpdateExecutable(args NoArgs, updated *bool) error {
 
 	return nil
 }
+
+// Updates the Deno binary using its builtin function
+func (s *Service) UpdateDeno(args NoArgs, updated *bool) error {
+	slog.Info("Updating Deno to the latest release")
+
+	if err := updater.UpdateDeno(); err != nil {
+		slog.Error("Failed updating Deno")
+		*updated = false
+		return err
+	}
+
+	*updated = true
+	slog.Info("Succesfully updated Deno")
+
+	return nil
+}

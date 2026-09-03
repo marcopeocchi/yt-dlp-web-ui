@@ -6,6 +6,7 @@ keys:
   startButton: Indítás
   abortAllButton: Összes megszakítása
   updateBinButton: yt-dlp bináris frissítése
+  updateDenoButton: Deno frissítése
   darkThemeButton: Sötét téma
   lightThemeButton: Világos téma
   settingsAnchor: Beállítások
@@ -16,6 +17,7 @@ keys:
   bgReminder: Miután a lap bezárásra kerül, a letöltés folytatódni fog a háttérben.
   toastConnected: 'Kapcsolódva: '
   toastUpdated: yt-dlp bináris frissítése sikeres volt!
+  toastUpdatedDeno: Deno frissítése sikeres volt!
   formatSelectionEnabler: Video/audio formátum manuális kiválasztásának engedélyezése
   themeSelect: 'Téma'
   languageSelect: 'Nyelv'

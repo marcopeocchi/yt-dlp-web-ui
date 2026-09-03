@@ -6,6 +6,7 @@ keys:
   startButton: Start
   abortAllButton: Abort All
   updateBinButton: Update yt-dlp binary
+  updateDenoButton: Update Deno binary
   darkThemeButton: Dark theme
   lightThemeButton: Light theme
   settingsAnchor: Settings
@@ -16,6 +17,7 @@ keys:
   bgReminder: Once you close this page the download will continue in the background.
   toastConnected: 'Connected to '
   toastUpdated: Updated yt-dlp binary!
+  toastUpdatedDeno: Updated Deno binary!
   formatSelectionEnabler: Enable video/audio formats selection
   themeSelect: 'Theme'
   languageSelect: 'Language'

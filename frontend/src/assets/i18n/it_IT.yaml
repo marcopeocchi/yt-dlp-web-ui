@@ -6,6 +6,7 @@ keys:
   startButton: Inizia
   abortAllButton: Termina tutto
   updateBinButton: Aggiorna yt-dlp
+  updateDenoButton: Aggiorna Deno
   darkThemeButton: Tema scuro
   lightThemeButton: Tema chiaro
   settingsAnchor: Impostazioni
@@ -16,6 +17,7 @@ keys:
   bgReminder: Chiusa questa UI il download continuerà in background.
   toastConnected: 'Connesso a '
   toastUpdated: yt-dlp aggiornato con successo!
+  toastUpdatedDeno: Deno aggiornato con successo!
   formatSelectionEnabler: Abilita la selezione dei formati audio/video
   themeSelect: 'Tema'
   languageSelect: 'Lingua'

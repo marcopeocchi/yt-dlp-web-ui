@@ -6,6 +6,7 @@ keys:
   startButton: 開始
   abortAllButton: すべて中止
   updateBinButton: yt-dlp更新
+  updateDenoButton: Deno更新
   darkThemeButton: 黒テーマ
   lightThemeButton: 白テーマ
   settingsAnchor: 設定
@@ -16,6 +17,7 @@ keys:
   bgReminder: このページを閉じてもバックグラウンドでダウンロードを続けます
   toastConnected: '接続中 '
   toastUpdated: yt-dlpを更新しました!
+  toastUpdatedDeno: Denoを更新しました!
   formatSelectionEnabler: 選択可能な動画/音源
   themeSelect: 'テーマ'
   languageSelect: '言語'

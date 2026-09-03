@@ -6,6 +6,7 @@ keys:
   startButton: 开始
   abortAllButton: 全部中止
   updateBinButton: 更新 yt-dlp 可执行文件
+  updateDenoButton: 更新 Deno 可执行文件
   darkThemeButton: 黑暗主题
   lightThemeButton: 明亮主题
   settingsAnchor: 设置
@@ -16,6 +17,7 @@ keys:
   bgReminder: 关闭页面后，下载会继续在后台运行。
   toastConnected: '已连接到 '
   toastUpdated: 已更新 yt-dlp 可执行文件！
+  toastUpdatedDeno: 已更新 Deno 可执行文件！
   formatSelectionEnabler: 启用视频/音频格式选择
   themeSelect: '主题'
   languageSelect: '语言'

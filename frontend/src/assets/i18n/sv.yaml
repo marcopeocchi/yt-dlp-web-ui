@@ -6,6 +6,7 @@ keys:
   startButton: Start
   abortAllButton: Avbryt alla
   updateBinButton: Uppdatera yt-dlp
+  updateDenoButton: Uppdatera Deno
   darkThemeButton: Mörkt tema
   lightThemeButton: Ljust tema
   settingsAnchor: Inställningar
@@ -16,6 +17,7 @@ keys:
   bgReminder: När du stänger denna sida så kommer nedladdningen att fortsätta i bakgrunden.
   toastConnected: 'Ansluten till '
   toastUpdated: Uppdaterade yt-dlp!
+  toastUpdatedDeno: Uppdaterade Deno!
   formatSelectionEnabler: Tillåt val av ljud- och bildformat
   themeSelect: 'Tema'
   languageSelect: 'Språk'

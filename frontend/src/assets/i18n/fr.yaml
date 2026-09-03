@@ -6,6 +6,7 @@ keys:
   startButton: Démarrer
   abortAllButton: Tout arrêter
   updateBinButton: Mettre à jour l'exécutable yt-dlp
+  updateDenoButton: Mettre à jour Deno
   darkThemeButton: Thème sombre
   lightThemeButton: Thème clair
   settingsAnchor: Paramètres
@@ -16,6 +17,7 @@ keys:
   bgReminder: Une fois que vous aurez fermé cette page, le téléchargement continuera en arrière-plan.
   toastConnected: 'Connecté à '
   toastUpdated: L'exécutable yt-dlp a été mis à jour !
+  toastUpdatedDeno: Deno a été mis à jour !
   formatSelectionEnabler: Activer la sélection des formats vidéo/audio
   themeSelect: 'Thème'
   languageSelect: 'Langue'

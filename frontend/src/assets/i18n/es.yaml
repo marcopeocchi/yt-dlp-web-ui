@@ -5,6 +5,7 @@ keys:
   statusReady: Listo
   abortAllButton: Cancelar Todo
   updateBinButton: Actualizar el binario yt-dlp
+  updateDenoButton: Actualizar Deno
   darkThemeButton: Tema oscuro
   lightThemeButton: Tema claro
   settingsAnchor: Ajustes
@@ -15,6 +16,7 @@ keys:
   bgReminder: Si cierras esta página, la descarga continuará en segundo plano.
   toastConnected: 'Conectado a'
   toastUpdated: ¡El binario yt-dlp está actualizado!
+  toastUpdatedDeno: ¡Deno actualizado!
   formatSelectionEnabler: Habilitar la selección de formatos de video/audio
   themeSelect: 'Tema'
   languageSelect: 'Idiomas'

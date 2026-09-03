@@ -5,6 +5,7 @@ keys:
   statusReady: Готово
   abortAllButton: Прервать все
   updateBinButton: Обновить бинарный файл yt-dlp
+  updateDenoButton: Обновить Deno
   darkThemeButton: Темная тема
   lightThemeButton: Светлая тема
   settingsAnchor: Настройки
@@ -15,6 +16,7 @@ keys:
   bgReminder: Как только вы закроете эту страницу, загрузка продолжится в фоновом режиме.
   toastConnected: 'Подключен к '
   toastUpdated: Бинарный файл yt-dlp обновлен!
+  toastUpdatedDeno: Deno обновлен!
   formatSelectionEnabler: Активировать выбор видео/аудио форматов
   themeSelect: 'Тема'
   languageSelect: 'Язык'

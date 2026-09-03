@@ -9,6 +9,7 @@ export type RPCMethods =
   | "Service.ExecPlaylist"
   | "Service.DirectoryTree"
   | "Service.UpdateExecutable"
+  | "Service.UpdateDeno"
   | "Service.ExecLivestream"
   | "Service.ProgressLivestream"
   | "Service.KillLivestream"

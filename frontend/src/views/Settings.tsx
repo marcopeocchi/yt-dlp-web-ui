@@ -49,6 +49,7 @@ import {
 } from '../atoms/settings'
 import CookiesTextField from '../components/CookiesTextField'
 import UpdateBinaryButton from '../components/UpdateBinaryButton'
+import UpdateDenoButton from '../components/UpdateDenoButton'
 import { useToast } from '../hooks/toast'
 import { useI18n } from '../hooks/useI18n'
 import Translator from '../lib/i18n'
@@ -391,8 +392,9 @@ export default function Settings() {
           </Suspense>
         </Grid>
         <Grid>
-          <Stack direction="row" sx={{ pt: 2 }}>
+          <Stack direction="row" spacing={1} sx={{ pt: 2 }}>
             <UpdateBinaryButton />
+            <UpdateDenoButton />
           </Stack>
         </Grid>
       </Paper>

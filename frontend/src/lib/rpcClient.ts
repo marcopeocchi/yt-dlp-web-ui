@@ -201,6 +201,13 @@ export class RPCClient {
     })
   }
 
+  public updateDeno() {
+    return this.sendHTTP({
+      method: 'Service.UpdateDeno',
+      params: []
+    })
+  }
+
   public clearCompleted() {
     return this.sendHTTP({
       method: 'Service.ClearCompleted',
