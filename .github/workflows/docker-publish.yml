@@ -36,12 +36,12 @@ jobs:
         # 2.10.0
         uses: docker/setup-buildx-action
 
-      - name: Login to Docker Hub
-        # 2.2.0
-        uses: docker/login-action
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      # - name: Login to Docker Hub
+      #   # 2.2.0
+      #   uses: docker/login-action
+      #   with:
+      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      #     password: ${{ secrets.DOCKER_HUB_PASSWORD }}
       - name: Login to GHCR
         # 2.2.0
         uses: docker/login-action
@@ -55,9 +55,8 @@ jobs:
         # v4.6.0
         uses: docker/metadata-action
         with:
-          images: |
-           ghcr.io/${{ github.repository }}
-           docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui
+          images: ghcr.io/${{ github.repository }}
+          # docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui
           tags: |
             type=raw,value=v4
 
@@ -77,6 +76,5 @@ jobs:
           COSIGN_EXPERIMENTAL: "true"
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: |
-          cosign sign ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
-          cosign sign docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui@${{ steps.build-and-push.outputs.digest }}
+        run: cosign sign ghcr.io/${{ github.repository }}@${{ steps.build-and-push.outputs.digest }}
+        # cosign sign docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/yt-dlp-webui@${{ steps.build-and-push.outputs.digest }}
