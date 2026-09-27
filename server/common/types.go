@@ -8,7 +8,7 @@ type DownloadMetadata struct {
 	Title       string    `json:"title"`
 	Thumbnail   string    `json:"thumbnail"`
 	Resolution  string    `json:"resolution"`
-	Size        int32     `json:"filesize_approx"`
+	Size        int64     `json:"filesize_approx"`
 	VCodec      string    `json:"vcodec"`
 	ACodec      string    `json:"acodec"`
 	Extension   string    `json:"ext"`
